@@ -1,0 +1,41 @@
+{
+    "name": "treefiction/polls",
+    "description": "A poll extension for your flarum Forum.",
+    "keywords": [
+        "extension",
+        "flarum",
+        "polls",
+        "poll",
+        "answer"
+    ],
+    "type": "flarum-extension",
+    "authors": [
+        {
+            "name": "Shahiem Seymor",
+            "email": "s.seymor@live.nl",
+            "homepage": "http://shahiemseymor.nl/"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/Shahiem/flarum-poll/issues",
+        "source": "https://github.com/Shahiem/flarum-poll"
+    },
+    "require": {
+        "flarum/core": "^0.1.0-beta.7"
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Polls",
+            "icon": {
+                "name": "caret-square-o-up",
+                "backgroundColor": "#f4f4f4",
+                "color": "#5f4bb6"
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Treefiction\\Polls\\": "src/"
+        }
+    }
+}

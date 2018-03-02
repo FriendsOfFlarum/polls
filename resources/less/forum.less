@@ -1,0 +1,115 @@
+
+.Form-group.Poll-group {
+  margin: 0;
+}
+
+.PollOption {
+  margin-bottom: 15px;
+  width: 45%;
+  margin-right: 5px;
+  float: left;
+}
+
+.PollPercent {
+  float: left;
+  padding-top: 10px;
+}
+
+.PollBar {
+  background: #f9f9f99e;
+  float: left;
+  width: 85%;
+  padding: 10px 10px 10px 15px;
+  padding-left: 0;
+  position: relative;
+  margin-left: 15px;
+}
+
+.PollBar label span {
+  padding-left: 20px;
+  color: #aaa;
+  font-size: 11px;
+  line-height: 19px;
+  font-weight: 600;
+}
+
+.PollOption:nth-child(odd) {
+  float: right;
+}
+
+.PollBar:hover {
+  background: #f3f3f39e;
+}
+
+.PollOption-active {
+    height: 100%;
+    left: 0;
+    position: absolute;
+    z-index: 1;
+    top: 0;
+  background: #fdeed7;
+}
+
+.PollVoted label{
+    position: relative;
+    z-index: 100;
+}
+
+.PollOption-active .checkmark {
+  background-color: #fabc67;
+}
+
+/* Checkbox */
+.PollBar input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.PollBar input[type="checkbox"]:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Checkmark */
+.PollBar .checkmark {
+  position: absolute;
+  margin-left: 10px;
+  margin-top: 11px;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: #e8ecef;
+  border-radius: 5px;
+}
+
+.PollBar .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.clear {
+  clear: both;
+}
+
+.Option-remove {
+  margin-top: 20px;
+  display: block;
+  text-decoration: none;
+}
+
+.Option-remove .TagLabel.untagged {
+  border-color: #e43232;
+  color: #e43232;
+}
+
