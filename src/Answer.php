@@ -19,8 +19,8 @@ class Answer extends AbstractModel
     protected $appends = [
         'all_votes',
         'votes',
-        'percent
-    '];
+        'percent'
+    ];
 
     public function getAllVotesAttribute()
     {
