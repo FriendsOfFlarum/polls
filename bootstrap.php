@@ -10,6 +10,5 @@ return function (Dispatcher $events) {
     $events->subscribe(Listeners\AddDiscussionPollRelationship::class);
     $events->subscribe(Listeners\AddForumFieldRelationship::class);
     $events->subscribe(Listeners\SavePollToDatabase::class);
-
     $events->subscribe(Access\DiscussionPolicy::class);
 };

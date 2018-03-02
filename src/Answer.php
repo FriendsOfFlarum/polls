@@ -7,24 +7,24 @@ use Flarum\Database\AbstractModel;
 
 class Answer extends AbstractModel
 {
-
     public $timestamps = true;
 
     protected $table = 'poll_options';
 
-    protected $fillable = ['answer', 'poll_id'];
+    protected $fillable = [
+        'answer',
+        'poll_id'
+    ];
 
-    // public function question()
-    // {
-    //     return $this->belongsTo(Question::class);
-    // }
-    protected $appends = ['all_votes', 'votes', 'percent'];
+    protected $appends = [
+        'all_votes',
+        'votes',
+        'percent
+    '];
 
     public function getAllVotesAttribute()
     {
-        return $this->attributes['all_votes'] = Vote::where('poll_id', '=', $this->poll_id)
-            ->count()
-        ;
+        return $this->attributes['all_votes'] = Vote::where('poll_id', '=', $this->poll_id)->count();
     }
 
     public function getVotesAttribute()

@@ -8,12 +8,14 @@ use Flarum\Core\Discussion;
 
 class Question extends AbstractModel
 {
-
     public $timestamps = true;
 
     protected $table = 'polls';
 
-    protected $fillable = ['id', 'discussion_id'];
+    protected $fillable = [
+        'id',
+        'discussion_id'
+    ];
 
     protected $visible = [
         'question',

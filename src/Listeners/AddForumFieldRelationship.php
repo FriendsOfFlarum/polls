@@ -6,7 +6,6 @@ use Treefiction\Polls\Api\Serializers\QuestionSerializer;
 use Treefiction\Polls\Repositories\QuestionRepository;
 use Flarum\Api\Serializer\ForumSerializer;
 use Flarum\Event\ConfigureApiController;
-use Flarum\Api\Serializer\DiscussionSerializer;
 use Flarum\Event\GetApiRelationship;
 use Illuminate\Contracts\Events\Dispatcher;
 use Tobscure\JsonApi\Collection;
@@ -24,14 +23,8 @@ class AddForumFieldRelationship
     {
         // We add the list of fields as a Forum Serializer relationship so models are included with the forum when it loads
         if ($event->isRelationship(ForumSerializer::class, 'treefictionPollsQuestion')) {
-            /**
-             * @var FieldRepository
-             */
-            $fields = app(QuestionRepository::class);
 
-            /**
-             * @var FieldSerializer
-             */
+            $fields = app(QuestionRepository::class);
             $serializer = app(QuestionSerializer::class);
 
             return new Relationship(new Collection($fields->all(), $serializer));
@@ -41,12 +34,10 @@ class AddForumFieldRelationship
 
     public function addSerializerInclude(ConfigureApiController $event)
     {
-
         if ($event->controller->serializer === ForumSerializer::class ) {
             $event->addInclude('treefictionPollsQuestion');
             $event->addInclude('treefictionPollsQuestion.answers');
             $event->addInclude('treefictionPollsQuestion.votes');
         }
-
     }
 }
