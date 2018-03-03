@@ -32,8 +32,6 @@ app.initializers.add('treefiction-polls', app => {
     items.add('polls', (<a className="DiscussionComposer-changeTags" onclick={this.addPoll}><span className="TagLabel">Add poll</span></a>), 1);
   });
 
-  const PollDiscussionClass = new PollDiscussion();
-  PollDiscussionClass.PollView();
-
+  PollDiscussion();
   PollControl();
 });

@@ -424,9 +424,7 @@ System.register('treefiction/polls/main', ['flarum/app', 'flarum/extend', 'flaru
           ), 1);
         });
 
-        var PollDiscussionClass = new PollDiscussion();
-        PollDiscussionClass.PollView();
-
+        PollDiscussion();
         PollControl();
       });
     }
@@ -593,53 +591,34 @@ System.register('treefiction/polls/PollControl', ['flarum/extend', 'flarum/utils
 });;
 'use strict';
 
-System.register('treefiction/polls/PollDiscussion', ['flarum/extend', 'flarum/components/EditPostComposer', 'flarum/utils/PostControls', 'flarum/components/Button', 'flarum/components/CommentPost', 'flarum/components/PostStream', 'treefiction/polls/components/PollVote'], function (_export, _context) {
+System.register('treefiction/polls/PollDiscussion', ['flarum/extend', 'flarum/components/CommentPost', 'treefiction/polls/components/PollVote'], function (_export, _context) {
   "use strict";
 
-  var extend, override, EditPostComposer, PostControls, Button, CommentPost, PostStream, PollVote, PollDiscussion;
+  var extend, override, CommentPost, PollVote;
+
+  _export('default', function () {
+    extend(CommentPost.prototype, 'content', function (content) {
+      var discussion = this.props.post.discussion();
+
+      if (discussion.treefictionPolls() && this.props.post.number() == 1 && !this.props.post.isHidden()) {
+        this.subtree.invalidate();
+
+        content.push(PollVote.component({
+          poll: discussion.treefictionPolls()
+        }));
+      }
+    });
+  });
+
   return {
     setters: [function (_flarumExtend) {
       extend = _flarumExtend.extend;
       override = _flarumExtend.override;
-    }, function (_flarumComponentsEditPostComposer) {
-      EditPostComposer = _flarumComponentsEditPostComposer.default;
-    }, function (_flarumUtilsPostControls) {
-      PostControls = _flarumUtilsPostControls.default;
-    }, function (_flarumComponentsButton) {
-      Button = _flarumComponentsButton.default;
     }, function (_flarumComponentsCommentPost) {
       CommentPost = _flarumComponentsCommentPost.default;
-    }, function (_flarumComponentsPostStream) {
-      PostStream = _flarumComponentsPostStream.default;
     }, function (_treefictionPollsComponentsPollVote) {
       PollVote = _treefictionPollsComponentsPollVote.default;
     }],
-    execute: function () {
-      PollDiscussion = function () {
-        function PollDiscussion() {
-          babelHelpers.classCallCheck(this, PollDiscussion);
-        }
-
-        babelHelpers.createClass(PollDiscussion, [{
-          key: 'PollView',
-          value: function PollView() {
-            extend(CommentPost.prototype, 'content', function (content) {
-              var discussion = this.props.post.discussion();
-
-              if (discussion.treefictionPolls() && this.props.post.number() == 1 && !this.props.post.isHidden()) {
-                this.subtree.invalidate();
-
-                content.push(PollVote.component({
-                  poll: discussion.treefictionPolls()
-                }));
-              }
-            });
-          }
-        }]);
-        return PollDiscussion;
-      }();
-
-      _export('default', PollDiscussion);
-    }
+    execute: function () {}
   };
 });
