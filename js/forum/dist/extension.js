@@ -558,22 +558,24 @@ System.register('treefiction/polls/models/Vote', ['flarum/app', 'flarum/Model', 
 });;
 'use strict';
 
-System.register('treefiction/polls/PollControl', ['flarum/extend', 'flarum/utils/PostControls', 'flarum/components/Button'], function (_export, _context) {
+System.register('treefiction/polls/PollControl', ['flarum/extend', 'flarum/utils/PostControls', 'flarum/components/Button', 'treefiction/polls/components/PollModal'], function (_export, _context) {
   "use strict";
 
-  var extend, override, PostControls, Button;
+  var extend, override, PostControls, Button, PollModal;
 
   _export('default', function () {
     extend(PostControls, 'moderationControls', function (items, post) {
       var discussion = post.discussion();
 
-      items.add('editPoll', [m(Button, {
-        icon: 'check-square',
-        className: 'treefiction-PollButton',
-        onclick: function onclick() {
-          // app.modal.show(new PollModal({post}));
-        }
-      }, 'Edit Poll')]);
+      if (discussion.treefictionPolls() && post.number() == 1) {
+        items.add('editPoll', [m(Button, {
+          icon: 'check-square',
+          className: 'treefiction-PollButton',
+          onclick: function onclick() {
+            app.modal.show(new PollModal({ post: post }));
+          }
+        }, 'Edit Poll')]);
+      }
     });
   });
 
@@ -585,6 +587,8 @@ System.register('treefiction/polls/PollControl', ['flarum/extend', 'flarum/utils
       PostControls = _flarumUtilsPostControls.default;
     }, function (_flarumComponentsButton) {
       Button = _flarumComponentsButton.default;
+    }, function (_treefictionPollsComponentsPollModal) {
+      PollModal = _treefictionPollsComponentsPollModal.default;
     }],
     execute: function () {}
   };
