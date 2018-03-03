@@ -1,5 +1,9 @@
 import { extend, override } from 'flarum/extend';
 
+import EditPostComposer from 'flarum/components/EditPostComposer';
+import PostControls from 'flarum/utils/PostControls';
+import Button from 'flarum/components/Button';
+
 import CommentPost from 'flarum/components/CommentPost';
 import PostStream from 'flarum/components/PostStream';
 import PollVote from 'treefiction/polls/components/PollVote';
