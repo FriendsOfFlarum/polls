@@ -1,7 +1,5 @@
 A Flarum extension that adds a poll to your discussion. (as simple as that)
 
-https://imgur.com/a/DVd4Q
-
 **INSTALLATION :balloon:**
 
 Install it with composer:
