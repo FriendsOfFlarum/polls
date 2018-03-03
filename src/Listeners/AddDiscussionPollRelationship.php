@@ -22,10 +22,6 @@ class AddDiscussionPollRelationship
         $events->listen(ConfigureApiController::class, [$this, 'includeRelationship']);
     }
 
-    /**
-     * @param GetModelRelationship $event
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany|null
-     */
     public function getModelRelationship(GetModelRelationship $event)
     {
         if ($event->isRelationship(Discussion::class, 'treefictionPolls')) {
@@ -33,10 +29,6 @@ class AddDiscussionPollRelationship
         }
     }
 
-    /**
-     * @param GetApiRelationship $event
-     * @return \Tobscure\JsonApi\Relationship|null
-     */
     public function getApiRelationship(GetApiRelationship $event)
     {
         if ($event->isRelationship(DiscussionSerializer::class, 'treefictionPolls')) {
@@ -44,9 +36,6 @@ class AddDiscussionPollRelationship
         }
     }
 
-    /**
-     * @param WillGetData $event
-     */
     public function includeRelationship(ConfigureApiController $event)
     {
         if ($event->isController(Controller\ListDiscussionsController::class)
@@ -59,5 +48,4 @@ class AddDiscussionPollRelationship
             $event->addInclude('treefictionPolls.votes');
         }
     }
-
 }

@@ -26,16 +26,16 @@ return [
         }
 
         if ($schema->hasTable('poll_votes') == false) {
-        $schema->create('poll_votes', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('user_id')->unsigned();
-            $table->integer('option_id')->unsigned();
-            $table->timestamps();
+            $schema->create('poll_votes', function (Blueprint $table) {
+                $table->increments('id');
+                $table->integer('user_id')->unsigned();
+                $table->integer('option_id')->unsigned();
+                $table->timestamps();
 
-            $table->foreign('option_id')->references('id')->on('poll_options');
-            $table->foreign('user_id')->references('id')->on('users');
-        });
-    }
+                $table->foreign('option_id')->references('id')->on('poll_options');
+                $table->foreign('user_id')->references('id')->on('users');
+            });
+        }
     },
 
     'down' => function (Builder $schema) {

@@ -29,7 +29,6 @@ class AddForumFieldRelationship
 
             return new Relationship(new Collection($fields->all(), $serializer));
         }
-
     }
 
     public function addSerializerInclude(ConfigureApiController $event)

@@ -32,7 +32,6 @@ class QuestionsIndexController extends AbstractCollectionController
 
     protected function data(ServerRequestInterface $request, Document $document)
     {
-        // $this->assertAdmin($request->getAttribute('actor'));
         return $this->fields->all();
     }
 }

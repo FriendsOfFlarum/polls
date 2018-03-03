@@ -37,6 +37,4 @@ class AnswerSerializer extends AbstractSerializer
             'poll_id'
         );
     }
-
-
 }

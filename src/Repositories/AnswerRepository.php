@@ -38,10 +38,6 @@ class AnswerRepository
         return $question->answers()->orderBy('created_at', 'desc');
     }
 
-    /**
-     * @param $id
-     * @return Field
-     */
     public function findOrFail($id)
     {
         return $this->field->newQuery()->findOrFail($id);
@@ -51,5 +47,4 @@ class AnswerRepository
     {
         return $this->query($question)->get();
     }
-
 }

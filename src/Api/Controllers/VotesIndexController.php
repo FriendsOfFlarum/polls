@@ -13,7 +13,7 @@ class VotesIndexController extends AbstractCollectionController
     public $serializer = VoteSerializer::class;
 
     /**
-     * @var QuestionRepository
+     * @var VoteRepository
      */
     protected $fields;
 
@@ -24,8 +24,8 @@ class VotesIndexController extends AbstractCollectionController
 
     protected function data(ServerRequestInterface $request, Document $document)
     {
-        $pollId =  array_get($request->getQueryParams(), 'poll_id');
-        $userId =  array_get($request->getQueryParams(), 'user_id');
+        $pollId = array_get($request->getQueryParams(), 'poll_id');
+        $userId = array_get($request->getQueryParams(), 'user_id');
 
         return $this->fields->findVote($pollId, $userId);
     }
