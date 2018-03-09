@@ -23,7 +23,6 @@ class AddForumFieldRelationship
     {
         // We add the list of fields as a Forum Serializer relationship so models are included with the forum when it loads
         if ($event->isRelationship(ForumSerializer::class, 'treefictionPollsQuestion')) {
-
             $fields = app(QuestionRepository::class);
             $serializer = app(QuestionSerializer::class);
 

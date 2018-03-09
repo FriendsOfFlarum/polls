@@ -16,6 +16,7 @@ class Vote extends AbstractModel
 
     public function poll()
     {
+        // Create relationship between Vote and Question model to display poll data
         return $this->belongsTo(Question::class, 'poll_id');
     }
 }

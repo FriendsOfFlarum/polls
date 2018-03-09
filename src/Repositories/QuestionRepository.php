@@ -38,7 +38,10 @@ class QuestionRepository
      */
     protected function query()
     {
-        return $this->field->newQuery()->orderBy('question', 'desc');
+        return $this->field
+            ->newQuery()
+            ->orderBy('question', 'desc')
+        ;
     }
 
     /**
@@ -47,7 +50,10 @@ class QuestionRepository
      */
     public function findOrFail($id)
     {
-        return $this->field->newQuery()->findOrFail($id);
+        return $this->field
+            ->newQuery()
+            ->findOrFail($id)
+        ;
     }
 
     /**

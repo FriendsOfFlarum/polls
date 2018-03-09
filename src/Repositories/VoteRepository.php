@@ -4,7 +4,6 @@ namespace Treefiction\Polls\Repositories;
 
 use Treefiction\Polls\Vote;
 use Treefiction\Polls\Validators\VoteValidator;
-use Flarum\Core\User;
 use Illuminate\Cache\Repository;
 use Illuminate\Support\Arr;
 use Validator;
@@ -35,7 +34,10 @@ class VoteRepository
 
     protected function query()
     {
-        return $this->field->newQuery()->orderBy('created_at', 'desc');
+        return $this->field
+            ->newQuery()
+            ->orderBy('created_at', 'desc')
+        ;
     }
 
     public function findVote($pollId, $userId)
@@ -61,8 +63,6 @@ class VoteRepository
 
     public function store(array $attributes)
     {
-        $this->validator->assertValid($attributes);
-
         if ($this->findDuplicate($attributes['poll_id'], $attributes['user_id']) == 0) {
             $answer = new Vote($attributes);
             $answer->save();

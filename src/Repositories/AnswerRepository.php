@@ -35,12 +35,18 @@ class AnswerRepository
 
     protected function query(Question $question)
     {
-        return $question->answers()->orderBy('created_at', 'desc');
+        return $question
+            ->answers()
+            ->orderBy('created_at', 'desc')
+        ;
     }
 
     public function findOrFail($id)
     {
-        return $this->field->newQuery()->findOrFail($id);
+        return $this->field
+            ->newQuery()
+            ->findOrFail($id)
+        ;
     }
 
     public function all(Question $question)

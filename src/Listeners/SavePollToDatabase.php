@@ -30,12 +30,12 @@ class SavePollToDatabase
     public function whenDiscussionWillBeSaved(DiscussionWillBeSaved $event)
     {
         $discussion = $event->discussion;
-        $actor = $event->actor;
         $post = $event->data['attributes']['poll'];
 
-        $answers = [];
+        $answers = array();
 
         if  (trim($post['question']) != '') {
+            // Add a poll after the disscusion has been created/saved.
             $discussion->afterSave(function ($discussion) use ($post) {
                 // Add question to databse
                 $questionModel = new Question();
