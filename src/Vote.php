@@ -11,8 +11,17 @@ class Vote extends AbstractModel
 
     protected $table = 'poll_votes';
 
-    protected $fillable = ['user_id', 'option_id', 'poll_id'];
-    protected $visible = ['user_id', 'option_id', 'poll_id'];
+    protected $fillable = [
+        'user_id',
+        'option_id',
+        'poll_id'
+    ];
+
+    protected $visible = [
+        'user_id',
+        'option_id',
+        'poll_id'
+    ];
 
     public function poll()
     {

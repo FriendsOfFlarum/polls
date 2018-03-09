@@ -24,9 +24,11 @@ class VotesIndexController extends AbstractCollectionController
 
     protected function data(ServerRequestInterface $request, Document $document)
     {
-        $pollId = array_get($request->getQueryParams(), 'poll_id');
-        $userId = array_get($request->getQueryParams(), 'user_id');
+        $voteArray = array(
+            'poll_id' => array_get($request->getQueryParams(), 'poll_id'),
+            'user_id' => array_get($request->getQueryParams(), 'user_id')
+        );
 
-        return $this->fields->findVote($pollId, $userId);
+        return $this->fields->findVote($voteArray['poll_id'], $voteArray['user_id']);
     }
 }

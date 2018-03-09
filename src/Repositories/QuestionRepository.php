@@ -33,9 +33,6 @@ class QuestionRepository
         $this->cache = $cache;
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
     protected function query()
     {
         return $this->field
@@ -44,10 +41,7 @@ class QuestionRepository
         ;
     }
 
-    /**
-     * @param $id
-     * @return Field
-     */
+
     public function findOrFail($id)
     {
         return $this->field
@@ -56,9 +50,6 @@ class QuestionRepository
         ;
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Collection|Field[]
-     */
     public function all()
     {
         return $this->query()->get();
