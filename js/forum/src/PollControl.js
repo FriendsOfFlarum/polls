@@ -15,7 +15,7 @@ export default function() {
           icon: 'check-square',
           className: 'treefiction-PollButton',
           onclick: () => {
-            app.modal.show(new PollModal({post}));
+            app.modal.show(new PollModal({poll}));
           }
         }, 'Edit Poll')
       ]);
@@ -33,6 +33,8 @@ export default function() {
                 method: 'DELETE',
                 poll
               });
+
+              location.reload();
             }
           }
         }, 'Remove Poll')

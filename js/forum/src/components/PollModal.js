@@ -9,11 +9,19 @@ import DiscussionComposer from 'flarum/components/DiscussionComposer';
 export default class PollModal extends Modal {
   init() {
     super.init();
-    
-    this.question = m.prop(this.props.question || '');
     this.answer = [];
-    this.answer[1] = m.prop('');
-    this.answer[2] = m.prop('');
+
+    if (null != this.props.poll) {
+      this.question = m.prop(this.props.poll.question()|| '');
+
+      this.props.poll.answers().map((el, i) => {
+        this.answer[i + 1] = m.prop(el.answer()); // Start at index 1
+      });
+    } else {
+      this.question = m.prop(this.props.question || '');
+      this.answer[1] = m.prop('');
+      this.answer[2] = m.prop('');
+    }
   }
 
   className() {
@@ -21,7 +29,7 @@ export default class PollModal extends Modal {
   }
 
   title() {
-    return 'Add a poll';
+    return null != this.props.poll ? 'Edit poll'  : 'Add a poll';
   }
 
   choicePlaceholder(number) {

@@ -33,12 +33,22 @@ System.register('treefiction/polls/components/PollModal', ['flarum/extend', 'fla
         babelHelpers.createClass(PollModal, [{
           key: 'init',
           value: function init() {
-            babelHelpers.get(PollModal.prototype.__proto__ || Object.getPrototypeOf(PollModal.prototype), 'init', this).call(this);
+            var _this2 = this;
 
-            this.question = m.prop(this.props.question || '');
+            babelHelpers.get(PollModal.prototype.__proto__ || Object.getPrototypeOf(PollModal.prototype), 'init', this).call(this);
             this.answer = [];
-            this.answer[1] = m.prop('');
-            this.answer[2] = m.prop('');
+
+            if (null != this.props.poll) {
+              this.question = m.prop(this.props.poll.question() || '');
+
+              this.props.poll.answers().map(function (el, i) {
+                _this2.answer[i + 1] = m.prop(el.answer()); // Start at index 1
+              });
+            } else {
+              this.question = m.prop(this.props.question || '');
+              this.answer[1] = m.prop('');
+              this.answer[2] = m.prop('');
+            }
           }
         }, {
           key: 'className',
@@ -48,7 +58,7 @@ System.register('treefiction/polls/components/PollModal', ['flarum/extend', 'fla
         }, {
           key: 'title',
           value: function title() {
-            return 'Add a poll';
+            return null != this.props.poll ? 'Edit poll' : 'Add a poll';
           }
         }, {
           key: 'choicePlaceholder',
@@ -70,7 +80,7 @@ System.register('treefiction/polls/components/PollModal', ['flarum/extend', 'fla
         }, {
           key: 'content',
           value: function content() {
-            var _this2 = this;
+            var _this3 = this;
 
             return [m(
               'div',
@@ -102,12 +112,12 @@ System.register('treefiction/polls/components/PollModal', ['flarum/extend', 'fla
                       m('input', { className: 'FormControl',
                         type: 'text',
                         name: 'answer' + (i + 1),
-                        bidi: _this2.answer[i + 1],
-                        placeholder: _this2.choicePlaceholder(i + 1) })
+                        bidi: _this3.answer[i + 1],
+                        placeholder: _this3.choicePlaceholder(i + 1) })
                     ),
                     i + 1 >= 3 ? m(
                       'a',
-                      { href: 'javascript:;', className: 'Option-remove', onclick: _this2.removeOption.bind(_this2, i + 1) },
+                      { href: 'javascript:;', className: 'Option-remove', onclick: _this3.removeOption.bind(_this3, i + 1) },
                       m(
                         'span',
                         { 'class': 'TagLabel untagged' },
@@ -138,7 +148,7 @@ System.register('treefiction/polls/components/PollModal', ['flarum/extend', 'fla
         }, {
           key: 'onsubmit',
           value: function onsubmit(e) {
-            var _this3 = this;
+            var _this4 = this;
 
             e.preventDefault();
 
@@ -150,7 +160,7 @@ System.register('treefiction/polls/components/PollModal', ['flarum/extend', 'fla
             // Add answers to PollArray
             Object.keys(this.answer).map(function (el, i) {
               var key = i + 1;
-              pollArray['answers'][key] = _this3.answer[key]();
+              pollArray['answers'][key] = _this4.answer[key]();
             });
 
             // Add data to DiscussionComposer post data
@@ -573,7 +583,7 @@ System.register('treefiction/polls/PollControl', ['flarum/extend', 'flarum/utils
           icon: 'check-square',
           className: 'treefiction-PollButton',
           onclick: function onclick() {
-            app.modal.show(new PollModal({ post: post }));
+            app.modal.show(new PollModal({ poll: poll }));
           }
         }, 'Edit Poll')]);
 
@@ -589,6 +599,8 @@ System.register('treefiction/polls/PollControl', ['flarum/extend', 'flarum/utils
                 method: 'DELETE',
                 poll: poll
               });
+
+              location.reload();
             }
           }
         }, 'Remove Poll')]);
