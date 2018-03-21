@@ -35,5 +35,12 @@ class AddApiRoutes
             'treefiction.polls.api.votes.store',
             Controllers\VotesStoreController::class
         );
+
+         // API Route to store votes
+         $routes->delete(
+            '/treefiction/polls/questions/{id}',
+            'treefiction.polls.api.poll.delete',
+            Controllers\DeletePollController::class
+        );
     }
 }

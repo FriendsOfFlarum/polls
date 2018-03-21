@@ -2,7 +2,6 @@
 
 namespace Treefiction\Polls\Repositories;
 
-use Treefiction\Polls\Answer;
 use Treefiction\Polls\Question;
 use Treefiction\Polls\Validators\FieldValidator;
 use Flarum\Core\User;
@@ -53,6 +52,15 @@ class QuestionRepository
     public function all()
     {
         return $this->query()->get();
+    }
+
+    public function deletePoll($id)
+    {
+        $poll = $this->field->find($id);
+
+        $poll->votes()->delete(); // Delete all votes
+        $poll->answers()->delete(); // Delete all answers
+        $poll->delete(); // Delete poll
     }
 
 }

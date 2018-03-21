@@ -566,6 +566,7 @@ System.register('treefiction/polls/PollControl', ['flarum/extend', 'flarum/utils
   _export('default', function () {
     extend(PostControls, 'moderationControls', function (items, post) {
       var discussion = post.discussion();
+      var poll = discussion.treefictionPolls();
 
       if (discussion.treefictionPolls() && post.number() == 1) {
         items.add('editPoll', [m(Button, {
@@ -575,6 +576,18 @@ System.register('treefiction/polls/PollControl', ['flarum/extend', 'flarum/utils
             app.modal.show(new PollModal({ post: post }));
           }
         }, 'Edit Poll')]);
+
+        items.add('removePoll', [m(Button, {
+          icon: 'trash',
+          className: 'treefiction-PollButton',
+          onclick: function onclick() {
+            app.request({
+              url: app.forum.attribute('apiUrl') + poll.apiEndpoint() + '/' + poll.id(),
+              method: 'DELETE',
+              poll: poll
+            });
+          }
+        }, 'Remove Poll')]);
       }
     });
   });
