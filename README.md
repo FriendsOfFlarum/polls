@@ -1,4 +1,4 @@
-#Flarum Polls by ReFlar#
+# Flarum Polls by ReFlar
 A Flarum extension that adds a poll to your discussion.
 
 **INSTALLATION :balloon:**
