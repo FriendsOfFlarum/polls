@@ -589,6 +589,8 @@ System.register('treefiction/polls/PollControl', ['flarum/extend', 'flarum/utils
                 method: 'DELETE',
                 poll: poll
               });
+
+              location.reload();
             }
           }
         }, 'Remove Poll')]);

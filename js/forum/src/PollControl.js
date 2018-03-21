@@ -33,6 +33,8 @@ export default function() {
                 method: 'DELETE',
                 poll
               });
+
+              location.reload();
             }
           }
         }, 'Remove Poll')
