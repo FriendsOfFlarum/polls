@@ -25,9 +25,9 @@ export default function() {
           icon: 'trash',
           className: 'treefiction-PollButton',
           onclick: () => {
-            var r = confirm('Are you sure you want to delete this poll?');
+            var message = confirm('Are you sure you want to delete this poll?');
 
-            if (r == true) {
+            if (message == true) {
               app.request({
                 url: app.forum.attribute('apiUrl') + poll.apiEndpoint() + '/' + poll.id(),
                 method: 'DELETE',
