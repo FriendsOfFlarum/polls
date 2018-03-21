@@ -1,4 +1,4 @@
-#Flarum Polls by ReFlar
+#Flarum Polls by ReFlar#
 A Flarum extension that adds a poll to your discussion.
 
 **INSTALLATION :balloon:**
@@ -14,7 +14,9 @@ Install it with composer:
 
 **TODO**
 - Translations
+
 ~~- Edit a Poll~~
+
 ~~- Remove a Poll~~
 - Poll customize settings
 - Expiry date field of a poll 
