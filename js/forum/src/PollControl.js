@@ -25,11 +25,15 @@ export default function() {
           icon: 'trash',
           className: 'treefiction-PollButton',
           onclick: () => {
-            app.request({
-              url: app.forum.attribute('apiUrl') + poll.apiEndpoint() + '/' + poll.id(),
-              method: 'DELETE',
-              poll
-            });
+            var r = confirm('Are you sure you want to delete this poll?');
+
+            if (r == true) {
+              app.request({
+                url: app.forum.attribute('apiUrl') + poll.apiEndpoint() + '/' + poll.id(),
+                method: 'DELETE',
+                poll
+              });
+            }
           }
         }, 'Remove Poll')
       ]);

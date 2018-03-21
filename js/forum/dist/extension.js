@@ -581,11 +581,15 @@ System.register('treefiction/polls/PollControl', ['flarum/extend', 'flarum/utils
           icon: 'trash',
           className: 'treefiction-PollButton',
           onclick: function onclick() {
-            app.request({
-              url: app.forum.attribute('apiUrl') + poll.apiEndpoint() + '/' + poll.id(),
-              method: 'DELETE',
-              poll: poll
-            });
+            var r = confirm('Are you sure you want to delete this poll?');
+
+            if (r == true) {
+              app.request({
+                url: app.forum.attribute('apiUrl') + poll.apiEndpoint() + '/' + poll.id(),
+                method: 'DELETE',
+                poll: poll
+              });
+            }
           }
         }, 'Remove Poll')]);
       }
