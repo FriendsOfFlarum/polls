@@ -30,21 +30,21 @@ class AddApiRoutes
             Controllers\CreateVotesController::class
         );
 
-        // API Route to get all questions
+        // API Route to get all polls
         $routes->get(
             '/treefiction/polls/questions',
             'treefiction.polls.api.questions.index',
             Controllers\ListPollController::class
         );
 
-        // API Route to store votes
+        // API Route to update a poll
         $routes->patch(
             '/treefiction/polls/questions/{id}',
             'treefiction.polls.api.poll.update',
             Controllers\UpdatePollController::class
         );
 
-        // API Route to store votes
+        // API Route to delete a poll
         $routes->delete(
             '/treefiction/polls/questions/{id}',
             'treefiction.polls.api.poll.delete',
