@@ -2,7 +2,6 @@
 
 namespace Treefiction\Polls\Api\Serializers;
 
-use Treefiction\Polls\Field;
 use Treefiction\Polls\Repositories\AnswerRepository;
 use Treefiction\Polls\Repositories\VoteRepository;
 use Flarum\Api\Serializer\AbstractSerializer;

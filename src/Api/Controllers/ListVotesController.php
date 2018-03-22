@@ -8,7 +8,7 @@ use Flarum\Api\Controller\AbstractCollectionController;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
 
-class VotesIndexController extends AbstractCollectionController
+class ListVotesController extends AbstractCollectionController
 {
     public $serializer = VoteSerializer::class;
 

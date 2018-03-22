@@ -2,7 +2,6 @@
 
 namespace Treefiction\Polls\Api\Serializers;
 
-use Treefiction\Polls\Field;
 use Flarum\Api\Serializer\AbstractSerializer;
 use Tobscure\JsonApi\Collection;
 use Tobscure\JsonApi\Relationship;

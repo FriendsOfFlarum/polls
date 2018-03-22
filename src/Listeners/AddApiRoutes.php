@@ -8,6 +8,7 @@ use Illuminate\Contracts\Events\Dispatcher;
 
 class AddApiRoutes
 {
+    
     public function subscribe(Dispatcher $events)
     {
         $events->listen(ConfigureApiRoutes::class, [$this, 'routes']);
@@ -19,21 +20,21 @@ class AddApiRoutes
         $routes->get(
             '/treefiction/polls/votes',
             'treefiction.polls.api.votes.index',
-            Controllers\VotesIndexController::class
+            Controllers\ListVotesController::class
         );
 
         // API Route to store votes
         $routes->post(
             '/treefiction/polls/votes',
-            'treefiction.polls.api.votes.store',
-            Controllers\VotesStoreController::class
+            'treefiction.polls.api.votes.create',
+            Controllers\CreateVotesController::class
         );
 
         // API Route to get all questions
         $routes->get(
             '/treefiction/polls/questions',
             'treefiction.polls.api.questions.index',
-            Controllers\QuestionsIndexController::class
+            Controllers\ListPollController::class
         );
 
         // API Route to store votes

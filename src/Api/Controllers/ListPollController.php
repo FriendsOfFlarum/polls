@@ -9,7 +9,7 @@ use Flarum\Core\Access\AssertPermissionTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
 
-class QuestionsIndexController extends AbstractCollectionController
+class ListPollController extends AbstractCollectionController
 {
     use AssertPermissionTrait;
 

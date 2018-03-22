@@ -11,7 +11,7 @@ use Validator;
 class VoteRepository
 {
     /**
-     * @var Field
+     * @var Vote
      */
     protected $field;
 
