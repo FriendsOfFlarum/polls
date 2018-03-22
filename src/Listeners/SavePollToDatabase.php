@@ -30,27 +30,31 @@ class SavePollToDatabase
     public function whenDiscussionWillBeSaved(DiscussionWillBeSaved $event)
     {
         $discussion = $event->discussion;
-        $post = $event->data['attributes']['poll'];
 
-        $answers = array();
+        // Check if posts data exists in data attributes
+        if (isset($event->data['attributes']['poll'])) {
+            $post = $event->data['attributes']['poll'];
 
-        if  (trim($post['question']) != '') {
-            // Add a poll after the disscusion has been created/saved.
-            $discussion->afterSave(function ($discussion) use ($post) {
-                // Add question to databse
-                $questionModel = new Question();
-                $questionModel->question = $post['question'];
-                $questionModel->discussion_id = $discussion->id;
-                $questionModel->save();
+            $answers = array();
 
-                // Add answers to database
-                foreach (array_filter($post['answers']) as $answer) {
-                    $answers[] = new Answer(['answer' => $answer]);
-                }
+            if (trim($post['question']) != '') {
+                // Add a poll after the disscusion has been created/saved.
+                $discussion->afterSave(function ($discussion) use ($post) {
+                    // Add question to databse
+                    $questionModel = new Question();
+                    $questionModel->question = $post['question'];
+                    $questionModel->discussion_id = $discussion->id;
+                    $questionModel->save();
 
-                // Create relationship between the answers & question
-                $questionModel->answers()->saveMany($answers);
-            });
+                    // Add answers to database
+                    foreach (array_filter($post['answers']) as $answer) {
+                        $answers[] = new Answer(['answer' => $answer]);
+                    }
+
+                    // Create relationship between the answers & question
+                    $questionModel->answers()->saveMany($answers);
+                });
+            }
         }
     }
 }
