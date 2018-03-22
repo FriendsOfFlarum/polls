@@ -1,6 +1,6 @@
 <?php
 
-namespace Treefiction\Polls;
+namespace Reflar\Polls;
 
 use Carbon\Carbon;
 use Flarum\Database\AbstractModel;

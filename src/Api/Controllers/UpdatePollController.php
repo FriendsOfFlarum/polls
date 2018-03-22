@@ -1,9 +1,9 @@
 <?php
 
-namespace Treefiction\Polls\Api\Controllers;
+namespace Reflar\Polls\Api\Controllers;
 
-use Treefiction\Polls\Api\Serializers\QuestionSerializer;
-use Treefiction\Polls\Repositories\QuestionRepository;
+use Reflar\Polls\Api\Serializers\QuestionSerializer;
+use Reflar\Polls\Repositories\QuestionRepository;
 use Flarum\Api\Controller\AbstractCollectionController;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;

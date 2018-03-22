@@ -1,9 +1,9 @@
 <?php
 
-namespace Treefiction\Polls\Listeners;
+namespace Reflar\Polls\Listeners;
 
-use Treefiction\Polls\Question;
-use Treefiction\Polls\Answer;
+use Reflar\Polls\Question;
+use Reflar\Polls\Answer;
 use Flarum\Event\DiscussionWillBeSaved;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Validation\Factory;

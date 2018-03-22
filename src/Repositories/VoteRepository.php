@@ -1,9 +1,9 @@
 <?php
 
-namespace Treefiction\Polls\Repositories;
+namespace Reflar\Polls\Repositories;
 
-use Treefiction\Polls\Vote;
-use Treefiction\Polls\Validators\VoteValidator;
+use Reflar\Polls\Vote;
+use Reflar\Polls\Validators\VoteValidator;
 use Illuminate\Cache\Repository;
 use Illuminate\Support\Arr;
 use Validator;

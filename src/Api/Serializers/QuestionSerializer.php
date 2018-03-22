@@ -1,9 +1,9 @@
 <?php
 
-namespace Treefiction\Polls\Api\Serializers;
+namespace Reflar\Polls\Api\Serializers;
 
-use Treefiction\Polls\Repositories\AnswerRepository;
-use Treefiction\Polls\Repositories\VoteRepository;
+use Reflar\Polls\Repositories\AnswerRepository;
+use Reflar\Polls\Repositories\VoteRepository;
 use Flarum\Api\Serializer\AbstractSerializer;
 use Tobscure\JsonApi\Collection;
 use Tobscure\JsonApi\Relationship;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Treefiction\Polls\Api\Serializers;
+namespace Reflar\Polls\Api\Serializers;
 
 use Flarum\Api\Serializer\AbstractSerializer;
 use Tobscure\JsonApi\Collection;

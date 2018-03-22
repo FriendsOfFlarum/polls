@@ -1,9 +1,9 @@
 <?php
 
-namespace Treefiction\Polls\Repositories;
+namespace Reflar\Polls\Repositories;
 
-use Treefiction\Polls\Question;
-use Treefiction\Polls\Validators\FieldValidator;
+use Reflar\Polls\Question;
+use Reflar\Polls\Validators\FieldValidator;
 use Flarum\Core\User;
 use Illuminate\Cache\Repository;
 use Illuminate\Support\Arr;

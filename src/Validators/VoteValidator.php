@@ -1,6 +1,6 @@
 <?php
 
-namespace Treefiction\Polls\Validators;
+namespace Reflar\Polls\Validators;
 
 use Flarum\Core\Validator\AbstractValidator;
 

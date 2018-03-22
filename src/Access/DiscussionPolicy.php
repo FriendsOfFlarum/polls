@@ -1,6 +1,6 @@
 <?php
 
-namespace Treefiction\Polls\Access;
+namespace Reflar\Polls\Access;
 
 use Flarum\Core\Access\AbstractPolicy;
 use Flarum\Core\Discussion;

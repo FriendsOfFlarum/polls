@@ -1,8 +1,8 @@
 <?php
 
-namespace Treefiction\Polls\Listeners;
+namespace Reflar\Polls\Listeners;
 
-use Treefiction\Polls\Api\Controllers;
+use Reflar\Polls\Api\Controllers;
 use Flarum\Event\ConfigureApiRoutes;
 use Illuminate\Contracts\Events\Dispatcher;
 

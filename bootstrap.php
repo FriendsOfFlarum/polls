@@ -1,6 +1,16 @@
 <?php
+/*
+ * This file is part of reflar/polls.
+ *
+ * Copyright (c) ReFlar.
+ *
+ * http://reflar.io
+ *
+ * For the full copyright and license information, please view the license.md
+ * file that was distributed with this source code.
+ */
 
-namespace Treefiction\Polls;
+namespace Reflar\Polls;
 
 use Illuminate\Contracts\Events\Dispatcher;
 
