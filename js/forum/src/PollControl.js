@@ -2,18 +2,18 @@ import { extend, override } from 'flarum/extend';
 
 import PostControls from 'flarum/utils/PostControls';
 import Button from 'flarum/components/Button';
-import PollModal from 'treefiction/polls/components/PollModal';
+import PollModal from 'reflar/polls/components/PollModal';
 
 export default function() {
   extend(PostControls, 'moderationControls', function(items, post) {
     const discussion = post.discussion();
-    const poll = discussion.treefictionPolls();
+    const poll = discussion.reflarPolls();
 
-    if (discussion.treefictionPolls() && post.number() == 1) {
+    if (discussion.reflarPolls() && post.number() == 1) {
       items.add('editPoll', [
         m(Button, {
           icon: 'check-square',
-          className: 'treefiction-PollButton',
+          className: 'reflar-PollButton',
           onclick: () => {
             app.modal.show(new PollModal({poll}));
           }
@@ -23,7 +23,7 @@ export default function() {
       items.add('removePoll', [
         m(Button, {
           icon: 'trash',
-          className: 'treefiction-PollButton',
+          className: 'reflar-PollButton',
           onclick: () => {
             var message = confirm('Are you sure you want to delete this poll?');
 

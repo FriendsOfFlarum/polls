@@ -11,7 +11,7 @@ export default class PollVote extends Component {
     this.answers = this.poll ? this.poll.answers() : [];
 
     if (app.session.user != undefined) {
-      app.store.find('treefiction/polls/votes', {
+      app.store.find('reflar/polls/votes', {
         poll_id: this.poll.id(),
         user_id: app.session.user.id()
       }).then((data) => {
@@ -84,7 +84,7 @@ export default class PollVote extends Component {
   }
 
   addVote(answer) {
-    app.store.createRecord('treefiction-polls-vote').save({
+    app.store.createRecord('reflar-polls-vote').save({
       poll_id: this.poll.id(),
       user_id: app.session.user.id(),
       option_id: answer 

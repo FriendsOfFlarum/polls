@@ -252,7 +252,7 @@ System.register('treefiction/polls/components/PollVote', ['flarum/extend', 'flar
             this.answers = this.poll ? this.poll.answers() : [];
 
             if (app.session.user != undefined) {
-              app.store.find('treefiction/polls/votes', {
+              app.store.find('reflar/polls/votes', {
                 poll_id: this.poll.id(),
                 user_id: app.session.user.id()
               }).then(function (data) {
@@ -358,7 +358,7 @@ System.register('treefiction/polls/components/PollVote', ['flarum/extend', 'flar
         }, {
           key: 'addVote',
           value: function addVote(answer) {
-            app.store.createRecord('treefiction-polls-vote').save({
+            app.store.createRecord('reflar-polls-vote').save({
               poll_id: this.poll.id(),
               user_id: app.session.user.id(),
               option_id: answer
@@ -396,7 +396,7 @@ System.register('treefiction/polls/helpers/sortByAttribute', [], function (_expo
 });;
 'use strict';
 
-System.register('treefiction/polls/main', ['flarum/app', 'flarum/extend', 'flarum/components/DiscussionComposer', 'flarum/Model', 'treefiction/polls/models/Question', 'treefiction/polls/models/Answer', 'treefiction/polls/models/Vote', 'flarum/models/Discussion', 'treefiction/polls/PollControl', 'treefiction/polls/PollDiscussion', 'treefiction/polls/components/PollModal'], function (_export, _context) {
+System.register('treefiction/polls/main', ['flarum/app', 'flarum/extend', 'flarum/components/DiscussionComposer', 'flarum/Model', 'reflar/polls/models/Question', 'reflar/polls/models/Answer', 'reflar/polls/models/Vote', 'flarum/models/Discussion', 'reflar/polls/PollControl', 'reflar/polls/PollDiscussion', 'reflar/polls/components/PollModal'], function (_export, _context) {
   "use strict";
 
   var app, extend, override, DiscussionComposer, Model, Question, Answer, Vote, Discussion, PollControl, PollDiscussion, PollModal;
@@ -410,30 +410,30 @@ System.register('treefiction/polls/main', ['flarum/app', 'flarum/extend', 'flaru
       DiscussionComposer = _flarumComponentsDiscussionComposer.default;
     }, function (_flarumModel) {
       Model = _flarumModel.default;
-    }, function (_treefictionPollsModelsQuestion) {
-      Question = _treefictionPollsModelsQuestion.default;
-    }, function (_treefictionPollsModelsAnswer) {
-      Answer = _treefictionPollsModelsAnswer.default;
-    }, function (_treefictionPollsModelsVote) {
-      Vote = _treefictionPollsModelsVote.default;
+    }, function (_reflarPollsModelsQuestion) {
+      Question = _reflarPollsModelsQuestion.default;
+    }, function (_reflarPollsModelsAnswer) {
+      Answer = _reflarPollsModelsAnswer.default;
+    }, function (_reflarPollsModelsVote) {
+      Vote = _reflarPollsModelsVote.default;
     }, function (_flarumModelsDiscussion) {
       Discussion = _flarumModelsDiscussion.default;
-    }, function (_treefictionPollsPollControl) {
-      PollControl = _treefictionPollsPollControl.default;
-    }, function (_treefictionPollsPollDiscussion) {
-      PollDiscussion = _treefictionPollsPollDiscussion.default;
-    }, function (_treefictionPollsComponentsPollModal) {
-      PollModal = _treefictionPollsComponentsPollModal.default;
+    }, function (_reflarPollsPollControl) {
+      PollControl = _reflarPollsPollControl.default;
+    }, function (_reflarPollsPollDiscussion) {
+      PollDiscussion = _reflarPollsPollDiscussion.default;
+    }, function (_reflarPollsComponentsPollModal) {
+      PollModal = _reflarPollsComponentsPollModal.default;
     }],
     execute: function () {
 
-      app.initializers.add('treefiction-polls', function (app) {
+      app.initializers.add('reflar-polls', function (app) {
         // Relationships
-        app.store.models['treefiction-polls-answer'] = Answer;
-        app.store.models['treefiction-polls-question'] = Question;
-        app.store.models['treefiction-polls-vote'] = Vote;
+        app.store.models['reflar-polls-answer'] = Answer;
+        app.store.models['reflar-polls-question'] = Question;
+        app.store.models['reflar-polls-vote'] = Vote;
 
-        Discussion.prototype.treefictionPolls = Model.hasOne('treefictionPolls');
+        Discussion.prototype.reflarPolls = Model.hasOne('reflarPolls');
 
         var pollModal = new PollModal();
 
@@ -488,7 +488,7 @@ System.register('treefiction/polls/models/Answer', ['flarum/app', 'flarum/Model'
                 babelHelpers.createClass(Answer, [{
                     key: 'apiEndpoint',
                     value: function apiEndpoint() {
-                        return '/treefiction/polls/questions';
+                        return '/reflar/polls/questions';
                     }
                 }]);
                 return Answer;
@@ -530,7 +530,7 @@ System.register('treefiction/polls/models/Question', ['flarum/app', 'flarum/Mode
                 babelHelpers.createClass(Question, [{
                     key: 'apiEndpoint',
                     value: function apiEndpoint() {
-                        return '/treefiction/polls/questions';
+                        return '/reflar/polls/questions';
                     }
                 }]);
                 return Question;
@@ -572,7 +572,7 @@ System.register('treefiction/polls/models/Vote', ['flarum/app', 'flarum/Model', 
                 babelHelpers.createClass(Vote, [{
                     key: 'apiEndpoint',
                     value: function apiEndpoint() {
-                        return '/treefiction/polls/votes';
+                        return '/reflar/polls/votes';
                     }
                 }]);
                 return Vote;
@@ -588,7 +588,7 @@ System.register('treefiction/polls/models/Vote', ['flarum/app', 'flarum/Model', 
 });;
 'use strict';
 
-System.register('treefiction/polls/PollControl', ['flarum/extend', 'flarum/utils/PostControls', 'flarum/components/Button', 'treefiction/polls/components/PollModal'], function (_export, _context) {
+System.register('treefiction/polls/PollControl', ['flarum/extend', 'flarum/utils/PostControls', 'flarum/components/Button', 'reflar/polls/components/PollModal'], function (_export, _context) {
   "use strict";
 
   var extend, override, PostControls, Button, PollModal;
@@ -596,12 +596,12 @@ System.register('treefiction/polls/PollControl', ['flarum/extend', 'flarum/utils
   _export('default', function () {
     extend(PostControls, 'moderationControls', function (items, post) {
       var discussion = post.discussion();
-      var poll = discussion.treefictionPolls();
+      var poll = discussion.reflarPolls();
 
-      if (discussion.treefictionPolls() && post.number() == 1) {
+      if (discussion.reflarPolls() && post.number() == 1) {
         items.add('editPoll', [m(Button, {
           icon: 'check-square',
-          className: 'treefiction-PollButton',
+          className: 'reflar-PollButton',
           onclick: function onclick() {
             app.modal.show(new PollModal({ poll: poll }));
           }
@@ -609,7 +609,7 @@ System.register('treefiction/polls/PollControl', ['flarum/extend', 'flarum/utils
 
         items.add('removePoll', [m(Button, {
           icon: 'trash',
-          className: 'treefiction-PollButton',
+          className: 'reflar-PollButton',
           onclick: function onclick() {
             var message = confirm('Are you sure you want to delete this poll?');
 
@@ -636,15 +636,15 @@ System.register('treefiction/polls/PollControl', ['flarum/extend', 'flarum/utils
       PostControls = _flarumUtilsPostControls.default;
     }, function (_flarumComponentsButton) {
       Button = _flarumComponentsButton.default;
-    }, function (_treefictionPollsComponentsPollModal) {
-      PollModal = _treefictionPollsComponentsPollModal.default;
+    }, function (_reflarPollsComponentsPollModal) {
+      PollModal = _reflarPollsComponentsPollModal.default;
     }],
     execute: function () {}
   };
 });;
 'use strict';
 
-System.register('treefiction/polls/PollDiscussion', ['flarum/extend', 'flarum/components/CommentPost', 'treefiction/polls/components/PollVote'], function (_export, _context) {
+System.register('treefiction/polls/PollDiscussion', ['flarum/extend', 'flarum/components/CommentPost', 'reflar/polls/components/PollVote'], function (_export, _context) {
   "use strict";
 
   var extend, override, CommentPost, PollVote;
@@ -653,11 +653,11 @@ System.register('treefiction/polls/PollDiscussion', ['flarum/extend', 'flarum/co
     extend(CommentPost.prototype, 'content', function (content) {
       var discussion = this.props.post.discussion();
 
-      if (discussion.treefictionPolls() && this.props.post.number() == 1 && !this.props.post.isHidden()) {
+      if (discussion.reflarPolls() && this.props.post.number() == 1 && !this.props.post.isHidden()) {
         this.subtree.invalidate();
 
         content.push(PollVote.component({
-          poll: discussion.treefictionPolls()
+          poll: discussion.reflarPolls()
         }));
       }
     });
@@ -669,8 +669,8 @@ System.register('treefiction/polls/PollDiscussion', ['flarum/extend', 'flarum/co
       override = _flarumExtend.override;
     }, function (_flarumComponentsCommentPost) {
       CommentPost = _flarumComponentsCommentPost.default;
-    }, function (_treefictionPollsComponentsPollVote) {
-      PollVote = _treefictionPollsComponentsPollVote.default;
+    }, function (_reflarPollsComponentsPollVote) {
+      PollVote = _reflarPollsComponentsPollVote.default;
     }],
     execute: function () {}
   };

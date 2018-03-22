@@ -2,7 +2,7 @@ var gulp = require('flarum-gulp');
 
 gulp({
     modules: {
-        'treefiction/polls': [
+        'reflar/polls': [
             '../lib/**/*.js',
             'src/**/*.js'
         ]

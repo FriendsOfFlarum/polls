@@ -4,22 +4,22 @@ import { extend, override } from 'flarum/extend';
 import DiscussionComposer from 'flarum/components/DiscussionComposer';
 
 import Model from 'flarum/Model';
-import Question from 'treefiction/polls/models/Question';
-import Answer from 'treefiction/polls/models/Answer';
-import Vote from 'treefiction/polls/models/Vote';
+import Question from 'reflar/polls/models/Question';
+import Answer from 'reflar/polls/models/Answer';
+import Vote from 'reflar/polls/models/Vote';
 import Discussion from 'flarum/models/Discussion';
 
-import PollControl from 'treefiction/polls/PollControl';
-import PollDiscussion from 'treefiction/polls/PollDiscussion';
-import PollModal from 'treefiction/polls/components/PollModal';
+import PollControl from 'reflar/polls/PollControl';
+import PollDiscussion from 'reflar/polls/PollDiscussion';
+import PollModal from 'reflar/polls/components/PollModal';
 
-app.initializers.add('treefiction-polls', app => {
+app.initializers.add('reflar-polls', app => {
   // Relationships
-  app.store.models['treefiction-polls-answer'] = Answer;
-  app.store.models['treefiction-polls-question'] = Question;
-  app.store.models['treefiction-polls-vote'] = Vote;
+  app.store.models['reflar-polls-answer'] = Answer;
+  app.store.models['reflar-polls-question'] = Question;
+  app.store.models['reflar-polls-vote'] = Vote;
 
-  Discussion.prototype.treefictionPolls = Model.hasOne('treefictionPolls');
+  Discussion.prototype.reflarPolls = Model.hasOne('reflarPolls');
 
   const pollModal = new PollModal();
 

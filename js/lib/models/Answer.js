@@ -12,6 +12,6 @@ export default class Answer extends mixin(Model, {
      * @inheritDoc
      */
     apiEndpoint() {
-        return '/treefiction/polls/questions';
+        return '/reflar/polls/questions';
     }
 }

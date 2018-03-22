@@ -12,6 +12,6 @@ export default class Vote extends mixin(Model, {
      * @inheritDoc
      */
     apiEndpoint() {
-        return '/treefiction/polls/votes';
+        return '/reflar/polls/votes';
     }
 }
