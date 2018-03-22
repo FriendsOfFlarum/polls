@@ -1,31 +1,33 @@
 {
-    "name": "treefiction/polls",
+    "name": "reflar/polls",
     "description": "A poll extension for your flarum Forum.",
     "keywords": [
         "extension",
         "flarum",
         "polls",
         "poll",
-        "answer"
+        "answer",
+        "reflar"
     ],
     "type": "flarum-extension",
+    "license": "MIT",
     "authors": [
         {
             "name": "Shahiem Seymor",
-            "email": "s.seymor@live.nl",
-            "homepage": "http://shahiemseymor.com/"
+            "email": "shahiem.seymor@reflar.email",
+            "homepage": "https://reflar.io"
         }
     ],
     "support": {
-        "issues": "https://github.com/Shahiem/flarum-poll/issues",
-        "source": "https://github.com/Shahiem/flarum-poll"
+        "issues": "https://github.com/ReFlar/polls/issues",
+        "source": "https://github.com/ReFlar/polls"
     },
     "require": {
         "flarum/core": "^0.1.0-beta.7"
     },
     "extra": {
         "flarum-extension": {
-            "title": "Polls",
+            "title": "ReFlar Polls",
             "icon": {
                 "name": "caret-square-o-up",
                 "backgroundColor": "#f4f4f4",
@@ -35,7 +37,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Treefiction\\Polls\\": "src/"
+            "Reflar\\Polls\\": "src/"
         }
     }
 }
