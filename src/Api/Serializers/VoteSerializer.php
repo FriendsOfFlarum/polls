@@ -25,7 +25,7 @@ class VoteSerializer extends AbstractSerializer
      */
     public function getType($model)
     {
-        return 'treefiction-polls-vote';
+        return 'reflar-polls-vote';
     }
 
     public function question($model)

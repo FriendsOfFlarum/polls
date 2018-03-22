@@ -26,7 +26,7 @@ class AddClientAssets
                 __DIR__ . '/../../resources/less/forum.less'
             ]);
 
-            $app->addBootstrapper('treefiction/polls/main');
+            $app->addBootstrapper('reflar/polls/main');
         }
     }
 

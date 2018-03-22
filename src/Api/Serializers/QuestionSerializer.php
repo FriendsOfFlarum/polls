@@ -27,7 +27,7 @@ class QuestionSerializer extends AbstractSerializer
      */
     public function getType($model)
     {
-        return 'treefiction-polls-question';
+        return 'reflar-polls-question';
     }
 
     public function answers($model)

@@ -24,15 +24,15 @@ class AddDiscussionPollRelationship
 
     public function getModelRelationship(GetModelRelationship $event)
     {
-        if ($event->isRelationship(Discussion::class, 'treefictionPolls')) {
-            return $event->model->hasOne(Question::class, 'discussion_id', 'id', null, 'treefictionPolls');
+        if ($event->isRelationship(Discussion::class, 'reflarPolls')) {
+            return $event->model->hasOne(Question::class, 'discussion_id', 'id', null, 'reflarPolls');
         }
     }
 
     public function getApiRelationship(GetApiRelationship $event)
     {
-        if ($event->isRelationship(DiscussionSerializer::class, 'treefictionPolls')) {
-            return $event->serializer->hasOne($event->model, QuestionSerializer::class, 'treefictionPolls');
+        if ($event->isRelationship(DiscussionSerializer::class, 'reflarPolls')) {
+            return $event->serializer->hasOne($event->model, QuestionSerializer::class, 'reflarPolls');
         }
     }
 
@@ -43,9 +43,9 @@ class AddDiscussionPollRelationship
             || $event->isController(Controller\CreateDiscussionController::class)
             || $event->isController(Controller\UpdateDiscussionController::class)
         ) {
-            $event->addInclude('treefictionPolls');
-            $event->addInclude('treefictionPolls.answers');
-            $event->addInclude('treefictionPolls.votes');
+            $event->addInclude('reflarPolls');
+            $event->addInclude('reflarPolls.answers');
+            $event->addInclude('reflarPolls.votes');
         }
     }
 }
