@@ -61,23 +61,6 @@ System.register('treefiction/polls/components/PollModal', ['flarum/extend', 'fla
             return null != this.props.poll ? 'Edit poll' : 'Add a poll';
           }
         }, {
-          key: 'choicePlaceholder',
-          value: function choicePlaceholder(number) {
-            return 'Choice ' + number;
-          }
-        }, {
-          key: 'addOption',
-          value: function addOption() {
-            if (this.answer.length < 11) {
-              this.answer.push(m.prop(''));
-            }
-          }
-        }, {
-          key: 'removeOption',
-          value: function removeOption(option) {
-            delete this.answer[option];
-          }
-        }, {
           key: 'content',
           value: function content() {
             var _this3 = this;
@@ -146,23 +129,25 @@ System.register('treefiction/polls/components/PollModal', ['flarum/extend', 'fla
             )];
           }
         }, {
-          key: 'onsubmit',
-          value: function onsubmit(e) {
-            var _this4 = this;
-
-            e.preventDefault();
-
-            var pollArray = {
-              question: this.question(),
-              answers: {}
-            };
-
-            // Add answers to PollArray
-            Object.keys(this.answer).map(function (el, i) {
-              var key = i + 1;
-              pollArray['answers'][key] = _this4.answer[key]();
-            });
-
+          key: 'choicePlaceholder',
+          value: function choicePlaceholder(number) {
+            return 'Choice ' + number;
+          }
+        }, {
+          key: 'addOption',
+          value: function addOption() {
+            if (this.answer.length < 11) {
+              this.answer.push(m.prop(''));
+            }
+          }
+        }, {
+          key: 'removeOption',
+          value: function removeOption(option) {
+            delete this.answer[option];
+          }
+        }, {
+          key: 'onAdd',
+          value: function onAdd(pollArray) {
             // Add data to DiscussionComposer post data
             extend(DiscussionComposer.prototype, 'data', function (data) {
               data.poll = pollArray;
@@ -181,6 +166,41 @@ System.register('treefiction/polls/components/PollModal', ['flarum/extend', 'fla
                   )
                 ), 1);
               });
+            }
+          }
+        }, {
+          key: 'onEdit',
+          value: function onEdit(pollArray) {
+            var poll = this.props.poll;
+            console.log(pollArray);
+            app.request({
+              url: app.forum.attribute('apiUrl') + poll.apiEndpoint() + '/' + poll.id(),
+              method: 'PATCH',
+              data: { pollArray: pollArray }
+            });
+          }
+        }, {
+          key: 'onsubmit',
+          value: function onsubmit(e) {
+            var _this4 = this;
+
+            e.preventDefault();
+
+            var pollArray = {
+              question: this.question(),
+              answers: {}
+            };
+
+            // Add answers to PollArray
+            Object.keys(this.answer).map(function (el, i) {
+              var key = i + 1;
+              pollArray['answers'][key] = _this4.answer[key]();
+            });
+
+            if (null != this.props.poll) {
+              this.onEdit(pollArray);
+            } else {
+              this.onAdd(pollArray);
             }
 
             app.modal.close();

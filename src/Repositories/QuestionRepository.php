@@ -54,6 +54,14 @@ class QuestionRepository
         return $this->query()->get();
     }
 
+    public function editPoll($id, $data)
+    {
+        $poll = $this->field->find($id);
+        // foreach (array_filter($post['answers']) as $answer) {;
+        // $poll->question = $data['question'];
+        // $poll->save();
+    }
+
     public function deletePoll($id)
     {
         $poll = $this->field->find($id);

@@ -32,20 +32,6 @@ export default class PollModal extends Modal {
     return null != this.props.poll ? 'Edit poll'  : 'Add a poll';
   }
 
-  choicePlaceholder(number) {
-    return 'Choice ' + number;
-  }
-
-  addOption() {
-    if (this.answer.length < 11) {
-      this.answer.push(m.prop(''));
-    }
-  }
-
-  removeOption(option) {
-    delete this.answer[option];
-  }
-
   content() {
     return [
       <div className="Modal-body">
@@ -88,6 +74,44 @@ export default class PollModal extends Modal {
     ];
   }
 
+  choicePlaceholder(number) {
+    return 'Choice ' + number;
+  }
+
+  addOption() {
+    if (this.answer.length < 11) {
+      this.answer.push(m.prop(''));
+    }
+  }
+
+  removeOption(option) {
+    delete this.answer[option];
+  }
+
+  onAdd(pollArray) {
+    // Add data to DiscussionComposer post data
+    extend(DiscussionComposer.prototype, 'data', function(data) {
+      data.poll = pollArray;
+    });
+
+    // Change the text of add poll button to edit poll
+    if (this.question() != '') {
+      extend(DiscussionComposer.prototype, 'headerItems', function(items) {
+        items.replace('polls', (<a className="DiscussionComposer-changeTags" onclick={this.addPoll}><span className="TagLabel">Edit poll</span></a>), 1);
+      });
+    }
+  }
+
+  onEdit(pollArray) {
+    const poll = this.props.poll;
+console.log(pollArray)
+    app.request({
+      url: app.forum.attribute('apiUrl') + poll.apiEndpoint() + '/' + poll.id(),
+      method: 'PATCH',
+      data:{ pollArray}
+    });
+  }
+
   onsubmit(e) {
     e.preventDefault();
 
@@ -102,18 +126,12 @@ export default class PollModal extends Modal {
       pollArray['answers'][key] = this.answer[key]()
     });
 
-    // Add data to DiscussionComposer post data
-    extend(DiscussionComposer.prototype, 'data', function(data) {
-      data.poll = pollArray;
-    });
-
-    // Change the text of add poll button to edit poll
-    if (this.question() != '') {
-      extend(DiscussionComposer.prototype, 'headerItems', function(items) {
-        items.replace('polls', (<a className="DiscussionComposer-changeTags" onclick={this.addPoll}><span className="TagLabel">Edit poll</span></a>), 1);
-      });
+    if (null != this.props.poll) {
+      this.onEdit(pollArray);
+    } else {
+      this.onAdd(pollArray);
     }
-    
+   
     app.modal.close();
 
     m.redraw.strategy('none');
