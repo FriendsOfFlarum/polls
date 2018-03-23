@@ -9,7 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
 use Illuminate\Support\Arr;
 
-class VotesStoreController extends AbstractCollectionController
+class CreateVotesController extends AbstractCollectionController
 {
     public $serializer = VoteSerializer::class;
 
