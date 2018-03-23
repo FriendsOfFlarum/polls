@@ -24,6 +24,10 @@ class DeletePollController extends AbstractCollectionController
 
     protected function data(ServerRequestInterface $request, Document $document)
     {
-       $this->fields->deletePoll(array_get($request->getQueryParams(), 'id'));
+        $actor = $request->getAttribute('actor');
+        
+        if ($actor->can('edit.polls')) {
+            $this->fields->deletePoll(array_get($request->getQueryParams(), 'id'));
+        }
     }
 }
