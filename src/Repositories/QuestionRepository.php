@@ -66,7 +66,7 @@ class QuestionRepository
             if (isset($postKey)) {
                $answer->update(array('answer' => $postKey)); // If the answer exists, update it!
             } else {
-                // Remove answer
+                $answer->delete(); // Remove answer
             }
         }
 
