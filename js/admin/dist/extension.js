@@ -38,7 +38,7 @@ System.register('reflar/polls/main', ['flarum/app', 'flarum/extend', 'flarum/com
           items.add('reflar-polls', {
             icon: 'signal',
             label: 'Edit & Remove Polls',
-            permission: 'edit.polls'
+            permission: 'discussion.polls'
           }, 95);
         });
       });

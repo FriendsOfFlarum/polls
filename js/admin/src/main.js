@@ -8,7 +8,7 @@ app.initializers.add('reflar-polls', app => {
     items.add('reflar-polls', {
       icon: 'signal',
       label: 'Edit & Remove Polls',
-      permission: 'edit.polls'
+      permission: 'discussion.polls'
     }, 95);
   });
 });
