@@ -9,8 +9,8 @@ return [
             $table->string('question')->nullable()->change();
         });
 
-        $schema->table('poll_votes', function (Blueprint $table) {
-            if (Schema::hasColumn('poll_votes', 'poll_id')) {
+        $schema->table('poll_votes', function (Blueprint $table) use($schema) {
+            if (!$schema->hasColumn('poll_votes', 'poll_id')) {
                 $table->integer('poll_id')->unsigned();
             }
         });
