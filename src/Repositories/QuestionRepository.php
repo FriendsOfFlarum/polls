@@ -57,13 +57,8 @@ class QuestionRepository
     public function editPoll($id, $data)
     {
         $poll = $this->field->find($id);
-        // foreach (array_filter($post['answers']) as $answer) {;
-        // $poll->question = $data['question'];
-        // $poll->save();
-        // foreach (array_filter($post['answers']) as $answer) {;
-        // $poll->question = $data['question'];
-        // $poll->save();
-        // echo count($poll->answers());
+        $poll->question = $data['question'];
+        $poll->save();
 
         foreach ($poll->answers as $key => $answer) {
             $postKey = $data['answers'][$key + 1];
