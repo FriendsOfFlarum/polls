@@ -26,6 +26,11 @@ class UpdatePollController extends AbstractCollectionController
     {
         $pollData = $request->getParsedBody()['pollArray'];
 
-        return $this->fields->editPoll(array_get($request->getQueryParams(), 'id'), $pollData);
+        // $this->assertAdmin($request->getAttribute('actor'));
+        $actor = $request->getAttribute('actor');
+        // $this->assertCan($actor, 'editPoll', $user);
+
+var_dump($actor->isAdmin());
+        // return $this->fields->editPoll(array_get($request->getQueryParams(), 'id'), $pollData);
     }
 }

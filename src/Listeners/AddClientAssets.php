@@ -28,6 +28,14 @@ class AddClientAssets
 
             $app->addBootstrapper('reflar/polls/main');
         }
+
+        if ($app->isAdmin()) {
+            $app->addAssets([
+                __DIR__.'/../../js/admin/dist/extension.js'
+            ]);
+            
+            $app->addBootstrapper('reflar/polls/main');
+        }
     }
 
 }
