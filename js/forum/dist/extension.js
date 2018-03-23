@@ -98,15 +98,16 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
                         bidi: _this3.answer[i + 1],
                         placeholder: _this3.choicePlaceholder(i + 1) })
                     ),
-                    i + 1 >= 3 ? m(
+                    m(
                       'a',
-                      { href: 'javascript:;', className: 'Option-remove', onclick: _this3.removeOption.bind(_this3, i + 1) },
+                      { href: 'javascript:;', className: i + 1 >= 3 ? 'Option-remove' : 'Option-remove disabled', onclick: i + 1 >= 3 ? _this3.removeOption.bind(_this3, i + 1) : '' },
                       m(
                         'span',
                         { 'class': 'TagLabel untagged' },
-                        'Remove option'
+                        'X'
                       )
-                    ) : ''
+                    ),
+                    m('div', { 'class': 'clear' })
                   );
                 }),
                 m(
@@ -143,6 +144,7 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
         }, {
           key: 'removeOption',
           value: function removeOption(option) {
+            console.log(option);
             delete this.answer[option];
           }
         }, {
@@ -172,7 +174,7 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
           key: 'onEdit',
           value: function onEdit(pollArray) {
             var poll = this.props.poll;
-            console.log(pollArray);
+
             app.request({
               url: app.forum.attribute('apiUrl') + poll.apiEndpoint() + '/' + poll.id(),
               method: 'PATCH',

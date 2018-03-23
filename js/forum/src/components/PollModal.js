@@ -55,7 +55,8 @@ export default class PollModal extends Modal {
                     placeholder={this.choicePlaceholder(i + 1)} />
                 </fieldset>
                 
-                {i + 1 >= 3 ? <a href="javascript:;" className="Option-remove" onclick={this.removeOption.bind(this, i + 1)}><span class="TagLabel untagged">Remove option</span></a> : '' }
+                <a href="javascript:;" className={ i + 1 >= 3 ? 'Option-remove' : 'Option-remove disabled' } onclick={ i + 1 >= 3 ? this.removeOption.bind(this, i + 1) : '' }><span class="TagLabel untagged">X</span></a>
+                <div class="clear"></div>
               </div>
             ))
           }
@@ -85,6 +86,7 @@ export default class PollModal extends Modal {
   }
 
   removeOption(option) {
+    console.log(option);
     delete this.answer[option];
   }
 
@@ -104,7 +106,7 @@ export default class PollModal extends Modal {
 
   onEdit(pollArray) {
     const poll = this.props.poll;
-console.log(pollArray)
+
     app.request({
       url: app.forum.attribute('apiUrl') + poll.apiEndpoint() + '/' + poll.id(),
       method: 'PATCH',

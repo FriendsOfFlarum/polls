@@ -102,12 +102,29 @@
   transform: rotate(45deg);
 }
 
+.PollDiscussionModal .Form-group {
+  margin-top: 5px;
+}
+
+.PollDiscussionModal .Form-group fieldset {
+  float: left; 
+  width: 90%;
+}
+
 /* Option remove */
 .Option-remove {
-  margin-top: 20px;
   display: block;
   text-decoration: none;
+  float: left;
+  margin: 5px;
 }
+
+.Option-remove.disabled .TagLabel.untagged {
+  border-color: #aaa;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
 
 .Option-remove .TagLabel.untagged {
   border-color: #e43232;
