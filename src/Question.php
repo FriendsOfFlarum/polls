@@ -24,7 +24,7 @@ class Question extends AbstractModel
 
     public function answers()
     {
-        return $this->hasMany(Answer::class, 'poll_id');
+        return $this->hasMany(Answer::class, 'poll_id')->orderBy('created_at', 'ASC');
     }
 
     public function votes()
