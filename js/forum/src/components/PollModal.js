@@ -131,6 +131,8 @@ export default class PollModal extends Modal {
 
     if (null != this.props.poll) {
       this.onEdit(pollArray);
+
+      location.reload();
     } else {
       this.onAdd(pollArray);
     }

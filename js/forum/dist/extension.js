@@ -202,6 +202,8 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
 
             if (null != this.props.poll) {
               this.onEdit(pollArray);
+
+              location.reload();
             } else {
               this.onAdd(pollArray);
             }
