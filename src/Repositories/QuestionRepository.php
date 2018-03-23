@@ -63,7 +63,7 @@ class QuestionRepository
         foreach ($poll->answers as $key => $answer) {
             $postKey = $data['answers'][$key + 1];
 
-            if (isset($postKey)) {
+            if (isset($postKey) && trim($postKey) != '') {
                $answer->update(array('answer' => $postKey)); // If the answer exists, update it!
             } else {
                 $answer->delete(); // Remove answer

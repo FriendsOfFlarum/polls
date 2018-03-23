@@ -49,6 +49,8 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
               this.answer[1] = m.prop('');
               this.answer[2] = m.prop('');
             }
+
+            console.log(this.answer);
           }
         }, {
           key: 'className',
@@ -88,7 +90,7 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
                 Object.keys(this.answer).map(function (el, i) {
                   return m(
                     'div',
-                    { 'class': 'Form-group' },
+                    { 'class': _this3.answer[i + 1] == '' ? 'Form-group hide' : 'Form-group' },
                     m(
                       'fieldset',
                       null,
@@ -144,8 +146,8 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
         }, {
           key: 'removeOption',
           value: function removeOption(option) {
-            console.log(option);
-            delete this.answer[option];
+            this.answer[option] = '';
+            console.log(this.answer);
           }
         }, {
           key: 'onAdd',
@@ -196,7 +198,7 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
             // Add answers to PollArray
             Object.keys(this.answer).map(function (el, i) {
               var key = i + 1;
-              pollArray['answers'][key] = _this4.answer[key]();
+              pollArray['answers'][key] = _this4.answer[key] == '' ? '' : _this4.answer[key]();
             });
 
             if (null != this.props.poll) {
