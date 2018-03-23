@@ -134,7 +134,7 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
         }, {
           key: 'choicePlaceholder',
           value: function choicePlaceholder(number) {
-            return 'Choice ' + number;
+            return 'Option';
           }
         }, {
           key: 'addOption',
@@ -147,7 +147,6 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
           key: 'removeOption',
           value: function removeOption(option) {
             this.answer[option] = '';
-            console.log(this.answer);
           }
         }, {
           key: 'onAdd',

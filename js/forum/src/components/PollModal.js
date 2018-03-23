@@ -78,7 +78,7 @@ export default class PollModal extends Modal {
   }
 
   choicePlaceholder(number) {
-    return 'Choice ' + number;
+    return 'Option';
   }
 
   addOption() {
@@ -89,7 +89,6 @@ export default class PollModal extends Modal {
 
   removeOption(option) {
     this.answer[option] = '';
-    console.log(this.answer);
   }
 
   onAdd(pollArray) {
