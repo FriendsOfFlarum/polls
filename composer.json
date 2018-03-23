@@ -29,9 +29,9 @@
         "flarum-extension": {
             "title": "ReFlar Polls",
             "icon": {
-                "name": "caret-square-o-up",
-                "backgroundColor": "#f4f4f4",
-                "color": "#5f4bb6"
+                "name": "signal",
+                "backgroundColor": "#263238",
+                "color": "#ffffff"
             }
         }
     },

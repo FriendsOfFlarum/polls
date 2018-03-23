@@ -1,33 +1,38 @@
-# Flarum Polls by ReFlar
-A Flarum extension that adds a poll to your discussion.
 
-**INSTALLATION :balloon:**
+# Polls by ReFlar
+
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ReFlar/polls/blob/master/LICENSE) [![Latest Stable Version](https://img.shields.io/packagist/v/reflar/polls.svg)](https://github.com/ReFlar/polls)
+
+A Flarum extension that adds polls to your discussions.
+
+### Installation :balloon:
 
 Install it with composer:
 
-`composer require treefiction/polls`
+```sh
+composer require reflar/polls
+```
 
-**ISSUES :thinking:**
+
+### TODO 📝
+
+- Translations
+- ~~Edit a Poll~~
+- ~~Remove a Poll~~
+- Poll customize settings
+- Expiry date field of a poll
+
+### Issues 🐛
 
 [Open an issue on Github](https://github.com/ReFlar/poll/issues)
 
+Suggestions? Please feel free to give me some suggestions
 
-**TODO**
-- Translations
+### Links 🔗
 
-~~- Edit a Poll~~
-
-~~- Remove a Poll~~
-- Poll customize settings
-- Expiry date field of a poll 
-
-- Suggestions? Please feel free to give me some suggestions
-
-**LINKS :link:**
-
-[Packagist](https://packagist.org/packages/treefiction/polls)
-
-[Buy me a house with $1 :moneybag:](https://paypal.me/shahiemseymor)
+- [Github](https://github.com/ReFlar/polls)
+- [Packagist](https://packagist.org/packages/reflar/polls)
+- [Buy me a house with $1 💰](https://paypal.me/shahiemseymor)
 
 
 

@@ -1,6 +1,6 @@
 'use strict';
 
-System.register('treefiction/polls/components/PollModal', ['flarum/extend', 'flarum/components/Modal', 'flarum/components/DiscussionPage', 'flarum/components/Button', 'flarum/helpers/highlight', 'flarum/utils/classList', 'flarum/components/DiscussionComposer'], function (_export, _context) {
+System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/components/Modal', 'flarum/components/DiscussionPage', 'flarum/components/Button', 'flarum/helpers/highlight', 'flarum/utils/classList', 'flarum/components/DiscussionComposer'], function (_export, _context) {
   "use strict";
 
   var extend, override, Modal, DiscussionPage, Button, highlight, classList, DiscussionComposer, PollModal;
@@ -217,7 +217,7 @@ System.register('treefiction/polls/components/PollModal', ['flarum/extend', 'fla
 });;
 'use strict';
 
-System.register('treefiction/polls/components/PollVote', ['flarum/extend', 'flarum/utils/ItemList', 'flarum/Component', 'flarum/utils/classList'], function (_export, _context) {
+System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/utils/ItemList', 'flarum/Component', 'flarum/utils/classList'], function (_export, _context) {
   "use strict";
 
   var extend, override, ItemList, Component, classList, PollVote;
@@ -378,7 +378,7 @@ System.register('treefiction/polls/components/PollVote', ['flarum/extend', 'flar
 });;
 'use strict';
 
-System.register('treefiction/polls/helpers/sortByAttribute', [], function (_export, _context) {
+System.register('reflar/polls/helpers/sortByAttribute', [], function (_export, _context) {
     "use strict";
 
     _export('default', function (items) {
@@ -396,7 +396,7 @@ System.register('treefiction/polls/helpers/sortByAttribute', [], function (_expo
 });;
 'use strict';
 
-System.register('treefiction/polls/main', ['flarum/app', 'flarum/extend', 'flarum/components/DiscussionComposer', 'flarum/Model', 'reflar/polls/models/Question', 'reflar/polls/models/Answer', 'reflar/polls/models/Vote', 'flarum/models/Discussion', 'reflar/polls/PollControl', 'reflar/polls/PollDiscussion', 'reflar/polls/components/PollModal'], function (_export, _context) {
+System.register('reflar/polls/main', ['flarum/app', 'flarum/extend', 'flarum/components/DiscussionComposer', 'flarum/Model', 'reflar/polls/models/Question', 'reflar/polls/models/Answer', 'reflar/polls/models/Vote', 'flarum/models/Discussion', 'reflar/polls/PollControl', 'reflar/polls/PollDiscussion', 'reflar/polls/components/PollModal'], function (_export, _context) {
   "use strict";
 
   var app, extend, override, DiscussionComposer, Model, Question, Answer, Vote, Discussion, PollControl, PollDiscussion, PollModal;
@@ -462,7 +462,7 @@ System.register('treefiction/polls/main', ['flarum/app', 'flarum/extend', 'flaru
 });;
 'use strict';
 
-System.register('treefiction/polls/models/Answer', ['flarum/app', 'flarum/Model', 'flarum/utils/mixin', 'flarum/utils/computed'], function (_export, _context) {
+System.register('reflar/polls/models/Answer', ['flarum/app', 'flarum/Model', 'flarum/utils/mixin', 'flarum/utils/computed'], function (_export, _context) {
     "use strict";
 
     var app, Model, mixin, computed, Answer;
@@ -504,7 +504,7 @@ System.register('treefiction/polls/models/Answer', ['flarum/app', 'flarum/Model'
 });;
 'use strict';
 
-System.register('treefiction/polls/models/Question', ['flarum/app', 'flarum/Model', 'flarum/utils/mixin', 'flarum/utils/computed'], function (_export, _context) {
+System.register('reflar/polls/models/Question', ['flarum/app', 'flarum/Model', 'flarum/utils/mixin', 'flarum/utils/computed'], function (_export, _context) {
     "use strict";
 
     var app, Model, mixin, computed, Question;
@@ -546,7 +546,7 @@ System.register('treefiction/polls/models/Question', ['flarum/app', 'flarum/Mode
 });;
 'use strict';
 
-System.register('treefiction/polls/models/Vote', ['flarum/app', 'flarum/Model', 'flarum/utils/mixin', 'flarum/utils/computed'], function (_export, _context) {
+System.register('reflar/polls/models/Vote', ['flarum/app', 'flarum/Model', 'flarum/utils/mixin', 'flarum/utils/computed'], function (_export, _context) {
     "use strict";
 
     var app, Model, mixin, computed, Vote;
@@ -588,7 +588,7 @@ System.register('treefiction/polls/models/Vote', ['flarum/app', 'flarum/Model', 
 });;
 'use strict';
 
-System.register('treefiction/polls/PollControl', ['flarum/extend', 'flarum/utils/PostControls', 'flarum/components/Button', 'reflar/polls/components/PollModal'], function (_export, _context) {
+System.register('reflar/polls/PollControl', ['flarum/extend', 'flarum/utils/PostControls', 'flarum/components/Button', 'reflar/polls/components/PollModal'], function (_export, _context) {
   "use strict";
 
   var extend, override, PostControls, Button, PollModal;
@@ -644,7 +644,7 @@ System.register('treefiction/polls/PollControl', ['flarum/extend', 'flarum/utils
 });;
 'use strict';
 
-System.register('treefiction/polls/PollDiscussion', ['flarum/extend', 'flarum/components/CommentPost', 'reflar/polls/components/PollVote'], function (_export, _context) {
+System.register('reflar/polls/PollDiscussion', ['flarum/extend', 'flarum/components/CommentPost', 'reflar/polls/components/PollVote'], function (_export, _context) {
   "use strict";
 
   var extend, override, CommentPost, PollVote;
