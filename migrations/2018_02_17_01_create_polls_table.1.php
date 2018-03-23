@@ -10,7 +10,9 @@ return [
         });
 
         $schema->table('poll_votes', function (Blueprint $table) {
-            $table->integer('poll_id')->unsigned();
+            if (Schema::hasColumn('poll_votes', 'poll_id')) {
+                $table->integer('poll_id')->unsigned();
+            }
         });
     },
 
