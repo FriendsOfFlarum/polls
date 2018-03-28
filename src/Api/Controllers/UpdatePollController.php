@@ -7,6 +7,7 @@ use Reflar\Polls\Repositories\QuestionRepository;
 use Flarum\Api\Controller\AbstractCollectionController;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
+use Flarum\Core\Post;
 
 class UpdatePollController extends AbstractCollectionController
 {
@@ -27,7 +28,9 @@ class UpdatePollController extends AbstractCollectionController
         $pollData = $request->getParsedBody()['pollArray'];
         $actor = $request->getAttribute('actor');
         
-        if ($actor->can('edit.polls')) {
+        $post = Post::find($pollData['post']);
+
+        if ($actor->can('edit.polls') || $actor->id == $post->user_id) {
             return $this->fields->editPoll(array_get($request->getQueryParams(), 'id'), $pollData);
         } 
     }

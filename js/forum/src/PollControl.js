@@ -15,7 +15,7 @@ export default function() {
           icon: 'check-square',
           className: 'reflar-PollButton',
           onclick: () => {
-            app.modal.show(new PollModal({poll}));
+            app.modal.show(new PollModal({ post: post, poll: poll }));
           }
         }, 'Edit Poll')
       ]);

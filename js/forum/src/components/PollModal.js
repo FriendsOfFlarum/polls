@@ -22,9 +22,6 @@ export default class PollModal extends Modal {
       this.answer[1] = m.prop('');
       this.answer[2] = m.prop('');
     }
-
-    console.log(this.answer);
-
   }
 
   className() {
@@ -107,20 +104,19 @@ export default class PollModal extends Modal {
 
   onEdit(pollArray) {
     const poll = this.props.poll;
-
     app.request({
       url: app.forum.attribute('apiUrl') + poll.apiEndpoint() + '/' + poll.id(),
       method: 'PATCH',
-      data:{ pollArray}
+      data:{ pollArray }
     });
   }
 
   onsubmit(e) {
     e.preventDefault();
-
     let pollArray = {
       question: this.question(),
-      answers: {}
+      answers: {},
+      post: this.props.post.id()
     };
 
     // Add answers to PollArray

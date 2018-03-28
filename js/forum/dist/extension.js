@@ -49,8 +49,6 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
               this.answer[1] = m.prop('');
               this.answer[2] = m.prop('');
             }
-
-            console.log(this.answer);
           }
         }, {
           key: 'className',
@@ -175,7 +173,6 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
           key: 'onEdit',
           value: function onEdit(pollArray) {
             var poll = this.props.poll;
-
             app.request({
               url: app.forum.attribute('apiUrl') + poll.apiEndpoint() + '/' + poll.id(),
               method: 'PATCH',
@@ -188,10 +185,10 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
             var _this4 = this;
 
             e.preventDefault();
-
             var pollArray = {
               question: this.question(),
-              answers: {}
+              answers: {},
+              post: this.props.post.id()
             };
 
             // Add answers to PollArray
@@ -608,7 +605,7 @@ System.register('reflar/polls/PollControl', ['flarum/extend', 'flarum/utils/Post
           icon: 'check-square',
           className: 'reflar-PollButton',
           onclick: function onclick() {
-            app.modal.show(new PollModal({ poll: poll }));
+            app.modal.show(new PollModal({ post: post, poll: poll }));
           }
         }, 'Edit Poll')]);
 
