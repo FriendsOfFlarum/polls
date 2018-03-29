@@ -398,10 +398,10 @@ System.register('reflar/polls/helpers/sortByAttribute', [], function (_export, _
 });;
 'use strict';
 
-System.register('reflar/polls/main', ['flarum/app', 'flarum/extend', 'flarum/components/DiscussionComposer', 'flarum/Model', 'reflar/polls/models/Question', 'reflar/polls/models/Answer', 'reflar/polls/models/Vote', 'flarum/models/Discussion', 'reflar/polls/PollControl', 'reflar/polls/PollDiscussion', 'reflar/polls/components/PollModal'], function (_export, _context) {
+System.register('reflar/polls/main', ['flarum/app', 'flarum/extend', 'flarum/components/DiscussionComposer', 'flarum/Model', 'reflar/polls/models/Question', 'reflar/polls/models/Answer', 'reflar/polls/models/Vote', 'flarum/models/Discussion', 'flarum/models/Post', 'reflar/polls/PollControl', 'reflar/polls/PollDiscussion', 'reflar/polls/components/PollModal'], function (_export, _context) {
   "use strict";
 
-  var app, extend, override, DiscussionComposer, Model, Question, Answer, Vote, Discussion, PollControl, PollDiscussion, PollModal;
+  var app, extend, override, DiscussionComposer, Model, Question, Answer, Vote, Discussion, Post, PollControl, PollDiscussion, PollModal;
   return {
     setters: [function (_flarumApp) {
       app = _flarumApp.default;
@@ -420,6 +420,8 @@ System.register('reflar/polls/main', ['flarum/app', 'flarum/extend', 'flarum/com
       Vote = _reflarPollsModelsVote.default;
     }, function (_flarumModelsDiscussion) {
       Discussion = _flarumModelsDiscussion.default;
+    }, function (_flarumModelsPost) {
+      Post = _flarumModelsPost.default;
     }, function (_reflarPollsPollControl) {
       PollControl = _reflarPollsPollControl.default;
     }, function (_reflarPollsPollDiscussion) {
@@ -436,6 +438,7 @@ System.register('reflar/polls/main', ['flarum/app', 'flarum/extend', 'flarum/com
         app.store.models['reflar-polls-vote'] = Vote;
 
         Discussion.prototype.reflarPolls = Model.hasOne('reflarPolls');
+        Post.prototype.canEditPoll = Model.attribute('canEditPoll');
 
         var pollModal = new PollModal();
 
@@ -455,6 +458,7 @@ System.register('reflar/polls/main', ['flarum/app', 'flarum/extend', 'flarum/com
             )
           ), 1);
         });
+        console.log(app.store);
 
         PollDiscussion();
         PollControl();
@@ -597,9 +601,11 @@ System.register('reflar/polls/PollControl', ['flarum/extend', 'flarum/utils/Post
 
   _export('default', function () {
     extend(PostControls, 'moderationControls', function (items, post) {
+
       var discussion = post.discussion();
       var poll = discussion.reflarPolls();
 
+      console.log(post.canEditPoll());
       if (discussion.reflarPolls() && post.number() == 1) {
         items.add('editPoll', [m(Button, {
           icon: 'check-square',

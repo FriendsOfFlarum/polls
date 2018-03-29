@@ -15,7 +15,9 @@ use Reflar\Polls\Question;
 use Reflar\Polls\Api\Serializers\QuestionSerializer;
 use Flarum\Api\Controller;
 use Flarum\Api\Serializer\DiscussionSerializer;
+use Flarum\Api\Serializer\PostSerializer;
 use Flarum\Core\Discussion;
+use Flarum\Api\Event\Serializing;
 use Flarum\Event\ConfigureApiController;
 use Flarum\Event\GetApiRelationship;
 use Flarum\Event\GetModelRelationship;
@@ -29,6 +31,7 @@ class AddDiscussionPollRelationship
         $events->listen(GetModelRelationship::class, [$this, 'getModelRelationship']);
         $events->listen(GetApiRelationship::class, [$this, 'getApiRelationship']);
         $events->listen(ConfigureApiController::class, [$this, 'includeRelationship']);
+        $events->listen(PrepareApiAttributes::class, [$this, 'prepareApiAttributes']);
     }
 
     public function getModelRelationship(GetModelRelationship $event)
@@ -45,6 +48,13 @@ class AddDiscussionPollRelationship
         }
     }
 
+    public function prepareApiAttributes(PrepareApiAttributes $event)
+    {
+        if ($event->isSerializer(PostSerializer::class)) {
+            $event->attributes['canEditPoll'] = $event->actor->can('edit.polls') || $event->actor->id == $event->model->user_id;
+        }
+    }
+
     public function includeRelationship(ConfigureApiController $event)
     {
         if ($event->isController(Controller\ListDiscussionsController::class)
@@ -57,4 +67,6 @@ class AddDiscussionPollRelationship
             $event->addInclude('reflarPolls.votes');
         }
     }
+
+  
 }

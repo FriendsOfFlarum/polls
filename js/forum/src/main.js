@@ -8,6 +8,7 @@ import Question from 'reflar/polls/models/Question';
 import Answer from 'reflar/polls/models/Answer';
 import Vote from 'reflar/polls/models/Vote';
 import Discussion from 'flarum/models/Discussion';
+import Post from 'flarum/models/Post';
 
 import PollControl from 'reflar/polls/PollControl';
 import PollDiscussion from 'reflar/polls/PollDiscussion';
@@ -20,6 +21,7 @@ app.initializers.add('reflar-polls', app => {
   app.store.models['reflar-polls-vote'] = Vote;
 
   Discussion.prototype.reflarPolls = Model.hasOne('reflarPolls');
+  Post.prototype.canEditPoll = Model.attribute('canEditPoll');
 
   const pollModal = new PollModal();
 
@@ -31,6 +33,7 @@ app.initializers.add('reflar-polls', app => {
   extend(DiscussionComposer.prototype, 'headerItems', function(items) {
     items.add('polls', (<a className="DiscussionComposer-changeTags" onclick={this.addPoll}><span className="TagLabel">Add poll</span></a>), 1);
   });
+  console.log(app.store);
 
   PollDiscussion();
   PollControl();
