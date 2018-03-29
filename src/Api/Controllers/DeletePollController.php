@@ -17,6 +17,7 @@ use Flarum\Api\Controller\AbstractCollectionController;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
 use Flarum\Core\Post;
+use Reflar\Polls\Question;
 
 class DeletePollController extends AbstractCollectionController
 {
@@ -34,13 +35,13 @@ class DeletePollController extends AbstractCollectionController
 
     protected function data(ServerRequestInterface $request, Document $document)
     {
-        var_dump($request->getParsedBody());
-//         $pollId = array_get($request->getQueryParams(), 'id');
-//         $actor = $request->getAttribute('actor');
-//         $post = Post::find($request->getQueryParams(), 'id');
-// echo $pollData;
-//         if ($actor->can('edit.polls') || $actor->id == $post->user_id) {
-//             return $this->fields->deletePoll($postId);
-//         }
+        $pollId = array_get($request->getQueryParams(), 'id');
+        $poll = Question::find($pollId);
+
+        $actor = $request->getAttribute('actor');
+
+        if ($actor->can('edit.polls') || $actor->id == $poll->user_id) {
+            return $this->fields->deletePoll($pollId);
+        }
     }
 }

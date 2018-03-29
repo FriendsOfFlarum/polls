@@ -12,6 +12,7 @@ export default function() {
       post: post,
       poll: poll
     };
+
     if (discussion.reflarPolls() && post.canEditPoll() && post.number() == 1) {
       items.add('editPoll', [
         m(Button, {
@@ -22,7 +23,7 @@ export default function() {
           }
         }, 'Edit Poll')
       ]);
-console.log(poll);
+
       items.add('removePoll', [
         m(Button, {
           icon: 'trash',
@@ -33,13 +34,10 @@ console.log(poll);
             if (message == true) {
               app.request({
                 url: app.forum.attribute('apiUrl') + poll.apiEndpoint() + '/' + poll.id(),
-                method: 'DELETE',
-                data: {
-                  polls: JSON.stringify(poll)
-                }
+                method: 'DELETE'
               });
 
-              // location.reload();
+              location.reload();
             }
           }
         }, 'Remove Poll')

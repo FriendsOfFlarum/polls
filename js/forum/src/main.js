@@ -33,7 +33,6 @@ app.initializers.add('reflar-polls', app => {
   extend(DiscussionComposer.prototype, 'headerItems', function(items) {
     items.add('polls', (<a className="DiscussionComposer-changeTags" onclick={this.addPoll}><span className="TagLabel">Add poll</span></a>), 1);
   });
-  console.log(app.store);
 
   PollDiscussion();
   PollControl();
