@@ -48,11 +48,12 @@ class SavePollToDatabase
 
             if (trim($post['question']) != '') {
                 // Add a poll after the disscusion has been created/saved.
-                $discussion->afterSave(function ($discussion) use ($post) {
+                $discussion->afterSave(function ($discussion) use ($post, $event) {
                     // Add question to databse
                     $questionModel = new Question();
                     $questionModel->question = $post['question'];
                     $questionModel->discussion_id = $discussion->id;
+                    $questionModel->user_id = $event->actor->id;
                     $questionModel->save();
 
                     // Add answers to database

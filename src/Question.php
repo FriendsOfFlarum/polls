@@ -23,7 +23,8 @@ class Question extends AbstractModel
 
     protected $fillable = [
         'id',
-        'discussion_id'
+        'discussion_id',
+        'user_id'
     ];
 
     protected $visible = [
