@@ -8,10 +8,6 @@ export default function() {
   extend(PostControls, 'moderationControls', function(items, post) {
     const discussion = post.discussion();
     const poll = discussion.reflarPolls();
-    let arraloly = {
-      post: post,
-      poll: poll
-    };
 
     if (discussion.reflarPolls() && post.canEditPoll() && post.number() == 1) {
       items.add('editPoll', [

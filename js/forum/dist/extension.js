@@ -602,10 +602,6 @@ System.register('reflar/polls/PollControl', ['flarum/extend', 'flarum/utils/Post
     extend(PostControls, 'moderationControls', function (items, post) {
       var discussion = post.discussion();
       var poll = discussion.reflarPolls();
-      var arraloly = {
-        post: post,
-        poll: poll
-      };
 
       if (discussion.reflarPolls() && post.canEditPoll() && post.number() == 1) {
         items.add('editPoll', [m(Button, {
