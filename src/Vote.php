@@ -9,9 +9,9 @@
  * For the full copyright and license information, please view the license.md
  * file that was distributed with this source code.
  */
+
 namespace Reflar\Polls;
 
-use Carbon\Carbon;
 use Flarum\Database\AbstractModel;
 
 class Vote extends AbstractModel
@@ -23,13 +23,13 @@ class Vote extends AbstractModel
     protected $fillable = [
         'user_id',
         'option_id',
-        'poll_id'
+        'poll_id',
     ];
 
     protected $visible = [
         'user_id',
         'option_id',
-        'poll_id'
+        'poll_id',
     ];
 
     public function poll()

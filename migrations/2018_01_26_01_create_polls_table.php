@@ -22,7 +22,6 @@ return [
                 $table->foreign('poll_id')->references('id')->on('polls');
                 $table->timestamps();
             });
-
         }
 
         if ($schema->hasTable('poll_votes') == false) {
@@ -42,5 +41,5 @@ return [
         $schema->drop('polls');
         $schema->drop('poll_options');
         $schema->drop('poll_votes');
-    }
+    },
 ];

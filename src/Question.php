@@ -9,11 +9,11 @@
  * For the full copyright and license information, please view the license.md
  * file that was distributed with this source code.
  */
+
 namespace Reflar\Polls;
 
-use Carbon\Carbon;
-use Flarum\Database\AbstractModel;
 use Flarum\Core\Discussion;
+use Flarum\Database\AbstractModel;
 
 class Question extends AbstractModel
 {
@@ -24,12 +24,12 @@ class Question extends AbstractModel
     protected $fillable = [
         'id',
         'discussion_id',
-        'user_id'
+        'user_id',
     ];
 
     protected $visible = [
         'question',
-        'discussion_id'
+        'discussion_id',
     ];
 
     public function answers()

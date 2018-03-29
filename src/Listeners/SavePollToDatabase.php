@@ -9,14 +9,14 @@
  * For the full copyright and license information, please view the license.md
  * file that was distributed with this source code.
  */
+
 namespace Reflar\Polls\Listeners;
 
-use Reflar\Polls\Question;
-use Reflar\Polls\Answer;
 use Flarum\Event\DiscussionWillBeSaved;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Validation\Factory;
-use Illuminate\Support\Arr;
+use Reflar\Polls\Answer;
+use Reflar\Polls\Question;
 
 class SavePollToDatabase
 {
@@ -44,7 +44,7 @@ class SavePollToDatabase
         if (isset($event->data['attributes']['poll'])) {
             $post = $event->data['attributes']['poll'];
 
-            $answers = array();
+            $answers = [];
 
             if (trim($post['question']) != '') {
                 // Add a poll after the disscusion has been created/saved.

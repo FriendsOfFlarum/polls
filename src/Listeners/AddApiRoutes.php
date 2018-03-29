@@ -9,15 +9,15 @@
  * For the full copyright and license information, please view the license.md
  * file that was distributed with this source code.
  */
+
 namespace Reflar\Polls\Listeners;
 
-use Reflar\Polls\Api\Controllers;
 use Flarum\Event\ConfigureApiRoutes;
 use Illuminate\Contracts\Events\Dispatcher;
+use Reflar\Polls\Api\Controllers;
 
 class AddApiRoutes
 {
-    
     public function subscribe(Dispatcher $events)
     {
         $events->listen(ConfigureApiRoutes::class, [$this, 'routes']);

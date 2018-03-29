@@ -9,9 +9,9 @@
  * For the full copyright and license information, please view the license.md
  * file that was distributed with this source code.
  */
+
 namespace Reflar\Polls;
 
-use Carbon\Carbon;
 use Flarum\Database\AbstractModel;
 
 class Answer extends AbstractModel
@@ -22,13 +22,13 @@ class Answer extends AbstractModel
 
     protected $fillable = [
         'answer',
-        'poll_id'
+        'poll_id',
     ];
 
     protected $appends = [
         'all_votes',
         'votes',
-        'percent'
+        'percent',
     ];
 
     public function getAllVotesAttribute()
@@ -44,8 +44,7 @@ class Answer extends AbstractModel
         // Add votes to data model
         $this->attributes['votes'] = Vote::where('option_id', '=', $this->id)
             ->where('poll_id', '=', $this->poll_id)
-            ->count()
-        ;
+            ->count();
 
         return $this->attributes['votes'];
     }

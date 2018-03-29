@@ -9,7 +9,7 @@ return [
             $table->string('question')->nullable()->change();
         });
 
-        $schema->table('poll_votes', function (Blueprint $table) use($schema) {
+        $schema->table('poll_votes', function (Blueprint $table) use ($schema) {
             if (!$schema->hasColumn('poll_votes', 'poll_id')) {
                 $table->integer('poll_id')->unsigned();
             }
@@ -19,5 +19,5 @@ return [
     'down' => function (Builder $schema) {
         $schema->drop('polls');
         $schema->drop('poll_votes');
-    }
+    },
 ];

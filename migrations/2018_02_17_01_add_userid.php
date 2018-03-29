@@ -14,5 +14,5 @@ return [
         $schema->table('polls', function (Blueprint $table) {
             $table->dropColumn('user_id');
         });
-    }
+    },
 ];

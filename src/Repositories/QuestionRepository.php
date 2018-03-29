@@ -9,14 +9,12 @@
  * For the full copyright and license information, please view the license.md
  * file that was distributed with this source code.
  */
+
 namespace Reflar\Polls\Repositories;
 
+use Illuminate\Cache\Repository;
 use Reflar\Polls\Question;
 use Reflar\Polls\Validators\FieldValidator;
-use Flarum\Core\User;
-use Illuminate\Cache\Repository;
-use Illuminate\Support\Arr;
-use Validator;
 
 class QuestionRepository
 {
@@ -45,17 +43,14 @@ class QuestionRepository
     {
         return $this->field
             ->newQuery()
-            ->orderBy('question', 'desc')
-        ;
+            ->orderBy('question', 'desc');
     }
-
 
     public function findOrFail($id)
     {
         return $this->field
             ->newQuery()
-            ->findOrFail($id)
-        ;
+            ->findOrFail($id);
     }
 
     public function all()
@@ -73,7 +68,7 @@ class QuestionRepository
             $postKey = $data['answers'][$key + 1];
 
             if (isset($postKey) && trim($postKey) != '') {
-               $answer->update(array('answer' => $postKey)); // If the answer exists, update it!
+                $answer->update(['answer' => $postKey]); // If the answer exists, update it!
             } else {
                 $answer->delete(); // Remove answer
             }
@@ -101,5 +96,4 @@ class QuestionRepository
         $poll->answers()->delete(); // Delete all answers
         $poll->delete(); // Delete poll
     }
-
 }

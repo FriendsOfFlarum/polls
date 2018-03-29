@@ -9,14 +9,15 @@
  * For the full copyright and license information, please view the license.md
  * file that was distributed with this source code.
  */
+
 namespace Reflar\Polls\Listeners;
 
-use Reflar\Polls\Api\Serializers\QuestionSerializer;
-use Reflar\Polls\Repositories\QuestionRepository;
 use Flarum\Api\Serializer\ForumSerializer;
 use Flarum\Event\ConfigureApiController;
 use Flarum\Event\GetApiRelationship;
 use Illuminate\Contracts\Events\Dispatcher;
+use Reflar\Polls\Api\Serializers\QuestionSerializer;
+use Reflar\Polls\Repositories\QuestionRepository;
 use Tobscure\JsonApi\Collection;
 use Tobscure\JsonApi\Relationship;
 
@@ -41,7 +42,7 @@ class AddForumFieldRelationship
 
     public function addSerializerInclude(ConfigureApiController $event)
     {
-        if ($event->controller->serializer === ForumSerializer::class ) {
+        if ($event->controller->serializer === ForumSerializer::class) {
             $event->addInclude('reflarPollsQuestion');
             $event->addInclude('reflarPollsQuestion.answers');
             $event->addInclude('reflarPollsQuestion.votes');

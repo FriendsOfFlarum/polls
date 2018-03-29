@@ -9,20 +9,20 @@
  * For the full copyright and license information, please view the license.md
  * file that was distributed with this source code.
  */
+
 namespace Reflar\Polls\Listeners;
 
-use Reflar\Polls\Question;
-use Reflar\Polls\Api\Serializers\QuestionSerializer;
 use Flarum\Api\Controller;
 use Flarum\Api\Serializer\DiscussionSerializer;
 use Flarum\Api\Serializer\PostSerializer;
 use Flarum\Core\Discussion;
-use Flarum\Api\Event\Serializing;
 use Flarum\Event\ConfigureApiController;
 use Flarum\Event\GetApiRelationship;
 use Flarum\Event\GetModelRelationship;
 use Flarum\Event\PrepareApiAttributes;
 use Illuminate\Contracts\Events\Dispatcher;
+use Reflar\Polls\Api\Serializers\QuestionSerializer;
+use Reflar\Polls\Question;
 
 class AddDiscussionPollRelationship
 {
@@ -67,6 +67,4 @@ class AddDiscussionPollRelationship
             $event->addInclude('reflarPolls.votes');
         }
     }
-
-  
 }

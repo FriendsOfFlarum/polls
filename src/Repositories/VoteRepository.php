@@ -9,13 +9,12 @@
  * For the full copyright and license information, please view the license.md
  * file that was distributed with this source code.
  */
+
 namespace Reflar\Polls\Repositories;
 
-use Reflar\Polls\Vote;
-use Reflar\Polls\Validators\VoteValidator;
 use Illuminate\Cache\Repository;
-use Illuminate\Support\Arr;
-use Validator;
+use Reflar\Polls\Validators\VoteValidator;
+use Reflar\Polls\Vote;
 
 class VoteRepository
 {
@@ -34,7 +33,7 @@ class VoteRepository
      */
     protected $cache;
 
-    public function __construct(Vote $field,  VoteValidator $validator, Repository $cache)
+    public function __construct(Vote $field, VoteValidator $validator, Repository $cache)
     {
         $this->field = $field;
         $this->validator = $validator;
@@ -45,24 +44,21 @@ class VoteRepository
     {
         return $this->field
             ->newQuery()
-            ->orderBy('created_at', 'desc')
-        ;
+            ->orderBy('created_at', 'desc');
     }
 
     public function findVote($pollId, $userId)
     {
         return Vote::where('poll_id', $pollId)
             ->where('user_id', $userId)
-            ->get()
-        ;
+            ->get();
     }
 
     public function findDuplicate($pollId, $userId)
     {
         return Vote::where('poll_id', $pollId)
             ->where('user_id', $userId)
-            ->count()
-        ;
+            ->count();
     }
 
     public function all()

@@ -9,15 +9,12 @@
  * For the full copyright and license information, please view the license.md
  * file that was distributed with this source code.
  */
+
 namespace Reflar\Polls\Repositories;
 
-use Reflar\Polls\Answer;
+use Illuminate\Cache\Repository;
 use Reflar\Polls\Question;
 use Reflar\Polls\Validators\FieldValidator;
-use Flarum\Core\User;
-use Illuminate\Cache\Repository;
-use Illuminate\Support\Arr;
-use Validator;
 
 class AnswerRepository
 {
@@ -46,16 +43,14 @@ class AnswerRepository
     {
         return $question
             ->answers()
-            ->orderBy('created_at', 'desc')
-        ;
+            ->orderBy('created_at', 'desc');
     }
 
     public function findOrFail($id)
     {
         return $this->field
             ->newQuery()
-            ->findOrFail($id)
-        ;
+            ->findOrFail($id);
     }
 
     public function all(Question $question)

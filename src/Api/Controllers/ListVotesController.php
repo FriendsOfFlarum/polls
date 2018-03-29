@@ -9,12 +9,13 @@
  * For the full copyright and license information, please view the license.md
  * file that was distributed with this source code.
  */
+
 namespace Reflar\Polls\Api\Controllers;
 
-use Reflar\Polls\Api\Serializers\VoteSerializer;
-use Reflar\Polls\Repositories\VoteRepository;
 use Flarum\Api\Controller\AbstractCollectionController;
 use Psr\Http\Message\ServerRequestInterface;
+use Reflar\Polls\Api\Serializers\VoteSerializer;
+use Reflar\Polls\Repositories\VoteRepository;
 use Tobscure\JsonApi\Document;
 
 class ListVotesController extends AbstractCollectionController
@@ -33,10 +34,10 @@ class ListVotesController extends AbstractCollectionController
 
     protected function data(ServerRequestInterface $request, Document $document)
     {
-        $voteArray = array(
+        $voteArray = [
             'poll_id' => array_get($request->getQueryParams(), 'poll_id'),
-            'user_id' => array_get($request->getQueryParams(), 'user_id')
-        );
+            'user_id' => array_get($request->getQueryParams(), 'user_id'),
+        ];
 
         return $this->fields->findVote($voteArray['poll_id'], $voteArray['user_id']);
     }

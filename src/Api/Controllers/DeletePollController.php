@@ -9,15 +9,15 @@
  * For the full copyright and license information, please view the license.md
  * file that was distributed with this source code.
  */
+
 namespace Reflar\Polls\Api\Controllers;
 
-use Reflar\Polls\Api\Serializers\QuestionSerializer;
-use Reflar\Polls\Repositories\QuestionRepository;
 use Flarum\Api\Controller\AbstractCollectionController;
 use Psr\Http\Message\ServerRequestInterface;
-use Tobscure\JsonApi\Document;
-use Flarum\Core\Post;
+use Reflar\Polls\Api\Serializers\QuestionSerializer;
 use Reflar\Polls\Question;
+use Reflar\Polls\Repositories\QuestionRepository;
+use Tobscure\JsonApi\Document;
 
 class DeletePollController extends AbstractCollectionController
 {

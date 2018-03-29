@@ -18,8 +18,8 @@ class VoteValidator extends AbstractValidator
 {
     protected function getRules()
     {
-        return array(
-            'poll_id' => 'required'
-        );
+        return [
+            'poll_id' => 'required',
+        ];
     }
 }

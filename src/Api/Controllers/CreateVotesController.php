@@ -9,14 +9,15 @@
  * For the full copyright and license information, please view the license.md
  * file that was distributed with this source code.
  */
+
 namespace Reflar\Polls\Api\Controllers;
 
+use Flarum\Api\Controller\AbstractCollectionController;
+use Illuminate\Support\Arr;
+use Psr\Http\Message\ServerRequestInterface;
 use Reflar\Polls\Api\Serializers\VoteSerializer;
 use Reflar\Polls\Repositories\VoteRepository;
-use Flarum\Api\Controller\AbstractCollectionController;
-use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
-use Illuminate\Support\Arr;
 
 class CreateVotesController extends AbstractCollectionController
 {
