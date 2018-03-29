@@ -107,7 +107,7 @@ export default class PollModal extends Modal {
     app.request({
       url: app.forum.attribute('apiUrl') + poll.apiEndpoint() + '/' + poll.id(),
       method: 'PATCH',
-      data:{ pollArray }
+      data: { pollArray }
     });
   }
 

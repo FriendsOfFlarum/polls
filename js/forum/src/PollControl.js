@@ -8,7 +8,10 @@ export default function() {
   extend(PostControls, 'moderationControls', function(items, post) {
     const discussion = post.discussion();
     const poll = discussion.reflarPolls();
-
+    let arraloly = {
+      post: post,
+      poll: poll
+    };
     if (discussion.reflarPolls() && post.canEditPoll() && post.number() == 1) {
       items.add('editPoll', [
         m(Button, {
@@ -19,22 +22,24 @@ export default function() {
           }
         }, 'Edit Poll')
       ]);
-
+console.log(poll);
       items.add('removePoll', [
         m(Button, {
           icon: 'trash',
           className: 'reflar-PollButton',
           onclick: () => {
             var message = confirm('Are you sure you want to delete this poll?');
-
+           
             if (message == true) {
               app.request({
                 url: app.forum.attribute('apiUrl') + poll.apiEndpoint() + '/' + poll.id(),
                 method: 'DELETE',
-                poll
+                data: {
+                  polls: JSON.stringify(poll)
+                }
               });
 
-              location.reload();
+              // location.reload();
             }
           }
         }, 'Remove Poll')

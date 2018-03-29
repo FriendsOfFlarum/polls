@@ -603,7 +603,10 @@ System.register('reflar/polls/PollControl', ['flarum/extend', 'flarum/utils/Post
     extend(PostControls, 'moderationControls', function (items, post) {
       var discussion = post.discussion();
       var poll = discussion.reflarPolls();
-
+      var arraloly = {
+        post: post,
+        poll: poll
+      };
       if (discussion.reflarPolls() && post.canEditPoll() && post.number() == 1) {
         items.add('editPoll', [m(Button, {
           icon: 'check-square',
@@ -612,7 +615,7 @@ System.register('reflar/polls/PollControl', ['flarum/extend', 'flarum/utils/Post
             app.modal.show(new PollModal({ post: post, poll: poll }));
           }
         }, 'Edit Poll')]);
-
+        console.log(poll);
         items.add('removePoll', [m(Button, {
           icon: 'trash',
           className: 'reflar-PollButton',
@@ -623,10 +626,12 @@ System.register('reflar/polls/PollControl', ['flarum/extend', 'flarum/utils/Post
               app.request({
                 url: app.forum.attribute('apiUrl') + poll.apiEndpoint() + '/' + poll.id(),
                 method: 'DELETE',
-                poll: poll
+                data: {
+                  polls: JSON.stringify(poll)
+                }
               });
 
-              location.reload();
+              // location.reload();
             }
           }
         }, 'Remove Poll')]);
