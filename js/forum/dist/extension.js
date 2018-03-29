@@ -188,7 +188,7 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
             var pollArray = {
               question: this.question(),
               answers: {},
-              post: this.props.post.id()
+              post: null != this.props.post ? this.props.post.id() : ''
             };
 
             // Add answers to PollArray
@@ -200,7 +200,7 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
             if (null != this.props.poll) {
               this.onEdit(pollArray);
 
-              // location.reload();
+              location.reload();
             } else {
               this.onAdd(pollArray);
             }

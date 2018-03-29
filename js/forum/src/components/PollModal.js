@@ -116,7 +116,7 @@ export default class PollModal extends Modal {
     let pollArray = {
       question: this.question(),
       answers: {},
-      post: this.props.post.id()
+      post: null != this.props.post ? this.props.post.id() : ''
     };
 
     // Add answers to PollArray
@@ -128,7 +128,7 @@ export default class PollModal extends Modal {
     if (null != this.props.poll) {
       this.onEdit(pollArray);
 
-      // location.reload();
+      location.reload();
     } else {
       this.onAdd(pollArray);
     }
