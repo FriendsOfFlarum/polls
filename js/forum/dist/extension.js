@@ -601,12 +601,10 @@ System.register('reflar/polls/PollControl', ['flarum/extend', 'flarum/utils/Post
 
   _export('default', function () {
     extend(PostControls, 'moderationControls', function (items, post) {
-
       var discussion = post.discussion();
       var poll = discussion.reflarPolls();
 
-      console.log(post.canEditPoll());
-      if (discussion.reflarPolls() && post.number() == 1) {
+      if (discussion.reflarPolls() && post.canEditPoll() && post.number() == 1) {
         items.add('editPoll', [m(Button, {
           icon: 'check-square',
           className: 'reflar-PollButton',

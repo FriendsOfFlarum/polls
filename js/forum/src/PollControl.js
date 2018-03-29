@@ -6,12 +6,10 @@ import PollModal from 'reflar/polls/components/PollModal';
 
 export default function() {
   extend(PostControls, 'moderationControls', function(items, post) {
-
     const discussion = post.discussion();
     const poll = discussion.reflarPolls();
 
-    console.log(post.canEditPoll());
-    if (discussion.reflarPolls() && post.number() == 1) {
+    if (discussion.reflarPolls() && post.canEditPoll() && post.number() == 1) {
       items.add('editPoll', [
         m(Button, {
           icon: 'check-square',
