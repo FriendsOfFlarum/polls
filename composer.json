@@ -33,6 +33,9 @@
                 "backgroundColor": "#263238",
                 "color": "#ffffff"
             }
+        },
+        "flagrow": {
+            "discuss": "https://discuss.flarum.org/d/9762-poll"
         }
     },
     "autoload": {
