@@ -4,7 +4,7 @@ Before we can address your issues and concerns with the behavior of our work, we
 
 * [x] By agreeing to these terms, you can simply leave this checkbox checked.
 
-### Prerequisites (check these AFTER you create your issue)
+### Prerequisites (Check these AFTER you create your issue)
 
 * [ ] Can you reproduce this problem in debug mode?
 * [ ] Are you running the latest version of this extension?
@@ -20,13 +20,13 @@ Before we can address your issues and concerns with the behavior of our work, we
 2. [Second Step]
 3. [and so on...]
 
-**Expected behavior:** [What you expected to happen]
+**Expected Behavior:** [What you expected to happen]
 
-**Actual behavior:** [What actually happened (screenshots are welcomed!)]
+**Actual Behavior:** [What actually happened (screenshots are welcomed!)]
 
 ### Flarum/Server/Client Information
 
-## Technical details
+## Technical Details
 
 - Version of Flarum (x.y.z):
 - Version of extension (x.y.z):
@@ -36,13 +36,13 @@ Before we can address your issues and concerns with the behavior of our work, we
 - Hosted environment (Shared, VPS, etc):
 - Hosting provider (https://some-amazing-provider.com):
 
-## Flarum info
+## Flarum Info
 
 ```
 Output of "php flarum info", run this in terminal in your Flarum directory.
 ```
 
-## Log files
+## Log Files
 
 ```
 Put any relevant logs here.
