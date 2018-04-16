@@ -27,8 +27,23 @@ Before we can address your issues and concerns with the behavior of our work, we
 
 ### Flarum/Server/Client Information
 
-* Output of executing `php flarum info` VIA SSH in the root directory of your Flarum installation:
+## Technical details
 
-* Affected Browers (IE, FireFox, Chrome, etc):
+- Version of Flarum: x.y.z
+- Website URL where the bug is visible: http://example.com
+- The webserver you are running: apache, nginx or something else
+- PHP version: x.y.z
+- Hosted environment: shared or vps
+- Hosting provider: http://some-amazing-provider.com
 
-* Affected Operating Systems (MacOS, Linux, Windows 10, etc):
+## Flarum info
+
+```
+Output of "php flarum info", run this in terminal in your Flarum directory.
+```
+
+## Log files
+
+```
+Put any relevant logs here.
+```
