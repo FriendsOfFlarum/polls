@@ -27,6 +27,6 @@ Before we can address your issues and concerns with the behavior of our work, we
 
 ### Flarum/Server/Client Information
 
-Output of executing `php flarum info` VIA SSH in the root directory of your Flarum installation:
-Affected Browers (IE, FireFox, Chrome, etc):
-Affected Operating Systems (MacOS, Linux, Windows 10, etc):
+* Output of executing `php flarum info` VIA SSH in the root directory of your Flarum installation:
+* Affected Browers (IE, FireFox, Chrome, etc):
+* Affected Operating Systems (MacOS, Linux, Windows 10, etc):
