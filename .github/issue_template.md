@@ -4,7 +4,6 @@ Before we can address your issues and concerns with the behavior of our work, we
 
 * [x] By agreeing to these terms, you can simply leave this checkbox checked.
 
-
 ### Prerequisites (check these AFTER you create your issue)
 
 * [ ] Can you reproduce this problem in debug mode?
