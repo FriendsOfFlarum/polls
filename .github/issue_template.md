@@ -28,12 +28,13 @@ Before we can address your issues and concerns with the behavior of our work, we
 
 ## Technical details
 
-- Version of Flarum: x.y.z
-- Website URL where the bug is visible: http://example.com
-- The webserver you are running: apache, nginx or something else
-- PHP version: x.y.z
-- Hosted environment: shared or vps
-- Hosting provider: http://some-amazing-provider.com
+- Version of Flarum (x.y.z):
+- Version of extension (x.y.z):
+- Website URL where the bug is visible (https://example.com):
+- The webserver you are running (Apache, Nginx, etc):
+- PHP version (x.y.z):
+- Hosted environment (Shared, VPS, etc):
+- Hosting provider (https://some-amazing-provider.com):
 
 ## Flarum info
 
