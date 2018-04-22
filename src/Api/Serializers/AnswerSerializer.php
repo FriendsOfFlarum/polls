@@ -16,6 +16,8 @@ use Flarum\Api\Serializer\AbstractSerializer;
 
 class AnswerSerializer extends AbstractSerializer
 {
+    protected $type = 'answers';
+
     /**
      * Get the default set of serialized attributes for a model.
      *
@@ -26,16 +28,6 @@ class AnswerSerializer extends AbstractSerializer
     protected function getDefaultAttributes($model)
     {
         return $model->toArray();
-    }
-
-    /**
-     * @param Field $model
-     *
-     * @return string
-     */
-    public function getType($model)
-    {
-        return 'reflar-polls-answer';
     }
 
     public function question($model)

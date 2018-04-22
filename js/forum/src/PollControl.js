@@ -7,9 +7,9 @@ import PollModal from 'reflar/polls/components/PollModal';
 export default function() {
   extend(PostControls, 'moderationControls', function(items, post) {
     const discussion = post.discussion();
-    const poll = discussion.reflarPolls();
+    const poll = discussion.Poll();
 
-    if (discussion.reflarPolls() && post.canEditPoll() && post.number() == 1) {
+    if (discussion.Poll() && post.canEditPoll() && post.number() === 1) {
       items.add('editPoll', [
         m(Button, {
           icon: 'check-square',
@@ -25,9 +25,8 @@ export default function() {
           icon: 'trash',
           className: 'reflar-PollButton',
           onclick: () => {
-            var message = confirm('Are you sure you want to delete this poll?');
            
-            if (message == true) {
+            if (confirm('Are you sure you want to delete this poll?')) {
               app.request({
                 url: app.forum.attribute('apiUrl') + poll.apiEndpoint() + '/' + poll.id(),
                 method: 'DELETE'

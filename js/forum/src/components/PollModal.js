@@ -1,9 +1,6 @@
 import { extend, override } from 'flarum/extend';
 import Modal from 'flarum/components/Modal';
-import DiscussionPage from 'flarum/components/DiscussionPage';
 import Button from 'flarum/components/Button';
-import highlight from 'flarum/helpers/highlight';
-import classList from 'flarum/utils/classList';
 import DiscussionComposer from 'flarum/components/DiscussionComposer';
 
 export default class PollModal extends Modal {
@@ -46,16 +43,16 @@ export default class PollModal extends Modal {
 
           {
             Object.keys(this.answer).map((el, i) => (
-              <div class={this.answer[i + 1] == '' ? 'Form-group hide' : 'Form-group' }>
+              <div className={this.answer[i + 1] === '' ? 'Form-group hide' : 'Form-group' }>
                 <fieldset>
                   <input className="FormControl"
                     type="text"
                     name={'answer' + (i + 1) }
                     bidi={this.answer[i + 1]}
-                    placeholder={this.choicePlaceholder(i + 1)} />
+                    placeholder={this.choicePlaceholder()} />
                 </fieldset>
-                <a href="javascript:;" className={ i + 1 >= 3 ? 'Option-remove' : 'Option-remove disabled' } onclick={ i + 1 >= 3 ? this.removeOption.bind(this, i + 1) : '' }><span class="TagLabel untagged">X</span></a>
-                <div class="clear"></div>
+                <a href="javascript:;" className={ i + 1 >= 3 ? 'Option-remove' : 'Option-remove disabled' } onclick={ i + 1 >= 3 ? this.removeOption.bind(this, i + 1) : '' }><span className="TagLabel untagged">X</span></a>
+                <div className="clear"></div>
               </div>
             ))
           }
@@ -74,7 +71,7 @@ export default class PollModal extends Modal {
     ];
   }
 
-  choicePlaceholder(number) {
+  choicePlaceholder() {
     return 'Option';
   }
 
@@ -95,7 +92,7 @@ export default class PollModal extends Modal {
     });
 
     // Change the text of add poll button to edit poll
-    if (this.question() != '') {
+    if (this.question() !== '') {
       extend(DiscussionComposer.prototype, 'headerItems', function(items) {
         items.replace('polls', (<a className="DiscussionComposer-changeTags" onclick={this.addPoll}><span className="TagLabel">Edit poll</span></a>), 1);
       });
@@ -122,7 +119,7 @@ export default class PollModal extends Modal {
     // Add answers to PollArray
     Object.keys(this.answer).map((el, i) => {
       var key = (i + 1);
-      pollArray['answers'][key] = this.answer[key] == '' ? '' : this.answer[key]()
+      pollArray['answers'][key] = this.answer[key] === '' ? '' : this.answer[key]()
     });
 
     if (null != this.props.poll) {

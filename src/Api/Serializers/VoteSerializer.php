@@ -16,6 +16,8 @@ use Flarum\Api\Serializer\AbstractSerializer;
 
 class VoteSerializer extends AbstractSerializer
 {
+    protected $type = 'votes';
+
     /**
      * Get the default set of serialized attributes for a model.
      *
@@ -28,15 +30,6 @@ class VoteSerializer extends AbstractSerializer
         return $model->toArray();
     }
 
-    /**
-     * @param Field $model
-     *
-     * @return string
-     */
-    public function getType($model)
-    {
-        return 'reflar-polls-vote';
-    }
 
     public function question($model)
     {

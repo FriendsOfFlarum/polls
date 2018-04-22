@@ -1,23 +1,17 @@
 'use strict';
 
-System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/components/Modal', 'flarum/components/DiscussionPage', 'flarum/components/Button', 'flarum/helpers/highlight', 'flarum/utils/classList', 'flarum/components/DiscussionComposer'], function (_export, _context) {
+System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/components/Modal', 'flarum/components/Button', 'flarum/components/DiscussionComposer'], function (_export, _context) {
   "use strict";
 
-  var extend, override, Modal, DiscussionPage, Button, highlight, classList, DiscussionComposer, PollModal;
+  var extend, override, Modal, Button, DiscussionComposer, PollModal;
   return {
     setters: [function (_flarumExtend) {
       extend = _flarumExtend.extend;
       override = _flarumExtend.override;
     }, function (_flarumComponentsModal) {
       Modal = _flarumComponentsModal.default;
-    }, function (_flarumComponentsDiscussionPage) {
-      DiscussionPage = _flarumComponentsDiscussionPage.default;
     }, function (_flarumComponentsButton) {
       Button = _flarumComponentsButton.default;
-    }, function (_flarumHelpersHighlight) {
-      highlight = _flarumHelpersHighlight.default;
-    }, function (_flarumUtilsClassList) {
-      classList = _flarumUtilsClassList.default;
     }, function (_flarumComponentsDiscussionComposer) {
       DiscussionComposer = _flarumComponentsDiscussionComposer.default;
     }],
@@ -88,7 +82,7 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
                 Object.keys(this.answer).map(function (el, i) {
                   return m(
                     'div',
-                    { 'class': _this3.answer[i + 1] == '' ? 'Form-group hide' : 'Form-group' },
+                    { className: _this3.answer[i + 1] === '' ? 'Form-group hide' : 'Form-group' },
                     m(
                       'fieldset',
                       null,
@@ -96,18 +90,18 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
                         type: 'text',
                         name: 'answer' + (i + 1),
                         bidi: _this3.answer[i + 1],
-                        placeholder: _this3.choicePlaceholder(i + 1) })
+                        placeholder: _this3.choicePlaceholder() })
                     ),
                     m(
                       'a',
                       { href: 'javascript:;', className: i + 1 >= 3 ? 'Option-remove' : 'Option-remove disabled', onclick: i + 1 >= 3 ? _this3.removeOption.bind(_this3, i + 1) : '' },
                       m(
                         'span',
-                        { 'class': 'TagLabel untagged' },
+                        { className: 'TagLabel untagged' },
                         'X'
                       )
                     ),
-                    m('div', { 'class': 'clear' })
+                    m('div', { className: 'clear' })
                   );
                 }),
                 m(
@@ -131,7 +125,7 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
           }
         }, {
           key: 'choicePlaceholder',
-          value: function choicePlaceholder(number) {
+          value: function choicePlaceholder() {
             return 'Option';
           }
         }, {
@@ -155,7 +149,7 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
             });
 
             // Change the text of add poll button to edit poll
-            if (this.question() != '') {
+            if (this.question() !== '') {
               extend(DiscussionComposer.prototype, 'headerItems', function (items) {
                 items.replace('polls', m(
                   'a',
@@ -194,7 +188,7 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
             // Add answers to PollArray
             Object.keys(this.answer).map(function (el, i) {
               var key = i + 1;
-              pollArray['answers'][key] = _this4.answer[key] == '' ? '' : _this4.answer[key]();
+              pollArray['answers'][key] = _this4.answer[key] === '' ? '' : _this4.answer[key]();
             });
 
             if (null != this.props.poll) {
@@ -219,16 +213,14 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
 });;
 'use strict';
 
-System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/utils/ItemList', 'flarum/Component', 'flarum/utils/classList'], function (_export, _context) {
+System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Component', 'flarum/utils/classList'], function (_export, _context) {
   "use strict";
 
-  var extend, override, ItemList, Component, classList, PollVote;
+  var extend, override, Component, classList, PollVote;
   return {
     setters: [function (_flarumExtend) {
       extend = _flarumExtend.extend;
       override = _flarumExtend.override;
-    }, function (_flarumUtilsItemList) {
-      ItemList = _flarumUtilsItemList.default;
     }, function (_flarumComponent) {
       Component = _flarumComponent.default;
     }, function (_flarumUtilsClassList) {
@@ -251,14 +243,17 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/ut
             this.poll = this.props.poll;
             this.votes = [];
             this.voted = false;
+            console.log(this.poll);
+            console.log(this.poll.answers());
+
             this.answers = this.poll ? this.poll.answers() : [];
 
-            if (app.session.user != undefined) {
-              app.store.find('reflar/polls/votes', {
+            if (app.session.user !== undefined) {
+              app.store.find('votes', {
                 poll_id: this.poll.id(),
                 user_id: app.session.user.id()
               }).then(function (data) {
-                if (data[0] != undefined) {
+                if (data[0] !== undefined) {
                   _this2.voted = true;
                 }
 
@@ -282,13 +277,13 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/ut
                   null,
                   this.poll.question()
                 ),
-                this.answers.map(function (item, index) {
+                this.answers.map(function (item) {
                   return m(
                     'div',
                     { className: 'PollOption PollVoted' },
                     m(
                       'div',
-                      { 'class': 'PollPercent' },
+                      { className: 'PollPercent' },
                       item.percent(),
                       '%'
                     ),
@@ -319,28 +314,28 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/ut
                   null,
                   this.poll.question()
                 ),
-                this.answers.map(function (item, index) {
+                this.answers.map(function (item) {
                   return m(
                     'div',
-                    { 'class': 'PollOption' },
+                    { className: 'PollOption' },
                     m(
                       'div',
                       { className: 'PollBar' },
                       m(
                         'label',
-                        { 'class': 'checkbox' },
+                        { className: 'checkbox' },
                         m('input', { type: 'checkbox', onchange: _this3.addVote.bind(_this3, item.id()) }),
                         m(
                           'span',
                           null,
                           item.answer()
                         ),
-                        m('span', { 'class': 'checkmark' })
+                        m('span', { className: 'checkmark' })
                       )
                     )
                   );
                 }),
-                m('div', { 'class': 'clear' })
+                m('div', { className: 'clear' })
               );
             }
           }
@@ -360,7 +355,7 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/ut
         }, {
           key: 'addVote',
           value: function addVote(answer) {
-            app.store.createRecord('reflar-polls-vote').save({
+            app.store.createRecord('votes').save({
               poll_id: this.poll.id(),
               user_id: app.session.user.id(),
               option_id: answer
@@ -433,11 +428,11 @@ System.register('reflar/polls/main', ['flarum/app', 'flarum/extend', 'flarum/com
 
       app.initializers.add('reflar-polls', function (app) {
         // Relationships
-        app.store.models['reflar-polls-answer'] = Answer;
-        app.store.models['reflar-polls-question'] = Question;
-        app.store.models['reflar-polls-vote'] = Vote;
+        app.store.models.answers = Answer;
+        app.store.models.questions = Question;
+        app.store.models.votes = Vote;
 
-        Discussion.prototype.reflarPolls = Model.hasOne('reflarPolls');
+        Discussion.prototype.Poll = Model.hasOne('Poll');
         Post.prototype.canEditPoll = Model.attribute('canEditPoll');
 
         var pollModal = new PollModal();
@@ -467,19 +462,15 @@ System.register('reflar/polls/main', ['flarum/app', 'flarum/extend', 'flarum/com
 });;
 'use strict';
 
-System.register('reflar/polls/models/Answer', ['flarum/app', 'flarum/Model', 'flarum/utils/mixin', 'flarum/utils/computed'], function (_export, _context) {
+System.register('reflar/polls/models/Answer', ['flarum/Model', 'flarum/utils/mixin'], function (_export, _context) {
     "use strict";
 
-    var app, Model, mixin, computed, Answer;
+    var Model, mixin, Answer;
     return {
-        setters: [function (_flarumApp) {
-            app = _flarumApp.default;
-        }, function (_flarumModel) {
+        setters: [function (_flarumModel) {
             Model = _flarumModel.default;
         }, function (_flarumUtilsMixin) {
             mixin = _flarumUtilsMixin.default;
-        }, function (_flarumUtilsComputed) {
-            computed = _flarumUtilsComputed.default;
         }],
         execute: function () {
             Answer = function (_mixin) {
@@ -490,12 +481,6 @@ System.register('reflar/polls/models/Answer', ['flarum/app', 'flarum/Model', 'fl
                     return babelHelpers.possibleConstructorReturn(this, (Answer.__proto__ || Object.getPrototypeOf(Answer)).apply(this, arguments));
                 }
 
-                babelHelpers.createClass(Answer, [{
-                    key: 'apiEndpoint',
-                    value: function apiEndpoint() {
-                        return '/reflar/polls/questions';
-                    }
-                }]);
                 return Answer;
             }(mixin(Model, {
                 answer: Model.attribute('answer'),
@@ -509,19 +494,15 @@ System.register('reflar/polls/models/Answer', ['flarum/app', 'flarum/Model', 'fl
 });;
 'use strict';
 
-System.register('reflar/polls/models/Question', ['flarum/app', 'flarum/Model', 'flarum/utils/mixin', 'flarum/utils/computed'], function (_export, _context) {
+System.register('reflar/polls/models/Question', ['flarum/Model', 'flarum/utils/mixin'], function (_export, _context) {
     "use strict";
 
-    var app, Model, mixin, computed, Question;
+    var Model, mixin, Question;
     return {
-        setters: [function (_flarumApp) {
-            app = _flarumApp.default;
-        }, function (_flarumModel) {
+        setters: [function (_flarumModel) {
             Model = _flarumModel.default;
         }, function (_flarumUtilsMixin) {
             mixin = _flarumUtilsMixin.default;
-        }, function (_flarumUtilsComputed) {
-            computed = _flarumUtilsComputed.default;
         }],
         execute: function () {
             Question = function (_mixin) {
@@ -532,12 +513,6 @@ System.register('reflar/polls/models/Question', ['flarum/app', 'flarum/Model', '
                     return babelHelpers.possibleConstructorReturn(this, (Question.__proto__ || Object.getPrototypeOf(Question)).apply(this, arguments));
                 }
 
-                babelHelpers.createClass(Question, [{
-                    key: 'apiEndpoint',
-                    value: function apiEndpoint() {
-                        return '/reflar/polls/questions';
-                    }
-                }]);
                 return Question;
             }(mixin(Model, {
                 question: Model.attribute('question'),
@@ -551,19 +526,15 @@ System.register('reflar/polls/models/Question', ['flarum/app', 'flarum/Model', '
 });;
 'use strict';
 
-System.register('reflar/polls/models/Vote', ['flarum/app', 'flarum/Model', 'flarum/utils/mixin', 'flarum/utils/computed'], function (_export, _context) {
+System.register('reflar/polls/models/Vote', ['flarum/Model', 'flarum/utils/mixin'], function (_export, _context) {
     "use strict";
 
-    var app, Model, mixin, computed, Vote;
+    var Model, mixin, Vote;
     return {
-        setters: [function (_flarumApp) {
-            app = _flarumApp.default;
-        }, function (_flarumModel) {
+        setters: [function (_flarumModel) {
             Model = _flarumModel.default;
         }, function (_flarumUtilsMixin) {
             mixin = _flarumUtilsMixin.default;
-        }, function (_flarumUtilsComputed) {
-            computed = _flarumUtilsComputed.default;
         }],
         execute: function () {
             Vote = function (_mixin) {
@@ -574,12 +545,6 @@ System.register('reflar/polls/models/Vote', ['flarum/app', 'flarum/Model', 'flar
                     return babelHelpers.possibleConstructorReturn(this, (Vote.__proto__ || Object.getPrototypeOf(Vote)).apply(this, arguments));
                 }
 
-                babelHelpers.createClass(Vote, [{
-                    key: 'apiEndpoint',
-                    value: function apiEndpoint() {
-                        return '/reflar/polls/votes';
-                    }
-                }]);
                 return Vote;
             }(mixin(Model, {
                 poll_id: Model.attribute('poll_id'),
@@ -601,9 +566,9 @@ System.register('reflar/polls/PollControl', ['flarum/extend', 'flarum/utils/Post
   _export('default', function () {
     extend(PostControls, 'moderationControls', function (items, post) {
       var discussion = post.discussion();
-      var poll = discussion.reflarPolls();
+      var poll = discussion.Poll();
 
-      if (discussion.reflarPolls() && post.canEditPoll() && post.number() == 1) {
+      if (discussion.Poll() && post.canEditPoll() && post.number() === 1) {
         items.add('editPoll', [m(Button, {
           icon: 'check-square',
           className: 'reflar-PollButton',
@@ -616,9 +581,8 @@ System.register('reflar/polls/PollControl', ['flarum/extend', 'flarum/utils/Post
           icon: 'trash',
           className: 'reflar-PollButton',
           onclick: function onclick() {
-            var message = confirm('Are you sure you want to delete this poll?');
 
-            if (message == true) {
+            if (confirm('Are you sure you want to delete this poll?')) {
               app.request({
                 url: app.forum.attribute('apiUrl') + poll.apiEndpoint() + '/' + poll.id(),
                 method: 'DELETE'
@@ -657,11 +621,11 @@ System.register('reflar/polls/PollDiscussion', ['flarum/extend', 'flarum/compone
     extend(CommentPost.prototype, 'content', function (content) {
       var discussion = this.props.post.discussion();
 
-      if (discussion.reflarPolls() && this.props.post.number() == 1 && !this.props.post.isHidden()) {
+      if (discussion.Poll() && this.props.post.number() === 1 && !this.props.post.isHidden()) {
         this.subtree.invalidate();
 
         content.push(PollVote.component({
-          poll: discussion.reflarPolls()
+          poll: discussion.Poll()
         }));
       }
     });

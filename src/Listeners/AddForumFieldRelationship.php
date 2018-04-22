@@ -32,7 +32,7 @@ class AddForumFieldRelationship
     public function addSerializerRelationship(GetApiRelationship $event)
     {
         // We add the list of fields as a Forum Serializer relationship so models are included with the forum when it loads
-        if ($event->isRelationship(ForumSerializer::class, 'reflarPollsQuestion')) {
+        if ($event->isRelationship(ForumSerializer::class, 'PollsQuestion')) {
             $fields = app(QuestionRepository::class);
             $serializer = app(QuestionSerializer::class);
 
@@ -43,9 +43,9 @@ class AddForumFieldRelationship
     public function addSerializerInclude(ConfigureApiController $event)
     {
         if ($event->controller->serializer === ForumSerializer::class) {
-            $event->addInclude('reflarPollsQuestion');
-            $event->addInclude('reflarPollsQuestion.answers');
-            $event->addInclude('reflarPollsQuestion.votes');
+            $event->addInclude('PollsQuestion');
+            $event->addInclude('PollsQuestion.answers');
+            $event->addInclude('PollsQuestion.votes');
         }
     }
 }

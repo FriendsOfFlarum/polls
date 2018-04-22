@@ -27,36 +27,36 @@ class AddApiRoutes
     {
         // API Route to get all votes
         $routes->get(
-            '/reflar/polls/votes',
-            'reflar.polls.api.votes.index',
+            '/votes',
+            'votes.index',
             Controllers\ListVotesController::class
         );
 
         // API Route to store votes
         $routes->post(
-            '/reflar/polls/votes',
-            'reflar.polls.api.votes.create',
+            '/votes',
+            'votes.create',
             Controllers\CreateVotesController::class
         );
 
         // API Route to get all polls
         $routes->get(
-            '/reflar/polls/questions',
-            'reflar.polls.api.questions.index',
+            '/questions',
+            'questions.index',
             Controllers\ListPollController::class
         );
 
         // API Route to update a poll
         $routes->patch(
-            '/reflar/polls/questions/{id}',
-            'reflar.polls.api.poll.update',
+            '/questions/{id}',
+            'poll.update',
             Controllers\UpdatePollController::class
         );
 
         // API Route to delete a poll
         $routes->delete(
-            '/reflar/polls/questions/{id}',
-            'reflar.polls.api.poll.delete',
+            '/questions/{id}',
+            'poll.delete',
             Controllers\DeletePollController::class
         );
     }

@@ -1,5 +1,4 @@
-import { extend, override } from 'flarum/extend';
-import ItemList from 'flarum/utils/ItemList';
+import {extend, override} from 'flarum/extend';
 import Component from 'flarum/Component';
 import classList from 'flarum/utils/classList';
 
@@ -8,14 +7,17 @@ export default class PollVote extends Component {
     this.poll = this.props.poll;
     this.votes = [];
     this.voted = false;
+      console.log(this.poll)
+    console.log(this.poll.answers())
+
     this.answers = this.poll ? this.poll.answers() : [];
 
-    if (app.session.user != undefined) {
-      app.store.find('reflar/polls/votes', {
+    if (app.session.user !== undefined) {
+      app.store.find('votes', {
         poll_id: this.poll.id(),
         user_id: app.session.user.id()
       }).then((data) => {
-        if (data[0] != undefined) {
+        if (data[0] !== undefined) {
           this.voted = true;
         }
 
@@ -26,16 +28,16 @@ export default class PollVote extends Component {
     }
   }
 
-  voteView() {
+ voteView() {
     
     if (this.voted) {
       return (
         <div>
           <h4>{this.poll.question()}</h4> 
           {
-            this.answers.map((item, index) => ( 
+            this.answers.map((item) => (
               <div className={'PollOption PollVoted'}>
-                <div class="PollPercent">
+                <div className="PollPercent">
                   {item.percent()}%
                 </div>
                 <div className={'PollBar'}>
@@ -53,19 +55,19 @@ export default class PollVote extends Component {
         <div>
           <h4>{this.poll.question()}</h4> 
           {
-            this.answers.map((item, index) => ( 
-              <div class="PollOption">
+            this.answers.map((item) => (
+              <div className="PollOption">
                 <div className={'PollBar'}>
-                  <label class="checkbox">
+                  <label className="checkbox">
                     <input type="checkbox" onchange={this.addVote.bind(this, item.id())} /> 
                     <span>{item.answer()}</span> 
-                    <span class="checkmark"></span> 
+                    <span className="checkmark"></span>
                   </label> 
                 </div>
               </div>
             ))
           }
-          <div class="clear"></div> 
+          <div className="clear"></div>
         </div>
     );
     }
@@ -84,7 +86,7 @@ export default class PollVote extends Component {
   }
 
   addVote(answer) {
-    app.store.createRecord('reflar-polls-vote').save({
+    app.store.createRecord('votes').save({
       poll_id: this.poll.id(),
       user_id: app.session.user.id(),
       option_id: answer 

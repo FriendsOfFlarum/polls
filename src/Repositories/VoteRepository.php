@@ -68,7 +68,7 @@ class VoteRepository
 
     public function store(array $attributes)
     {
-        if ($this->findDuplicate($attributes['poll_id'], $attributes['user_id']) == 0) {
+        if ($this->findDuplicate($attributes['poll_id'], $attributes['user_id']) === 0) {
             $answer = new Vote($attributes);
             $answer->save();
 
