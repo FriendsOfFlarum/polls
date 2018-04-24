@@ -214,164 +214,160 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
 'use strict';
 
 System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Component', 'flarum/utils/classList'], function (_export, _context) {
-  "use strict";
+    "use strict";
 
-  var extend, override, Component, classList, PollVote;
-  return {
-    setters: [function (_flarumExtend) {
-      extend = _flarumExtend.extend;
-      override = _flarumExtend.override;
-    }, function (_flarumComponent) {
-      Component = _flarumComponent.default;
-    }, function (_flarumUtilsClassList) {
-      classList = _flarumUtilsClassList.default;
-    }],
-    execute: function () {
-      PollVote = function (_Component) {
-        babelHelpers.inherits(PollVote, _Component);
+    var extend, override, Component, classList, PollVote;
+    return {
+        setters: [function (_flarumExtend) {
+            extend = _flarumExtend.extend;
+            override = _flarumExtend.override;
+        }, function (_flarumComponent) {
+            Component = _flarumComponent.default;
+        }, function (_flarumUtilsClassList) {
+            classList = _flarumUtilsClassList.default;
+        }],
+        execute: function () {
+            PollVote = function (_Component) {
+                babelHelpers.inherits(PollVote, _Component);
 
-        function PollVote() {
-          babelHelpers.classCallCheck(this, PollVote);
-          return babelHelpers.possibleConstructorReturn(this, (PollVote.__proto__ || Object.getPrototypeOf(PollVote)).apply(this, arguments));
-        }
-
-        babelHelpers.createClass(PollVote, [{
-          key: 'init',
-          value: function init() {
-            var _this2 = this;
-
-            this.poll = this.props.poll;
-            this.votes = [];
-            this.voted = false;
-            console.log(this.poll);
-            console.log(this.poll.answers());
-
-            this.answers = this.poll ? this.poll.answers() : [];
-
-            if (app.session.user !== undefined) {
-              app.store.find('votes', {
-                poll_id: this.poll.id(),
-                user_id: app.session.user.id()
-              }).then(function (data) {
-                if (data[0] !== undefined) {
-                  _this2.voted = true;
+                function PollVote() {
+                    babelHelpers.classCallCheck(this, PollVote);
+                    return babelHelpers.possibleConstructorReturn(this, (PollVote.__proto__ || Object.getPrototypeOf(PollVote)).apply(this, arguments));
                 }
 
-                m.redraw();
-              });
-            } else {
-              this.voted = true;
-            }
-          }
-        }, {
-          key: 'voteView',
-          value: function voteView() {
-            var _this3 = this;
+                babelHelpers.createClass(PollVote, [{
+                    key: 'init',
+                    value: function init() {
+                        var _this2 = this;
 
-            if (this.voted) {
-              return m(
-                'div',
-                null,
-                m(
-                  'h4',
-                  null,
-                  this.poll.question()
-                ),
-                this.answers.map(function (item) {
-                  return m(
-                    'div',
-                    { className: 'PollOption PollVoted' },
-                    m(
-                      'div',
-                      { className: 'PollPercent' },
-                      item.percent(),
-                      '%'
-                    ),
-                    m(
-                      'div',
-                      { className: 'PollBar' },
-                      m('div', { style: 'width: ' + item.percent() + '%;', className: 'PollOption-active' }),
-                      m(
-                        'label',
-                        null,
-                        m(
-                          'span',
-                          null,
-                          item.answer()
-                        )
-                      )
-                    )
-                  );
-                }),
-                m('div', { 'class': 'clear' })
-              );
-            } else {
-              return m(
-                'div',
-                null,
-                m(
-                  'h4',
-                  null,
-                  this.poll.question()
-                ),
-                this.answers.map(function (item) {
-                  return m(
-                    'div',
-                    { className: 'PollOption' },
-                    m(
-                      'div',
-                      { className: 'PollBar' },
-                      m(
-                        'label',
-                        { className: 'checkbox' },
-                        m('input', { type: 'checkbox', onchange: _this3.addVote.bind(_this3, item.id()) }),
-                        m(
-                          'span',
-                          null,
-                          item.answer()
-                        ),
-                        m('span', { className: 'checkmark' })
-                      )
-                    )
-                  );
-                }),
-                m('div', { className: 'clear' })
-              );
-            }
-          }
-        }, {
-          key: 'view',
-          value: function view() {
-            var content = this.voteView();
+                        this.poll = this.props.poll;
+                        this.votes = [];
+                        this.voted = false;
 
-            return m(
-              'div',
-              { className: classList({
-                  voted: this.voted
-                }) },
-              content
-            );
-          }
-        }, {
-          key: 'addVote',
-          value: function addVote(answer) {
-            app.store.createRecord('votes').save({
-              poll_id: this.poll.id(),
-              user_id: app.session.user.id(),
-              option_id: answer
-            });
+                        this.answers = this.poll ? this.poll.answers() : [];
 
-            location.reload();
+                        if (app.session.user !== undefined) {
+                            app.store.find('votes', {
+                                poll_id: this.poll.id(),
+                                user_id: app.session.user.id()
+                            }).then(function (data) {
+                                if (data[0] !== undefined) {
+                                    _this2.voted = true;
+                                }
 
-            m.redraw();
-          }
-        }]);
-        return PollVote;
-      }(Component);
+                                m.redraw();
+                            });
+                        } else {
+                            this.voted = true;
+                        }
+                    }
+                }, {
+                    key: 'voteView',
+                    value: function voteView() {
+                        var _this3 = this;
 
-      _export('default', PollVote);
-    }
-  };
+                        if (this.voted) {
+                            return m(
+                                'div',
+                                null,
+                                m(
+                                    'h4',
+                                    null,
+                                    this.poll.question()
+                                ),
+                                this.answers.map(function (item) {
+                                    return m(
+                                        'div',
+                                        { className: 'PollOption PollVoted' },
+                                        m(
+                                            'div',
+                                            { className: 'PollPercent' },
+                                            item.percent(),
+                                            '%'
+                                        ),
+                                        m(
+                                            'div',
+                                            { className: 'PollBar' },
+                                            m('div', { style: 'width: ' + item.percent() + '%;', className: 'PollOption-active' }),
+                                            m(
+                                                'label',
+                                                null,
+                                                m(
+                                                    'span',
+                                                    null,
+                                                    item.answer()
+                                                )
+                                            )
+                                        )
+                                    );
+                                }),
+                                m('div', { className: 'clear' })
+                            );
+                        } else {
+                            return m(
+                                'div',
+                                null,
+                                m(
+                                    'h4',
+                                    null,
+                                    this.poll.question()
+                                ),
+                                this.answers.map(function (item) {
+                                    return m(
+                                        'div',
+                                        { className: 'PollOption' },
+                                        m(
+                                            'div',
+                                            { className: 'PollBar' },
+                                            m(
+                                                'label',
+                                                { className: 'checkbox' },
+                                                m('input', { type: 'checkbox', onchange: _this3.addVote.bind(_this3, item.id()) }),
+                                                m(
+                                                    'span',
+                                                    null,
+                                                    item.answer()
+                                                ),
+                                                m('span', { className: 'checkmark' })
+                                            )
+                                        )
+                                    );
+                                }),
+                                m('div', { className: 'clear' })
+                            );
+                        }
+                    }
+                }, {
+                    key: 'view',
+                    value: function view() {
+                        var content = this.voteView();
+
+                        return m(
+                            'div',
+                            { className: classList({
+                                    voted: this.voted
+                                }) },
+                            content
+                        );
+                    }
+                }, {
+                    key: 'addVote',
+                    value: function addVote(answer) {
+                        app.store.createRecord('votes').save({
+                            poll_id: this.poll.id(),
+                            user_id: app.session.user.id(),
+                            option_id: answer
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                }]);
+                return PollVote;
+            }(Component);
+
+            _export('default', PollVote);
+        }
+    };
 });;
 'use strict';
 

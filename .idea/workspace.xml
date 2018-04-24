@@ -10,26 +10,16 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="Question.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/js/lib/models/Question.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="161">
-              <caret line="7" column="4" lean-forward="false" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="4" />
-              <folding>
-                <element signature="e#0#33#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="Vote.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/js/lib/models/Vote.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="161">
+            <state relative-caret-position="138">
               <caret line="7" column="4" lean-forward="false" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="4" />
               <folding>
-                <element signature="e#0#33#0" expanded="true" />
+                <marker date="1524437871847" expanded="true" signature="7:73" ph="..." />
+                <marker date="1524437871847" expanded="true" signature="122:252" ph="{...}" />
+                <marker date="1524437871847" expanded="true" signature="254:257" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -38,10 +28,14 @@
       <file leaf-file-name="PollDiscussion.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/js/forum/src/PollDiscussion.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="161">
+            <state relative-caret-position="92">
               <caret line="7" column="52" lean-forward="false" selection-start-line="7" selection-start-column="52" selection-end-line="7" selection-end-column="52" />
               <folding>
-                <element signature="e#0#49#0" expanded="true" />
+                <marker date="1524437628924" expanded="true" signature="7:164" ph="..." />
+                <marker date="1524437628924" expanded="true" signature="192:543" ph="{...}" />
+                <marker date="1524437628924" expanded="true" signature="255:539" ph="{...}" />
+                <marker date="1524437628924" expanded="true" signature="403:535" ph="{...}" />
+                <marker date="1524437628924" expanded="true" signature="485:526" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -51,51 +45,30 @@
         <entry file="file://$PROJECT_DIR$/js/forum/src/PollControl.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="437">
-              <caret line="23" column="19" lean-forward="true" selection-start-line="23" selection-start-column="19" selection-end-line="23" selection-end-column="19" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Answer.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/js/lib/models/Answer.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="161">
-              <caret line="7" column="4" lean-forward="false" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="4" />
+              <caret line="23" column="19" lean-forward="false" selection-start-line="23" selection-start-column="19" selection-end-line="23" selection-end-column="19" />
               <folding>
-                <element signature="e#0#33#0" expanded="true" />
+                <marker date="1524434771684" expanded="false" signature="7:210" ph="..." />
+                <marker date="1524434771684" expanded="true" signature="238:1241" ph="{...}" />
+                <marker date="1524434771684" expanded="true" signature="307:1237" ph="{...}" />
+                <marker date="1524434771684" expanded="true" signature="460:1233" ph="{...}" />
+                <marker date="1524434771684" expanded="true" signature="490:682" ph="[...]" />
+                <marker date="1524434771684" expanded="true" signature="510:609" ph="{&quot;icon&quot;: 'check-square'...}" />
+                <marker date="1524434771684" expanded="true" signature="611:628" ph="{...}" />
+                <marker date="1524434771684" expanded="true" signature="761:1130" ph="[...]" />
+                <marker date="1524434771684" expanded="true" signature="781:873" ph="{&quot;icon&quot;: 'trash'...}" />
+                <marker date="1524434771684" expanded="true" signature="875:912" ph="{...}" />
+                <marker date="1524434771684" expanded="true" signature="960:979" ph="{...}" />
+                <marker date="1524434771684" expanded="true" signature="988:1129" ph="{&quot;method&quot;: 'DELETE'...}" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="QuestionSerializer.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Api/Serializers/QuestionSerializer.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="690">
-              <caret line="39" column="5" lean-forward="false" selection-start-line="39" selection-start-column="5" selection-end-line="39" selection-end-column="5" />
-              <folding>
-                <element signature="e#277#322#0#PHP" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="VoteSerializer.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Api/Serializers/VoteSerializer.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="713">
-              <caret line="40" column="5" lean-forward="false" selection-start-line="40" selection-start-column="5" selection-end-line="40" selection-end-column="5" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PollVote.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="PollVote.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/js/forum/src/components/PollVote.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="789">
-              <caret line="88" column="33" lean-forward="false" selection-start-line="88" selection-start-column="33" selection-end-line="88" selection-end-column="33" />
+            <state relative-caret-position="1035">
+              <caret line="92" column="10" lean-forward="true" selection-start-line="92" selection-start-column="10" selection-end-line="92" selection-end-column="10" />
               <folding>
                 <element signature="e#0#47#0" expanded="true" />
               </folding>
@@ -103,12 +76,97 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AddApiRoutes.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="VoteRepository.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Repositories/VoteRepository.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1357">
+              <caret line="70" column="83" lean-forward="false" selection-start-line="70" selection-start-column="83" selection-end-line="70" selection-end-column="83" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ListVotesController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Api/Controllers/ListVotesController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="575">
+              <caret line="38" column="30" lean-forward="false" selection-start-line="38" selection-start-column="30" selection-end-line="38" selection-end-column="30" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CreateVotesController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Api/Controllers/CreateVotesController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="230">
+              <caret line="19" column="30" lean-forward="false" selection-start-line="19" selection-start-column="30" selection-end-line="19" selection-end-column="30" />
+              <folding>
+                <element signature="e#277#328#0#PHP" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/js/forum/src/main.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="115">
+              <caret line="19" column="28" lean-forward="false" selection-start-line="19" selection-start-column="28" selection-end-line="19" selection-end-column="28" />
+              <folding>
+                <marker date="1524437129258" expanded="false" signature="7:593" ph="..." />
+                <marker date="1524437129258" expanded="true" signature="639:665" ph="{...}" />
+                <marker date="1524437129258" expanded="true" signature="978:1014" ph="{...}" />
+                <marker date="1524437129258" expanded="true" signature="1132:1282" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AddApiRoutes.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Listeners/AddApiRoutes.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="874">
-              <caret line="49" column="23" lean-forward="true" selection-start-line="49" selection-start-column="23" selection-end-line="49" selection-end-column="23" />
+              <caret line="49" column="23" lean-forward="false" selection-start-line="49" selection-start-column="23" selection-end-line="49" selection-end-column="23" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PollModal.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/js/forum/src/components/PollModal.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="383">
+              <caret line="53" column="100" lean-forward="false" selection-start-line="53" selection-start-column="100" selection-end-line="53" selection-end-column="100" />
+              <folding>
+                <marker date="1524433832180" expanded="false" signature="7:212" ph="..." />
+                <marker date="1524433832180" expanded="true" signature="259:3846" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="270:690" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="346:546" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="459:473" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="552:686" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="706:758" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="770:841" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="855:2321" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="1200:1958" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="2109:2129" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="2140:2269" ph="{&quot;type&quot;: 'submit'...}" />
+                <marker date="1524433832180" expanded="true" signature="2345:2371" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="2387:2469" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="2422:2465" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="2494:2529" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="2550:3042" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="2664:2700" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="2791:3038" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="2867:3030" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="3064:3259" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="3116:3253" ph="{&quot;method&quot;: 'PATCH'...}" />
+                <marker date="1524433832180" expanded="true" signature="3275:3844" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="3321:3444" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="3523:3548" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="3676:3739" ph="{...}" />
+                <marker date="1524433832180" expanded="true" signature="3745:3781" ph="{...}" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -129,6 +187,8 @@
     <commandsHistory>
       <command text="cd js/forum/" />
       <command text="npm install" />
+      <command text="gulp" />
+      <command text="cd js/forum" />
       <command text="gulp" />
     </commandsHistory>
   </component>
@@ -157,8 +217,9 @@
         <option value="$PROJECT_DIR$/js/lib/models/Question.js" />
         <option value="$PROJECT_DIR$/js/lib/models/Vote.js" />
         <option value="$PROJECT_DIR$/src/Api/Controllers/ListAnswersController.php" />
-        <option value="$PROJECT_DIR$/js/forum/src/components/PollVote.js" />
         <option value="$PROJECT_DIR$/src/Listeners/AddApiRoutes.php" />
+        <option value="$PROJECT_DIR$/src/Api/Controllers/CreateVotesController.php" />
+        <option value="$PROJECT_DIR$/js/forum/src/components/PollVote.js" />
       </list>
     </option>
   </component>
@@ -180,10 +241,14 @@
   <component name="PhpServers">
     <servers />
   </component>
-  <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
+  <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true">
+    <include_path>
+      <path value="D:\xampp\htdocs\vendor" />
+    </include_path>
+  </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-2773" />
-    <option name="y" value="-393" />
+    <option name="x" value="-3848" />
+    <option name="y" value="-378" />
     <option name="width" value="1294" />
     <option name="height" value="1407" />
   </component>
@@ -218,6 +283,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -254,19 +321,6 @@
             <path>
               <item name="polls" type="b2602c69:ProjectViewProjectNode" />
               <item name="polls" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="js" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="lib" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="polls" type="b2602c69:ProjectViewProjectNode" />
-              <item name="polls" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="js" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="lib" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="models" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="polls" type="b2602c69:ProjectViewProjectNode" />
-              <item name="polls" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="src" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
             <path>
@@ -284,36 +338,19 @@
             </path>
             <path>
               <item name="polls" type="b2602c69:ProjectViewProjectNode" />
-              <item name="polls" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="src" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Api" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Serializers" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="polls" type="b2602c69:ProjectViewProjectNode" />
-              <item name="polls" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="src" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Listeners" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="polls" type="b2602c69:ProjectViewProjectNode" />
-              <item name="polls" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="src" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Repositories" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="External Libraries" type="bcb0276e:PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="configurable.group.editor" />
+    <property name="settings.editor.selected.configurable" value="web-ide.project.structure" />
     <property name="JavaScriptWeakerCompletionTypeGuess" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../vendor" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -332,25 +369,26 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-3848" y="-378" width="3088" height="1704" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.10384115" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Command Line Tools Console" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20939086" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Command Line Tools Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20939086" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Floobits" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Floobits" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -365,11 +403,150 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/js/lib/models/Vote.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="138">
+          <caret line="7" column="4" lean-forward="false" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="4" />
+          <folding>
+            <marker date="1524437871847" expanded="true" signature="7:73" ph="..." />
+            <marker date="1524437871847" expanded="true" signature="122:252" ph="{...}" />
+            <marker date="1524437871847" expanded="true" signature="254:257" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/forum/src/PollControl.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="437">
+          <caret line="23" column="19" lean-forward="false" selection-start-line="23" selection-start-column="19" selection-end-line="23" selection-end-column="19" />
+          <folding>
+            <marker date="1524434771684" expanded="false" signature="7:210" ph="..." />
+            <marker date="1524434771684" expanded="true" signature="238:1241" ph="{...}" />
+            <marker date="1524434771684" expanded="true" signature="307:1237" ph="{...}" />
+            <marker date="1524434771684" expanded="true" signature="460:1233" ph="{...}" />
+            <marker date="1524434771684" expanded="true" signature="490:682" ph="[...]" />
+            <marker date="1524434771684" expanded="true" signature="510:609" ph="{&quot;icon&quot;: 'check-square'...}" />
+            <marker date="1524434771684" expanded="true" signature="611:628" ph="{...}" />
+            <marker date="1524434771684" expanded="true" signature="761:1130" ph="[...]" />
+            <marker date="1524434771684" expanded="true" signature="781:873" ph="{&quot;icon&quot;: 'trash'...}" />
+            <marker date="1524434771684" expanded="true" signature="875:912" ph="{...}" />
+            <marker date="1524434771684" expanded="true" signature="960:979" ph="{...}" />
+            <marker date="1524434771684" expanded="true" signature="988:1129" ph="{&quot;method&quot;: 'DELETE'...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/forum/src/PollDiscussion.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="92">
+          <caret line="7" column="52" lean-forward="false" selection-start-line="7" selection-start-column="52" selection-end-line="7" selection-end-column="52" />
+          <folding>
+            <marker date="1524437628924" expanded="true" signature="7:164" ph="..." />
+            <marker date="1524437628924" expanded="true" signature="192:543" ph="{...}" />
+            <marker date="1524437628924" expanded="true" signature="255:539" ph="{...}" />
+            <marker date="1524437628924" expanded="true" signature="403:535" ph="{...}" />
+            <marker date="1524437628924" expanded="true" signature="485:526" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Repositories/VoteRepository.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1357">
+          <caret line="70" column="83" lean-forward="false" selection-start-line="70" selection-start-column="83" selection-end-line="70" selection-end-column="83" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Api/Controllers/ListVotesController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="575">
+          <caret line="38" column="30" lean-forward="false" selection-start-line="38" selection-start-column="30" selection-end-line="38" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Api/Controllers/CreateVotesController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="529">
+          <caret line="37" column="81" lean-forward="false" selection-start-line="37" selection-start-column="81" selection-end-line="37" selection-end-column="81" />
+          <folding>
+            <element signature="e#277#328#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/forum/src/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="115">
+          <caret line="19" column="28" lean-forward="true" selection-start-line="19" selection-start-column="28" selection-end-line="19" selection-end-column="28" />
+          <folding>
+            <marker date="1524437129258" expanded="false" signature="7:593" ph="..." />
+            <marker date="1524437129258" expanded="true" signature="639:665" ph="{...}" />
+            <marker date="1524437129258" expanded="true" signature="978:1014" ph="{...}" />
+            <marker date="1524437129258" expanded="true" signature="1132:1282" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Listeners/AddApiRoutes.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="874">
+          <caret line="49" column="23" lean-forward="false" selection-start-line="49" selection-start-column="23" selection-end-line="49" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/forum/src/components/PollModal.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1150">
+          <caret line="53" column="100" lean-forward="false" selection-start-line="53" selection-start-column="100" selection-end-line="53" selection-end-column="100" />
+          <folding>
+            <marker date="1524433832180" expanded="false" signature="7:212" ph="..." />
+            <marker date="1524433832180" expanded="true" signature="259:3846" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="270:690" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="346:546" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="459:473" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="552:686" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="706:758" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="770:841" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="855:2321" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="1200:1958" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="2109:2129" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="2140:2269" ph="{&quot;type&quot;: 'submit'...}" />
+            <marker date="1524433832180" expanded="true" signature="2345:2371" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="2387:2469" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="2422:2465" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="2494:2529" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="2550:3042" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="2664:2700" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="2791:3038" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="2867:3030" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="3064:3259" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="3116:3253" ph="{&quot;method&quot;: 'PATCH'...}" />
+            <marker date="1524433832180" expanded="true" signature="3275:3844" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="3321:3444" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="3523:3548" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="3676:3739" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="3745:3781" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/forum/src/components/PollVote.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1932">
+          <caret line="86" column="27" lean-forward="false" selection-start-line="86" selection-start-column="27" selection-end-line="86" selection-end-column="27" />
+          <folding>
+            <element signature="e#0#47#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Api/Controllers/UpdatePollController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -377,7 +554,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-269">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -385,7 +561,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -393,17 +568,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Api/Controllers/CreateVotesController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="644">
-          <caret line="37" column="79" lean-forward="false" selection-start-line="37" selection-start-column="31" selection-end-line="37" selection-end-column="79" />
-          <folding>
-            <element signature="e#277#332#0#PHP" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -411,17 +575,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Repositories/VoteRepository.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="943">
-          <caret line="70" column="83" lean-forward="false" selection-start-line="70" selection-start-column="83" selection-end-line="70" selection-end-column="83" />
-          <folding>
-            <element signature="e#274#306#0#PHP" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -429,7 +582,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -437,17 +589,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Api/Controllers/ListVotesController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="690">
-          <caret line="39" column="10" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
-          <folding>
-            <element signature="e#277#332#0#PHP" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -455,7 +596,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="667">
           <caret line="48" column="5" lean-forward="true" selection-start-line="48" selection-start-column="5" selection-end-line="48" selection-end-column="5" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -463,7 +603,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="414">
           <caret line="34" column="73" lean-forward="false" selection-start-line="34" selection-start-column="73" selection-end-line="34" selection-end-column="73" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -471,16 +610,135 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1196">
           <caret line="63" column="35" lean-forward="false" selection-start-line="63" selection-start-column="35" selection-end-line="63" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Api/Serializers/AnswerSerializer.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="690">
+          <caret line="39" column="5" lean-forward="false" selection-start-line="39" selection-start-column="5" selection-end-line="39" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Api/Serializers/QuestionSerializer.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="690">
+          <caret line="39" column="5" lean-forward="false" selection-start-line="39" selection-start-column="5" selection-end-line="39" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Api/Serializers/VoteSerializer.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="713">
+          <caret line="40" column="5" lean-forward="false" selection-start-line="40" selection-start-column="5" selection-end-line="40" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/lib/models/Question.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="7" column="4" lean-forward="false" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/lib/models/Answer.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="7" column="4" lean-forward="false" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/lib/models/Vote.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="138">
+          <caret line="7" column="4" lean-forward="false" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="4" />
+          <folding>
+            <marker date="1524437871847" expanded="true" signature="7:73" ph="..." />
+            <marker date="1524437871847" expanded="true" signature="122:252" ph="{...}" />
+            <marker date="1524437871847" expanded="true" signature="254:257" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Api/Controllers/ListAnswersController.php" />
+    <entry file="file://$PROJECT_DIR$/js/forum/src/PollDiscussion.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="92">
+          <caret line="7" column="52" lean-forward="false" selection-start-line="7" selection-start-column="52" selection-end-line="7" selection-end-column="52" />
+          <folding>
+            <marker date="1524437628924" expanded="true" signature="7:164" ph="..." />
+            <marker date="1524437628924" expanded="true" signature="192:543" ph="{...}" />
+            <marker date="1524437628924" expanded="true" signature="255:539" ph="{...}" />
+            <marker date="1524437628924" expanded="true" signature="403:535" ph="{...}" />
+            <marker date="1524437628924" expanded="true" signature="485:526" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/forum/src/PollControl.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="437">
+          <caret line="23" column="19" lean-forward="false" selection-start-line="23" selection-start-column="19" selection-end-line="23" selection-end-column="19" />
+          <folding>
+            <marker date="1524434771684" expanded="false" signature="7:210" ph="..." />
+            <marker date="1524434771684" expanded="true" signature="238:1241" ph="{...}" />
+            <marker date="1524434771684" expanded="true" signature="307:1237" ph="{...}" />
+            <marker date="1524434771684" expanded="true" signature="460:1233" ph="{...}" />
+            <marker date="1524434771684" expanded="true" signature="490:682" ph="[...]" />
+            <marker date="1524434771684" expanded="true" signature="510:609" ph="{&quot;icon&quot;: 'check-square'...}" />
+            <marker date="1524434771684" expanded="true" signature="611:628" ph="{...}" />
+            <marker date="1524434771684" expanded="true" signature="761:1130" ph="[...]" />
+            <marker date="1524434771684" expanded="true" signature="781:873" ph="{&quot;icon&quot;: 'trash'...}" />
+            <marker date="1524434771684" expanded="true" signature="875:912" ph="{...}" />
+            <marker date="1524434771684" expanded="true" signature="960:979" ph="{...}" />
+            <marker date="1524434771684" expanded="true" signature="988:1129" ph="{&quot;method&quot;: 'DELETE'...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Listeners/AddApiRoutes.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="874">
+          <caret line="49" column="23" lean-forward="false" selection-start-line="49" selection-start-column="23" selection-end-line="49" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Api/Controllers/ListVotesController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="575">
+          <caret line="38" column="30" lean-forward="false" selection-start-line="38" selection-start-column="30" selection-end-line="38" selection-end-column="30" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/js/forum/src/main.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="437">
-          <caret line="19" column="28" lean-forward="true" selection-start-line="19" selection-start-column="28" selection-end-line="19" selection-end-column="28" />
+        <state relative-caret-position="115">
+          <caret line="19" column="28" lean-forward="false" selection-start-line="19" selection-start-column="28" selection-end-line="19" selection-end-column="28" />
           <folding>
-            <element signature="e#0#29#0" expanded="true" />
+            <marker date="1524437129258" expanded="false" signature="7:593" ph="..." />
+            <marker date="1524437129258" expanded="true" signature="639:665" ph="{...}" />
+            <marker date="1524437129258" expanded="true" signature="978:1014" ph="{...}" />
+            <marker date="1524437129258" expanded="true" signature="1132:1282" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Repositories/VoteRepository.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1357">
+          <caret line="70" column="83" lean-forward="false" selection-start-line="70" selection-start-column="83" selection-end-line="70" selection-end-column="83" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Api/Controllers/CreateVotesController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="19" column="30" lean-forward="false" selection-start-line="19" selection-start-column="30" selection-end-line="19" selection-end-column="30" />
+          <folding>
+            <element signature="e#277#328#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -489,107 +747,45 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="383">
           <caret line="53" column="100" lean-forward="false" selection-start-line="53" selection-start-column="100" selection-end-line="53" selection-end-column="100" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Api/Serializers/AnswerSerializer.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="690">
-          <caret line="39" column="5" lean-forward="false" selection-start-line="39" selection-start-column="5" selection-end-line="39" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Api/Serializers/QuestionSerializer.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="690">
-          <caret line="39" column="5" lean-forward="false" selection-start-line="39" selection-start-column="5" selection-end-line="39" selection-end-column="5" />
           <folding>
-            <element signature="e#277#322#0#PHP" expanded="true" />
+            <marker date="1524433832180" expanded="false" signature="7:212" ph="..." />
+            <marker date="1524433832180" expanded="true" signature="259:3846" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="270:690" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="346:546" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="459:473" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="552:686" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="706:758" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="770:841" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="855:2321" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="1200:1958" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="2109:2129" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="2140:2269" ph="{&quot;type&quot;: 'submit'...}" />
+            <marker date="1524433832180" expanded="true" signature="2345:2371" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="2387:2469" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="2422:2465" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="2494:2529" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="2550:3042" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="2664:2700" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="2791:3038" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="2867:3030" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="3064:3259" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="3116:3253" ph="{&quot;method&quot;: 'PATCH'...}" />
+            <marker date="1524433832180" expanded="true" signature="3275:3844" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="3321:3444" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="3523:3548" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="3676:3739" ph="{...}" />
+            <marker date="1524433832180" expanded="true" signature="3745:3781" ph="{...}" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Api/Serializers/VoteSerializer.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="713">
-          <caret line="40" column="5" lean-forward="false" selection-start-line="40" selection-start-column="5" selection-end-line="40" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/lib/models/Question.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="7" column="4" lean-forward="false" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="4" />
-          <folding>
-            <element signature="e#0#33#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/lib/models/Answer.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="7" column="4" lean-forward="false" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="4" />
-          <folding>
-            <element signature="e#0#33#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/lib/models/Vote.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="7" column="4" lean-forward="false" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="4" />
-          <folding>
-            <element signature="e#0#33#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Api/Controllers/ListAnswersController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="644">
-          <caret line="37" column="73" lean-forward="false" selection-start-line="37" selection-start-column="73" selection-end-line="37" selection-end-column="73" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/forum/src/PollDiscussion.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="7" column="52" lean-forward="false" selection-start-line="7" selection-start-column="52" selection-end-line="7" selection-end-column="52" />
-          <folding>
-            <element signature="e#0#49#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/forum/src/PollControl.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="437">
-          <caret line="23" column="19" lean-forward="true" selection-start-line="23" selection-start-column="19" selection-end-line="23" selection-end-column="19" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/js/forum/src/components/PollVote.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="789">
-          <caret line="88" column="33" lean-forward="false" selection-start-line="88" selection-start-column="33" selection-end-line="88" selection-end-column="33" />
+        <state relative-caret-position="1035">
+          <caret line="92" column="10" lean-forward="true" selection-start-line="92" selection-start-column="10" selection-end-line="92" selection-end-column="10" />
           <folding>
             <element signature="e#0#47#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Listeners/AddApiRoutes.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="874">
-          <caret line="49" column="23" lean-forward="true" selection-start-line="49" selection-start-column="23" selection-end-line="49" selection-end-column="23" />
-          <folding />
         </state>
       </provider>
     </entry>

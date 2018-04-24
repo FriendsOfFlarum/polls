@@ -12,14 +12,14 @@
 
 namespace Reflar\Polls\Api\Controllers;
 
-use Flarum\Api\Controller\AbstractCollectionController;
+use Flarum\Api\Controller\AbstractCreateController;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
 use Reflar\Polls\Api\Serializers\VoteSerializer;
 use Reflar\Polls\Repositories\VoteRepository;
 use Tobscure\JsonApi\Document;
 
-class CreateVotesController extends AbstractCollectionController
+class CreateVotesController extends AbstractCreateController
 {
     public $serializer = VoteSerializer::class;
 
