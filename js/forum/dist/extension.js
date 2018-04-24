@@ -242,7 +242,7 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Co
 
                         this.poll = this.props.poll;
                         this.votes = [];
-                        this.voted = false;
+                        this.voted = m.prop(false);
 
                         this.answers = this.poll ? this.poll.answers() : [];
 
@@ -252,7 +252,7 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Co
                                 user_id: app.session.user.id()
                             }).then(function (data) {
                                 if (data[0] !== undefined) {
-                                    _this2.voted = true;
+                                    _this2.voted(data[0]);
                                 }
 
                                 m.redraw();
@@ -266,7 +266,7 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Co
                     value: function voteView() {
                         var _this3 = this;
 
-                        if (this.voted) {
+                        if (this.voted() !== false) {
                             return m(
                                 'div',
                                 null,
@@ -281,14 +281,8 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Co
                                         { className: 'PollOption PollVoted' },
                                         m(
                                             'div',
-                                            { className: 'PollPercent' },
-                                            item.percent(),
-                                            '%'
-                                        ),
-                                        m(
-                                            'div',
-                                            { className: 'PollBar' },
-                                            m('div', { style: 'width: ' + item.percent() + '%;', className: 'PollOption-active' }),
+                                            { className: 'PollBar', style: _this3.voted().option_id() === item.data.attributes.id ? 'border-color: ' + app.forum.data.attributes.themePrimaryColor : '' },
+                                            _this3.voted().option_id() === item.data.attributes.id ? m('div', { style: 'width: ' + item.percent() + '%; background:' + app.forum.data.attributes.themePrimaryColor, className: 'PollOption-active' }) : m('div', { style: ' width: ' + item.percent() + '%; background:' + app.forum.data.attributes.themeSecondaryColor, className: 'PollOption-active' }),
                                             m(
                                                 'label',
                                                 null,
@@ -296,6 +290,16 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Co
                                                     'span',
                                                     null,
                                                     item.answer()
+                                                )
+                                            ),
+                                            m(
+                                                'label',
+                                                null,
+                                                m(
+                                                    'span',
+                                                    { className: 'PollPercent' },
+                                                    item.percent(),
+                                                    '%'
                                                 )
                                             )
                                         )

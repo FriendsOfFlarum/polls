@@ -6,7 +6,7 @@ export default class PollVote extends Component {
     init() {
         this.poll = this.props.poll;
         this.votes = [];
-        this.voted = false;
+        this.voted = m.prop(false);
 
         this.answers = this.poll ? this.poll.answers() : [];
 
@@ -16,7 +16,7 @@ export default class PollVote extends Component {
                 user_id: app.session.user.id()
             }).then((data) => {
                 if (data[0] !== undefined) {
-                    this.voted = true;
+                    this.voted(data[0])
                 }
 
                 m.redraw();
@@ -28,19 +28,23 @@ export default class PollVote extends Component {
 
     voteView() {
 
-        if (this.voted) {
+        if (this.voted() !== false) {
             return (
                 <div>
                     <h4>{this.poll.question()}</h4>
                     {
                         this.answers.map((item) => (
-                            <div className={'PollOption PollVoted'}>
-                                <div className="PollPercent">
-                                    {item.percent()}%
-                                </div>
-                                <div className={'PollBar'}>
-                                    <div style={'width: ' + item.percent() + '%;'} className="PollOption-active"></div>
+                            <div className='PollOption PollVoted'>
+                                <div className='PollBar' style={this.voted().option_id() === item.data.attributes.id ? 'border-color: ' + app.forum.data.attributes.themePrimaryColor : ''}>
+                                    {this.voted().option_id() === item.data.attributes.id ? (
+                                        <div style={'width: ' + item.percent() + '%; background:' + app.forum.data.attributes.themePrimaryColor} className="PollOption-active"></div>
+                                    ) : (
+                                        <div style={' width: ' + item.percent() + '%; background:' + app.forum.data.attributes.themeSecondaryColor} className="PollOption-active"></div>
+                                    )
+                                    }
+                                    {}
                                     <label><span>{item.answer()}</span></label>
+                                    <label><span className='PollPercent'>{item.percent()}%</span></label>
                                 </div>
                             </div>
                         ))
@@ -55,7 +59,7 @@ export default class PollVote extends Component {
                     {
                         this.answers.map((item) => (
                             <div className="PollOption">
-                                <div className={'PollBar'}>
+                                <div className='PollBar'>
                                     <label className="checkbox">
                                         <input type="checkbox" onchange={this.addVote.bind(this, item.id())}/>
                                         <span>{item.answer()}</span>
