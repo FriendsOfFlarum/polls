@@ -30,7 +30,6 @@ class VoteSerializer extends AbstractSerializer
         return $model->toArray();
     }
 
-
     public function question($model)
     {
         return $this->hasOne(

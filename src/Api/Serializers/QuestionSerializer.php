@@ -30,12 +30,14 @@ class QuestionSerializer extends AbstractSerializer
     public function answers($model)
     {
         $answers = app(AnswerRepository::class);
+
         return new Relationship(new Collection($answers->all($model), app(AnswerSerializer::class)));
     }
 
     public function votes($model)
     {
         $votes = app(VoteRepository::class);
+
         return new Relationship(new Collection($votes->all($model), app(VoteSerializer::class)));
     }
 }

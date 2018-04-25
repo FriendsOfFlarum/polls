@@ -1,215 +1,215 @@
 'use strict';
 
 System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/components/Modal', 'flarum/components/Button', 'flarum/components/DiscussionComposer'], function (_export, _context) {
-  "use strict";
+    "use strict";
 
-  var extend, override, Modal, Button, DiscussionComposer, PollModal;
-  return {
-    setters: [function (_flarumExtend) {
-      extend = _flarumExtend.extend;
-      override = _flarumExtend.override;
-    }, function (_flarumComponentsModal) {
-      Modal = _flarumComponentsModal.default;
-    }, function (_flarumComponentsButton) {
-      Button = _flarumComponentsButton.default;
-    }, function (_flarumComponentsDiscussionComposer) {
-      DiscussionComposer = _flarumComponentsDiscussionComposer.default;
-    }],
-    execute: function () {
-      PollModal = function (_Modal) {
-        babelHelpers.inherits(PollModal, _Modal);
+    var extend, override, Modal, Button, DiscussionComposer, PollModal;
+    return {
+        setters: [function (_flarumExtend) {
+            extend = _flarumExtend.extend;
+            override = _flarumExtend.override;
+        }, function (_flarumComponentsModal) {
+            Modal = _flarumComponentsModal.default;
+        }, function (_flarumComponentsButton) {
+            Button = _flarumComponentsButton.default;
+        }, function (_flarumComponentsDiscussionComposer) {
+            DiscussionComposer = _flarumComponentsDiscussionComposer.default;
+        }],
+        execute: function () {
+            PollModal = function (_Modal) {
+                babelHelpers.inherits(PollModal, _Modal);
 
-        function PollModal() {
-          babelHelpers.classCallCheck(this, PollModal);
-          return babelHelpers.possibleConstructorReturn(this, (PollModal.__proto__ || Object.getPrototypeOf(PollModal)).apply(this, arguments));
+                function PollModal() {
+                    babelHelpers.classCallCheck(this, PollModal);
+                    return babelHelpers.possibleConstructorReturn(this, (PollModal.__proto__ || Object.getPrototypeOf(PollModal)).apply(this, arguments));
+                }
+
+                babelHelpers.createClass(PollModal, [{
+                    key: 'init',
+                    value: function init() {
+                        var _this2 = this;
+
+                        babelHelpers.get(PollModal.prototype.__proto__ || Object.getPrototypeOf(PollModal.prototype), 'init', this).call(this);
+                        this.answer = [];
+
+                        if (null != this.props.poll) {
+                            this.question = m.prop(this.props.poll.question() || '');
+
+                            this.props.poll.answers().map(function (el, i) {
+                                _this2.answer[i + 1] = m.prop(el.answer()); // Start at index 1
+                            });
+                        } else {
+                            this.question = m.prop(this.props.question || '');
+                            this.answer[1] = m.prop('');
+                            this.answer[2] = m.prop('');
+                        }
+                    }
+                }, {
+                    key: 'className',
+                    value: function className() {
+                        return 'PollDiscussionModal Modal--small';
+                    }
+                }, {
+                    key: 'title',
+                    value: function title() {
+                        return null != this.props.poll ? 'Edit poll' : 'Add a poll';
+                    }
+                }, {
+                    key: 'content',
+                    value: function content() {
+                        var _this3 = this;
+
+                        return [m(
+                            'div',
+                            { className: 'Modal-body' },
+                            m(
+                                'div',
+                                { className: 'PollDiscussionModal-form' },
+                                m(
+                                    'div',
+                                    null,
+                                    m(
+                                        'fieldset',
+                                        null,
+                                        m('input', { type: 'text', name: 'question', className: 'FormControl', bidi: this.question, placeholder: 'Ask a question' })
+                                    )
+                                ),
+                                m(
+                                    'h4',
+                                    null,
+                                    'Answers'
+                                ),
+                                Object.keys(this.answer).map(function (el, i) {
+                                    return m(
+                                        'div',
+                                        { className: _this3.answer[i + 1] === '' ? 'Form-group hide' : 'Form-group' },
+                                        m(
+                                            'fieldset',
+                                            null,
+                                            m('input', { className: 'FormControl',
+                                                type: 'text',
+                                                name: 'answer' + (i + 1),
+                                                bidi: _this3.answer[i + 1],
+                                                placeholder: _this3.choicePlaceholder() })
+                                        ),
+                                        m(
+                                            'a',
+                                            { href: 'javascript:;', className: i + 1 >= 3 ? 'Option-remove' : 'Option-remove disabled', onclick: i + 1 >= 3 ? _this3.removeOption.bind(_this3, i + 1) : '' },
+                                            m(
+                                                'span',
+                                                { className: 'TagLabel untagged' },
+                                                'X'
+                                            )
+                                        ),
+                                        m('div', { className: 'clear' })
+                                    );
+                                }),
+                                m(
+                                    'a',
+                                    { href: 'javascript:;', onclick: this.addOption.bind(this) },
+                                    m(
+                                        'span',
+                                        { 'class': 'TagLabel untagged' },
+                                        '+ Add an option'
+                                    )
+                                ),
+                                m('br', null),
+                                m('br', null),
+                                Button.component({
+                                    type: 'submit',
+                                    className: 'Button Button--primary',
+                                    children: 'Submit'
+                                })
+                            )
+                        )];
+                    }
+                }, {
+                    key: 'choicePlaceholder',
+                    value: function choicePlaceholder() {
+                        return 'Option';
+                    }
+                }, {
+                    key: 'addOption',
+                    value: function addOption() {
+                        if (this.answer.length < 11) {
+                            this.answer.push(m.prop(''));
+                        }
+                    }
+                }, {
+                    key: 'removeOption',
+                    value: function removeOption(option) {
+                        this.answer[option] = '';
+                    }
+                }, {
+                    key: 'onAdd',
+                    value: function onAdd(pollArray) {
+                        // Add data to DiscussionComposer post data
+                        extend(DiscussionComposer.prototype, 'data', function (data) {
+                            data.poll = pollArray;
+                        });
+
+                        // Change the text of add poll button to edit poll
+                        if (this.question() !== '') {
+                            extend(DiscussionComposer.prototype, 'headerItems', function (items) {
+                                items.replace('polls', m(
+                                    'a',
+                                    { className: 'DiscussionComposer-changeTags', onclick: this.addPoll },
+                                    m(
+                                        'span',
+                                        { className: 'TagLabel' },
+                                        'Edit poll'
+                                    )
+                                ), 1);
+                            });
+                        }
+                    }
+                }, {
+                    key: 'onEdit',
+                    value: function onEdit(pollArray) {
+                        var poll = this.props.poll;
+                        app.request({
+                            url: app.forum.attribute('apiUrl') + '/questions/' + poll.id(),
+                            method: 'PATCH',
+                            data: { pollArray: pollArray }
+                        }).then(function () {
+                            location.reload();
+                        });
+                    }
+                }, {
+                    key: 'onsubmit',
+                    value: function onsubmit(e) {
+                        var _this4 = this;
+
+                        e.preventDefault();
+                        var pollArray = {
+                            question: this.question(),
+                            answers: {},
+                            post: null != this.props.post ? this.props.post.id() : ''
+                        };
+
+                        // Add answers to PollArray
+                        Object.keys(this.answer).map(function (el, i) {
+                            var key = i + 1;
+                            pollArray['answers'][key] = _this4.answer[key] === '' ? '' : _this4.answer[key]();
+                        });
+
+                        if (null != this.props.poll) {
+                            this.onEdit(pollArray);
+                        } else {
+                            this.onAdd(pollArray);
+                        }
+
+                        app.modal.close();
+
+                        m.redraw.strategy('none');
+                    }
+                }]);
+                return PollModal;
+            }(Modal);
+
+            _export('default', PollModal);
         }
-
-        babelHelpers.createClass(PollModal, [{
-          key: 'init',
-          value: function init() {
-            var _this2 = this;
-
-            babelHelpers.get(PollModal.prototype.__proto__ || Object.getPrototypeOf(PollModal.prototype), 'init', this).call(this);
-            this.answer = [];
-
-            if (null != this.props.poll) {
-              this.question = m.prop(this.props.poll.question() || '');
-
-              this.props.poll.answers().map(function (el, i) {
-                _this2.answer[i + 1] = m.prop(el.answer()); // Start at index 1
-              });
-            } else {
-              this.question = m.prop(this.props.question || '');
-              this.answer[1] = m.prop('');
-              this.answer[2] = m.prop('');
-            }
-          }
-        }, {
-          key: 'className',
-          value: function className() {
-            return 'PollDiscussionModal Modal--small';
-          }
-        }, {
-          key: 'title',
-          value: function title() {
-            return null != this.props.poll ? 'Edit poll' : 'Add a poll';
-          }
-        }, {
-          key: 'content',
-          value: function content() {
-            var _this3 = this;
-
-            return [m(
-              'div',
-              { className: 'Modal-body' },
-              m(
-                'div',
-                { className: 'PollDiscussionModal-form' },
-                m(
-                  'div',
-                  null,
-                  m(
-                    'fieldset',
-                    null,
-                    m('input', { type: 'text', name: 'question', className: 'FormControl', bidi: this.question, placeholder: 'Ask a question' })
-                  )
-                ),
-                m(
-                  'h4',
-                  null,
-                  'Answers'
-                ),
-                Object.keys(this.answer).map(function (el, i) {
-                  return m(
-                    'div',
-                    { className: _this3.answer[i + 1] === '' ? 'Form-group hide' : 'Form-group' },
-                    m(
-                      'fieldset',
-                      null,
-                      m('input', { className: 'FormControl',
-                        type: 'text',
-                        name: 'answer' + (i + 1),
-                        bidi: _this3.answer[i + 1],
-                        placeholder: _this3.choicePlaceholder() })
-                    ),
-                    m(
-                      'a',
-                      { href: 'javascript:;', className: i + 1 >= 3 ? 'Option-remove' : 'Option-remove disabled', onclick: i + 1 >= 3 ? _this3.removeOption.bind(_this3, i + 1) : '' },
-                      m(
-                        'span',
-                        { className: 'TagLabel untagged' },
-                        'X'
-                      )
-                    ),
-                    m('div', { className: 'clear' })
-                  );
-                }),
-                m(
-                  'a',
-                  { href: 'javascript:;', onclick: this.addOption.bind(this) },
-                  m(
-                    'span',
-                    { 'class': 'TagLabel untagged' },
-                    '+ Add an option'
-                  )
-                ),
-                m('br', null),
-                m('br', null),
-                Button.component({
-                  type: 'submit',
-                  className: 'Button Button--primary',
-                  children: 'Submit'
-                })
-              )
-            )];
-          }
-        }, {
-          key: 'choicePlaceholder',
-          value: function choicePlaceholder() {
-            return 'Option';
-          }
-        }, {
-          key: 'addOption',
-          value: function addOption() {
-            if (this.answer.length < 11) {
-              this.answer.push(m.prop(''));
-            }
-          }
-        }, {
-          key: 'removeOption',
-          value: function removeOption(option) {
-            this.answer[option] = '';
-          }
-        }, {
-          key: 'onAdd',
-          value: function onAdd(pollArray) {
-            // Add data to DiscussionComposer post data
-            extend(DiscussionComposer.prototype, 'data', function (data) {
-              data.poll = pollArray;
-            });
-
-            // Change the text of add poll button to edit poll
-            if (this.question() !== '') {
-              extend(DiscussionComposer.prototype, 'headerItems', function (items) {
-                items.replace('polls', m(
-                  'a',
-                  { className: 'DiscussionComposer-changeTags', onclick: this.addPoll },
-                  m(
-                    'span',
-                    { className: 'TagLabel' },
-                    'Edit poll'
-                  )
-                ), 1);
-              });
-            }
-          }
-        }, {
-          key: 'onEdit',
-          value: function onEdit(pollArray) {
-            var poll = this.props.poll;
-            app.request({
-              url: app.forum.attribute('apiUrl') + poll.apiEndpoint() + '/' + poll.id(),
-              method: 'PATCH',
-              data: { pollArray: pollArray }
-            });
-          }
-        }, {
-          key: 'onsubmit',
-          value: function onsubmit(e) {
-            var _this4 = this;
-
-            e.preventDefault();
-            var pollArray = {
-              question: this.question(),
-              answers: {},
-              post: null != this.props.post ? this.props.post.id() : ''
-            };
-
-            // Add answers to PollArray
-            Object.keys(this.answer).map(function (el, i) {
-              var key = i + 1;
-              pollArray['answers'][key] = _this4.answer[key] === '' ? '' : _this4.answer[key]();
-            });
-
-            if (null != this.props.poll) {
-              this.onEdit(pollArray);
-
-              location.reload();
-            } else {
-              this.onAdd(pollArray);
-            }
-
-            app.modal.close();
-
-            m.redraw.strategy('none');
-          }
-        }]);
-        return PollModal;
-      }(Modal);
-
-      _export('default', PollModal);
-    }
-  };
+    };
 });;
 'use strict';
 
