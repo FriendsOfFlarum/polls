@@ -120,9 +120,8 @@ export default class PollModal extends Modal {
         };
 
         // Add answers to PollArray
-        Object.keys(this.answer).map((el, i) => {
-            var key = (i + 1);
-            pollArray['answers'][key] = this.answer[key] === '' ? '' : this.answer[key]()
+        Object.keys(this.answer).map(el => {
+            pollArray['answers'][el - 1] = this.answer[el] === '' ? '' : this.answer[el]()
         });
 
         if (null != this.props.poll) {

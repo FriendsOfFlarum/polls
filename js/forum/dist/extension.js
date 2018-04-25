@@ -188,9 +188,8 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
                         };
 
                         // Add answers to PollArray
-                        Object.keys(this.answer).map(function (el, i) {
-                            var key = i + 1;
-                            pollArray['answers'][key] = _this4.answer[key] === '' ? '' : _this4.answer[key]();
+                        Object.keys(this.answer).map(function (el) {
+                            pollArray['answers'][el - 1] = _this4.answer[el] === '' ? '' : _this4.answer[el]();
                         });
 
                         if (null != this.props.poll) {
@@ -276,19 +275,24 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Co
                                     this.poll.question()
                                 ),
                                 this.answers.map(function (item) {
+                                    if (_this3.voted().option_id() === item.data.attributes.id) {
+                                        var color = app.forum.data.attributes.themePrimaryColor;
+                                    } else {
+                                        var color = app.forum.data.attributes.themeSecondaryColor;
+                                    }
                                     return m(
                                         'div',
                                         { className: 'PollOption PollVoted' },
                                         m(
                                             'div',
-                                            { className: 'PollBar', style: _this3.voted().option_id() === item.data.attributes.id ? 'border-color: ' + app.forum.data.attributes.themePrimaryColor : '' },
-                                            _this3.voted().option_id() === item.data.attributes.id ? m('div', { style: 'width: ' + item.percent() + '%; background:' + app.forum.data.attributes.themePrimaryColor, className: 'PollOption-active' }) : m('div', { style: ' width: ' + item.percent() + '%; background:' + app.forum.data.attributes.themeSecondaryColor, className: 'PollOption-active' }),
+                                            { className: 'PollBar', style: _this3.voted().option_id() === item.data.attributes.id ? 'border-color: ' + color : '' },
+                                            m('div', { style: 'width: ' + item.percent() + '%; background:' + color, className: 'PollOption-active' }),
                                             m(
                                                 'label',
                                                 null,
                                                 m(
                                                     'span',
-                                                    null,
+                                                    { style: _this3.calculateColor(color) },
                                                     item.answer()
                                                 )
                                             ),
@@ -297,7 +301,7 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Co
                                                 null,
                                                 m(
                                                     'span',
-                                                    { className: 'PollPercent' },
+                                                    { style: 'color: #000000', className: 'PollPercent' },
                                                     item.percent(),
                                                     '%'
                                                 )
@@ -340,6 +344,19 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Co
                                 m('div', { className: 'clear' })
                             );
                         }
+                    }
+                }, {
+                    key: 'calculateColor',
+                    value: function calculateColor(hex) {
+                        var _map = [0, 2, 4].map(function (p) {
+                            return parseInt(hex.replace('#', '').substr(p, 2), 16);
+                        }),
+                            _map2 = babelHelpers.slicedToArray(_map, 3),
+                            r = _map2[0],
+                            g = _map2[1],
+                            b = _map2[2];
+
+                        return (r * 299 + g * 587 + b * 114) / 1000 >= 128 ? 'color: #000000' : 'color: #ffffff';
                     }
                 }, {
                     key: 'view',

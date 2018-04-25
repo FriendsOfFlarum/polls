@@ -65,6 +65,7 @@ class QuestionRepository
         $poll->save();
 
         foreach ($poll->answers as $key => $answer) {
+            die(var_dump($data));
             $postKey = $data['answers'][$key + 1];
 
             if (isset($postKey) && trim($postKey) != '') {

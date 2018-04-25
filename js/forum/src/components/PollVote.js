@@ -33,23 +33,24 @@ export default class PollVote extends Component {
                 <div>
                     <h4>{this.poll.question()}</h4>
                     {
-                        this.answers.map((item) => (
-                            <div className='PollOption PollVoted'>
-                                <div className='PollBar' style={this.voted().option_id() === item.data.attributes.id ? 'border-color: ' + app.forum.data.attributes.themePrimaryColor : ''}>
-                                    {this.voted().option_id() === item.data.attributes.id ? (
-                                        <div style={'width: ' + item.percent() + '%; background:' + app.forum.data.attributes.themePrimaryColor} className="PollOption-active"></div>
-                                    ) : (
-                                        <div style={' width: ' + item.percent() + '%; background:' + app.forum.data.attributes.themeSecondaryColor} className="PollOption-active"></div>
-                                    )
-                                    }
-                                    {}
-                                    <label><span>{item.answer()}</span></label>
-                                    <label><span className='PollPercent'>{item.percent()}%</span></label>
+                        this.answers.map((item) => {
+                            if (this.voted().option_id() === item.data.attributes.id) {
+                                var color = app.forum.data.attributes.themePrimaryColor
+                            } else {
+                                var color = app.forum.data.attributes.themeSecondaryColor
+                            }
+                            return (
+                                <div className='PollOption PollVoted'>
+                                    <div className='PollBar' style={this.voted().option_id() === item.data.attributes.id ? 'border-color: ' + color : ''}>
+                                        <div style={'width: ' + item.percent() + '%; background:' + color} className="PollOption-active"></div>
+                                        <label><span style={this.calculateColor(color)}>{item.answer()}</span></label>
+                                        <label><span style={'color: #000000'} className='PollPercent'>{item.percent()}%</span></label>
+                                    </div>
                                 </div>
-                            </div>
-                        ))
+                            )
+                        })
                     }
-                    <div className="clear"></div>
+                    < div className="clear"></div>
                 </div>
             );
         } else {
@@ -73,6 +74,11 @@ export default class PollVote extends Component {
                 </div>
             );
         }
+    }
+
+    calculateColor(hex) {
+        const [r, g, b] = [0, 2, 4].map(p => parseInt(hex.replace('#', '').substr(p, 2), 16));
+        return (((r * 299) + (g * 587) + (b * 114)) / 1000 >= 128) ? 'color: #000000' : 'color: #ffffff';
     }
 
     view() {
