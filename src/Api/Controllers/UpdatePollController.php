@@ -14,8 +14,8 @@ namespace Reflar\Polls\Api\Controllers;
 
 use Flarum\Api\Controller\AbstractResourceController;
 use Psr\Http\Message\ServerRequestInterface;
-use Reflar\Polls\Question;
 use Reflar\Polls\Api\Serializers\QuestionSerializer;
+use Reflar\Polls\Question;
 use Reflar\Polls\Repositories\QuestionRepository;
 use Tobscure\JsonApi\Document;
 
@@ -30,6 +30,7 @@ class UpdatePollController extends AbstractResourceController
 
     /**
      * UpdatePollController constructor.
+     *
      * @param QuestionRepository $fields
      */
     public function __construct(QuestionRepository $fields)
@@ -39,7 +40,8 @@ class UpdatePollController extends AbstractResourceController
 
     /**
      * @param ServerRequestInterface $request
-     * @param Document $document
+     * @param Document               $document
+     *
      * @return array|mixed
      */
     protected function data(ServerRequestInterface $request, Document $document)

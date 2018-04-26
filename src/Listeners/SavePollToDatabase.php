@@ -25,16 +25,27 @@ class SavePollToDatabase
      */
     protected $validator;
 
+    /**
+     * SavePollToDatabase constructor.
+     *
+     * @param AnswerValidator $validator
+     */
     public function __construct(AnswerValidator $validator)
     {
         $this->validator = $validator;
     }
 
+    /**
+     * @param Dispatcher $events
+     */
     public function subscribe(Dispatcher $events)
     {
         $events->listen(DiscussionWillBeSaved::class, [$this, 'whenDiscussionWillBeSaved']);
     }
 
+    /**
+     * @param DiscussionWillBeSaved $event
+     */
     public function whenDiscussionWillBeSaved(DiscussionWillBeSaved $event)
     {
         $discussion = $event->discussion;

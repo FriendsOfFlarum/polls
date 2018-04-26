@@ -36,7 +36,8 @@ class CreateAnswerController extends AbstractCreateController
 
     /**
      * @param ServerRequestInterface $request
-     * @param Document $document
+     * @param Document               $document
+     *
      * @return mixed|static
      */
     protected function data(ServerRequestInterface $request, Document $document)

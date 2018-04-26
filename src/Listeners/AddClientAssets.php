@@ -17,6 +17,9 @@ use Illuminate\Contracts\Events\Dispatcher;
 
 class AddClientAssets
 {
+    /**
+     * @param Dispatcher $events
+     */
     public function subscribe(Dispatcher $events)
     {
         $events->listen(ConfigureWebApp::class, [$this, 'addAssets']);

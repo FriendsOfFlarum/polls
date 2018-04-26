@@ -78,6 +78,7 @@ class Answer extends AbstractModel
 
     /**
      * @param $answerText
+     *
      * @return static
      */
     public static function build($answerText)

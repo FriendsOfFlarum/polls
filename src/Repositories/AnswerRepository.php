@@ -28,12 +28,23 @@ class AnswerRepository
      */
     protected $cache;
 
+    /**
+     * AnswerRepository constructor.
+     *
+     * @param Question $field
+     * @param Repository $cache
+     */
     public function __construct(Question $field, Repository $cache)
     {
         $this->field = $field;
         $this->cache = $cache;
     }
 
+    /**
+     * @param Question $question
+     *
+     * @return mixed
+     */
     protected function query(Question $question)
     {
         return $question
@@ -41,6 +52,11 @@ class AnswerRepository
             ->orderBy('created_at', 'desc');
     }
 
+    /**
+     * @param $id
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+     */
     public function findOrFail($id)
     {
         return $this->field
@@ -48,11 +64,19 @@ class AnswerRepository
             ->findOrFail($id);
     }
 
+    /**
+     * @param Question $question
+     *
+     * @return mixed
+     */
     public function all(Question $question)
     {
         return $this->query($question)->get();
     }
 
+    /**
+     * @param $answerId
+     */
     public function deleteAnswer($answerId)
     {
         $answer = Answer::find($answerId);

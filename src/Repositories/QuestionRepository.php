@@ -13,7 +13,6 @@
 namespace Reflar\Polls\Repositories;
 
 use Illuminate\Cache\Repository;
-use Reflar\Polls\Answer;
 use Reflar\Polls\Question;
 
 class QuestionRepository
@@ -30,6 +29,7 @@ class QuestionRepository
 
     /**
      * QuestionRepository constructor.
+     *
      * @param Question $field
      * @param Repository $cache
      */
@@ -51,6 +51,7 @@ class QuestionRepository
 
     /**
      * @param $id
+     *
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      */
     public function findOrFail($id)

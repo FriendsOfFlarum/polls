@@ -27,6 +27,7 @@ class QuestionSerializer extends AbstractSerializer
 
     /**
      * @param array|object $model
+     *
      * @return array
      */
     protected function getDefaultAttributes($model)
@@ -36,6 +37,7 @@ class QuestionSerializer extends AbstractSerializer
 
     /**
      * @param $model
+     *
      * @return Relationship
      */
     public function answers($model)
@@ -47,6 +49,7 @@ class QuestionSerializer extends AbstractSerializer
 
     /**
      * @param $model
+     * 
      * @return Relationship
      */
     public function votes($model)

@@ -31,6 +31,11 @@ class UpdateAnswerController extends AbstractResourceController
      */
     protected $validator;
 
+    /**
+     * UpdateAnswerController constructor.
+     *
+     * @param AnswerValidator $validator
+     */
     public function __construct(AnswerValidator $validator)
     {
         $this->validator = $validator;
@@ -38,7 +43,8 @@ class UpdateAnswerController extends AbstractResourceController
 
     /**
      * @param ServerRequestInterface $request
-     * @param Document $document
+     * @param Document               $document
+     *
      * @return mixed
      */
     protected function data(ServerRequestInterface $request, Document $document)

@@ -29,6 +29,7 @@ class ListVotesController extends AbstractCollectionController
 
     /**
      * ListVotesController constructor.
+     *
      * @param VoteRepository $fields
      */
     public function __construct(VoteRepository $fields)
@@ -38,7 +39,8 @@ class ListVotesController extends AbstractCollectionController
 
     /**
      * @param ServerRequestInterface $request
-     * @param Document $document
+     * @param Document               $document
+     *
      * @return mixed
      */
     protected function data(ServerRequestInterface $request, Document $document)

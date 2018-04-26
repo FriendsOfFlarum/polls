@@ -43,6 +43,7 @@ class ListPollController extends AbstractCollectionController
 
     /**
      * ListPollController constructor.
+     *
      * @param QuestionRepository $fields
      */
     public function __construct(QuestionRepository $fields)
@@ -53,6 +54,7 @@ class ListPollController extends AbstractCollectionController
     /**
      * @param ServerRequestInterface $request
      * @param Document $document
+     *
      * @return mixed
      */
     protected function data(ServerRequestInterface $request, Document $document)

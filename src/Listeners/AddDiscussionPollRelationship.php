@@ -26,6 +26,9 @@ use Reflar\Polls\Question;
 
 class AddDiscussionPollRelationship
 {
+    /**
+     * @param Dispatcher $events
+     */
     public function subscribe(Dispatcher $events)
     {
         $events->listen(GetModelRelationship::class, [$this, 'getModelRelationship']);
@@ -34,6 +37,11 @@ class AddDiscussionPollRelationship
         $events->listen(PrepareApiAttributes::class, [$this, 'prepareApiAttributes']);
     }
 
+    /**
+     * @param GetModelRelationship $event
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function getModelRelationship(GetModelRelationship $event)
     {
         if ($event->isRelationship(Discussion::class, 'Poll')) {
@@ -41,6 +49,11 @@ class AddDiscussionPollRelationship
         }
     }
 
+    /**
+     * @param GetApiRelationship $event
+     *
+     * @return \Tobscure\JsonApi\Relationship
+     */
     public function getApiRelationship(GetApiRelationship $event)
     {
         if ($event->isRelationship(DiscussionSerializer::class, 'Poll')) {
@@ -48,6 +61,9 @@ class AddDiscussionPollRelationship
         }
     }
 
+    /**
+     * @param PrepareApiAttributes $event
+     */
     public function prepareApiAttributes(PrepareApiAttributes $event)
     {
         if ($event->isSerializer(PostSerializer::class)) {
@@ -55,6 +71,9 @@ class AddDiscussionPollRelationship
         }
     }
 
+    /**
+     * @param ConfigureApiController $event
+     */
     public function includeRelationship(ConfigureApiController $event)
     {
         if ($event->isController(Controller\ListDiscussionsController::class)

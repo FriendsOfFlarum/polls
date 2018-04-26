@@ -15,8 +15,8 @@ namespace Reflar\Polls\Api\Controllers;
 use Flarum\Api\Controller\AbstractDeleteController;
 use Psr\Http\Message\ServerRequestInterface;
 use Reflar\Polls\Answer;
-use Reflar\Polls\Repositories\AnswerRepository;
 use Reflar\Polls\Api\Serializers\AnswerSerializer;
+use Reflar\Polls\Repositories\AnswerRepository;
 
 class DeleteAnswerController extends AbstractDeleteController
 {
@@ -32,6 +32,7 @@ class DeleteAnswerController extends AbstractDeleteController
 
     /**
      * UpdatePollController constructor.
+     *
      * @param AnswerRepository $fields
      */
     public function __construct(AnswerRepository $fields)
@@ -41,6 +42,7 @@ class DeleteAnswerController extends AbstractDeleteController
 
     /**
      * @param ServerRequestInterface $request
+     *
      * @return mixed
      */
     protected function delete(ServerRequestInterface $request)

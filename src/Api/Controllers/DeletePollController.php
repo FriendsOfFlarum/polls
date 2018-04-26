@@ -32,6 +32,7 @@ class DeletePollController extends AbstractDeleteController
 
     /**
      * DeletePollController constructor.
+     *
      * @param QuestionRepository $fields
      */
     public function __construct(QuestionRepository $fields)

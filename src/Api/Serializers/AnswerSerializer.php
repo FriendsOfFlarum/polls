@@ -32,6 +32,7 @@ class AnswerSerializer extends AbstractSerializer
 
     /**
      * @param $model
+     *
      * @return \Tobscure\JsonApi\Relationship
      */
     public function question($model)

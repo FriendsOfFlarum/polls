@@ -23,12 +23,20 @@ use Tobscure\JsonApi\Relationship;
 
 class AddForumFieldRelationship
 {
+    /**
+     * @param Dispatcher $events
+     */
     public function subscribe(Dispatcher $events)
     {
         $events->listen(GetApiRelationship::class, [$this, 'addSerializerRelationship']);
         $events->listen(ConfigureApiController::class, [$this, 'addSerializerInclude']);
     }
 
+    /**
+     * @param GetApiRelationship $event
+     *
+     * @return Relationship
+     */
     public function addSerializerRelationship(GetApiRelationship $event)
     {
         // We add the list of fields as a Forum Serializer relationship so models are included with the forum when it loads
@@ -40,6 +48,9 @@ class AddForumFieldRelationship
         }
     }
 
+    /**
+     * @param ConfigureApiController $event
+     */
     public function addSerializerInclude(ConfigureApiController $event)
     {
         if ($event->controller->serializer === ForumSerializer::class) {

@@ -72,6 +72,7 @@ class Question extends AbstractModel
      * @param $question
      * @param $discussionId
      * @param $actorId
+     *
      * @return static
      */
     public static function build($questionText, $discussionId, $actorId)
