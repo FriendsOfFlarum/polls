@@ -463,24 +463,22 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Co
                                     this.poll.question()
                                 ),
                                 this.answers.map(function (item) {
-                                    if (_this3.voted().option_id() === item.data.attributes.id) {
-                                        var color = app.forum.data.attributes.themePrimaryColor;
-                                    } else {
-                                        var color = app.forum.data.attributes.themeSecondaryColor;
-                                    }
+                                    var voted = _this3.voted().option_id() === item.data.attributes.id;
+                                    var percent = item.percent();
+
                                     return m(
                                         'div',
                                         { className: 'PollOption PollVoted' },
                                         m(
                                             'div',
-                                            { className: 'PollBar', style: _this3.voted().option_id() === item.data.attributes.id ? 'border-color: ' + color : '' },
-                                            m('div', { style: 'width: ' + item.percent() + '%; background:' + color, className: 'PollOption-active' }),
+                                            { className: 'PollBar', 'data-selected': voted },
+                                            m('div', { style: '--width: ' + percent + '%', className: 'PollOption-active' }),
                                             m(
                                                 'label',
                                                 null,
                                                 m(
                                                     'span',
-                                                    { style: _this3.calculateColor(color) },
+                                                    null,
                                                     item.answer()
                                                 )
                                             ),
@@ -489,8 +487,8 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Co
                                                 null,
                                                 m(
                                                     'span',
-                                                    { style: 'color: #000000', className: 'PollPercent' },
-                                                    item.percent(),
+                                                    { style: percent !== 100 && 'color: #000000', className: 'PollPercent' },
+                                                    percent,
                                                     '%'
                                                 )
                                             )
@@ -532,19 +530,6 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Co
                                 m('div', { className: 'clear' })
                             );
                         }
-                    }
-                }, {
-                    key: 'calculateColor',
-                    value: function calculateColor(hex) {
-                        var _map = [0, 2, 4].map(function (p) {
-                            return parseInt(hex.replace('#', '').substr(p, 2), 16);
-                        }),
-                            _map2 = babelHelpers.slicedToArray(_map, 3),
-                            r = _map2[0],
-                            g = _map2[1],
-                            b = _map2[2];
-
-                        return (r * 299 + g * 587 + b * 114) / 1000 >= 128 ? 'color: #000000' : 'color: #ffffff';
                     }
                 }, {
                     key: 'view',
