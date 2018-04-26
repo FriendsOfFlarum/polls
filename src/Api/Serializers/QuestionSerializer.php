@@ -49,7 +49,7 @@ class QuestionSerializer extends AbstractSerializer
 
     /**
      * @param $model
-     * 
+     *
      * @return Relationship
      */
     public function votes($model)
