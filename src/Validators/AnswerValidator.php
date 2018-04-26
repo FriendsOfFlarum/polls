@@ -14,12 +14,15 @@ namespace Reflar\Polls\Validators;
 
 use Flarum\Core\Validator\AbstractValidator;
 
-class VoteValidator extends AbstractValidator
+class AnswerValidator extends AbstractValidator
 {
+    /**
+     * @return array
+     */
     protected function getRules()
     {
         return [
-            'poll_id' => 'required',
+            'answer' => 'required',
         ];
     }
 }

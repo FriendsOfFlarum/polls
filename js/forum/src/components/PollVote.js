@@ -1,6 +1,7 @@
 import {extend, override} from 'flarum/extend';
 import Component from 'flarum/Component';
 import classList from 'flarum/utils/classList';
+import LogInModal from 'flarum/components/LogInModal'
 
 export default class PollVote extends Component {
     init() {
@@ -21,8 +22,6 @@ export default class PollVote extends Component {
 
                 m.redraw();
             });
-        } else {
-            this.voted = true;
         }
     }
 
@@ -94,13 +93,17 @@ export default class PollVote extends Component {
     }
 
     addVote(answer) {
-        app.store.createRecord('votes').save({
-            poll_id: this.poll.id(),
-            user_id: app.session.user.id(),
-            option_id: answer
-        }).then(() => {
-            window.location.reload()
-        })
-
+        if (app.session.user === undefined) {
+            app.modal.show(new LogInModal())
+            return
+        } else {
+            app.store.createRecord('votes').save({
+                poll_id: this.poll.id(),
+                user_id: app.session.user.id(),
+                option_id: answer
+            }).then(() => {
+                window.location.reload()
+            })
+        }
     }
 }

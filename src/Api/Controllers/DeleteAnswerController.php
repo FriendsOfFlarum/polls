@@ -14,43 +14,43 @@ namespace Reflar\Polls\Api\Controllers;
 
 use Flarum\Api\Controller\AbstractDeleteController;
 use Psr\Http\Message\ServerRequestInterface;
-use Reflar\Polls\Api\Serializers\QuestionSerializer;
-use Reflar\Polls\Question;
-use Reflar\Polls\Repositories\QuestionRepository;
+use Reflar\Polls\Answer;
+use Reflar\Polls\Repositories\AnswerRepository;
+use Reflar\Polls\Api\Serializers\AnswerSerializer;
 
-class DeletePollController extends AbstractDeleteController
+class DeleteAnswerController extends AbstractDeleteController
 {
     /**
      * @var string
      */
-    public $serializer = QuestionSerializer::class;
+    public $serializer = AnswerSerializer::class;
 
     /**
-     * @var QuestionRepository
+     * @var AnswerRepository
      */
     protected $fields;
 
     /**
-     * DeletePollController constructor.
-     * @param QuestionRepository $fields
+     * UpdatePollController constructor.
+     * @param AnswerRepository $fields
      */
-    public function __construct(QuestionRepository $fields)
+    public function __construct(AnswerRepository $fields)
     {
         $this->fields = $fields;
     }
 
     /**
      * @param ServerRequestInterface $request
+     * @return mixed
      */
     protected function delete(ServerRequestInterface $request)
     {
-        $pollId = array_get($request->getQueryParams(), 'id');
-        $poll = Question::find($pollId);
+        $answer = Answer::find(array_get($request->getQueryParams(), 'id'));
 
         $actor = $request->getAttribute('actor');
 
-        if ($actor->can('edit.polls') || $actor->id === $poll->user_id) {
-            return $this->fields->deletePoll($pollId);
+        if ($actor->can('edit.polls') || $actor->id === $answer->poll()->user_id) {
+            return $this->fields->deleteAnswer(array_get($request->getQueryParams(), 'id'));
         }
     }
 }

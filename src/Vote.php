@@ -37,4 +37,15 @@ class Vote extends AbstractModel
         // Create relationship between Vote and Question model to display poll data
         return $this->belongsTo(Question::class, 'poll_id');
     }
+
+    public static function build($pollId, $userId, $optionId)
+    {
+        $vote = new static();
+
+        $vote->poll_id = $pollId;
+        $vote->user_id = $userId;
+        $vote->option_id = $optionId;
+
+        return $vote;
+    }
 }

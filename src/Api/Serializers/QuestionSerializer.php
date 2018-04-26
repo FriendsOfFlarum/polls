@@ -20,13 +20,24 @@ use Tobscure\JsonApi\Relationship;
 
 class QuestionSerializer extends AbstractSerializer
 {
+    /**
+     * @var string
+     */
     protected $type = 'questions';
 
+    /**
+     * @param array|object $model
+     * @return array
+     */
     protected function getDefaultAttributes($model)
     {
         return $model->toArray();
     }
 
+    /**
+     * @param $model
+     * @return Relationship
+     */
     public function answers($model)
     {
         $answers = app(AnswerRepository::class);
@@ -34,6 +45,10 @@ class QuestionSerializer extends AbstractSerializer
         return new Relationship(new Collection($answers->all($model), app(AnswerSerializer::class)));
     }
 
+    /**
+     * @param $model
+     * @return Relationship
+     */
     public function votes($model)
     {
         $votes = app(VoteRepository::class);

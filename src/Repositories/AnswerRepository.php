@@ -13,8 +13,8 @@
 namespace Reflar\Polls\Repositories;
 
 use Illuminate\Cache\Repository;
+use Reflar\Polls\Answer;
 use Reflar\Polls\Question;
-use Reflar\Polls\Validators\FieldValidator;
 
 class AnswerRepository
 {
@@ -22,11 +22,6 @@ class AnswerRepository
      * @var Field
      */
     protected $field;
-
-    /**
-     * @var FieldValidator
-     */
-    protected $validator;
 
     /**
      * @var Repository
@@ -56,5 +51,13 @@ class AnswerRepository
     public function all(Question $question)
     {
         return $this->query($question)->get();
+    }
+
+    public function deleteAnswer($answerId)
+    {
+        $answer = Answer::find($answerId);
+
+        $answer->votes()->delete(); // Delete all votes
+        $answer->delete(); // Delete answer
     }
 }

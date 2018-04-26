@@ -2,7 +2,7 @@ import { extend, override } from 'flarum/extend';
 
 import PostControls from 'flarum/utils/PostControls';
 import Button from 'flarum/components/Button';
-import PollModal from 'reflar/polls/components/PollModal';
+import EditPollModal from 'reflar/polls/components/EditPollModal';
 
 export default function() {
   extend(PostControls, 'moderationControls', function(items, post) {
@@ -15,7 +15,7 @@ export default function() {
           icon: 'check-square',
           className: 'reflar-PollButton',
           onclick: () => {
-            app.modal.show(new PollModal({ post: post, poll: poll }));
+            app.modal.show(new EditPollModal({ post: post, poll: poll }));
           }
         }, 'Edit Poll')
       ]);

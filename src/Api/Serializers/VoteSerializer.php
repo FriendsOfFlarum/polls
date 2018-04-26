@@ -30,6 +30,10 @@ class VoteSerializer extends AbstractSerializer
         return $model->toArray();
     }
 
+    /**
+     * @param $model
+     * @return \Tobscure\JsonApi\Relationship
+     */
     public function question($model)
     {
         return $this->hasOne(

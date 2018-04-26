@@ -13,7 +13,6 @@
 namespace Reflar\Polls\Repositories;
 
 use Illuminate\Cache\Repository;
-use Reflar\Polls\Validators\VoteValidator;
 use Reflar\Polls\Vote;
 
 class VoteRepository
@@ -24,19 +23,13 @@ class VoteRepository
     protected $field;
 
     /**
-     * @var FieldValidator
-     */
-    protected $validator;
-
-    /**
      * @var Repository
      */
     protected $cache;
 
-    public function __construct(Vote $field, VoteValidator $validator, Repository $cache)
+    public function __construct(Vote $field, Repository $cache)
     {
         $this->field = $field;
-        $this->validator = $validator;
         $this->cache = $cache;
     }
 
@@ -64,15 +57,5 @@ class VoteRepository
     public function all()
     {
         return $this->query()->get();
-    }
-
-    public function store(array $attributes)
-    {
-        if ($this->findDuplicate($attributes['poll_id'], $attributes['user_id']) === 0) {
-            $answer = new Vote($attributes);
-            $answer->save();
-
-            return $answer;
-        }
     }
 }

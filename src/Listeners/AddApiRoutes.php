@@ -18,11 +18,17 @@ use Reflar\Polls\Api\Controllers;
 
 class AddApiRoutes
 {
+    /**
+     * @param Dispatcher $events
+     */
     public function subscribe(Dispatcher $events)
     {
         $events->listen(ConfigureApiRoutes::class, [$this, 'routes']);
     }
 
+    /**
+     * @param ConfigureApiRoutes $routes
+     */
     public function routes(ConfigureApiRoutes $routes)
     {
         // API Route to get all votes
@@ -36,7 +42,14 @@ class AddApiRoutes
         $routes->post(
             '/votes',
             'votes.create',
-            Controllers\CreateVotesController::class
+            Controllers\CreateVoteController::class
+        );
+
+        // API Route to store answer
+        $routes->post(
+            '/answers',
+            'answers.create',
+            Controllers\CreateAnswerController::class
         );
 
         // API Route to get all polls
@@ -53,11 +66,25 @@ class AddApiRoutes
             Controllers\UpdatePollController::class
         );
 
+        // API Route to update an answer
+        $routes->patch(
+            '/answers/{id}',
+            'answers.update',
+            Controllers\UpdateAnswerController::class
+        );
+
         // API Route to delete a poll
         $routes->delete(
             '/questions/{id}',
             'poll.delete',
             Controllers\DeletePollController::class
+        );
+
+        // API Route to delete an answer
+        $routes->delete(
+            '/answers/{id}',
+            'answer.delete',
+            Controllers\DeleteAnswerController::class
         );
     }
 }
