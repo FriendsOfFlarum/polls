@@ -52,6 +52,7 @@ class UpdatePollController extends AbstractResourceController
         if ($actor->can('edit.polls') || $actor->id == $poll->post()->user_id) {
             $poll->question = $request->getParsedBody();
             $poll->save();
+
             return $poll;
         }
     }

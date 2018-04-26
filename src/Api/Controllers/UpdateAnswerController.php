@@ -57,6 +57,7 @@ class UpdateAnswerController extends AbstractResourceController
             $answer->answer = $updatedAnswer;
             $this->validator->assertValid(['answer' => $updatedAnswer]);
             $answer->save();
+
             return $answer;
         }
     }

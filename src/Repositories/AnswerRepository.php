@@ -31,7 +31,7 @@ class AnswerRepository
     /**
      * AnswerRepository constructor.
      *
-     * @param Question $field
+     * @param Question   $field
      * @param Repository $cache
      */
     public function __construct(Question $field, Repository $cache)

@@ -102,7 +102,7 @@ export default class PollVote extends Component {
                 user_id: app.session.user.id(),
                 option_id: answer
             }).then(() => {
-                window.location.reload()
+                location.reload()
             })
         }
     }

@@ -30,7 +30,7 @@ class VoteRepository
     /**
      * VoteRepository constructor.
      *
-     * @param Vote $field
+     * @param Vote       $field
      * @param Repository $cache
      */
     public function __construct(Vote $field, Repository $cache)

@@ -17,7 +17,7 @@ export default class EditPollModal extends Modal {
     }
 
     title() {
-        return 'Edit poll';
+        return app.translator.trans('reflar-polls.forum.modal.edit_title');
     }
 
     content() {
@@ -26,11 +26,11 @@ export default class EditPollModal extends Modal {
                 <div className="PollDiscussionModal-form">
                     <div>
                         <fieldset>
-                            <input type="text" name="question" className="FormControl" value={this.question()} oninput={m.withAttr('value', this.updateQuestion.bind(this))} placeholder="Ask a question"/>
+                            <input type="text" name="question" className="FormControl" value={this.question()} oninput={m.withAttr('value', this.updateQuestion.bind(this))} placeholder={app.translator.trans('reflar-polls.forum.modal.question_placeholder')}/>
                         </fieldset>
                     </div>
 
-                    <h4>Answers</h4>
+                    <h4>{app.translator.trans('reflar-polls.forum.modal.answers')}</h4>
 
                     {
                         this.answers.map((answer, i) => (
@@ -40,7 +40,7 @@ export default class EditPollModal extends Modal {
                                            type="text"
                                            oninput={m.withAttr('value', this.updateAnswer.bind(this, answer))}
                                            value={answer.data.attributes.answer}
-                                           placeholder={this.choicePlaceholder()}/>
+                                           placeholder={app.translator.trans('reflar-polls.forum.modal.answer_placeholder') + ' #' + (i+1)}/>
                                 </fieldset>
                                 {i + 1 >= 3 ?
                                     Button.component({
@@ -58,7 +58,7 @@ export default class EditPollModal extends Modal {
                             <input className="FormControl"
                                    type="text"
                                    oninput={m.withAttr('value', this.newAnswer)}
-                                   placeholder={this.choicePlaceholder()}/>
+                                   placeholder={app.translator.trans('reflar-polls.forum.modal.answer_placeholder') + ' #' + (this.answers.length + 1)}/>
                         </fieldset>
                         {Button.component({
                             type: 'button',
@@ -73,12 +73,8 @@ export default class EditPollModal extends Modal {
         ];
     }
 
-    choicePlaceholder() {
-        return 'Option';
-    }
-
     addAnswer(answer) {
-        if (this.answers.length < 11) {
+        if (this.answers.length < 10) {
             app.request({
                 method: 'POST',
                 url: app.forum.attribute('apiUrl') + '/answers',
@@ -95,17 +91,17 @@ export default class EditPollModal extends Modal {
                 }
             );
         } else {
-            alert('You can have a maximum of 10 answers')
+            alert(app.translator.trans('reflar-polls.forum.modal.max'))
         }
     }
 
     removeOption(option) {
         app.request({
             method: 'DELETE',
-            url: app.forum.attribute('apiUrl') + '/answers/' + option.id()
+            url: app.forum.attribute('apiUrl') + '/answers/' + option.data.id
         });
         this.answers.some((answer, i) => {
-            if (answer.id() === option.id()) {
+            if (answer.data.id === option.data.id) {
                 this.answers.splice(i, 1);
                 return true;
             }
@@ -113,24 +109,29 @@ export default class EditPollModal extends Modal {
     }
 
     updateAnswer(answerToUpdate, value) {
-        if (value === '') {
-            alert('You must include a question')
-            return
-        }
         app.request({
             method: 'PATCH',
-            url: app.forum.attribute('apiUrl') + '/answers/' + answerToUpdate.id(),
+            url: app.forum.attribute('apiUrl') + '/answers/' + answerToUpdate.data.id,
             data: value
         });
         this.answers.some((answer) => {
-            if (answer.id() === answerToUpdate.id()) {
+            if (answer.data.id === answerToUpdate.data.id) {
                 answer.data.attributes.answer = value;
                 return true;
             }
         })
     }
 
+    onhide() {
+        location.reload()
+    }
+
     updateQuestion(question) {
+        if (question === '') {
+            alert(app.translator.trans('reflar-polls.forum.modal.include_question'))
+            this.question('')
+            return
+        }
         app.request({
             method: 'PATCH',
             url: app.forum.attribute('apiUrl') + '/questions/' + this.props.poll.id(),

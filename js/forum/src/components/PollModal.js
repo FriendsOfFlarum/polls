@@ -1,4 +1,4 @@
-import {extend, override} from 'flarum/extend';
+import {extend} from 'flarum/extend';
 import Modal from 'flarum/components/Modal';
 import Button from 'flarum/components/Button';
 import DiscussionComposer from 'flarum/components/DiscussionComposer';
@@ -18,7 +18,7 @@ export default class PollModal extends Modal {
     }
 
     title() {
-        return 'Add a poll';
+        return app.translator.trans('reflar-polls.forum.modal.add_title');
     }
 
     content() {
@@ -27,11 +27,11 @@ export default class PollModal extends Modal {
                 <div className="PollDiscussionModal-form">
                     <div>
                         <fieldset>
-                            <input type="text" name="question" className="FormControl" bidi={this.question} placeholder="Ask a question"/>
+                            <input type="text" name="question" className="FormControl" bidi={this.question} placeholder={app.translator.trans('reflar-polls.forum.modal.question_placeholder')}/>
                         </fieldset>
                     </div>
 
-                    <h4>Answers</h4>
+                    <h4>{app.translator.trans('reflar-polls.forum.modal.answers')}</h4>
 
                     {
                         Object.keys(this.answer).map((el, i) => (
@@ -41,7 +41,7 @@ export default class PollModal extends Modal {
                                            type="text"
                                            name={'answer' + (i + 1)}
                                            bidi={this.answer[i + 1]}
-                                           placeholder={this.choicePlaceholder()}/>
+                                           placeholder={app.translator.trans('reflar-polls.forum.modal.answer_placeholder') + ' #' + (i + 1)}/>
                                 </fieldset>
                                 {i + 1 >= 3 ?
                                     Button.component({
@@ -55,7 +55,7 @@ export default class PollModal extends Modal {
                         ))
                     }
 
-                    <a href="javascript:;" onclick={this.addOption.bind(this)}><span class="TagLabel untagged">+ Add an option</span></a><br/><br/>
+                    <a href="javascript:;" onclick={this.addOption.bind(this)}><span class="TagLabel untagged">{'+ ' + app.translator.trans('reflar-polls.forum.modal.add')}</span></a><br/><br/>
 
                     <div className='Form-group'>
                         <div className="clear"></div>
@@ -73,15 +73,11 @@ export default class PollModal extends Modal {
         ];
     }
 
-    choicePlaceholder() {
-        return 'Option';
-    }
-
     addOption() {
         if (this.answer.length < 11) {
             this.answer.push(m.prop(''));
         } else {
-            alert('You can have a maximum of 10 answers')
+            alert(app.translator.trans('reflar-polls.forum.modal.max'))
         }
     }
 
@@ -99,7 +95,7 @@ export default class PollModal extends Modal {
         if (this.question() !== '') {
             extend(DiscussionComposer.prototype, 'headerItems', function (items) {
                 items.replace('polls', (
-                    <a className="DiscussionComposer-changeTags" onclick={this.addPoll}><span className="TagLabel">Edit poll</span></a>), 1);
+                    <a className="DiscussionComposer-changeTags" onclick={this.addPoll}><span className="TagLabel">{app.translator.trans('reflar-polls.forum.composer_discussion.edit')}</span></a>), 1);
             });
         }
     }
@@ -120,7 +116,7 @@ export default class PollModal extends Modal {
         };
 
         if (this.question() === '') {
-            alert('You must include a question')
+            alert(app.translator.trans('reflar-polls.forum.modal.include_question'))
             return
         }
 
@@ -131,7 +127,7 @@ export default class PollModal extends Modal {
         });
 
         if (this.objectSize(pollArray.answers) < 2) {
-            alert('You must include a minimum of 2 answers')
+            alert(app.translator.trans('reflar-polls.forum.modal.min'))
             return
         }
 

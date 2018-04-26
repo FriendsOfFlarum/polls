@@ -40,7 +40,7 @@ System.register('reflar/polls/components/EditPollModal', ['flarum/extend', 'flar
                 }, {
                     key: 'title',
                     value: function title() {
-                        return 'Edit poll';
+                        return app.translator.trans('reflar-polls.forum.modal.edit_title');
                     }
                 }, {
                     key: 'content',
@@ -59,13 +59,13 @@ System.register('reflar/polls/components/EditPollModal', ['flarum/extend', 'flar
                                     m(
                                         'fieldset',
                                         null,
-                                        m('input', { type: 'text', name: 'question', className: 'FormControl', value: this.question(), oninput: m.withAttr('value', this.updateQuestion.bind(this)), placeholder: 'Ask a question' })
+                                        m('input', { type: 'text', name: 'question', className: 'FormControl', value: this.question(), oninput: m.withAttr('value', this.updateQuestion.bind(this)), placeholder: app.translator.trans('reflar-polls.forum.modal.question_placeholder') })
                                     )
                                 ),
                                 m(
                                     'h4',
                                     null,
-                                    'Answers'
+                                    app.translator.trans('reflar-polls.forum.modal.answers')
                                 ),
                                 this.answers.map(function (answer, i) {
                                     return m(
@@ -78,7 +78,7 @@ System.register('reflar/polls/components/EditPollModal', ['flarum/extend', 'flar
                                                 type: 'text',
                                                 oninput: m.withAttr('value', _this2.updateAnswer.bind(_this2, answer)),
                                                 value: answer.data.attributes.answer,
-                                                placeholder: _this2.choicePlaceholder() })
+                                                placeholder: app.translator.trans('reflar-polls.forum.modal.answer_placeholder') + ' #' + (i + 1) })
                                         ),
                                         i + 1 >= 3 ? Button.component({
                                             type: 'button',
@@ -98,7 +98,7 @@ System.register('reflar/polls/components/EditPollModal', ['flarum/extend', 'flar
                                         m('input', { className: 'FormControl',
                                             type: 'text',
                                             oninput: m.withAttr('value', this.newAnswer),
-                                            placeholder: this.choicePlaceholder() })
+                                            placeholder: app.translator.trans('reflar-polls.forum.modal.answer_placeholder') + ' #' + (this.answers.length + 1) })
                                     ),
                                     Button.component({
                                         type: 'button',
@@ -112,16 +112,11 @@ System.register('reflar/polls/components/EditPollModal', ['flarum/extend', 'flar
                         )];
                     }
                 }, {
-                    key: 'choicePlaceholder',
-                    value: function choicePlaceholder() {
-                        return 'Option';
-                    }
-                }, {
                     key: 'addAnswer',
                     value: function addAnswer(answer) {
                         var _this3 = this;
 
-                        if (this.answers.length < 11) {
+                        if (this.answers.length < 10) {
                             app.request({
                                 method: 'POST',
                                 url: app.forum.attribute('apiUrl') + '/answers',
@@ -136,7 +131,7 @@ System.register('reflar/polls/components/EditPollModal', ['flarum/extend', 'flar
                                 m.redraw();
                             });
                         } else {
-                            alert('You can have a maximum of 10 answers');
+                            alert(app.translator.trans('reflar-polls.forum.modal.max'));
                         }
                     }
                 }, {
@@ -146,10 +141,10 @@ System.register('reflar/polls/components/EditPollModal', ['flarum/extend', 'flar
 
                         app.request({
                             method: 'DELETE',
-                            url: app.forum.attribute('apiUrl') + '/answers/' + option.id()
+                            url: app.forum.attribute('apiUrl') + '/answers/' + option.data.id
                         });
                         this.answers.some(function (answer, i) {
-                            if (answer.id() === option.id()) {
+                            if (answer.data.id === option.data.id) {
                                 _this4.answers.splice(i, 1);
                                 return true;
                             }
@@ -158,25 +153,31 @@ System.register('reflar/polls/components/EditPollModal', ['flarum/extend', 'flar
                 }, {
                     key: 'updateAnswer',
                     value: function updateAnswer(answerToUpdate, value) {
-                        if (value === '') {
-                            alert('You must include a question');
-                            return;
-                        }
                         app.request({
                             method: 'PATCH',
-                            url: app.forum.attribute('apiUrl') + '/answers/' + answerToUpdate.id(),
+                            url: app.forum.attribute('apiUrl') + '/answers/' + answerToUpdate.data.id,
                             data: value
                         });
                         this.answers.some(function (answer) {
-                            if (answer.id() === answerToUpdate.id()) {
+                            if (answer.data.id === answerToUpdate.data.id) {
                                 answer.data.attributes.answer = value;
                                 return true;
                             }
                         });
                     }
                 }, {
+                    key: 'onhide',
+                    value: function onhide() {
+                        location.reload();
+                    }
+                }, {
                     key: 'updateQuestion',
                     value: function updateQuestion(question) {
+                        if (question === '') {
+                            alert(app.translator.trans('reflar-polls.forum.modal.include_question'));
+                            this.question('');
+                            return;
+                        }
                         app.request({
                             method: 'PATCH',
                             url: app.forum.attribute('apiUrl') + '/questions/' + this.props.poll.id(),
@@ -198,11 +199,10 @@ System.register('reflar/polls/components/EditPollModal', ['flarum/extend', 'flar
 System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/components/Modal', 'flarum/components/Button', 'flarum/components/DiscussionComposer'], function (_export, _context) {
     "use strict";
 
-    var extend, override, Modal, Button, DiscussionComposer, PollModal;
+    var extend, Modal, Button, DiscussionComposer, PollModal;
     return {
         setters: [function (_flarumExtend) {
             extend = _flarumExtend.extend;
-            override = _flarumExtend.override;
         }, function (_flarumComponentsModal) {
             Modal = _flarumComponentsModal.default;
         }, function (_flarumComponentsButton) {
@@ -237,7 +237,7 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
                 }, {
                     key: 'title',
                     value: function title() {
-                        return 'Add a poll';
+                        return app.translator.trans('reflar-polls.forum.modal.add_title');
                     }
                 }, {
                     key: 'content',
@@ -256,13 +256,13 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
                                     m(
                                         'fieldset',
                                         null,
-                                        m('input', { type: 'text', name: 'question', className: 'FormControl', bidi: this.question, placeholder: 'Ask a question' })
+                                        m('input', { type: 'text', name: 'question', className: 'FormControl', bidi: this.question, placeholder: app.translator.trans('reflar-polls.forum.modal.question_placeholder') })
                                     )
                                 ),
                                 m(
                                     'h4',
                                     null,
-                                    'Answers'
+                                    app.translator.trans('reflar-polls.forum.modal.answers')
                                 ),
                                 Object.keys(this.answer).map(function (el, i) {
                                     return m(
@@ -275,7 +275,7 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
                                                 type: 'text',
                                                 name: 'answer' + (i + 1),
                                                 bidi: _this2.answer[i + 1],
-                                                placeholder: _this2.choicePlaceholder() })
+                                                placeholder: app.translator.trans('reflar-polls.forum.modal.answer_placeholder') + ' #' + (i + 1) })
                                         ),
                                         i + 1 >= 3 ? Button.component({
                                             type: 'button',
@@ -292,7 +292,7 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
                                     m(
                                         'span',
                                         { 'class': 'TagLabel untagged' },
-                                        '+ Add an option'
+                                        '+ ' + app.translator.trans('reflar-polls.forum.modal.add')
                                     )
                                 ),
                                 m('br', null),
@@ -311,17 +311,12 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
                         )];
                     }
                 }, {
-                    key: 'choicePlaceholder',
-                    value: function choicePlaceholder() {
-                        return 'Option';
-                    }
-                }, {
                     key: 'addOption',
                     value: function addOption() {
                         if (this.answer.length < 11) {
                             this.answer.push(m.prop(''));
                         } else {
-                            alert('You can have a maximum of 10 answers');
+                            alert(app.translator.trans('reflar-polls.forum.modal.max'));
                         }
                     }
                 }, {
@@ -346,7 +341,7 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
                                     m(
                                         'span',
                                         { className: 'TagLabel' },
-                                        'Edit poll'
+                                        app.translator.trans('reflar-polls.forum.composer_discussion.edit')
                                     )
                                 ), 1);
                             });
@@ -374,7 +369,7 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
                         };
 
                         if (this.question() === '') {
-                            alert('You must include a question');
+                            alert(app.translator.trans('reflar-polls.forum.modal.include_question'));
                             return;
                         }
 
@@ -385,7 +380,7 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
                         });
 
                         if (this.objectSize(pollArray.answers) < 2) {
-                            alert('You must include a minimum of 2 answers');
+                            alert(app.translator.trans('reflar-polls.forum.modal.min'));
                             return;
                         }
 
@@ -576,7 +571,7 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Co
                                 user_id: app.session.user.id(),
                                 option_id: answer
                             }).then(function () {
-                                window.location.reload();
+                                location.reload();
                             });
                         }
                     }
@@ -660,11 +655,11 @@ System.register('reflar/polls/main', ['flarum/app', 'flarum/extend', 'flarum/com
         extend(DiscussionComposer.prototype, 'headerItems', function (items) {
           items.add('polls', m(
             'a',
-            { className: 'DiscussionComposer-changeTags', onclick: this.addPoll },
+            { className: 'DiscussionComposer-poll', onclick: this.addPoll },
             m(
               'span',
               { className: 'TagLabel' },
-              'Add poll'
+              app.translator.trans('reflar-polls.forum.composer_discussion.add_poll')
             )
           ), 1);
         });
@@ -774,56 +769,55 @@ System.register('reflar/polls/models/Vote', ['flarum/Model', 'flarum/utils/mixin
 'use strict';
 
 System.register('reflar/polls/PollControl', ['flarum/extend', 'flarum/utils/PostControls', 'flarum/components/Button', 'reflar/polls/components/EditPollModal'], function (_export, _context) {
-  "use strict";
+    "use strict";
 
-  var extend, override, PostControls, Button, EditPollModal;
+    var extend, PostControls, Button, EditPollModal;
 
-  _export('default', function () {
-    extend(PostControls, 'moderationControls', function (items, post) {
-      var discussion = post.discussion();
-      var poll = discussion.Poll();
+    _export('default', function () {
+        extend(PostControls, 'moderationControls', function (items, post) {
+            var discussion = post.discussion();
+            var poll = discussion.Poll();
 
-      if (discussion.Poll() && post.canEditPoll() && post.number() === 1) {
-        items.add('editPoll', [m(Button, {
-          icon: 'check-square',
-          className: 'reflar-PollButton',
-          onclick: function onclick() {
-            app.modal.show(new EditPollModal({ post: post, poll: poll }));
-          }
-        }, 'Edit Poll')]);
+            if (discussion.Poll() && post.canEditPoll() && post.number() === 1) {
+                items.add('editPoll', [m(Button, {
+                    icon: 'check-square',
+                    className: 'reflar-PollButton',
+                    onclick: function onclick() {
+                        app.modal.show(new EditPollModal({ post: post, poll: poll }));
+                    }
+                }, app.translator.trans('reflar-polls.forum.moderation.edit'))]);
 
-        items.add('removePoll', [m(Button, {
-          icon: 'trash',
-          className: 'reflar-PollButton',
-          onclick: function onclick() {
+                items.add('removePoll', [m(Button, {
+                    icon: 'trash',
+                    className: 'reflar-PollButton',
+                    onclick: function onclick() {
 
-            if (confirm('Are you sure you want to delete this poll?')) {
-              app.request({
-                url: app.forum.attribute('apiUrl') + poll.apiEndpoint() + '/' + poll.id(),
-                method: 'DELETE'
-              });
-
-              location.reload();
+                        if (confirm(app.translator.trans('reflar-polls.forum.moderation.delete_confirm'))) {
+                            app.request({
+                                url: app.forum.attribute('apiUrl') + '/questions/' + poll.id(),
+                                method: 'DELETE'
+                            }).then(function () {
+                                location.reload();
+                            });
+                        }
+                    }
+                }, app.translator.trans('reflar-polls.forum.moderation.delete'))]);
             }
-          }
-        }, 'Remove Poll')]);
-      }
+        });
     });
-  });
 
-  return {
-    setters: [function (_flarumExtend) {
-      extend = _flarumExtend.extend;
-      override = _flarumExtend.override;
-    }, function (_flarumUtilsPostControls) {
-      PostControls = _flarumUtilsPostControls.default;
-    }, function (_flarumComponentsButton) {
-      Button = _flarumComponentsButton.default;
-    }, function (_reflarPollsComponentsEditPollModal) {
-      EditPollModal = _reflarPollsComponentsEditPollModal.default;
-    }],
-    execute: function () {}
-  };
+    return {
+        setters: [function (_flarumExtend) {
+            extend = _flarumExtend.extend;
+        }, function (_flarumUtilsPostControls) {
+            PostControls = _flarumUtilsPostControls.default;
+        }, function (_flarumComponentsButton) {
+            Button = _flarumComponentsButton.default;
+        }, function (_reflarPollsComponentsEditPollModal) {
+            EditPollModal = _reflarPollsComponentsEditPollModal.default;
+        }],
+        execute: function () {}
+    };
 });;
 'use strict';
 
