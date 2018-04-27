@@ -23,10 +23,10 @@ export default class PollVote extends Component {
                 m.redraw();
             });
         }
+
     }
 
     voteView() {
-
         if (this.voted() !== false) {
             return (
                 <div>
@@ -35,10 +35,17 @@ export default class PollVote extends Component {
                         this.answers.map((item) => {
                             const voted = this.voted().option_id() === item.data.attributes.id;
                             const percent = item.percent();
-
                             return (
                                 <div className='PollOption PollVoted'>
-                                    <div className='PollBar' data-selected={voted}>
+                                    <div
+                                        title={item.votes() >= 1 ? item.votes() + ' ' + app.translator.trans('reflar-polls.forum.tooltip.vote') : item.votes() + ' ' + app.translator.trans('reflar-polls.forum.tooltip.votes')}
+                                        className='PollBar'
+                                        data-selected={voted}
+                                        config={
+                                            function(element) {
+                                                $(element).tooltip({placement: 'right'});
+                                            }
+                                    }>
                                         <div style={'--width: ' + percent + '%'} className="PollOption-active" />
                                         <label><span>{item.answer()}</span></label>
                                         <label><span style={percent !== 100 && 'color: #000000'} className='PollPercent'>{percent}%</span></label>

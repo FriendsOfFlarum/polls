@@ -17,3 +17,6 @@ reflar-polls:
     composer_discussion:
       add_poll: Add Poll
       edit: => reflar-polls.forum.moderation.edit
+    tooltip:
+      votes: votes
+      vote: vote

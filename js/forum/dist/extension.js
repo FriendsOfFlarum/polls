@@ -465,13 +465,18 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Co
                                 this.answers.map(function (item) {
                                     var voted = _this3.voted().option_id() === item.data.attributes.id;
                                     var percent = item.percent();
-
                                     return m(
                                         'div',
                                         { className: 'PollOption PollVoted' },
                                         m(
                                             'div',
-                                            { className: 'PollBar', 'data-selected': voted },
+                                            {
+                                                title: item.votes() >= 1 ? item.votes() + ' ' + app.translator.trans('reflar-polls.forum.tooltip.vote') : item.votes() + ' ' + app.translator.trans('reflar-polls.forum.tooltip.votes'),
+                                                className: 'PollBar',
+                                                'data-selected': voted,
+                                                config: function config(element) {
+                                                    $(element).tooltip({ placement: 'right' });
+                                                } },
                                             m('div', { style: '--width: ' + percent + '%', className: 'PollOption-active' }),
                                             m(
                                                 'label',
