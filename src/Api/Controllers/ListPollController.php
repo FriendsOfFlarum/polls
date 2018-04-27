@@ -23,8 +23,14 @@ class ListPollController extends AbstractCollectionController
 {
     use AssertPermissionTrait;
 
+    /**
+     * @var string
+     */
     public $serializer = QuestionSerializer::class;
 
+    /**
+     * @var array
+     */
     public $include = [
         'answers',
         'votes',
@@ -35,11 +41,22 @@ class ListPollController extends AbstractCollectionController
      */
     protected $fields;
 
+    /**
+     * ListPollController constructor.
+     *
+     * @param QuestionRepository $fields
+     */
     public function __construct(QuestionRepository $fields)
     {
         $this->fields = $fields;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @param Document               $document
+     *
+     * @return mixed
+     */
     protected function data(ServerRequestInterface $request, Document $document)
     {
         return $this->fields->all();

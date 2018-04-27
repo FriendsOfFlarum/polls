@@ -27,11 +27,22 @@ class ListVotesController extends AbstractCollectionController
      */
     protected $fields;
 
+    /**
+     * ListVotesController constructor.
+     *
+     * @param VoteRepository $fields
+     */
     public function __construct(VoteRepository $fields)
     {
         $this->fields = $fields;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @param Document               $document
+     *
+     * @return mixed
+     */
     protected function data(ServerRequestInterface $request, Document $document)
     {
         $voteArray = [

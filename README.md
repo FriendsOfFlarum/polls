@@ -16,7 +16,7 @@ composer require reflar/polls
 
 ### TODO 📝
 
-- Translations
+- ~~Translations~~
 - ~~Edit a Poll~~
 - ~~Remove a Poll~~
 - Poll customize settings

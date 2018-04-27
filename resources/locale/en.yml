@@ -1,0 +1,19 @@
+reflar-polls:
+  forum:
+    modal:
+      min: You must include a minimum of 2 answers
+      max: You can have a maximum of 10 answers
+      include_question: You must include a question
+      answer_placeholder: Answer
+      add: Add an Option
+      question_placeholder: Question
+      add_title: Add a Poll
+      edit_title: Edit Poll
+      answers: Answers
+    moderation:
+      edit: Edit Poll
+      delete: Remove Poll
+      delete_confirm: Are you sure you want to delete this poll?
+    composer_discussion:
+      add_poll: Add Poll
+      edit: => reflar-polls.forum.moderation.edit

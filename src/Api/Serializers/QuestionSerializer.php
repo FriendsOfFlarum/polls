@@ -21,9 +21,12 @@ use Tobscure\JsonApi\Relationship;
 class QuestionSerializer extends AbstractSerializer
 {
     /**
-     * Get the default set of serialized attributes for a model.
-     *
-     * @param Field|array $model
+     * @var string
+     */
+    protected $type = 'questions';
+
+    /**
+     * @param array|object $model
      *
      * @return array
      */
@@ -33,15 +36,10 @@ class QuestionSerializer extends AbstractSerializer
     }
 
     /**
-     * @param Field $model
+     * @param $model
      *
-     * @return string
+     * @return Relationship
      */
-    public function getType($model)
-    {
-        return 'reflar-polls-question';
-    }
-
     public function answers($model)
     {
         $answers = app(AnswerRepository::class);
@@ -49,6 +47,11 @@ class QuestionSerializer extends AbstractSerializer
         return new Relationship(new Collection($answers->all($model), app(AnswerSerializer::class)));
     }
 
+    /**
+     * @param $model
+     *
+     * @return Relationship
+     */
     public function votes($model)
     {
         $votes = app(VoteRepository::class);

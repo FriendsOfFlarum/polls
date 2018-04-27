@@ -1,97 +1,102 @@
-import { extend, override } from 'flarum/extend';
-import ItemList from 'flarum/utils/ItemList';
+import {extend, override} from 'flarum/extend';
 import Component from 'flarum/Component';
 import classList from 'flarum/utils/classList';
+import LogInModal from 'flarum/components/LogInModal'
 
 export default class PollVote extends Component {
-  init() {
-    this.poll = this.props.poll;
-    this.votes = [];
-    this.voted = false;
-    this.answers = this.poll ? this.poll.answers() : [];
+    init() {
+        this.poll = this.props.poll;
+        this.votes = [];
+        this.voted = m.prop(false);
 
-    if (app.session.user != undefined) {
-      app.store.find('reflar/polls/votes', {
-        poll_id: this.poll.id(),
-        user_id: app.session.user.id()
-      }).then((data) => {
-        if (data[0] != undefined) {
-          this.voted = true;
+        this.answers = this.poll ? this.poll.answers() : [];
+
+        if (app.session.user !== undefined) {
+            app.store.find('votes', {
+                poll_id: this.poll.id(),
+                user_id: app.session.user.id()
+            }).then((data) => {
+                if (data[0] !== undefined) {
+                    this.voted(data[0])
+                }
+
+                m.redraw();
+            });
         }
-
-        m.redraw();
-      });
-    } else {
-      this.voted = true;
     }
-  }
 
-  voteView() {
-    
-    if (this.voted) {
-      return (
-        <div>
-          <h4>{this.poll.question()}</h4> 
-          {
-            this.answers.map((item, index) => ( 
-              <div className={'PollOption PollVoted'}>
-                <div class="PollPercent">
-                  {item.percent()}%
+    voteView() {
+
+        if (this.voted() !== false) {
+            return (
+                <div>
+                    <h4>{this.poll.question()}</h4>
+                    {
+                        this.answers.map((item) => {
+                            const voted = this.voted().option_id() === item.data.attributes.id;
+                            const percent = item.percent();
+
+                            return (
+                                <div className='PollOption PollVoted'>
+                                    <div className='PollBar' data-selected={voted}>
+                                        <div style={'--width: ' + percent + '%'} className="PollOption-active" />
+                                        <label><span>{item.answer()}</span></label>
+                                        <label><span style={percent !== 100 && 'color: #000000'} className='PollPercent'>{percent}%</span></label>
+                                    </div>
+                                </div>
+                            )
+                        })
+                    }
+                    <div className="clear" />
                 </div>
-                <div className={'PollBar'}>
-                  <div style={'width: ' + item.percent() + '%;'} className="PollOption-active"></div>
-                    <label><span>{item.answer()}</span></label> 
+            );
+        } else {
+            return (
+                <div>
+                    <h4>{this.poll.question()}</h4>
+                    {
+                        this.answers.map((item) => (
+                            <div className="PollOption">
+                                <div className='PollBar'>
+                                    <label className="checkbox">
+                                        <input type="checkbox" onchange={this.addVote.bind(this, item.id())}/>
+                                        <span>{item.answer()}</span>
+                                        <span className="checkmark"/>
+                                    </label>
+                                </div>
+                            </div>
+                        ))
+                    }
+                    <div className="clear"/>
                 </div>
-              </div>
-            ))
-          } 
-          <div class="clear"></div> 
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          <h4>{this.poll.question()}</h4> 
-          {
-            this.answers.map((item, index) => ( 
-              <div class="PollOption">
-                <div className={'PollBar'}>
-                  <label class="checkbox">
-                    <input type="checkbox" onchange={this.addVote.bind(this, item.id())} /> 
-                    <span>{item.answer()}</span> 
-                    <span class="checkmark"></span> 
-                  </label> 
-                </div>
-              </div>
-            ))
-          }
-          <div class="clear"></div> 
-        </div>
-    );
+            );
+        }
     }
-  }
 
-  view() {
-    let content = this.voteView();
-    
-    return (
-      <div className={classList({
-        voted: this.voted
-      })}>
-        {content}
-      </div>
-    );
-  }
+    view() {
+        let content = this.voteView();
 
-  addVote(answer) {
-    app.store.createRecord('reflar-polls-vote').save({
-      poll_id: this.poll.id(),
-      user_id: app.session.user.id(),
-      option_id: answer 
-    });
+        return (
+            <div className={classList({
+                voted: this.voted
+            })}>
+                {content}
+            </div>
+        );
+    }
 
-    location.reload();
-
-    m.redraw();
-  }
+    addVote(answer) {
+        if (app.session.user === undefined) {
+            app.modal.show(new LogInModal())
+            return
+        } else {
+            app.store.createRecord('votes').save({
+                poll_id: this.poll.id(),
+                user_id: app.session.user.id(),
+                option_id: answer
+            }).then(() => {
+                location.reload()
+            })
+        }
+    }
 }

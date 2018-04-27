@@ -12,14 +12,14 @@
 
 namespace Reflar\Polls\Api\Controllers;
 
-use Flarum\Api\Controller\AbstractCollectionController;
-use Flarum\Core\Post;
+use Flarum\Api\Controller\AbstractResourceController;
 use Psr\Http\Message\ServerRequestInterface;
 use Reflar\Polls\Api\Serializers\QuestionSerializer;
+use Reflar\Polls\Question;
 use Reflar\Polls\Repositories\QuestionRepository;
 use Tobscure\JsonApi\Document;
 
-class UpdatePollController extends AbstractCollectionController
+class UpdatePollController extends AbstractResourceController
 {
     public $serializer = QuestionSerializer::class;
 
@@ -28,20 +28,32 @@ class UpdatePollController extends AbstractCollectionController
      */
     protected $fields;
 
+    /**
+     * UpdatePollController constructor.
+     *
+     * @param QuestionRepository $fields
+     */
     public function __construct(QuestionRepository $fields)
     {
         $this->fields = $fields;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @param Document               $document
+     *
+     * @return array|mixed
+     */
     protected function data(ServerRequestInterface $request, Document $document)
     {
-        $pollData = $request->getParsedBody()['pollArray'];
         $actor = $request->getAttribute('actor');
+        $poll = Question::find(array_get($request->getQueryParams(), 'id'));
 
-        $post = Post::find($pollData['post']);
+        if ($actor->can('edit.polls') || $actor->id == $poll->post()->user_id) {
+            $poll->question = $request->getParsedBody();
+            $poll->save();
 
-        if ($actor->can('edit.polls') || $actor->id == $post->user_id) {
-            return $this->fields->editPoll(array_get($request->getQueryParams(), 'id'), $pollData);
+            return $poll;
         }
     }
 }

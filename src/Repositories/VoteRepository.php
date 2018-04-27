@@ -13,7 +13,6 @@
 namespace Reflar\Polls\Repositories;
 
 use Illuminate\Cache\Repository;
-use Reflar\Polls\Validators\VoteValidator;
 use Reflar\Polls\Vote;
 
 class VoteRepository
@@ -24,22 +23,25 @@ class VoteRepository
     protected $field;
 
     /**
-     * @var FieldValidator
-     */
-    protected $validator;
-
-    /**
      * @var Repository
      */
     protected $cache;
 
-    public function __construct(Vote $field, VoteValidator $validator, Repository $cache)
+    /**
+     * VoteRepository constructor.
+     *
+     * @param Vote       $field
+     * @param Repository $cache
+     */
+    public function __construct(Vote $field, Repository $cache)
     {
         $this->field = $field;
-        $this->validator = $validator;
         $this->cache = $cache;
     }
 
+    /**
+     * @return mixed
+     */
     protected function query()
     {
         return $this->field
@@ -47,6 +49,12 @@ class VoteRepository
             ->orderBy('created_at', 'desc');
     }
 
+    /**
+     * @param $pollId
+     * @param $userId
+     *
+     * @return mixed
+     */
     public function findVote($pollId, $userId)
     {
         return Vote::where('poll_id', $pollId)
@@ -54,6 +62,12 @@ class VoteRepository
             ->get();
     }
 
+    /**
+     * @param $pollId
+     * @param $userId
+     *
+     * @return mixed
+     */
     public function findDuplicate($pollId, $userId)
     {
         return Vote::where('poll_id', $pollId)
@@ -61,18 +75,11 @@ class VoteRepository
             ->count();
     }
 
+    /**
+     * @return mixed
+     */
     public function all()
     {
         return $this->query()->get();
-    }
-
-    public function store(array $attributes)
-    {
-        if ($this->findDuplicate($attributes['poll_id'], $attributes['user_id']) == 0) {
-            $answer = new Vote($attributes);
-            $answer->save();
-
-            return $answer;
-        }
     }
 }

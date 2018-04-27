@@ -14,28 +14,38 @@ namespace Reflar\Polls\Listeners;
 
 use Flarum\Event\DiscussionWillBeSaved;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Validation\Factory;
 use Reflar\Polls\Answer;
 use Reflar\Polls\Question;
+use Reflar\Polls\Validators\AnswerValidator;
 
 class SavePollToDatabase
 {
     /**
-     * @var Factory
+     * @var AnswerValidator
      */
     protected $validator;
-    protected $answers;
 
-    public function __construct(Factory $validator)
+    /**
+     * SavePollToDatabase constructor.
+     *
+     * @param AnswerValidator $validator
+     */
+    public function __construct(AnswerValidator $validator)
     {
         $this->validator = $validator;
     }
 
+    /**
+     * @param Dispatcher $events
+     */
     public function subscribe(Dispatcher $events)
     {
         $events->listen(DiscussionWillBeSaved::class, [$this, 'whenDiscussionWillBeSaved']);
     }
 
+    /**
+     * @param DiscussionWillBeSaved $event
+     */
     public function whenDiscussionWillBeSaved(DiscussionWillBeSaved $event)
     {
         $discussion = $event->discussion;
@@ -44,25 +54,19 @@ class SavePollToDatabase
         if (isset($event->data['attributes']['poll'])) {
             $post = $event->data['attributes']['poll'];
 
-            $answers = [];
-
             if (trim($post['question']) != '') {
                 // Add a poll after the disscusion has been created/saved.
                 $discussion->afterSave(function ($discussion) use ($post, $event) {
                     // Add question to databse
-                    $questionModel = new Question();
-                    $questionModel->question = $post['question'];
-                    $questionModel->discussion_id = $discussion->id;
-                    $questionModel->user_id = $event->actor->id;
-                    $questionModel->save();
+                    $poll = Question::build($post['question'], $discussion->id, $event->actor->id);
+                    $poll->save();
 
                     // Add answers to database
                     foreach (array_filter($post['answers']) as $answer) {
-                        $answers[] = new Answer(['answer' => $answer]);
+                        $answer = Answer::build($answer);
+                        $this->validator->assertValid(['answer' => $answer]);
+                        $poll->answers()->save($answer);
                     }
-
-                    // Create relationship between the answers & question
-                    $questionModel->answers()->saveMany($answers);
                 });
             }
         }

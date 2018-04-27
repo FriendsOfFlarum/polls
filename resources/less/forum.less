@@ -8,10 +8,10 @@
   width: 45%;
   margin-right: 5px;
   float: left;
-}
 
-.PollOption:nth-child(odd) {
-  float: right;
+  &:nth-child(odd) {
+    float: right;
+  }
 }
 
 .PollOption-active {
@@ -20,7 +20,10 @@
   position: absolute;
   z-index: 1;
   top: 0;
-  background: #fdeed7;
+  width: var(--width, 0);
+  background-color: @secondary-color;
+
+  animation: slideIn 1s ease-in-out;
 }
 
 .PollOption-active .checkmark {
@@ -29,90 +32,104 @@
 
 /* Percent */
 .PollPercent {
-  float: left;
-  padding-top: 10px;
-  font-size: 10px;
-  width: 20px;
+  float: right;
+  position: relative;
+  padding-right: 5px;
 }
 
 /* PollBar */
 .PollBar {
-  background: #f9f9f99e;
+  background: #fcfcfc;
   float: left;
   width: 85%;
-  padding: 10px 10px 10px 15px;
-  padding-left: 0;
+  padding: 10px 10px 10px 0;
   position: relative;
   margin-left: 15px;
-}
+  border-radius: 4px;
+  border: 2px solid @secondary-color;
+  overflow: hidden;
 
-.PollBar label span {
-  padding-left: 20px;
-  color: #666;
-  font-size: 11px;
-  line-height: 19px;
-  font-weight: 600;
-}
+  &:hover {
+    background: #f3f3f39e;
+  }
 
-.PollBar:hover {
-  background: #f3f3f39e;
-}
+  label {
+    position: relative;
+    z-index: 1;
 
-.PollVoted label{
-  position: relative;
-  z-index: 100;
-}
+    span {
+      padding-left: 15px;
+      font-size: 11px;
+      line-height: 19px;
+      font-weight: 600;
+    }
+  }
 
+  &[data-selected=true] {
+    border-color: @primary-color;
+
+    .PollOption-active {
+      background-color: @primary-color;
+    }
+
+    label span {
+      color: contrast(@primary-color);
+    }
+  }
+}
 /* Checkbox */
-.PollBar input[type="checkbox"] {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-}
+.PollBar label.checkbox {
+  margin-bottom: 0;
 
-.PollBar input[type="checkbox"]:checked ~ .checkmark:after {
-  display: block;
-}
+  input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
 
-/* Checkmark */
-.PollBar .checkmark {
-  position: absolute;
-  margin-left: 10px;
-  margin-top: 11px;
-  top: 0;
-  left: 0;
-  height: 20px;
-  width: 20px;
-  background-color: #e8ecef;
-  border-radius: 5px;
-}
+    &:checked ~ .checkmark:after {
+      display: block;
+    }
+  }
 
-.PollBar .checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
-  left: 9px;
-  top: 5px;
-  width: 5px;
-  height: 10px;
-  border: solid white;
-  border-width: 0 3px 3px 0;
-  -webkit-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  transform: rotate(45deg);
+  .checkmark {
+    position: absolute;
+    margin-left: 10px;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: #e8ecef;
+    border: 1px solid;
+    border-radius: 4px;
+
+    &:after {
+      content: "";
+      position: absolute;
+      display: none;
+      left: 7px;
+      top: 2.5px;
+      width: 5px;
+      height: 10px;
+      border: solid black;
+      border-width: 0 3px 3px 0;
+      -webkit-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      transform: rotate(45deg);
+    }
+  }
 }
 
 .PollDiscussionModal .Form-group {
   margin-top: 5px;
-}
 
-.PollDiscussionModal .Form-group.hide {
-  display: none;
-}
+  &.hide {
+    display: none;
+  }
 
-.PollDiscussionModal .Form-group fieldset {
-  float: left; 
-  width: 90%;
+  fieldset {
+    float: left;
+    width: 90%;
+  }
 }
 
 /* Option remove */
@@ -121,14 +138,36 @@
   text-decoration: none;
   float: left;
   margin: 5px;
+
+  &.disabled .TagLabel.untagged {
+    border-color: #aaa;
+    color: #aaa;
+    cursor: not-allowed;
+  }
 }
 
-.Option-remove.disabled .TagLabel.untagged {
-  border-color: #aaa;
-  color: #aaa;
-  cursor: not-allowed;
+.Poll-answer-input {
+  max-width: 80%
 }
 
+.Poll-answer-button {
+  float: right;
+  border-width: 1px;
+  border-color: #000;
+  border-style: dotted;
+  padding-right: 7px;
+}
+
+.DiscussionComposer-poll {
+  margin-right: 15px;
+  vertical-align: 2px;
+
+  span {
+    background: transparent;
+    border: 1px dotted @muted-color;
+    color: @muted-color;
+  }
+}
 
 .Option-remove .TagLabel.untagged {
   border-color: #e43232;
@@ -145,4 +184,13 @@
 
 .clear {
   clear: both;
+}
+
+@keyframes slideIn {
+  from {
+    width: 0
+  }
+  to {
+    width: var(--width);
+  }
 }

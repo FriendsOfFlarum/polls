@@ -5,13 +5,13 @@ import PollVote from 'reflar/polls/components/PollVote';
 
 export default function() {
   extend(CommentPost.prototype, 'content', function(content) {
-    const discussion = this.props.post.discussion(); 
+    const discussion = this.props.post.discussion();
 
-    if (discussion.reflarPolls() && this.props.post.number() == 1 && !this.props.post.isHidden()) {
+    if (discussion.Poll() && this.props.post.number() === 1 && !this.props.post.isHidden()) {
       this.subtree.invalidate();
         
       content.push(PollVote.component({
-        poll: discussion.reflarPolls()
+        poll: discussion.Poll()
       }));
     }
   });

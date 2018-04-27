@@ -16,11 +16,11 @@ import PollModal from 'reflar/polls/components/PollModal';
 
 app.initializers.add('reflar-polls', app => {
   // Relationships
-  app.store.models['reflar-polls-answer'] = Answer;
-  app.store.models['reflar-polls-question'] = Question;
-  app.store.models['reflar-polls-vote'] = Vote;
+  app.store.models.answers = Answer;
+  app.store.models.questions = Question;
+  app.store.models.votes = Vote;
 
-  Discussion.prototype.reflarPolls = Model.hasOne('reflarPolls');
+  Discussion.prototype.Poll = Model.hasOne('Poll');
   Post.prototype.canEditPoll = Model.attribute('canEditPoll');
 
   const pollModal = new PollModal();
@@ -31,7 +31,7 @@ app.initializers.add('reflar-polls', app => {
 
   // Add button to DiscussionComposer header
   extend(DiscussionComposer.prototype, 'headerItems', function(items) {
-    items.add('polls', (<a className="DiscussionComposer-changeTags" onclick={this.addPoll}><span className="TagLabel">Add poll</span></a>), 1);
+    items.add('polls', (<a className="DiscussionComposer-poll" onclick={this.addPoll}><span className="TagLabel">{app.translator.trans('reflar-polls.forum.composer_discussion.add_poll')}</span></a>), 1);
   });
 
   PollDiscussion();
