@@ -492,7 +492,7 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Co
                                                 null,
                                                 m(
                                                     'span',
-                                                    { style: percent !== 100 && 'color: #000000', className: 'PollPercent' },
+                                                    { className: percent !== 100 ? 'PollPercent PollPercent--option' : 'PollPercent' },
                                                     percent,
                                                     '%'
                                                 )
