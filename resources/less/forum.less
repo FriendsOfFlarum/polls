@@ -22,6 +22,8 @@
   top: 0;
   width: var(--width, 0);
   background-color: @secondary-color;
+
+  animation: slideIn 1s ease-in-out;
 }
 
 .PollOption-active .checkmark {
@@ -182,4 +184,13 @@
 
 .clear {
   clear: both;
+}
+
+@keyframes slideIn {
+  from {
+    width: 0
+  }
+  to {
+    width: var(--width);
+  }
 }
