@@ -40,9 +40,9 @@ class CreateAnswerController extends AbstractCreateController
      * @param ServerRequestInterface $request
      * @param Document               $document
      *
-     * @return mixed|static
-     *
      * @throws PermissionDeniedException
+     *
+     * @return mixed|static
      */
     protected function data(ServerRequestInterface $request, Document $document)
     {
@@ -57,7 +57,7 @@ class CreateAnswerController extends AbstractCreateController
 
             return $answer;
         } else {
-            throw new PermissionDeniedException;
+            throw new PermissionDeniedException();
         }
     }
 }

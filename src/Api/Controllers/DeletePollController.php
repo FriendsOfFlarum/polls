@@ -55,7 +55,7 @@ class DeletePollController extends AbstractDeleteController
         if ($actor->can('edit.polls') || ($actor->id == User::find($request->getParsedBody())->id && $actor->can('selfEditPolls'))) {
             return $this->fields->deletePoll($pollId);
         } else {
-            throw new PermissionDeniedException;
+            throw new PermissionDeniedException();
         }
     }
 }

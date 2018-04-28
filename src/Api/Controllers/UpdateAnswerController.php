@@ -47,9 +47,9 @@ class UpdateAnswerController extends AbstractResourceController
      * @param ServerRequestInterface $request
      * @param Document               $document
      *
-     * @return mixed
-     *
      * @throws PermissionDeniedException
+     *
+     * @return mixed
      */
     protected function data(ServerRequestInterface $request, Document $document)
     {
@@ -65,7 +65,7 @@ class UpdateAnswerController extends AbstractResourceController
 
             return $answer;
         } else {
-            throw new PermissionDeniedException;
+            throw new PermissionDeniedException();
         }
     }
 }
