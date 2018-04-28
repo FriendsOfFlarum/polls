@@ -14,7 +14,7 @@ namespace Reflar\Polls\Listeners;
 
 use Flarum\Api\Controller;
 use Flarum\Api\Serializer\DiscussionSerializer;
-use Flarum\Api\Serializer\PostSerializer;
+use Flarum\Api\Serializer\UserSerializer;
 use Flarum\Core\Discussion;
 use Flarum\Event\ConfigureApiController;
 use Flarum\Event\GetApiRelationship;
@@ -66,8 +66,11 @@ class AddDiscussionPollRelationship
      */
     public function prepareApiAttributes(PrepareApiAttributes $event)
     {
-        if ($event->isSerializer(PostSerializer::class)) {
-            $event->attributes['canEditPoll'] = $event->actor->can('edit.polls') || $event->actor->id == $event->model->user_id;
+        if ($event->isSerializer(UserSerializer::class)) {
+            $event->attributes['canEditPolls'] = $event->actor->can('discussion.polls');
+            $event->attributes['canStartPolls'] = $event->actor->can('startPolls');
+            $event->attributes['canSelfEditPolls'] = $event->actor->can('selfEditPolls');
+            $event->attributes['canVote'] = $event->actor->can('votePolls');
         }
     }
 

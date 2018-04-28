@@ -13,6 +13,8 @@
 namespace Reflar\Polls\Api\Controllers;
 
 use Flarum\Api\Controller\AbstractCreateController;
+use Flarum\Core\Exception\PermissionDeniedException;
+use Flarum\Core\User;
 use Psr\Http\Message\ServerRequestInterface;
 use Reflar\Polls\Answer;
 use Reflar\Polls\Api\Serializers\AnswerSerializer;
@@ -39,6 +41,8 @@ class CreateAnswerController extends AbstractCreateController
      * @param Document               $document
      *
      * @return mixed|static
+     *
+     * @throws PermissionDeniedException
      */
     protected function data(ServerRequestInterface $request, Document $document)
     {
@@ -47,11 +51,13 @@ class CreateAnswerController extends AbstractCreateController
         $poll = Question::find($data['poll_id']);
         $answer = Answer::build($data['answer']);
 
-        if ($actor->can('edit.polls') || $actor->id === $poll->user_id) {
+        if ($actor->can('edit.polls') || ($actor->id == User::find($data['user_id'])->id && $actor->can('selfEditPolls'))) {
             $this->validator->assertValid(['answer' => $data['answer']]);
             $poll->answers()->save($answer);
-        }
 
-        return $answer;
+            return $answer;
+        } else {
+            throw new PermissionDeniedException;
+        }
     }
 }

@@ -30,6 +30,8 @@ System.register('reflar/polls/components/EditPollModal', ['flarum/extend', 'flar
 
                         this.question = m.prop(this.props.poll.question());
 
+                        this.pollCreator = this.props.poll.store.data.users[Object.keys(this.props.poll.store.data.users)[0]];
+
                         this.newAnswer = m.prop('');
                     }
                 }, {
@@ -122,7 +124,8 @@ System.register('reflar/polls/components/EditPollModal', ['flarum/extend', 'flar
                                 url: app.forum.attribute('apiUrl') + '/answers',
                                 data: {
                                     answer: this.newAnswer(),
-                                    poll_id: this.props.poll.id()
+                                    poll_id: this.props.poll.id(),
+                                    user_id: this.pollCreator.id()
                                 }
                             }).then(function (response) {
                                 _this3.answers.push(response);
@@ -141,7 +144,8 @@ System.register('reflar/polls/components/EditPollModal', ['flarum/extend', 'flar
 
                         app.request({
                             method: 'DELETE',
-                            url: app.forum.attribute('apiUrl') + '/answers/' + option.data.id
+                            url: app.forum.attribute('apiUrl') + '/answers/' + option.data.id,
+                            data: this.pollCreator.id()
                         });
                         this.answers.some(function (answer, i) {
                             if (answer.data.id === option.data.id) {
@@ -156,7 +160,10 @@ System.register('reflar/polls/components/EditPollModal', ['flarum/extend', 'flar
                         app.request({
                             method: 'PATCH',
                             url: app.forum.attribute('apiUrl') + '/answers/' + answerToUpdate.data.id,
-                            data: value
+                            data: {
+                                answer: value,
+                                user_id: this.pollCreator.id()
+                            }
                         });
                         this.answers.some(function (answer) {
                             if (answer.data.id === answerToUpdate.data.id) {
@@ -181,7 +188,10 @@ System.register('reflar/polls/components/EditPollModal', ['flarum/extend', 'flar
                         app.request({
                             method: 'PATCH',
                             url: app.forum.attribute('apiUrl') + '/questions/' + this.props.poll.id(),
-                            data: question
+                            data: {
+                                question: question,
+                                user_id: this.pollCreator.id()
+                            }
                         });
                         this.question = m.prop(question);
                         m.redraw();
@@ -400,14 +410,15 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
 });;
 'use strict';
 
-System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Component', 'flarum/utils/classList', 'flarum/components/LogInModal'], function (_export, _context) {
+System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/components/Alert', 'flarum/Component', 'flarum/utils/classList', 'flarum/components/LogInModal'], function (_export, _context) {
     "use strict";
 
-    var extend, override, Component, classList, LogInModal, PollVote;
+    var extend, Alert, Component, classList, LogInModal, PollVote;
     return {
         setters: [function (_flarumExtend) {
             extend = _flarumExtend.extend;
-            override = _flarumExtend.override;
+        }, function (_flarumComponentsAlert) {
+            Alert = _flarumComponentsAlert.default;
         }, function (_flarumComponent) {
             Component = _flarumComponent.default;
         }, function (_flarumUtilsClassList) {
@@ -432,13 +443,14 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Co
                         this.poll = this.props.poll;
                         this.votes = [];
                         this.voted = m.prop(false);
+                        this.user = app.session.user;
 
                         this.answers = this.poll ? this.poll.answers() : [];
 
-                        if (app.session.user !== undefined) {
+                        if (this.user !== undefined) {
                             app.store.find('votes', {
                                 poll_id: this.poll.id(),
-                                user_id: app.session.user.id()
+                                user_id: this.user.id()
                             }).then(function (data) {
                                 if (data[0] !== undefined) {
                                     _this2.voted(data[0]);
@@ -551,18 +563,29 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Co
                     }
                 }, {
                     key: 'addVote',
-                    value: function addVote(answer) {
-                        if (app.session.user === undefined) {
-                            app.modal.show(new LogInModal());
-                            return;
-                        } else {
-                            app.store.createRecord('votes').save({
-                                poll_id: this.poll.id(),
-                                user_id: app.session.user.id(),
-                                option_id: answer
-                            }).then(function () {
-                                location.reload();
+                    value: function addVote(answer, el) {
+                        if (!this.user.canVote()) {
+                            var alert = new Alert({
+                                type: 'error',
+                                children: app.translator.trans('core.lib.error.permission_denied_message')
                             });
+                            app.alerts.clear();
+                            setTimeout(function () {
+                                el.srcElement.checked = false;
+                                app.alerts.show(alert);
+                            }, 195);
+                        } else {
+                            if (this.user === undefined) {
+                                app.modal.show(new LogInModal());
+                                return;
+                            } else {
+                                app.store.createRecord('votes').save({
+                                    poll_id: this.poll.id(),
+                                    option_id: answer
+                                }).then(function () {
+                                    location.reload();
+                                });
+                            }
                         }
                     }
                 }]);
@@ -575,90 +598,78 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Co
 });;
 'use strict';
 
-System.register('reflar/polls/helpers/sortByAttribute', [], function (_export, _context) {
+System.register('reflar/polls/main', ['flarum/app', 'flarum/extend', 'flarum/components/DiscussionComposer', 'flarum/Model', 'reflar/polls/models/Question', 'reflar/polls/models/Answer', 'reflar/polls/models/Vote', 'flarum/models/Discussion', 'flarum/models/User', 'reflar/polls/PollControl', 'reflar/polls/PollDiscussion', 'reflar/polls/components/PollModal'], function (_export, _context) {
     "use strict";
 
-    _export('default', function (items) {
-        var attr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'sort';
-
-        return items.sort(function (a, b) {
-            return a[attr]() - b[attr]();
-        });
-    });
-
+    var app, extend, override, DiscussionComposer, Model, Question, Answer, Vote, Discussion, User, PollControl, PollDiscussion, PollModal;
     return {
-        setters: [],
-        execute: function () {}
+        setters: [function (_flarumApp) {
+            app = _flarumApp.default;
+        }, function (_flarumExtend) {
+            extend = _flarumExtend.extend;
+            override = _flarumExtend.override;
+        }, function (_flarumComponentsDiscussionComposer) {
+            DiscussionComposer = _flarumComponentsDiscussionComposer.default;
+        }, function (_flarumModel) {
+            Model = _flarumModel.default;
+        }, function (_reflarPollsModelsQuestion) {
+            Question = _reflarPollsModelsQuestion.default;
+        }, function (_reflarPollsModelsAnswer) {
+            Answer = _reflarPollsModelsAnswer.default;
+        }, function (_reflarPollsModelsVote) {
+            Vote = _reflarPollsModelsVote.default;
+        }, function (_flarumModelsDiscussion) {
+            Discussion = _flarumModelsDiscussion.default;
+        }, function (_flarumModelsUser) {
+            User = _flarumModelsUser.default;
+        }, function (_reflarPollsPollControl) {
+            PollControl = _reflarPollsPollControl.default;
+        }, function (_reflarPollsPollDiscussion) {
+            PollDiscussion = _reflarPollsPollDiscussion.default;
+        }, function (_reflarPollsComponentsPollModal) {
+            PollModal = _reflarPollsComponentsPollModal.default;
+        }],
+        execute: function () {
+
+            app.initializers.add('reflar-polls', function (app) {
+                // Relationships
+                app.store.models.answers = Answer;
+                app.store.models.questions = Question;
+                app.store.models.votes = Vote;
+
+                Discussion.prototype.Poll = Model.hasOne('Poll');
+
+                User.prototype.canEditPolls = Model.attribute('canEditPolls');
+                User.prototype.canStartPolls = Model.attribute('canStartPolls');
+                User.prototype.canSelfEditPolls = Model.attribute('canSelfEditPolls');
+                User.prototype.canVote = Model.attribute('canVote');
+
+                var pollModal = new PollModal();
+
+                DiscussionComposer.prototype.addPoll = function () {
+                    app.modal.show(pollModal);
+                };
+
+                // Add button to DiscussionComposer header
+                extend(DiscussionComposer.prototype, 'headerItems', function (items) {
+                    if (app.session.user.canStartPolls()) {
+                        items.add('polls', m(
+                            'a',
+                            { className: 'DiscussionComposer-poll', onclick: this.addPoll },
+                            m(
+                                'span',
+                                { className: 'TagLabel' },
+                                app.translator.trans('reflar-polls.forum.composer_discussion.add_poll')
+                            )
+                        ), 1);
+                    }
+                });
+
+                PollDiscussion();
+                PollControl();
+            });
+        }
     };
-});;
-'use strict';
-
-System.register('reflar/polls/main', ['flarum/app', 'flarum/extend', 'flarum/components/DiscussionComposer', 'flarum/Model', 'reflar/polls/models/Question', 'reflar/polls/models/Answer', 'reflar/polls/models/Vote', 'flarum/models/Discussion', 'flarum/models/Post', 'reflar/polls/PollControl', 'reflar/polls/PollDiscussion', 'reflar/polls/components/PollModal'], function (_export, _context) {
-  "use strict";
-
-  var app, extend, override, DiscussionComposer, Model, Question, Answer, Vote, Discussion, Post, PollControl, PollDiscussion, PollModal;
-  return {
-    setters: [function (_flarumApp) {
-      app = _flarumApp.default;
-    }, function (_flarumExtend) {
-      extend = _flarumExtend.extend;
-      override = _flarumExtend.override;
-    }, function (_flarumComponentsDiscussionComposer) {
-      DiscussionComposer = _flarumComponentsDiscussionComposer.default;
-    }, function (_flarumModel) {
-      Model = _flarumModel.default;
-    }, function (_reflarPollsModelsQuestion) {
-      Question = _reflarPollsModelsQuestion.default;
-    }, function (_reflarPollsModelsAnswer) {
-      Answer = _reflarPollsModelsAnswer.default;
-    }, function (_reflarPollsModelsVote) {
-      Vote = _reflarPollsModelsVote.default;
-    }, function (_flarumModelsDiscussion) {
-      Discussion = _flarumModelsDiscussion.default;
-    }, function (_flarumModelsPost) {
-      Post = _flarumModelsPost.default;
-    }, function (_reflarPollsPollControl) {
-      PollControl = _reflarPollsPollControl.default;
-    }, function (_reflarPollsPollDiscussion) {
-      PollDiscussion = _reflarPollsPollDiscussion.default;
-    }, function (_reflarPollsComponentsPollModal) {
-      PollModal = _reflarPollsComponentsPollModal.default;
-    }],
-    execute: function () {
-
-      app.initializers.add('reflar-polls', function (app) {
-        // Relationships
-        app.store.models.answers = Answer;
-        app.store.models.questions = Question;
-        app.store.models.votes = Vote;
-
-        Discussion.prototype.Poll = Model.hasOne('Poll');
-        Post.prototype.canEditPoll = Model.attribute('canEditPoll');
-
-        var pollModal = new PollModal();
-
-        DiscussionComposer.prototype.addPoll = function () {
-          app.modal.show(pollModal);
-        };
-
-        // Add button to DiscussionComposer header
-        extend(DiscussionComposer.prototype, 'headerItems', function (items) {
-          items.add('polls', m(
-            'a',
-            { className: 'DiscussionComposer-poll', onclick: this.addPoll },
-            m(
-              'span',
-              { className: 'TagLabel' },
-              app.translator.trans('reflar-polls.forum.composer_discussion.add_poll')
-            )
-          ), 1);
-        });
-
-        PollDiscussion();
-        PollControl();
-      });
-    }
-  };
 });;
 'use strict';
 
@@ -767,8 +778,9 @@ System.register('reflar/polls/PollControl', ['flarum/extend', 'flarum/utils/Post
         extend(PostControls, 'moderationControls', function (items, post) {
             var discussion = post.discussion();
             var poll = discussion.Poll();
+            var user = app.session.user;
 
-            if (discussion.Poll() && post.canEditPoll() && post.number() === 1) {
+            if (discussion.Poll() && (user.canEditPolls() || post.user().canSelfEditPolls() && post.user().id() === user.id()) && post.number() === 1) {
                 items.add('editPoll', [m(Button, {
                     icon: 'check-square',
                     className: 'reflar-PollButton',
@@ -785,7 +797,8 @@ System.register('reflar/polls/PollControl', ['flarum/extend', 'flarum/utils/Post
                         if (confirm(app.translator.trans('reflar-polls.forum.moderation.delete_confirm'))) {
                             app.request({
                                 url: app.forum.attribute('apiUrl') + '/questions/' + poll.id(),
-                                method: 'DELETE'
+                                method: 'DELETE',
+                                data: poll.store.data.users[Object.keys(poll.store.data.users)[0]].id()
                             }).then(function () {
                                 location.reload();
                             });

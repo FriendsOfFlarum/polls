@@ -1,4 +1,10 @@
 reflar-polls:
+  admin:
+    permissions:
+      moderate: Edit & remove polls
+      start: Start a poll
+      vote: Vote on polls
+      self_edit: Allow poll editing
   forum:
     modal:
       min: You must include a minimum of 2 answers

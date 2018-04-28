@@ -13,6 +13,8 @@
 namespace Reflar\Polls\Api\Controllers;
 
 use Flarum\Api\Controller\AbstractResourceController;
+use Flarum\Core\Exception\PermissionDeniedException;
+use Flarum\Core\User;
 use Psr\Http\Message\ServerRequestInterface;
 use Reflar\Polls\Api\Serializers\QuestionSerializer;
 use Reflar\Polls\Question;
@@ -42,18 +44,23 @@ class UpdatePollController extends AbstractResourceController
      * @param ServerRequestInterface $request
      * @param Document               $document
      *
-     * @return array|mixed
+     * @return mixed
+     *
+     * @throws PermissionDeniedException
      */
     protected function data(ServerRequestInterface $request, Document $document)
     {
+        $data = $request->getParsedBody();
         $actor = $request->getAttribute('actor');
         $poll = Question::find(array_get($request->getQueryParams(), 'id'));
 
-        if ($actor->can('edit.polls') || $actor->id == $poll->post()->user_id) {
-            $poll->question = $request->getParsedBody();
+        if ($actor->can('edit.polls') || $actor->id == (User::find($data['user_id'])->id && $actor->can('selfEditPolls'))) {
+            $poll->question = $data['question'];
             $poll->save();
 
             return $poll;
+        } else {
+            throw new PermissionDeniedException;
         }
     }
 }

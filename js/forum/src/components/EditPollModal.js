@@ -9,6 +9,8 @@ export default class EditPollModal extends Modal {
 
         this.question = m.prop(this.props.poll.question());
 
+        this.pollCreator = this.props.poll.store.data.users[Object.keys(this.props.poll.store.data.users)[0]]
+
         this.newAnswer = m.prop('')
     }
 
@@ -80,7 +82,8 @@ export default class EditPollModal extends Modal {
                 url: app.forum.attribute('apiUrl') + '/answers',
                 data: {
                     answer: this.newAnswer(),
-                    poll_id: this.props.poll.id()
+                    poll_id: this.props.poll.id(),
+                    user_id: this.pollCreator.id()
                 }
             }).then(
                 response => {
@@ -98,7 +101,8 @@ export default class EditPollModal extends Modal {
     removeOption(option) {
         app.request({
             method: 'DELETE',
-            url: app.forum.attribute('apiUrl') + '/answers/' + option.data.id
+            url: app.forum.attribute('apiUrl') + '/answers/' + option.data.id,
+            data: this.pollCreator.id()
         });
         this.answers.some((answer, i) => {
             if (answer.data.id === option.data.id) {
@@ -112,7 +116,10 @@ export default class EditPollModal extends Modal {
         app.request({
             method: 'PATCH',
             url: app.forum.attribute('apiUrl') + '/answers/' + answerToUpdate.data.id,
-            data: value
+            data: {
+                answer: value,
+                user_id: this.pollCreator.id()
+            }
         });
         this.answers.some((answer) => {
             if (answer.data.id === answerToUpdate.data.id) {
@@ -135,7 +142,10 @@ export default class EditPollModal extends Modal {
         app.request({
             method: 'PATCH',
             url: app.forum.attribute('apiUrl') + '/questions/' + this.props.poll.id(),
-            data: question
+            data: {
+                question: question,
+                user_id: this.pollCreator.id()
+            }
         });
         this.question = m.prop(question)
         m.redraw()

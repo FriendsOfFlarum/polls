@@ -1,4 +1,5 @@
-import {extend, override} from 'flarum/extend';
+import {extend} from 'flarum/extend';
+import Alert from 'flarum/components/Alert'
 import Component from 'flarum/Component';
 import classList from 'flarum/utils/classList';
 import LogInModal from 'flarum/components/LogInModal'
@@ -8,13 +9,14 @@ export default class PollVote extends Component {
         this.poll = this.props.poll;
         this.votes = [];
         this.voted = m.prop(false);
+        this.user = app.session.user
 
         this.answers = this.poll ? this.poll.answers() : [];
 
-        if (app.session.user !== undefined) {
+        if (this.user !== undefined) {
             app.store.find('votes', {
                 poll_id: this.poll.id(),
-                user_id: app.session.user.id()
+                user_id: this.user.id()
             }).then((data) => {
                 if (data[0] !== undefined) {
                     this.voted(data[0])
@@ -65,11 +67,11 @@ export default class PollVote extends Component {
                         this.answers.map((item) => (
                             <div className="PollOption">
                                 <div className='PollBar'>
-                                    <label className="checkbox">
-                                        <input type="checkbox" onchange={this.addVote.bind(this, item.id())}/>
-                                        <span>{item.answer()}</span>
-                                        <span className="checkmark"/>
-                                    </label>
+                                        <label className="checkbox">
+                                            <input type="checkbox" onchange={this.addVote.bind(this, item.id())}/>
+                                            <span>{item.answer()}</span>
+                                            <span className="checkmark"/>
+                                        </label>
                                 </div>
                             </div>
                         ))
@@ -92,18 +94,29 @@ export default class PollVote extends Component {
         );
     }
 
-    addVote(answer) {
-        if (app.session.user === undefined) {
-            app.modal.show(new LogInModal())
-            return
-        } else {
-            app.store.createRecord('votes').save({
-                poll_id: this.poll.id(),
-                user_id: app.session.user.id(),
-                option_id: answer
-            }).then(() => {
-                location.reload()
+    addVote(answer, el) {
+        if (!this.user.canVote()) {
+            var alert = new Alert({
+                type: 'error',
+                children: app.translator.trans('core.lib.error.permission_denied_message')
             })
+            app.alerts.clear()
+            setTimeout(function() {
+                el.srcElement.checked = false
+                app.alerts.show(alert)
+            }, 195)
+        } else {
+            if (this.user === undefined) {
+                app.modal.show(new LogInModal())
+                return
+            } else {
+                app.store.createRecord('votes').save({
+                    poll_id: this.poll.id(),
+                    option_id: answer
+                }).then(() => {
+                    location.reload()
+                })
+            }
         }
     }
 }

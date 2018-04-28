@@ -8,8 +8,9 @@ export default function () {
     extend(PostControls, 'moderationControls', function (items, post) {
         const discussion = post.discussion();
         const poll = discussion.Poll();
+        const user = app.session.user
 
-        if (discussion.Poll() && post.canEditPoll() && post.number() === 1) {
+        if (discussion.Poll() && (user.canEditPolls() || (post.user().canSelfEditPolls()) && post.user().id() === user.id()) && post.number() === 1) {
             items.add('editPoll', [
                 m(Button, {
                     icon: 'check-square',
@@ -29,7 +30,8 @@ export default function () {
                         if (confirm(app.translator.trans('reflar-polls.forum.moderation.delete_confirm'))) {
                             app.request({
                                 url: app.forum.attribute('apiUrl') + '/questions/' + poll.id(),
-                                method: 'DELETE'
+                                method: 'DELETE',
+                                data: poll.store.data.users[Object.keys(poll.store.data.users)[0]].id()
                             }).then(() => {
                                 location.reload()
                             })

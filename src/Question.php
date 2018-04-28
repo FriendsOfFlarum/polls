@@ -13,6 +13,7 @@
 namespace Reflar\Polls;
 
 use Flarum\Core\Discussion;
+use Flarum\Core\User;
 use Flarum\Database\AbstractModel;
 
 class Question extends AbstractModel
