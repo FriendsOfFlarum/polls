@@ -528,7 +528,7 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/Co
                                             m('div', { style: '--width: ' + percent + '%', className: 'PollOption-active' }),
                                             m(
                                                 'label',
-                                                null,
+                                                { className: 'PollAnswer' },
                                                 m(
                                                     'span',
                                                     null,

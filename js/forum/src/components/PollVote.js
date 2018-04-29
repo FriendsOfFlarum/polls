@@ -55,7 +55,7 @@ export default class PollVote extends Component {
                                             }
                                         }>
                                         <div style={'--width: ' + percent + '%'} className="PollOption-active"/>
-                                        <label><span>{item.answer()}</span></label>
+                                        <label className="PollAnswer"><span>{item.answer()}</span></label>
                                         <label><span className={percent !== 100 ? 'PollPercent PollPercent--option' : 'PollPercent'}>{percent}%</span></label>
                                     </div>
                                 </div>
