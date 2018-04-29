@@ -11,7 +11,7 @@ System.register('reflar/polls/addPollBadge', ['flarum/extend', 'flarum/models/Di
                     type: 'poll',
                     label: app.translator.trans('reflar-polls.forum.tooltip.badge'),
                     icon: 'signal'
-                }), 10);
+                }), 5);
             }
         });
     }

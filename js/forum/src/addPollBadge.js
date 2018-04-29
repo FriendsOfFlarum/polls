@@ -9,7 +9,7 @@ export default function addPollBadge() {
                 type: 'poll',
                 label: app.translator.trans('reflar-polls.forum.tooltip.badge'),
                 icon: 'signal'
-            }), 10);
+            }), 5);
         }
     });
 }
