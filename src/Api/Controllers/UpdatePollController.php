@@ -44,9 +44,9 @@ class UpdatePollController extends AbstractResourceController
      * @param ServerRequestInterface $request
      * @param Document               $document
      *
-     * @return mixed
-     *
      * @throws PermissionDeniedException
+     *
+     * @return mixed
      */
     protected function data(ServerRequestInterface $request, Document $document)
     {
@@ -60,7 +60,7 @@ class UpdatePollController extends AbstractResourceController
 
             return $poll;
         } else {
-            throw new PermissionDeniedException;
+            throw new PermissionDeniedException();
         }
     }
 }

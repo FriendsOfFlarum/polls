@@ -4,17 +4,17 @@ use Illuminate\Database\ConnectionInterface;
 
 $permissionAttributes = [
     [
-        'group_id' => 3,
-        'permission' => 'startPolls'
+        'group_id'   => 3,
+        'permission' => 'startPolls',
     ],
     [
-        'group_id' => 3,
-        'permission' => 'votePolls'
+        'group_id'   => 3,
+        'permission' => 'votePolls',
     ],
     [
-        'group_id' => 3,
-        'permission' => 'selfEditPolls'
-    ]
+        'group_id'   => 3,
+        'permission' => 'selfEditPolls',
+    ],
 ];
 
 return [
@@ -32,5 +32,5 @@ return [
         foreach ($permissionAttributes as $permissionAttribute) {
             $db->table('permissions')->where($permissionAttribute)->delete();
         }
-    }
+    },
 ];
