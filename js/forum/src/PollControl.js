@@ -10,7 +10,7 @@ export default function () {
         const poll = discussion.Poll();
         const user = app.session.user
 
-        if (discussion.Poll() && (user.canEditPolls() || (post.user().canSelfEditPolls()) && post.user().id() === user.id()) && post.number() === 1) {
+        if (discussion.Poll() && ((user !== undefined && user.canEditPolls()) || (post.user().canSelfEditPolls()) && post.user().id() === user.id()) && post.number() === 1) {
             items.add('editPoll', [
                 m(Button, {
                     icon: 'check-square',

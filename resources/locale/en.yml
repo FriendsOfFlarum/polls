@@ -6,6 +6,7 @@ reflar-polls:
       vote: Vote on polls
       self_edit: Allow poll editing
   forum:
+    no_permission: You don't have permission to vote
     modal:
       min: You must include a minimum of 2 answers
       max: You can have a maximum of 10 answers
@@ -26,3 +27,4 @@ reflar-polls:
     tooltip:
       votes: votes
       vote: vote
+      badge: Poll

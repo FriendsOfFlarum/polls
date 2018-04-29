@@ -10,9 +10,10 @@ import Vote from 'reflar/polls/models/Vote';
 import Discussion from 'flarum/models/Discussion';
 import User from 'flarum/models/User';
 
-import PollControl from 'reflar/polls/PollControl';
-import PollDiscussion from 'reflar/polls/PollDiscussion';
-import PollModal from 'reflar/polls/components/PollModal';
+import addPollBadege from './addPollBadge'
+import PollControl from './PollControl';
+import PollDiscussion from './PollDiscussion';
+import PollModal from './components/PollModal';
 
 app.initializers.add('reflar-polls', app => {
     // Relationships
@@ -41,6 +42,7 @@ app.initializers.add('reflar-polls', app => {
         }
     });
 
+    addPollBadege();
     PollDiscussion();
     PollControl();
 });

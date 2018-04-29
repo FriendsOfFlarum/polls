@@ -1,5 +1,4 @@
 import {extend} from 'flarum/extend';
-import Alert from 'flarum/components/Alert'
 import Component from 'flarum/Component';
 import classList from 'flarum/utils/classList';
 import LogInModal from 'flarum/components/LogInModal'
@@ -14,16 +13,20 @@ export default class PollVote extends Component {
         this.answers = this.poll ? this.poll.answers() : [];
 
         if (this.user !== undefined) {
-            app.store.find('votes', {
-                poll_id: this.poll.id(),
-                user_id: this.user.id()
-            }).then((data) => {
-                if (data[0] !== undefined) {
-                    this.voted(data[0])
-                }
+            if (!this.user.canVote()) {
+                this.voted(true)
+            } else {
+                app.store.find('votes', {
+                    poll_id: this.poll.id(),
+                    user_id: this.user.id()
+                }).then((data) => {
+                    if (data[0] !== undefined) {
+                        this.voted(data[0])
+                    }
 
-                m.redraw();
-            });
+                    m.redraw();
+                });
+            }
         }
 
     }
@@ -35,7 +38,10 @@ export default class PollVote extends Component {
                     <h4>{this.poll.question()}</h4>
                     {
                         this.answers.map((item) => {
-                            const voted = this.voted().option_id() === item.data.attributes.id;
+                            let voted = false;
+                            if (this.voted() !== true) {
+                                voted = this.voted().option_id() === item.data.attributes.id;
+                            }
                             const percent = item.percent();
                             return (
                                 <div className='PollOption PollVoted'>
@@ -44,11 +50,11 @@ export default class PollVote extends Component {
                                         className='PollBar'
                                         data-selected={voted}
                                         config={
-                                            function(element) {
+                                            function (element) {
                                                 $(element).tooltip({placement: 'right'});
                                             }
-                                    }>
-                                        <div style={'--width: ' + percent + '%'} className="PollOption-active" />
+                                        }>
+                                        <div style={'--width: ' + percent + '%'} className="PollOption-active"/>
                                         <label><span>{item.answer()}</span></label>
                                         <label><span className={percent !== 100 ? 'PollPercent PollPercent--option' : 'PollPercent'}>{percent}%</span></label>
                                     </div>
@@ -56,7 +62,11 @@ export default class PollVote extends Component {
                             )
                         })
                     }
-                    <div className="clear" />
+                    <div className="clear"/>
+                    {!this.user.canVote() ? (
+                        <div className="helpText">{app.translator.trans('reflar-polls.forum.no_permission')}</div>
+                    ) : ''}
+                    <div className="clear"/>
                 </div>
             );
         } else {
@@ -67,11 +77,11 @@ export default class PollVote extends Component {
                         this.answers.map((item) => (
                             <div className="PollOption">
                                 <div className='PollBar'>
-                                        <label className="checkbox">
-                                            <input type="checkbox" onchange={this.addVote.bind(this, item.id())}/>
-                                            <span>{item.answer()}</span>
-                                            <span className="checkmark"/>
-                                        </label>
+                                    <label className="checkbox">
+                                        <input type="checkbox" onchange={this.addVote.bind(this, item.id())}/>
+                                        <span>{item.answer()}</span>
+                                        <span className="checkmark"/>
+                                    </label>
                                 </div>
                             </div>
                         ))
@@ -95,28 +105,16 @@ export default class PollVote extends Component {
     }
 
     addVote(answer, el) {
-        if (!this.user.canVote()) {
-            var alert = new Alert({
-                type: 'error',
-                children: app.translator.trans('core.lib.error.permission_denied_message')
-            })
-            app.alerts.clear()
-            setTimeout(function() {
-                el.srcElement.checked = false
-                app.alerts.show(alert)
-            }, 195)
+        if (this.user === undefined) {
+            app.modal.show(new LogInModal())
+            el.srcElement.checked = false
         } else {
-            if (this.user === undefined) {
-                app.modal.show(new LogInModal())
-                return
-            } else {
-                app.store.createRecord('votes').save({
-                    poll_id: this.poll.id(),
-                    option_id: answer
-                }).then(() => {
-                    location.reload()
-                })
-            }
+            app.store.createRecord('votes').save({
+                poll_id: this.poll.id(),
+                option_id: answer
+            }).then(() => {
+                location.reload()
+            })
         }
     }
 }
