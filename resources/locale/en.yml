@@ -1,5 +1,12 @@
 reflar-polls:
+  admin:
+    permissions:
+      moderate: Edit & remove polls
+      start: Start a poll
+      vote: Vote on polls
+      self_edit: Allow poll editing
   forum:
+    no_permission: You don't have permission to vote
     modal:
       min: You must include a minimum of 2 answers
       max: You can have a maximum of 10 answers
@@ -17,3 +24,7 @@ reflar-polls:
     composer_discussion:
       add_poll: Add Poll
       edit: => reflar-polls.forum.moderation.edit
+    tooltip:
+      votes: votes
+      vote: vote
+      badge: Poll

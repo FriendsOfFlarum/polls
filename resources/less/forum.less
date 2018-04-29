@@ -21,7 +21,7 @@
   z-index: 1;
   top: 0;
   width: var(--width, 0);
-  background-color: @secondary-color;
+  background-color: @muted-color;
 
   animation: slideIn 1s ease-in-out;
 }
@@ -37,16 +37,17 @@
   padding-right: 5px;
 }
 
+
 /* PollBar */
 .PollBar {
-  background: #fcfcfc;
+  background: transparent;
   float: left;
   width: 85%;
   padding: 10px 10px 10px 0;
   position: relative;
   margin-left: 15px;
   border-radius: 4px;
-  border: 2px solid @secondary-color;
+  border: 2px solid @muted-color;
   overflow: hidden;
 
   &:hover {
@@ -66,14 +67,14 @@
   }
 
   &[data-selected=true] {
-    border-color: @primary-color;
+    border-color: @secondary-color;
 
     .PollOption-active {
-      background-color: @primary-color;
+      background-color: @secondary-color;
     }
 
-    label span {
-      color: contrast(@primary-color);
+    label .PollAnswer {
+      color: contrast(@secondary-color);
     }
   }
 }
@@ -193,4 +194,8 @@
   to {
     width: var(--width);
   }
+}
+
+.PollPercent--option {
+    color: #868686;
 }

@@ -1,4 +1,4 @@
-import {extend, override} from 'flarum/extend';
+import {extend} from 'flarum/extend';
 import Component from 'flarum/Component';
 import classList from 'flarum/utils/classList';
 import LogInModal from 'flarum/components/LogInModal'
@@ -8,46 +8,65 @@ export default class PollVote extends Component {
         this.poll = this.props.poll;
         this.votes = [];
         this.voted = m.prop(false);
+        this.user = app.session.user
 
         this.answers = this.poll ? this.poll.answers() : [];
 
-        if (app.session.user !== undefined) {
-            app.store.find('votes', {
-                poll_id: this.poll.id(),
-                user_id: app.session.user.id()
-            }).then((data) => {
-                if (data[0] !== undefined) {
-                    this.voted(data[0])
-                }
+        if (this.user !== undefined) {
+            if (!this.user.canVote()) {
+                this.voted(true)
+            } else {
+                app.store.find('votes', {
+                    poll_id: this.poll.id(),
+                    user_id: this.user.id()
+                }).then((data) => {
+                    if (data[0] !== undefined) {
+                        this.voted(data[0])
+                    }
 
-                m.redraw();
-            });
+                    m.redraw();
+                });
+            }
         }
+
     }
 
     voteView() {
-
         if (this.voted() !== false) {
             return (
                 <div>
                     <h4>{this.poll.question()}</h4>
                     {
                         this.answers.map((item) => {
-                            const voted = this.voted().option_id() === item.data.attributes.id;
+                            let voted = false;
+                            if (this.voted() !== true) {
+                                voted = this.voted().option_id() === item.data.attributes.id;
+                            }
                             const percent = item.percent();
-
                             return (
                                 <div className='PollOption PollVoted'>
-                                    <div className='PollBar' data-selected={voted}>
-                                        <div style={'--width: ' + percent + '%'} className="PollOption-active" />
-                                        <label><span>{item.answer()}</span></label>
-                                        <label><span style={percent !== 100 && 'color: #000000'} className='PollPercent'>{percent}%</span></label>
+                                    <div
+                                        title={item.votes() >= 1 ? item.votes() + ' ' + app.translator.trans('reflar-polls.forum.tooltip.vote') : item.votes() + ' ' + app.translator.trans('reflar-polls.forum.tooltip.votes')}
+                                        className='PollBar'
+                                        data-selected={voted}
+                                        config={
+                                            function (element) {
+                                                $(element).tooltip({placement: 'right'});
+                                            }
+                                        }>
+                                        <div style={'--width: ' + percent + '%'} className="PollOption-active"/>
+                                        <label className="PollAnswer"><span>{item.answer()}</span></label>
+                                        <label><span className={percent !== 100 ? 'PollPercent PollPercent--option' : 'PollPercent'}>{percent}%</span></label>
                                     </div>
                                 </div>
                             )
                         })
                     }
-                    <div className="clear" />
+                    <div className="clear"/>
+                    {!this.user.canVote() ? (
+                        <div className="helpText">{app.translator.trans('reflar-polls.forum.no_permission')}</div>
+                    ) : ''}
+                    <div className="clear"/>
                 </div>
             );
         } else {
@@ -85,14 +104,13 @@ export default class PollVote extends Component {
         );
     }
 
-    addVote(answer) {
-        if (app.session.user === undefined) {
+    addVote(answer, el) {
+        if (this.user === undefined) {
             app.modal.show(new LogInModal())
-            return
+            el.srcElement.checked = false
         } else {
             app.store.createRecord('votes').save({
                 poll_id: this.poll.id(),
-                user_id: app.session.user.id(),
                 option_id: answer
             }).then(() => {
                 location.reload()

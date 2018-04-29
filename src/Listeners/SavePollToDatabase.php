@@ -12,6 +12,7 @@
 
 namespace Reflar\Polls\Listeners;
 
+use Flarum\Core\Access\AssertPermissionTrait;
 use Flarum\Event\DiscussionWillBeSaved;
 use Illuminate\Contracts\Events\Dispatcher;
 use Reflar\Polls\Answer;
@@ -20,6 +21,8 @@ use Reflar\Polls\Validators\AnswerValidator;
 
 class SavePollToDatabase
 {
+    use AssertPermissionTrait;
+
     /**
      * @var AnswerValidator
      */
@@ -45,6 +48,8 @@ class SavePollToDatabase
 
     /**
      * @param DiscussionWillBeSaved $event
+     *
+     * @throws \Flarum\Core\Exception\PermissionDeniedException
      */
     public function whenDiscussionWillBeSaved(DiscussionWillBeSaved $event)
     {
@@ -52,6 +57,8 @@ class SavePollToDatabase
 
         // Check if posts data exists in data attributes
         if (isset($event->data['attributes']['poll'])) {
+            $this->assertCan($event->actor, 'startPolls');
+
             $post = $event->data['attributes']['poll'];
 
             if (trim($post['question']) != '') {
