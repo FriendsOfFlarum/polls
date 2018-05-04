@@ -20,7 +20,7 @@ composer require reflar/polls
 - ~~Edit a Poll~~
 - ~~Remove a Poll~~
 - Poll customize settings
-- Expiry date field of a poll
+- ~~Expiry date field of a poll~~
 
 ### Issues 🐛
 
