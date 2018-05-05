@@ -28,17 +28,15 @@ app.initializers.add('reflar-polls', app => {
     User.prototype.canSelfEditPolls = Model.attribute('canSelfEditPolls');
     User.prototype.canVote = Model.attribute('canVote');
 
-    const pollModal = new PollModal();
-
     DiscussionComposer.prototype.addPoll = function () {
-        app.modal.show(pollModal);
+        app.modal.show(new PollModal());
     };
 
     // Add button to DiscussionComposer header
     extend(DiscussionComposer.prototype, 'headerItems', function (items) {
         if (app.session.user.canStartPolls()) {
             items.add('polls', (
-                <a className="DiscussionComposer-poll" onclick={this.addPoll}><span className="TagLabel">{app.translator.trans('reflar-polls.forum.composer_discussion.add_poll')}</span></a>), 1);
+                <a className="DiscussionComposer-poll" onclick={this.addPoll}><span className="PollLabel">{app.translator.trans('reflar-polls.forum.composer_discussion.add_poll')}</span></a>), 1);
         }
     });
 

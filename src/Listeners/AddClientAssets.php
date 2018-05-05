@@ -37,6 +37,7 @@ class AddClientAssets
             $app->addAssets([
                 __DIR__.'/../../js/forum/dist/extension.js',
                 __DIR__.'/../../resources/less/forum.less',
+                __DIR__.'/../../css/forum/dist/DateTimePicker.min.css',
             ]);
 
             $app->addBootstrapper('reflar/polls/main');

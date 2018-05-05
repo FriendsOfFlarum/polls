@@ -13,7 +13,7 @@
 namespace Reflar\Polls\Api\Controllers;
 
 use DateTime;
-use Flarum\Api\Controller\AbstractCreateController;
+use Flarum\Api\Controller\AbstractResourceController;
 use Flarum\Core\Access\AssertPermissionTrait;
 use Flarum\Core\Exception\FloodingException;
 use Flarum\Core\Exception\PermissionDeniedException;
@@ -23,7 +23,7 @@ use Reflar\Polls\Question;
 use Reflar\Polls\Vote;
 use Tobscure\JsonApi\Document;
 
-class CreateVoteController extends AbstractCreateController
+class UpdateVoteController extends AbstractResourceController
 {
     use AssertPermissionTrait;
 
@@ -45,15 +45,17 @@ class CreateVoteController extends AbstractCreateController
     {
         $actor = $request->getAttribute('actor');
 
-        $attributes = array_get($request->getParsedBody(), 'data.attributes', []);
+        $attributes = $request->getParsedBody();
+
+        $this->assertCan($actor, 'votePolls');
 
         $this->assertNotFlooding($actor);
+
+        Vote::where('user_id', $actor->id)->delete();
 
         if (Question::find($attributes['poll_id'])->isEnded()) {
             throw new PermissionDeniedException();
         }
-
-        $this->assertCan($actor, 'votePolls');
 
         $vote = Vote::build($attributes['poll_id'], $actor->id, $attributes['option_id']);
 

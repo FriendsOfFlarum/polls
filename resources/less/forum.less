@@ -2,6 +2,30 @@
   margin: 0;
 }
 
+.VotesModal-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  a {
+    color: @text-color;
+    font-size: 15px;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+    text-decoration: none;
+
+    &:hover .username {
+      text-decoration: underline;
+    }
+  }
+  .Avatar {
+    .Avatar--size(32px);
+    vertical-align: middle;
+    margin-right: 5px;
+  }
+}
+
 /* PollOption */
 .PollOption {
   margin-bottom: 15px;
@@ -37,6 +61,41 @@
   padding-right: 5px;
 }
 
+.PollLabel {
+  font-size: 85%;
+  font-weight: 600;
+  display: inline-block;
+  padding: .1em .5em;
+  border-radius: 4px;
+  background: #e8ecf3;
+  color: #667c99;
+  text-transform: none;
+}
+
+.PollModal-SubmitButton {
+  margin-top: 10px;
+}
+
+.PollModal-Button {
+  margin-bottom: 15px;
+}
+
+.DiscussionComposer-changePoll {
+  margin-right: 15px;
+  vertical-align: 2px;
+}
+
+.CommentPost--Reactions {
+  z-index: 3 !important;
+}
+
+.PublicPollButton {
+  margin: 10px 0px 15px 15px;
+}
+
+.PollInfoText {
+  margin-left: 15px;
+}
 
 /* PollBar */
 .PollBar {
@@ -56,7 +115,7 @@
 
   label {
     position: relative;
-    z-index: 1;
+    z-index: 2;
 
     span {
       padding-left: 15px;
@@ -99,7 +158,6 @@
     left: 0;
     height: 20px;
     width: 20px;
-    background-color: #e8ecef;
     border: 1px solid;
     border-radius: 4px;
 
@@ -107,8 +165,8 @@
       content: "";
       position: absolute;
       display: none;
-      left: 7px;
-      top: 2.5px;
+      left: 6.75px;
+      top: 3px;
       width: 5px;
       height: 10px;
       border: solid black;

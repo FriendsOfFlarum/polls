@@ -1,7 +1,6 @@
 {
     "private": true,
     "devDependencies": {
-        "flarum-gulp": "^0.2.0",
         "gulp": "^3.8.11"
     },
     "dependencies": {

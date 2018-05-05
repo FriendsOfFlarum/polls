@@ -59,17 +59,23 @@ class SavePollToDatabase
         if (isset($event->data['attributes']['poll'])) {
             $this->assertCan($event->actor, 'startPolls');
 
-            $post = $event->data['attributes']['poll'];
+            $attributes = $event->data['attributes']['poll'];
 
-            if (trim($post['question']) != '') {
-                // Add a poll after the disscusion has been created/saved.
-                $discussion->afterSave(function ($discussion) use ($post, $event) {
-                    // Add question to databse
-                    $poll = Question::build($post['question'], $discussion->id, $event->actor->id);
+            if (trim($attributes['question']) != '') {
+                // Add a poll after the discussion has been created/saved.
+                $discussion->afterSave(function ($discussion) use ($attributes, $event) {
+                    $endDate = new \DateTime($attributes['endDate']);
+
+                    if ($attributes['endDate'] === null) {
+                        $endDate = null;
+                    }
+
+                    // Add question to database
+                    $poll = Question::build($attributes['question'], $discussion->id, $event->actor->id, $endDate, $attributes['publicPoll']);
                     $poll->save();
 
                     // Add answers to database
-                    foreach (array_filter($post['answers']) as $answer) {
+                    foreach (array_filter($attributes['answers']) as $answer) {
                         $answer = Answer::build($answer);
                         $this->validator->assertValid(['answer' => $answer]);
                         $poll->answers()->save($answer);

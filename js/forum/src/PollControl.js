@@ -11,15 +11,17 @@ export default function () {
         const user = app.session.user
 
         if (discussion.Poll() && ((user !== undefined && user.canEditPolls()) || (post.user().canSelfEditPolls()) && post.user().id() === user.id()) && post.number() === 1) {
-            items.add('editPoll', [
-                m(Button, {
-                    icon: 'check-square',
-                    className: 'reflar-PollButton',
-                    onclick: () => {
-                        app.modal.show(new EditPollModal({post: post, poll: poll}));
-                    }
-                }, app.translator.trans('reflar-polls.forum.moderation.edit'))
-            ]);
+            if (!poll.isEnded()) {
+                items.add('editPoll', [
+                    m(Button, {
+                        icon: 'check-square',
+                        className: 'reflar-PollButton',
+                        onclick: () => {
+                            app.modal.show(new EditPollModal({post: post, poll: poll}));
+                        }
+                    }, app.translator.trans('reflar-polls.forum.moderation.edit'))
+                ]);
+            }
 
             items.add('removePoll', [
                 m(Button, {

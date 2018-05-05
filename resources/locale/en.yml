@@ -4,13 +4,22 @@ reflar-polls:
       moderate: Edit & remove polls
       start: Start a poll
       vote: Vote on polls
-      self_edit: Allow poll editing
+      self_edit: Allow users to edit their own polls
   forum:
     no_permission: You don't have permission to vote
+    poll_ended: This poll has ended
+    days_remaining: "Poll ends {time}"
+    public_poll: Public poll: Click to view voters
+    votes_modal:
+      title: Voters
     modal:
+      submit: submit
+      no_voters: No Votes
+      switch: Allow people to see who voted
       min: You must include a minimum of 2 answers
       max: You can have a maximum of 10 answers
       include_question: You must include a question
+      date_placeholder: Poll end date (Optional)
       answer_placeholder: Answer
       add: Add an Option
       question_placeholder: Question

@@ -9,10 +9,4 @@ return [
             $table->integer('user_id');
         });
     },
-
-    'down' => function (Builder $schema) {
-        $schema->table('polls', function (Blueprint $table) {
-            $table->dropColumn('user_id');
-        });
-    },
 ];

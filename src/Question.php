@@ -12,6 +12,7 @@
 
 namespace Reflar\Polls;
 
+use DateTime;
 use Flarum\Core\Discussion;
 use Flarum\Database\AbstractModel;
 
@@ -44,6 +45,16 @@ class Question extends AbstractModel
         'discussion_id',
     ];
 
+    public function isEnded()
+    {
+        $endDate = new DateTime($this->end_date);
+        if (new DateTime() > $endDate && $this->end_date !== '0000-00-00 00:00:00' && $this->end_date !== null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * @return mixed
      */
@@ -69,19 +80,23 @@ class Question extends AbstractModel
     }
 
     /**
-     * @param $question
+     * @param $questionText
      * @param $discussionId
      * @param $actorId
+     * @param $endDate
+     * @param $publicPoll
      *
      * @return static
      */
-    public static function build($questionText, $discussionId, $actorId)
+    public static function build($questionText, $discussionId, $actorId, $endDate, $publicPoll)
     {
         $question = new static();
 
         $question->question = $questionText;
         $question->discussion_id = $discussionId;
         $question->user_id = $actorId;
+        $question->end_date = $endDate;
+        $question->public_poll = $publicPoll;
 
         return $question;
     }

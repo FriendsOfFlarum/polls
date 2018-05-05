@@ -54,6 +54,15 @@ class Vote extends AbstractModel
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function answer()
+    {
+        // Create relationship between Vote and Answer model to display answer
+        return $this->belongsTo(Answer::class, 'option_id');
+    }
+
+    /**
      * @param $pollId
      * @param $userId
      * @param $optionId

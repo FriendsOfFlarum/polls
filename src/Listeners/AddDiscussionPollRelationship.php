@@ -45,7 +45,7 @@ class AddDiscussionPollRelationship
     public function getModelRelationship(GetModelRelationship $event)
     {
         if ($event->isRelationship(Discussion::class, 'Poll')) {
-            return $event->model->hasOne(Question::class, 'discussion_id', 'id', null, 'Poll');
+            return $event->model->hasOne(Question::class, 'discussion_id', 'id', null, 'end_date', 'Poll');
         }
     }
 

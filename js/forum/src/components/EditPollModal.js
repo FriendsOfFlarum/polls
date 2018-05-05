@@ -12,6 +12,8 @@ export default class EditPollModal extends Modal {
         this.pollCreator = this.props.poll.store.data.users[Object.keys(this.props.poll.store.data.users)[0]]
 
         this.newAnswer = m.prop('')
+
+        this.endDate = m.prop(this.getDateTime(new Date(this.props.poll.endDate())))
     }
 
     className() {
@@ -20,6 +22,51 @@ export default class EditPollModal extends Modal {
 
     title() {
         return app.translator.trans('reflar-polls.forum.modal.edit_title');
+    }
+
+    getDateTime(date = new Date()) {
+        if (isNaN(date)) {
+            date = new Date()
+        }
+        var checkTargets = [
+            date.getMonth() + 1,
+            date.getDate(),
+            date.getHours(),
+            date.getMinutes()
+        ];
+
+        checkTargets.forEach((target, i) => {
+            if (target < 10) {
+                checkTargets[i] = "0" + target;
+            }
+        })
+
+        return date.getFullYear() + '-' + checkTargets[0] + '-' + checkTargets[1] +  ' ' + checkTargets[2] + ':' + checkTargets[3]
+    }
+
+    config(isInitalized) {
+        if (isInitalized) return;
+
+        var oDTP1;
+
+        $('#dtBox').DateTimePicker({
+            init: function () {
+                oDTP1 = this;
+            },
+            dateTimeFormat: "yyyy-MM-dd HH:mm",
+            minDateTime: this.getDateTime(),
+            settingValueOfElement: (value) => {
+                this.endDate(value)
+                app.request({
+                    method: 'PATCH',
+                    url: app.forum.attribute('apiUrl') + '/endDate/' + this.props.poll.id(),
+                    data: {
+                        date: new Date(value),
+                        user_id: this.pollCreator.id()
+                    }
+                });
+            }
+        });
     }
 
     content() {
@@ -42,7 +89,7 @@ export default class EditPollModal extends Modal {
                                            type="text"
                                            oninput={m.withAttr('value', this.updateAnswer.bind(this, answer))}
                                            value={answer.data.attributes.answer}
-                                           placeholder={app.translator.trans('reflar-polls.forum.modal.answer_placeholder') + ' #' + (i+1)}/>
+                                           placeholder={app.translator.trans('reflar-polls.forum.modal.answer_placeholder') + ' #' + (i + 1)}/>
                                 </fieldset>
                                 {i + 1 >= 3 ?
                                     Button.component({
@@ -68,8 +115,15 @@ export default class EditPollModal extends Modal {
                             icon: 'plus',
                             onclick: this.addAnswer.bind(this)
                         })}
-                        <div className="clear"></div>
                     </div>
+                    <div className="clear"></div>
+                    <div style="margin-top: 20px" className='Form-group'>
+                        <fieldset style="margin-bottom: 15px" className="Poll-answer-input">
+                            <input style="opacity: 1" className="FormControl" type="text" data-field="datetime" value={this.endDate() || app.translator.trans('reflar-polls.forum.modal.date_placeholder')} id="dtInput" data-min={this.getDateTime()} readonly/>
+                            <div id="dtBox"></div>
+                        </fieldset>
+                    </div>
+                    <div className="clear"></div>
                 </div>
             </div>
         ];
