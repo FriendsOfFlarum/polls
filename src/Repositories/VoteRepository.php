@@ -82,4 +82,14 @@ class VoteRepository
     {
         return $this->query()->get();
     }
+
+    /**
+     * @param $questionId
+     *
+     * @return mixed
+     */
+    public function getReleventVotes($questionId)
+    {
+        return vote::where('poll_id', $questionId)->get();
+    }
 }

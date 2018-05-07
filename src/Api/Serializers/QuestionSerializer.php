@@ -62,6 +62,6 @@ class QuestionSerializer extends AbstractSerializer
     {
         $votes = app(VoteRepository::class);
 
-        return new Relationship(new Collection($votes->all($question), app(VoteSerializer::class)));
+        return new Relationship(new Collection($votes->getReleventVotes($question->id), app(VoteSerializer::class)));
     }
 }
