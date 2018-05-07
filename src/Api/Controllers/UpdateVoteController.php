@@ -51,13 +51,15 @@ class UpdateVoteController extends AbstractResourceController
 
         $this->assertNotFlooding($actor);
 
-        Vote::where('user_id', $actor->id)->delete();
-
         if (Question::find($attributes['poll_id'])->isEnded()) {
             throw new PermissionDeniedException();
         }
 
-        $vote = Vote::build($attributes['poll_id'], $actor->id, $attributes['option_id']);
+        $vote = Vote::where('user_id', $actor->id)
+            ->where('poll_id', $attributes['poll_id'])
+            ->first();
+
+        $vote->option_id = $attributes['option_id'];
 
         $actor->last_vote_time = new DateTime();
         $actor->save();

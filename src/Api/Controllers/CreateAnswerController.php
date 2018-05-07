@@ -47,7 +47,7 @@ class CreateAnswerController extends AbstractCreateController
     protected function data(ServerRequestInterface $request, Document $document)
     {
         $actor = $request->getAttribute('actor');
-        $data = $request->getParsedBody();
+        $data = array_get($request->getParsedBody(), 'data.attributes', []);
         $poll = Question::find($data['poll_id']);
         $answer = Answer::build($data['answer']);
 

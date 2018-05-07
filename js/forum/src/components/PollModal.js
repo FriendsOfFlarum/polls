@@ -80,7 +80,8 @@ export default class PollModal extends Modal {
                                            name={'answer' + (i + 1)}
                                            bidi={this.answer[i + 1]}
                                            placeholder={app.translator.trans('reflar-polls.forum.modal.answer_placeholder') + ' #' + (i + 1)}/>
-                                </fieldset>
+                                <div id="dtBox"></div>
+								</fieldset>
                                 {i + 1 >= 3 ?
                                     Button.component({
                                         type: 'button',
@@ -101,8 +102,7 @@ export default class PollModal extends Modal {
 
                     <div className='Form-group'>
                         <fieldset style="margin-bottom: 15px" className="Poll-answer-input">
-                            <input style="opacity: 1" className="FormControl" type="text" data-field="datetime" value={this.endDate() || app.translator.trans('reflar-polls.forum.modal.date_placeholder')} id="dtInput" data-min={this.getMinDateTime()} readonly/>
-                            <div id="dtBox"></div>
+                            <input style="opacity: 1; color: inherit" className="FormControl" type="text" data-field="datetime" value={this.endDate() || app.translator.trans('reflar-polls.forum.modal.date_placeholder')} id="dtInput" data-min={this.getMinDateTime()} readonly/>
                         </fieldset>
                         <div className="clear"></div>
                         {Switch.component({
@@ -134,17 +134,6 @@ export default class PollModal extends Modal {
 
     removeOption(option) {
         this.answer[option] = '';
-    }
-
-    onAdd(pollArray) {
-        // Add data to DiscussionComposer post data
-        extend(DiscussionComposer.prototype, 'data', function (data) {
-            data.poll = pollArray;
-        });
-        extend(DiscussionComposer.prototype, 'headerItems', function (items) {
-            items.replace('polls', (
-                <a className="DiscussionComposer-changePoll" onclick={this.addPoll}><span className="PollLabel">{app.translator.trans('reflar-polls.forum.composer_discussion.edit')}</span></a>), 1);
-        });
     }
 
     objectSize(obj) {
@@ -180,7 +169,10 @@ export default class PollModal extends Modal {
             return
         }
 
-        this.onAdd(pollArray);
+        // Add data to DiscussionComposer post data
+        extend(DiscussionComposer.prototype, 'data', function (data) {
+            data.poll = pollArray;
+        });
 
         app.modal.close();
 
