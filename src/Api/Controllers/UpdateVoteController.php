@@ -49,7 +49,7 @@ class UpdateVoteController extends AbstractResourceController
 
         $this->assertCan($actor, 'votePolls');
 
-        $this->assertNotFlooding($actor);
+        // $this->assertNotFlooding($actor);
 
         if (Question::find($attributes['poll_id'])->isEnded()) {
             throw new PermissionDeniedException();
