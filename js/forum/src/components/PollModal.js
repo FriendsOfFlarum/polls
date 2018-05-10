@@ -9,7 +9,7 @@ export default class PollModal extends Modal {
         super.init();
         this.answer = [];
 
-        this.question = m.prop(this.props.question || '');
+        this.question = m.prop('');
         this.answer[0] = m.prop('');
         this.answer[1] = m.prop('');
 

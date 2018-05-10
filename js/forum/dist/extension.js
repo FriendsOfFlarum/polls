@@ -350,7 +350,7 @@ System.register('reflar/polls/components/PollModal', ['flarum/extend', 'flarum/c
                         babelHelpers.get(PollModal.prototype.__proto__ || Object.getPrototypeOf(PollModal.prototype), 'init', this).call(this);
                         this.answer = [];
 
-                        this.question = m.prop(this.props.question || '');
+                        this.question = m.prop('');
                         this.answer[0] = m.prop('');
                         this.answer[1] = m.prop('');
 
