@@ -149,6 +149,7 @@ export default class EditPollModal extends Modal {
                     this.answers.push(answer);
 
                     this.newAnswer('');
+                    m.redraw.strategy('all')
                     m.redraw();
                 }
             );

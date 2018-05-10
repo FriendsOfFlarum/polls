@@ -10,20 +10,29 @@ export default class PollModal extends Modal {
         this.answer = [];
 
         this.question = m.prop(this.props.question || '');
+        this.answer[0] = m.prop('');
         this.answer[1] = m.prop('');
-        this.answer[2] = m.prop('');
 
         this.endDate = m.prop();
         this.publicPoll = m.prop(false);
+
+        if (this.props.poll) {
+            var poll = this.props.poll
+            this.answer = Object.values(poll.answers)
+            this.question(poll.question)
+            this.endDate(isNaN(poll.endDate) ? '' : this.getDateTime(poll.endDate))
+            this.publicPoll(poll.publicPoll)
+        }
     }
 
     className() {
         return 'PollDiscussionModal Modal--small';
     }
 
-    getMinDateTime() {
-        var date = new Date()
-
+    getDateTime(date = new Date()) {
+        if (isNaN(date)) {
+            date = new Date()
+        }
         var checkTargets = [
             date.getMonth() + 1,
             date.getDate(),
@@ -52,7 +61,7 @@ export default class PollModal extends Modal {
                 oDTP1 = this;
             },
             dateTimeFormat: "yyyy-MM-dd HH:mm",
-            minDateTime: this.getMinDateTime(),
+            minDateTime: this.getDateTime(),
             settingValueOfElement: (value) => {
                 this.endDate(value)
             }
@@ -78,16 +87,16 @@ export default class PollModal extends Modal {
                                     <input className="FormControl"
                                            type="text"
                                            name={'answer' + (i + 1)}
-                                           bidi={this.answer[i + 1]}
+                                           bidi={this.answer[i]}
                                            placeholder={app.translator.trans('reflar-polls.forum.modal.answer_placeholder') + ' #' + (i + 1)}/>
-                                <div id="dtBox"></div>
-								</fieldset>
+                                    <div id="dtBox"></div>
+                                </fieldset>
                                 {i + 1 >= 3 ?
                                     Button.component({
                                         type: 'button',
                                         className: 'Button Button--warning Poll-answer-button',
                                         icon: 'minus',
-                                        onclick: i + 1 >= 3 ? this.removeOption.bind(this, i + 1) : ''
+                                        onclick: i + 1 >= 3 ? this.removeOption.bind(this, i) : ''
                                     }) : ''}
                                 <div className="clear"></div>
                             </div>
@@ -102,7 +111,7 @@ export default class PollModal extends Modal {
 
                     <div className='Form-group'>
                         <fieldset style="margin-bottom: 15px" className="Poll-answer-input">
-                            <input style="opacity: 1; color: inherit" className="FormControl" type="text" data-field="datetime" value={this.endDate() || app.translator.trans('reflar-polls.forum.modal.date_placeholder')} id="dtInput" data-min={this.getMinDateTime()} readonly/>
+                            <input style="opacity: 1; color: inherit" className="FormControl" type="text" data-field="datetime" value={this.endDate() || app.translator.trans('reflar-polls.forum.modal.date_placeholder')} id="dtInput" data-min={this.getDateTime()} readonly/>
                         </fieldset>
                         <div className="clear"></div>
                         {Switch.component({
@@ -133,7 +142,11 @@ export default class PollModal extends Modal {
     }
 
     removeOption(option) {
-        this.answer[option] = '';
+        this.answer.forEach((answer, i) => {
+            if (i === option) {
+                this.answer.splice(i, 1)
+            }
+        })
     }
 
     objectSize(obj) {
@@ -159,9 +172,10 @@ export default class PollModal extends Modal {
         }
 
         // Add answers to PollArray
-        Object.keys(this.answer).map((el, i) => {
-            var key = (i + 1);
-            pollArray['answers'][key - 1] = this.answer[key]()
+        this.answer.map((answer, i) => {
+            if (answer() !== '') {
+                pollArray['answers'][i] = answer
+            }
         });
 
         if (this.objectSize(pollArray.answers) < 2) {

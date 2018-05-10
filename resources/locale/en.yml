@@ -9,7 +9,7 @@ reflar-polls:
     no_permission: You don't have permission to vote
     poll_ended: This poll has ended
     days_remaining: "Poll ends {time}"
-    public_poll: Public poll: Click to view voters
+    public_poll: View voters
     votes_modal:
       title: Voters
     modal:
