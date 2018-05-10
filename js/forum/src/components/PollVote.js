@@ -8,7 +8,7 @@ import ShowVotersModal from './ShowVotersModal';
 export default class PollVote extends Component {
     init() {
         this.poll = this.props.poll;
-        this.votes = [];
+        this.votes = this.poll.votes();
         this.voted = m.prop(false);
         this.user = app.session.user;
         this.answers = []
@@ -128,7 +128,7 @@ export default class PollVote extends Component {
                             className: 'Button Button--primary PublicPollButton',
                             children: app.translator.trans('reflar-polls.forum.public_poll'),
                             onclick: () => {
-                                app.modal.show(new ShowVotersModal(this.poll))
+                                app.modal.show(new ShowVotersModal({votes: this.votes, answers: this.answers}))
                             }
                         }) : ''}
                     <div className="clear"/>
@@ -196,6 +196,7 @@ export default class PollVote extends Component {
                     this.answers[answer.id()].data.attributes.votes++;
                     this.voted(vote);
                     this.poll.data.relationships.votes.data.push(vote)
+                    this.votes.push(vote)
                     m.redraw()
                 })
         }

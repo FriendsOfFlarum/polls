@@ -13,7 +13,7 @@ export default class EditPollModal extends Modal {
 
         this.newAnswer = m.prop('')
 
-        this.endDate = m.prop(this.getDateTime(new Date(this.props.poll.endDate())))
+        this.endDate = m.prop(this.props.poll.endDate() === ' UTC' ? '' : this.getDateTime(new Date(this.props.poll.endDate())))
     }
 
     className() {
@@ -41,7 +41,7 @@ export default class EditPollModal extends Modal {
             }
         })
 
-        return date.getFullYear() + '-' + checkTargets[0] + '-' + checkTargets[1] +  ' ' + checkTargets[2] + ':' + checkTargets[3]
+        return date.getFullYear() + '-' + checkTargets[0] + '-' + checkTargets[1] + ' ' + checkTargets[2] + ':' + checkTargets[3]
     }
 
     config(isInitalized) {
@@ -125,6 +125,13 @@ export default class EditPollModal extends Modal {
                     </div>
                     <div className="clear"></div>
                 </div>
+                {Button.component({
+                    className: 'Button Button--primary PollModal-SubmitButton',
+                    children: app.translator.trans('reflar-polls.forum.modal.submit'),
+                    onclick: () => {
+                        app.modal.close()
+                    }
+                })}
             </div>
         ];
     }
@@ -133,7 +140,9 @@ export default class EditPollModal extends Modal {
     onhide() {
         this.props.poll.answers = m.prop(this.answers)
         this.props.poll.question = this.question
-        this.props.poll.endDate = this.endDate
+        if (this.endDate() !== '') {
+            this.props.poll.endDate = this.endDate
+        }
         m.redraw.strategy('all')
     }
 

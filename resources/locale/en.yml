@@ -13,7 +13,7 @@ reflar-polls:
     votes_modal:
       title: Voters
     modal:
-      submit: submit
+      submit: Submit
       no_voters: No Votes
       switch: Allow people to see who voted
       min: You must include a minimum of 2 answers

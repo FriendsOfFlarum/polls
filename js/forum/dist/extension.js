@@ -78,7 +78,7 @@ System.register('reflar/polls/components/EditPollModal', ['flarum/extend', 'flar
 
                         this.newAnswer = m.prop('');
 
-                        this.endDate = m.prop(this.getDateTime(new Date(this.props.poll.endDate())));
+                        this.endDate = m.prop(this.props.poll.endDate() === ' UTC' ? '' : this.getDateTime(new Date(this.props.poll.endDate())));
                     }
                 }, {
                     key: 'className',
@@ -213,7 +213,14 @@ System.register('reflar/polls/components/EditPollModal', ['flarum/extend', 'flar
                                     )
                                 ),
                                 m('div', { className: 'clear' })
-                            )
+                            ),
+                            Button.component({
+                                className: 'Button Button--primary PollModal-SubmitButton',
+                                children: app.translator.trans('reflar-polls.forum.modal.submit'),
+                                onclick: function onclick() {
+                                    app.modal.close();
+                                }
+                            })
                         )];
                     }
                 }, {
@@ -221,7 +228,9 @@ System.register('reflar/polls/components/EditPollModal', ['flarum/extend', 'flar
                     value: function onhide() {
                         this.props.poll.answers = m.prop(this.answers);
                         this.props.poll.question = this.question;
-                        this.props.poll.endDate = this.endDate;
+                        if (this.endDate() !== '') {
+                            this.props.poll.endDate = this.endDate;
+                        }
                         m.redraw.strategy('all');
                     }
                 }, {
@@ -587,7 +596,7 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/co
                         var _this2 = this;
 
                         this.poll = this.props.poll;
-                        this.votes = [];
+                        this.votes = this.poll.votes();
                         this.voted = m.prop(false);
                         this.user = app.session.user;
                         this.answers = [];
@@ -727,7 +736,7 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/co
                                     className: 'Button Button--primary PublicPollButton',
                                     children: app.translator.trans('reflar-polls.forum.public_poll'),
                                     onclick: function onclick() {
-                                        app.modal.show(new ShowVotersModal(_this4.poll));
+                                        app.modal.show(new ShowVotersModal({ votes: _this4.votes, answers: _this4.answers }));
                                     }
                                 }) : '',
                                 m('div', { className: 'clear' }),
@@ -816,6 +825,7 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/co
                                 _this5.answers[answer.id()].data.attributes.votes++;
                                 _this5.voted(vote);
                                 _this5.poll.data.relationships.votes.data.push(vote);
+                                _this5.votes.push(vote);
                                 m.redraw();
                             });
                         }
@@ -871,10 +881,10 @@ System.register('reflar/polls/components/ShowVotersModal', ['flarum/components/M
                         var items = new ItemList();
                         var counter = 0;
 
-                        this.props.votes().map(function (vote) {
+                        this.props.votes.map(function (vote) {
                             var user = app.store.getById('users', vote.user_id());
 
-                            if (parseInt(answer.id()) === vote.option_id()) {
+                            if (parseInt(answer.id()) === parseInt(vote.option_id())) {
                                 counter++;
                                 items.add(user.id(), m(
                                     'a',
@@ -908,7 +918,7 @@ System.register('reflar/polls/components/ShowVotersModal', ['flarum/components/M
                             m(
                                 'ul',
                                 { className: 'VotesModal-list' },
-                                this.props.answers().map(function (answer) {
+                                this.props.answers.map(function (answer) {
                                     return m(
                                         'div',
                                         null,
