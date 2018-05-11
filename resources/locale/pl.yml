@@ -1,0 +1,39 @@
+reflar-polls:
+  admin:
+    permissions:
+      moderate: Edytuj & usuń ankiety
+      start: Rozpocznij ankietę
+      vote: Głosuj na ankiety
+      self_edit: Pozwól użytkownikom edytować własne ankiety
+  forum:
+    no_permission: Nie masz uprawnień do głosowania
+    poll_ended: Ta ankieta zakończyła się
+    days_remaining: "Zakończ ankietę {time}"
+    public_poll: Zobacz głosujących
+    votes_modal:
+      title: Głosujący użytkownicy
+    modal:
+      submit: Potwierdź
+      no_voters: Brak Głosów
+      switch: Pozwól ludziom zobaczyć, kto głosował
+      min: Musisz uwzględnić co najmniej 2 odpowiedzi
+      max: Możesz mieć maksymalnie 10 odpowiedzi
+      include_question: Musisz dołączyć pytanie do ankiety
+      date_placeholder: Data zakończenia ankiety (opcjonalnie)
+      answer_placeholder: Odpowiedź
+      add: Dodaj opcję
+      question_placeholder: Pytanie
+      add_title: Dodaj ankietę
+      edit_title: Edytuj ankietę
+      answers: Odpowiedzi
+    moderation:
+      edit: Edytuj ankietę
+      delete: Usuń ankietę
+      delete_confirm: Czy na pewno chcesz usunąć tę ankietę?
+    composer_discussion:
+      add_poll: Dodaj ankietę
+      edit: => reflar-polls.forum.moderation.edit
+    tooltip:
+      votes: głosów
+      vote: głosować
+      badge: głosowanie
