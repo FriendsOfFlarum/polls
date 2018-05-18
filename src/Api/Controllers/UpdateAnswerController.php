@@ -65,7 +65,7 @@ class UpdateAnswerController extends AbstractResourceController
 
             return $answer;
         } else {
-            throw new PermissionDeniedException;
+            throw new PermissionDeniedException();
         }
     }
 }

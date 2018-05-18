@@ -56,7 +56,7 @@ class CreateAnswerController extends AbstractCreateController
 
             return $answer;
         } else {
-            throw new PermissionDeniedException;
+            throw new PermissionDeniedException();
         }
     }
 }

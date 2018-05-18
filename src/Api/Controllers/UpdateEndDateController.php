@@ -62,7 +62,7 @@ class UpdateEndDateController extends AbstractResourceController
             $poll->end_date = $endDate;
             $poll->save();
         } else {
-            throw new PermissionDeniedException;
+            throw new PermissionDeniedException();
         }
     }
 }

@@ -59,7 +59,7 @@ class UpdatePollController extends AbstractResourceController
 
             return $poll;
         } else {
-            throw new PermissionDeniedException;
+            throw new PermissionDeniedException();
         }
     }
 }
