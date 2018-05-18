@@ -50,7 +50,7 @@ class CreateVoteController extends AbstractCreateController
         $this->assertNotFlooding($actor);
 
         if (Question::find($attributes['poll_id'])->isEnded()) {
-            throw new PermissionDeniedException();
+            throw new PermissionDeniedException;
         }
 
         $this->assertCan($actor, 'votePolls');
@@ -73,7 +73,7 @@ class CreateVoteController extends AbstractCreateController
     public function assertNotFlooding($actor)
     {
         if (new DateTime($actor->last_vote_time) >= new DateTime('-10 seconds')) {
-            throw new FloodingException();
+            throw new FloodingException;
         }
     }
 }

@@ -14,7 +14,6 @@ namespace Reflar\Polls\Api\Controllers;
 
 use Flarum\Api\Controller\AbstractResourceController;
 use Flarum\Core\Exception\PermissionDeniedException;
-use Flarum\Core\User;
 use Psr\Http\Message\ServerRequestInterface;
 use Reflar\Polls\Api\Serializers\QuestionSerializer;
 use Reflar\Polls\Question;
@@ -54,7 +53,7 @@ class UpdateEndDateController extends AbstractResourceController
         $actor = $request->getAttribute('actor');
         $poll = Question::find(array_get($request->getQueryParams(), 'id'));
 
-        if ($actor->can('edit.polls') || $actor->id == (User::find($data['user_id'])->id && $actor->can('selfEditPolls'))) {
+        if ($actor->can('edit.polls') || $actor->id === ($poll->user_id && $actor->can('selfEditPolls'))) {
             $endDate = new \DateTime($data['date']);
 
             if ($data['date'] === null) {
@@ -63,7 +62,7 @@ class UpdateEndDateController extends AbstractResourceController
             $poll->end_date = $endDate;
             $poll->save();
         } else {
-            throw new PermissionDeniedException();
+            throw new PermissionDeniedException;
         }
     }
 }

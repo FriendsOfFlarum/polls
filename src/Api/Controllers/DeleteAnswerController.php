@@ -14,7 +14,8 @@ namespace Reflar\Polls\Api\Controllers;
 
 use Flarum\Api\Controller\AbstractDeleteController;
 use Flarum\Core\Exception\PermissionDeniedException;
-use Flarum\Core\User;
+use Reflar\Polls\Answer;
+use Reflar\Polls\Question;
 use Psr\Http\Message\ServerRequestInterface;
 use Reflar\Polls\Api\Serializers\AnswerSerializer;
 use Reflar\Polls\Repositories\AnswerRepository;
@@ -49,11 +50,12 @@ class DeleteAnswerController extends AbstractDeleteController
     protected function delete(ServerRequestInterface $request)
     {
         $actor = $request->getAttribute('actor');
+        $answer = Answer::find(array_get($request->getQueryParams(), 'id'));
 
-        if ($actor->can('edit.polls') || ($actor->id == User::find($request->getParsedBody())->id && $actor->can('selfEditPolls'))) {
+        if ($actor->can('edit.polls') || ($actor->id == Question::find($answer->poll_id)->user_id && $actor->can('selfEditPolls'))) {
             $this->fields->deleteAnswer(array_get($request->getQueryParams(), 'id'));
         } else {
-            throw new PermissionDeniedException();
+            throw new PermissionDeniedException;
         }
     }
 }

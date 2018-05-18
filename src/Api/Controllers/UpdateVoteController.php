@@ -77,7 +77,7 @@ class UpdateVoteController extends AbstractResourceController
     public function assertNotFlooding($actor)
     {
         if (new DateTime($actor->last_vote_time) >= new DateTime('-10 seconds')) {
-            throw new FloodingException();
+            throw new FloodingException;
         }
     }
 }
