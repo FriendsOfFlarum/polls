@@ -29,13 +29,13 @@ export default class ShowVotersModal extends Modal {
                     </a>
                 ))
             }
-
-            if (counter === 0) {
-                items.add('none', (
-                    <h4 style="color: #000">{app.translator.trans('reflar-polls.forum.modal.no_voters')}</h4>
-                ))
-            }
         })
+        
+       if (counter === 0) {
+           items.add('none', (
+               <h4 style="color: #000">{app.translator.trans('reflar-polls.forum.modal.no_voters')}</h4>
+           ))
+       }
 
         return items;
     }
