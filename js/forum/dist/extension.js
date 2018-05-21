@@ -895,15 +895,16 @@ System.register('reflar/polls/components/ShowVotersModal', ['flarum/components/M
                                     username(user)
                                 ));
                             }
-
-                            if (counter === 0) {
-                                items.add('none', m(
-                                    'h4',
-                                    { style: 'color: #000' },
-                                    app.translator.trans('reflar-polls.forum.modal.no_voters')
-                                ));
-                            }
                         });
+                        
+                        
+                       if (counter === 0) {
+                           items.add('none', m(
+                               'h4',
+                               { style: 'color: #000' },
+                               app.translator.trans('reflar-polls.forum.modal.no_voters')
+                           ));
+                       }
 
                         return items;
                     }
