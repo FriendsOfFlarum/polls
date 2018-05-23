@@ -1,0 +1,39 @@
+reflar-polls:
+  admin:
+    permissions:
+      moderate: Modifica & rimuovi sondaggi
+      start: Inizia un sondaggio
+      vote: Vota i sondaggi
+      self_edit: Permetti agli utenti di modificare i propri sondaggi
+  forum:
+    no_permission: Non hai i permessi per votare
+    poll_ended: Questo sondaggio è terminato
+    days_remaining: "Il sondaggio terminerà {time}"
+    public_poll: Mostra i votanti
+    votes_modal:
+      title: Votanti
+    modal:
+      submit: Invia
+      no_voters: Nessun voto
+      switch: Permetti agli utenti di vedere chi ha votato
+      min: Devi includere un minimo di 2 risposte
+      max: Puoi avere un massimo di 10 risposte
+      include_question: Devi includere una domanda
+      date_placeholder: Termine del sondaggio (Opzionale)
+      answer_placeholder: Risposta
+      add: Aggiungi una Opzione
+      question_placeholder: Domanda
+      add_title: Aggiungi un Sondaggio
+      edit_title: Modifica Sondaggio
+      answers: Risposte
+    moderation:
+      edit: Modifica Sondaggio
+      delete: Rimuovi Sondaggio
+      delete_confirm: Sei sicuro di voler eliminare questo sondaggio?
+    composer_discussion:
+      add_poll: Aggiungi Sondaggio
+      edit: => reflar-polls.forum.moderation.edit
+    tooltip:
+      votes: voti
+      vote: voto
+      badge: Sondaggio
