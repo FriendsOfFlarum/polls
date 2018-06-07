@@ -63,6 +63,11 @@ export default class PollVote extends Component {
             response => {
                 this.answers[answer.id()].data.attributes.votes++;
                 this.answers[oldAnswerId].data.attributes.votes--;
+                this.votes.some((vote, i) => {
+                    if (vote.data.id === oldVoteId) {
+                        this.votes[i].data.attributes.option_id = response.data.attributes.option_id
+                    }
+                })
                 this.poll.data.relationships.votes.data.some(vote => {
                     if (typeof vote.id === "function") {
                         var id = vote.id()
@@ -74,6 +79,7 @@ export default class PollVote extends Component {
                         return true;
                     }
                 })
+                this.poll.votes = m.prop(this.votes)
                 m.redraw.strategy('all')
                 m.redraw()
             }

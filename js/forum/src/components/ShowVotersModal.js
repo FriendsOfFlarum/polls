@@ -14,13 +14,19 @@ export default class ShowVotersModal extends Modal {
     }
 
     getUsers(answer) {
+        let votes = []
+        if (typeof this.props.votes === 'function') {
+            votes = this.props.votes()
+        } else {
+            votes = this.props.votes
+        }
         const items = new ItemList();
         var counter = 0;
 
-        this.props.votes.map(vote => {
-            var user = app.store.getById('users', vote.user_id())
+        votes.map(vote => {
+            var user = app.store.getById('users', vote.data.attributes.user_id)
 
-            if (parseInt(answer.id()) === parseInt(vote.option_id())) {
+            if (parseInt(answer.id()) === parseInt(vote.data.attributes.option_id)) {
                 counter++
                 items.add(user.id(), (
                     <a href={app.route.user(user)} config={m.route}>
@@ -41,10 +47,15 @@ export default class ShowVotersModal extends Modal {
     }
 
     content() {
+        if (typeof this.props.answers === 'function') {
+            this.answers = this.props.answers()
+        } else {
+            this.answers = this.props.answers
+        }
         return (
             <div className="Modal-body">
                 <ul className="VotesModal-list">
-                    {this.props.answers.map(answer => (
+                    {this.answers.map(answer => (
                         <div>
                             <h2>{answer.answer() + ':'}</h2>
                             {listItems(this.getUsers(answer).toArray())}

@@ -654,6 +654,11 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/co
                         }).then(function (response) {
                             _this3.answers[answer.id()].data.attributes.votes++;
                             _this3.answers[oldAnswerId].data.attributes.votes--;
+                            _this3.votes.some(function (vote, i) {
+                                if (vote.data.id === oldVoteId) {
+                                    _this3.votes[i].data.attributes.option_id = response.data.attributes.option_id;
+                                }
+                            });
                             _this3.poll.data.relationships.votes.data.some(function (vote) {
                                 if (typeof vote.id === "function") {
                                     var id = vote.id();
@@ -665,6 +670,7 @@ System.register('reflar/polls/components/PollVote', ['flarum/extend', 'flarum/co
                                     return true;
                                 }
                             });
+                            _this3.poll.votes = m.prop(_this3.votes);
                             m.redraw.strategy('all');
                             m.redraw();
                         });
@@ -878,13 +884,19 @@ System.register('reflar/polls/components/ShowVotersModal', ['flarum/components/M
                 }, {
                     key: 'getUsers',
                     value: function getUsers(answer) {
+                        var votes = [];
+                        if (typeof this.props.votes === 'function') {
+                            votes = this.props.votes();
+                        } else {
+                            votes = this.props.votes;
+                        }
                         var items = new ItemList();
                         var counter = 0;
 
-                        this.props.votes.map(function (vote) {
-                            var user = app.store.getById('users', vote.user_id());
+                        votes.map(function (vote) {
+                            var user = app.store.getById('users', vote.data.attributes.user_id);
 
-                            if (parseInt(answer.id()) === parseInt(vote.option_id())) {
+                            if (parseInt(answer.id()) === parseInt(vote.data.attributes.option_id)) {
                                 counter++;
                                 items.add(user.id(), m(
                                     'a',
@@ -896,15 +908,14 @@ System.register('reflar/polls/components/ShowVotersModal', ['flarum/components/M
                                 ));
                             }
                         });
-                        
-                        
-                       if (counter === 0) {
-                           items.add('none', m(
-                               'h4',
-                               { style: 'color: #000' },
-                               app.translator.trans('reflar-polls.forum.modal.no_voters')
-                           ));
-                       }
+
+                        if (counter === 0) {
+                            items.add('none', m(
+                                'h4',
+                                { style: 'color: #000' },
+                                app.translator.trans('reflar-polls.forum.modal.no_voters')
+                            ));
+                        }
 
                         return items;
                     }
@@ -913,13 +924,18 @@ System.register('reflar/polls/components/ShowVotersModal', ['flarum/components/M
                     value: function content() {
                         var _this2 = this;
 
+                        if (typeof this.props.answers === 'function') {
+                            this.answers = this.props.answers();
+                        } else {
+                            this.answers = this.props.answers;
+                        }
                         return m(
                             'div',
                             { className: 'Modal-body' },
                             m(
                                 'ul',
                                 { className: 'VotesModal-list' },
-                                this.props.answers.map(function (answer) {
+                                this.answers.map(function (answer) {
                                     return m(
                                         'div',
                                         null,
