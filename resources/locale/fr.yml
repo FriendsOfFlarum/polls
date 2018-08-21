@@ -8,15 +8,15 @@ reflar-polls:
   forum:
     no_permission: Vous n'êtes pas autorisé à voter
     poll_ended: Ce sondage est terminé
-    days_remaining: "Le sondage se termine {time}"
-    public_poll: Voir les électeurs
+    days_remaining: "Le sondage se termine dans {time}"
+    public_poll: Voir les votants
     votes_modal:
-      title: Les électeurs
+      title: Votants
     modal:
-      submit: soumettre
-      no_voters: Pas de vote
-      switch: Permettre aux gens de voir qui a votéClick to see the voters
-      min: Vous devez inclure un minimum de 2 réponses
+      submit: Soumettre
+      no_voters: Aucun vote
+      switch: Permettre aux utilisateurs de voir qui a voté
+      min: Vous devez inclure au minimum de 2 réponses
       max: Vous pouvez avoir un maximum de 10 réponses
       include_question: Vous devez inclure une question
       date_placeholder: Date de fin du sondage (facultatif)
