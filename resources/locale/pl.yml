@@ -15,7 +15,7 @@ reflar-polls:
     modal:
       submit: Potwierdź
       no_voters: Brak Głosów
-      switch: Pozwól ludziom zobaczyć, kto głosował
+      switch: Pozwól użytkownikom zobaczyć, kto głosował
       min: Musisz uwzględnić co najmniej 2 odpowiedzi
       max: Możesz mieć maksymalnie 10 odpowiedzi
       include_question: Musisz dołączyć pytanie do ankiety
