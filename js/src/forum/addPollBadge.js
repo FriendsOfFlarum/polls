@@ -8,7 +8,7 @@ export default function addPollBadge() {
             badges.add('poll', Badge.component({
                 type: 'poll',
                 label: app.translator.trans('reflar-polls.forum.tooltip.badge'),
-                icon: 'signal'
+                icon: 'fa fa-signal'
             }), 5);
         }
     });

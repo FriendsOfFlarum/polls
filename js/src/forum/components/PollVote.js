@@ -21,7 +21,7 @@ export default class PollVote extends Component {
             if (!this.user.canVote()) {
                 this.voted(true)
             } else {
-                app.store.find('votes', {
+                app.store.find('reflar/polls/votes', {
                     poll_id: this.poll.id(),
                     user_id: this.user.id()
                 }).then((data) => {
@@ -53,7 +53,7 @@ export default class PollVote extends Component {
         var oldAnswerId = this.voted().option_id()
         app.request({
             method: 'PATCH',
-            url: app.forum.attribute('apiUrl') + '/votes/' + answer.id(),
+            url: `${app.forum.attribute('apiUrl')}/reflar/polls/votes/${answer.id()}`,
             errorHandler: this.onError.bind(this, el),
             data: {
                 option_id: answer.id(),

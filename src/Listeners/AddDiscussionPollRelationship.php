@@ -4,7 +4,7 @@
  *
  * Copyright (c) ReFlar.
  *
- * http://reflar.io
+ * https://reflar.redevs.org
  *
  * For the full copyright and license information, please view the license.md
  * file that was distributed with this source code.
@@ -13,13 +13,13 @@
 namespace Reflar\Polls\Listeners;
 
 use Flarum\Api\Controller;
+use Flarum\Api\Event\Serializing;
+use Flarum\Api\Event\WillGetData;
 use Flarum\Api\Serializer\DiscussionSerializer;
 use Flarum\Api\Serializer\UserSerializer;
-use Flarum\Core\Discussion;
-use Flarum\Event\ConfigureApiController;
+use Flarum\Discussion\Discussion;
 use Flarum\Event\GetApiRelationship;
 use Flarum\Event\GetModelRelationship;
-use Flarum\Event\PrepareApiAttributes;
 use Illuminate\Contracts\Events\Dispatcher;
 use Reflar\Polls\Api\Serializers\QuestionSerializer;
 use Reflar\Polls\Question;
@@ -33,8 +33,8 @@ class AddDiscussionPollRelationship
     {
         $events->listen(GetModelRelationship::class, [$this, 'getModelRelationship']);
         $events->listen(GetApiRelationship::class, [$this, 'getApiRelationship']);
-        $events->listen(ConfigureApiController::class, [$this, 'includeRelationship']);
-        $events->listen(PrepareApiAttributes::class, [$this, 'prepareApiAttributes']);
+        $events->listen(WillGetData::class, [$this, 'includeRelationship']);
+        $events->listen(Serializing::class, [$this, 'prepareApiAttributes']);
     }
 
     /**
@@ -62,9 +62,9 @@ class AddDiscussionPollRelationship
     }
 
     /**
-     * @param PrepareApiAttributes $event
+     * @param Serializing $event
      */
-    public function prepareApiAttributes(PrepareApiAttributes $event)
+    public function prepareApiAttributes(Serializing $event)
     {
         if ($event->isSerializer(UserSerializer::class)) {
             $event->attributes['canEditPolls'] = $event->actor->can('discussion.polls');
@@ -75,9 +75,9 @@ class AddDiscussionPollRelationship
     }
 
     /**
-     * @param ConfigureApiController $event
+     * @param WillGetData $event
      */
-    public function includeRelationship(ConfigureApiController $event)
+    public function includeRelationship(WillGetData $event)
     {
         if ($event->isController(Controller\ListDiscussionsController::class)
             || $event->isController(Controller\ShowDiscussionController::class)

@@ -2,7 +2,7 @@ import {extend} from 'flarum/extend';
 
 import PostControls from 'flarum/utils/PostControls';
 import Button from 'flarum/components/Button';
-import EditPollModal from 'reflar/polls/components/EditPollModal';
+import EditPollModal from './components/EditPollModal';
 
 export default function () {
     extend(PostControls, 'moderationControls', function (items, post) {
@@ -14,7 +14,7 @@ export default function () {
             if (!poll.isEnded()) {
                 items.add('editPoll', [
                     m(Button, {
-                        icon: 'check-square',
+                        icon: 'fa fa-check-square',
                         className: 'reflar-PollButton',
                         onclick: () => {
                             app.modal.show(new EditPollModal({post: post, poll: poll}));
@@ -25,13 +25,13 @@ export default function () {
 
             items.add('removePoll', [
                 m(Button, {
-                    icon: 'trash',
+                    icon: 'fa fa-trash',
                     className: 'reflar-PollButton',
                     onclick: () => {
 
                         if (confirm(app.translator.trans('reflar-polls.forum.moderation.delete_confirm'))) {
                             app.request({
-                                url: app.forum.attribute('apiUrl') + '/questions/' + poll.id(),
+                                url: `${app.forum.attribute('apiUrl')}/reflar/polls/${poll.id()}`,
                                 method: 'DELETE',
                                 data: poll.store.data.users[Object.keys(poll.store.data.users)[0]].id()
                             }).then(() => {

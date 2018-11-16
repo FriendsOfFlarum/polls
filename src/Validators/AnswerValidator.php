@@ -4,7 +4,7 @@
  *
  * Copyright (c) ReFlar.
  *
- * http://reflar.io
+ * https://reflar.redevs.org
  *
  * For the full copyright and license information, please view the license.md
  * file that was distributed with this source code.
@@ -12,7 +12,7 @@
 
 namespace Reflar\Polls\Validators;
 
-use Flarum\Core\Validator\AbstractValidator;
+use Flarum\Foundation\AbstractValidator;
 
 class AnswerValidator extends AbstractValidator
 {

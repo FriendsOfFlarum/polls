@@ -4,7 +4,7 @@
  *
  * Copyright (c) ReFlar.
  *
- * http://reflar.io
+ * https://reflar.redevs.org
  *
  * For the full copyright and license information, please view the license.md
  * file that was distributed with this source code.
@@ -12,13 +12,13 @@
 
 namespace Reflar\Polls\Api\Controllers;
 
-use Flarum\Api\Controller\AbstractCollectionController;
+use Flarum\Api\Controller\AbstractListController;
 use Psr\Http\Message\ServerRequestInterface;
 use Reflar\Polls\Api\Serializers\VoteSerializer;
 use Reflar\Polls\Repositories\VoteRepository;
 use Tobscure\JsonApi\Document;
 
-class ListVotesController extends AbstractCollectionController
+class ListVotesController extends AbstractListController
 {
     public $serializer = VoteSerializer::class;
 

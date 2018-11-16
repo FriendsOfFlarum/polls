@@ -4,7 +4,7 @@
  *
  * Copyright (c) ReFlar.
  *
- * http://reflar.io
+ * https://reflar.redevs.org
  *
  * For the full copyright and license information, please view the license.md
  * file that was distributed with this source code.
@@ -13,7 +13,7 @@
 namespace Reflar\Polls\Api\Controllers;
 
 use Flarum\Api\Controller\AbstractDeleteController;
-use Flarum\Core\Exception\PermissionDeniedException;
+use Flarum\User\Exception\PermissionDeniedException;
 use Psr\Http\Message\ServerRequestInterface;
 use Reflar\Polls\Answer;
 use Reflar\Polls\Api\Serializers\AnswerSerializer;

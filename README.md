@@ -1,7 +1,6 @@
-
 # Polls by ReFlar
 
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ReFlar/polls/blob/master/LICENSE) [![Latest Stable Version](https://img.shields.io/packagist/v/reflar/polls.svg)](https://github.com/ReFlar/polls)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ReFlar/polls/blob/master/LICENSE) [![Latest Stable Version](https://img.shields.io/packagist/v/reflar/polls.svg)](https://github.com/ReFlar/polls)
 
 A Flarum extension that adds polls to your discussions.
 

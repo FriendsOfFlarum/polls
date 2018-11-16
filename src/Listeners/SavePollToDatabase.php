@@ -4,7 +4,7 @@
  *
  * Copyright (c) ReFlar.
  *
- * http://reflar.io
+ * https://reflar.redevs.org
  *
  * For the full copyright and license information, please view the license.md
  * file that was distributed with this source code.
@@ -12,10 +12,11 @@
 
 namespace Reflar\Polls\Listeners;
 
-use Flarum\Core\Access\AssertPermissionTrait;
-use Flarum\Event\DiscussionWillBeSaved;
+use Flarum\Discussion\Event\Saving;
+use Flarum\User\AssertPermissionTrait;
 use Illuminate\Contracts\Events\Dispatcher;
 use Reflar\Polls\Answer;
+use Reflar\Polls\Events\PollWasCreated;
 use Reflar\Polls\Question;
 use Reflar\Polls\Validators\AnswerValidator;
 
@@ -29,13 +30,20 @@ class SavePollToDatabase
     protected $validator;
 
     /**
+     * @var Dispatcher
+     */
+    protected $Dispatcher;
+
+    /**
      * SavePollToDatabase constructor.
      *
      * @param AnswerValidator $validator
+     * @param Dispatcher      $events
      */
-    public function __construct(AnswerValidator $validator)
+    public function __construct(AnswerValidator $validator, Dispatcher $events)
     {
         $this->validator = $validator;
+        $this->events = $events;
     }
 
     /**
@@ -43,15 +51,15 @@ class SavePollToDatabase
      */
     public function subscribe(Dispatcher $events)
     {
-        $events->listen(DiscussionWillBeSaved::class, [$this, 'whenDiscussionWillBeSaved']);
+        $events->listen(Saving::class, [$this, 'whenSaving']);
     }
 
     /**
-     * @param DiscussionWillBeSaved $event
+     * @param Saving $event
      *
-     * @throws \Flarum\Core\Exception\PermissionDeniedException
+     * @throws \Flarum\User\Exception\PermissionDeniedException
      */
-    public function whenDiscussionWillBeSaved(DiscussionWillBeSaved $event)
+    public function whenSaving(Saving $event)
     {
         $discussion = $event->discussion;
 
@@ -73,6 +81,10 @@ class SavePollToDatabase
                     // Add question to database
                     $poll = Question::build($attributes['question'], $discussion->id, $event->actor->id, $endDate, $attributes['publicPoll']);
                     $poll->save();
+
+                    $this->events->fire(
+                        new PollWasCreated($discussion, $poll, $event->actor)
+                    );
 
                     // Add answers to database
                     foreach (array_filter($attributes['answers']) as $answer) {

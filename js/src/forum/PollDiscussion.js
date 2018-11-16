@@ -1,7 +1,7 @@
 import { extend, override } from 'flarum/extend';
 
 import CommentPost from 'flarum/components/CommentPost';
-import PollVote from 'reflar/polls/components/PollVote';
+import PollVote from './components/PollVote';
 
 export default function() {
   extend(CommentPost.prototype, 'content', function(content) {

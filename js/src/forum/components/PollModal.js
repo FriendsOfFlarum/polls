@@ -3,6 +3,7 @@ import Modal from 'flarum/components/Modal';
 import Button from 'flarum/components/Button';
 import DiscussionComposer from 'flarum/components/DiscussionComposer';
 import Switch from "flarum/components/Switch";
+import DateTimePicker from "DateTimePicker";
 
 export default class PollModal extends Modal {
     init() {
@@ -95,7 +96,7 @@ export default class PollModal extends Modal {
                                     Button.component({
                                         type: 'button',
                                         className: 'Button Button--warning Poll-answer-button',
-                                        icon: 'minus',
+                                        icon: 'fa fa-minus',
                                         onclick: i + 1 >= 3 ? this.removeOption.bind(this, i) : ''
                                     }) : ''}
                                 <div className="clear"></div>

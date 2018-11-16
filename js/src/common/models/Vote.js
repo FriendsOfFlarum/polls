@@ -6,4 +6,7 @@ export default class Vote extends mixin(Model, {
     user_id: Model.attribute('user_id'),
     option_id: Model.attribute('option_id'),
 }) {
+    apiEndpoint() {
+        return `/reflar/polls/votes${this.exists ? `/${this.data.id}` : ''}`;
+    }
 }

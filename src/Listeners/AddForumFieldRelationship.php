@@ -4,7 +4,7 @@
  *
  * Copyright (c) ReFlar.
  *
- * http://reflar.io
+ * https://reflar.redevs.org
  *
  * For the full copyright and license information, please view the license.md
  * file that was distributed with this source code.
@@ -12,8 +12,8 @@
 
 namespace Reflar\Polls\Listeners;
 
+use Flarum\Api\Event\WillGetData;
 use Flarum\Api\Serializer\ForumSerializer;
-use Flarum\Event\ConfigureApiController;
 use Flarum\Event\GetApiRelationship;
 use Illuminate\Contracts\Events\Dispatcher;
 use Reflar\Polls\Api\Serializers\QuestionSerializer;
@@ -29,7 +29,7 @@ class AddForumFieldRelationship
     public function subscribe(Dispatcher $events)
     {
         $events->listen(GetApiRelationship::class, [$this, 'addSerializerRelationship']);
-        $events->listen(ConfigureApiController::class, [$this, 'addSerializerInclude']);
+        $events->listen(WillGetData::class, [$this, 'addSerializerInclude']);
     }
 
     /**
@@ -49,9 +49,9 @@ class AddForumFieldRelationship
     }
 
     /**
-     * @param ConfigureApiController $event
+     * @param WillGetData $event
      */
-    public function addSerializerInclude(ConfigureApiController $event)
+    public function addSerializerInclude(WillGetData $event)
     {
         if ($event->controller->serializer === ForumSerializer::class) {
             $event->addInclude('PollsQuestion');

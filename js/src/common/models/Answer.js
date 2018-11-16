@@ -6,4 +6,7 @@ export default class Answer extends mixin(Model, {
     votes: Model.attribute('votes'),
     percent: Model.attribute('percent')
 }) {
+    apiEndpoint() {
+        return `/reflar/polls/answers${this.exists ? `/${this.data.id}` : ''}`;
+    }
 }

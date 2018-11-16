@@ -4,7 +4,7 @@
  *
  * Copyright (c) ReFlar.
  *
- * http://reflar.io
+ * https://reflar.redevs.org
  *
  * For the full copyright and license information, please view the license.md
  * file that was distributed with this source code.
@@ -12,14 +12,14 @@
 
 namespace Reflar\Polls\Api\Controllers;
 
-use Flarum\Api\Controller\AbstractCollectionController;
-use Flarum\Core\Access\AssertPermissionTrait;
+use Flarum\Api\Controller\AbstractListController;
+use Flarum\User\AssertPermissionTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Reflar\Polls\Api\Serializers\QuestionSerializer;
 use Reflar\Polls\Repositories\QuestionRepository;
 use Tobscure\JsonApi\Document;
 
-class ListPollController extends AbstractCollectionController
+class ListPollController extends AbstractListController
 {
     use AssertPermissionTrait;
 

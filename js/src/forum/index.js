@@ -4,9 +4,9 @@ import {extend, override} from 'flarum/extend';
 import DiscussionComposer from 'flarum/components/DiscussionComposer';
 
 import Model from 'flarum/Model';
-import Question from 'reflar/polls/models/Question';
-import Answer from 'reflar/polls/models/Answer';
-import Vote from 'reflar/polls/models/Vote';
+import Question from '../common/models/Question';
+import Answer from '../common/models/Answer';
+import Vote from '../common/models/Vote';
 import Discussion from 'flarum/models/Discussion';
 import User from 'flarum/models/User';
 
@@ -27,7 +27,7 @@ app.initializers.add('reflar-polls', app => {
     User.prototype.canStartPolls = Model.attribute('canStartPolls');
     User.prototype.canSelfEditPolls = Model.attribute('canSelfEditPolls');
     User.prototype.canVote = Model.attribute('canVote');
-
+	
     DiscussionComposer.prototype.addPoll = function(data) {
         app.modal.show(new PollModal(data));
     };

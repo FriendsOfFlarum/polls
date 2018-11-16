@@ -23,13 +23,13 @@
         "source": "https://github.com/ReFlar/polls"
     },
     "require": {
-        "flarum/core": "^0.1.0-beta.7"
+        "flarum/core": "^0.1.0-beta.8"
     },
     "extra": {
         "flarum-extension": {
             "title": "ReFlar Polls",
             "icon": {
-                "name": "signal",
+                "name": "fa fa-signal",
                 "backgroundColor": "#263238",
                 "color": "#ffffff"
             }
