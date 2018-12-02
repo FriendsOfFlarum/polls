@@ -37,7 +37,6 @@ return [
         ->delete('/reflar/polls/answers/{id}', 'polls.answers.delete', Controllers\DeleteAnswerController::class),
     function (Dispatcher $events) {
         $events->subscribe(Listeners\AddDiscussionPollRelationship::class);
-        $events->subscribe(Listeners\AddForumFieldRelationship::class);
         $events->subscribe(Listeners\SavePollToDatabase::class);
     },
 ];

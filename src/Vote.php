@@ -13,6 +13,7 @@
 namespace Reflar\Polls;
 
 use Flarum\Database\AbstractModel;
+use Flarum\User\User;
 
 class Vote extends AbstractModel
 {
@@ -60,6 +61,11 @@ class Vote extends AbstractModel
     {
         // Create relationship between Vote and Answer model to display answer
         return $this->belongsTo(Answer::class, 'option_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**

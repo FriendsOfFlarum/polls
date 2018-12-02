@@ -23,6 +23,14 @@ class ListVotesController extends AbstractListController
     public $serializer = VoteSerializer::class;
 
     /**
+     * {@inheritdoc}
+     */
+    public $include = [
+        'user',
+        'question'
+    ];
+
+    /**
      * @var VoteRepository
      */
     protected $fields;

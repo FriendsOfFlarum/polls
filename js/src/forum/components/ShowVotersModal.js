@@ -24,7 +24,7 @@ export default class ShowVotersModal extends Modal {
         var counter = 0;
 
         votes.map(vote => {
-            var user = app.store.getById('users', vote.data.attributes.user_id)
+            var user = vote.user();
 
             if (parseInt(answer.id()) === parseInt(vote.data.attributes.option_id)) {
                 counter++

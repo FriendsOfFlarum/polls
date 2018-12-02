@@ -13,6 +13,7 @@
 namespace Reflar\Polls\Api\Serializers;
 
 use Flarum\Api\Serializer\AbstractSerializer;
+use Flarum\Api\Serializer\BasicUserSerializer;
 
 class VoteSerializer extends AbstractSerializer
 {
@@ -31,16 +32,30 @@ class VoteSerializer extends AbstractSerializer
     }
 
     /**
-     * @param $model
-     *
-     * @return \Tobscure\JsonApi\Relationship
-     */
+ * @param $model
+ *
+ * @return \Tobscure\JsonApi\Relationship
+ */
     public function question($model)
     {
         return $this->hasOne(
             $model,
             QuestionSerializer::class,
             'poll_id'
+        );
+    }
+
+    /**
+     * @param $model
+     *
+     * @return \Tobscure\JsonApi\Relationship
+     */
+    public function user($model)
+    {
+        return $this->hasOne(
+            $model,
+            BasicUserSerializer::class,
+            'user_id'
         );
     }
 }
