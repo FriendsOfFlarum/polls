@@ -1,0 +1,39 @@
+reflar-polls:
+  admin:
+    permissions:
+      moderate: Upravit a odebrat ankety
+      start: Vytvoøit anketu
+      vote: Hlasovat v anketì
+      self_edit: Povolit uživatelùm upravit jejich vlastní ankety
+  forum:
+    no_permission: Nemáte oprávnìní pro hlasování
+    poll_ended: Tato anketa byla uzavøena
+    days_remaining: "Anketa vyprší {time}"
+    public_poll: Zobrazit hlasující
+    votes_modal:
+      title: Hlasování
+    modal:
+      submit: Odeslat
+      no_voters: Žádné hlasy
+      switch: Povolit uživatelùm vidìt kdo hlasoval
+      min: Zadejte nejménì 2 odpovìdi
+      max: Zadat lze maximálnì 10 odpovìdí
+      include_question: Zadejte otázku
+      date_placeholder: Datum uzavøení ankety (volitelné)
+      answer_placeholder: Odpovìï
+      add: Pøidat volbu
+      question_placeholder: Otázka
+      add_title: Pøidat anketu
+      edit_title: Upravit anketu
+      answers: Odpovìdi
+    moderation:
+      edit: Úprava ankety
+      delete: Odebrat anketu
+      delete_confirm: Opravdu si pøejete odstranit tuto anketu?
+    composer_discussion:
+      add_poll: Pøidat anketu
+      edit: => reflar-polls.forum.moderation.edit
+    tooltip:
+      votes: hlasù
+      vote: hlas
+      badge: Anketa
