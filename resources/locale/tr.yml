@@ -1,0 +1,39 @@
+reflar-polls:
+  admin:
+    permissions:
+      moderate: Anket düzenleme & silme
+      start: Anket başlatma
+      vote: Anketlere oy verme
+      self_edit: Kendi anketini düzenleme
+  forum:
+    no_permission: Oy verme yetkisine sahip değilsiniz
+    poll_ended: Bu anket sona erdi
+    days_remaining: "Anket bitimine {time}"
+    public_poll: Oy verenler
+    votes_modal:
+      title: Oy verenler
+    modal:
+      submit: Gönder
+      no_voters: Oy Yok
+      switch: İnsanların kimin oy verdiğine oy vermesine izin ver
+      min: En az 2 seçenek eklemelisiniz
+      max: En fazla 10 seçenek ekleyebilirsiniz
+      include_question: Bir soru eklemelisiniz
+      date_placeholder: Anket bitim tarihi (İsteğe bağlı)
+      answer_placeholder: Cevap
+      add: Bir seçenek ekleyin
+      question_placeholder: Soru
+      add_title: Bir anket ekleyin
+      edit_title: Anketi düzenleyin
+      answers: Cevaplar
+    moderation:
+      edit: Anketi Düzenle
+      delete: Anketi Kaldır
+      delete_confirm: Bu anketi silmek istediğinizden emin misiniz?
+    composer_discussion:
+      add_poll: Anket Ekle
+      edit: => reflar-polls.forum.moderation.edit
+    tooltip:
+      votes: oylar
+      vote: oy
+      badge: Anket
