@@ -9,4 +9,7 @@ return [
             $table->integer('user_id');
         });
     },
+    'down' => function (Builder $schema) {
+        //
+    }
 ];

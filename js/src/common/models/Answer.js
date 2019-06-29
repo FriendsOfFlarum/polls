@@ -4,7 +4,7 @@ import mixin from 'flarum/utils/mixin';
 export default class Answer extends mixin(Model, {
     answer: Model.attribute('answer'),
     votes: Model.attribute('votes'),
-    percent: Model.attribute('percent')
+    percent: Model.attribute('percent'),
 }) {
     apiEndpoint() {
         return `/reflar/polls/answers${this.exists ? `/${this.data.id}` : ''}`;
