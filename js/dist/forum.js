@@ -101,6 +101,36 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/@babel/runtime/helpers/esm/extends.js":
+/*!************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/esm/extends.js ***!
+  \************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _extends; });
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+/***/ }),
+
 /***/ "./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js":
 /*!******************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js ***!
@@ -3049,17 +3079,10 @@ function (_Modal) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return PollVote; });
-/* harmony import */ var _babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/esm/inheritsLoose */ "./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js");
-/* harmony import */ var flarum_extend__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! flarum/extend */ "flarum/extend");
-/* harmony import */ var flarum_extend__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(flarum_extend__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var flarum_components_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! flarum/components/Button */ "flarum/components/Button");
-/* harmony import */ var flarum_components_Button__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(flarum_components_Button__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var flarum_Component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! flarum/Component */ "flarum/Component");
-/* harmony import */ var flarum_Component__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(flarum_Component__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var flarum_components_LogInModal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! flarum/components/LogInModal */ "flarum/components/LogInModal");
-/* harmony import */ var flarum_components_LogInModal__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(flarum_components_LogInModal__WEBPACK_IMPORTED_MODULE_4__);
-
-
+/* harmony import */ var _babel_runtime_helpers_esm_extends__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/esm/extends */ "./node_modules/@babel/runtime/helpers/esm/extends.js");
+/* harmony import */ var _babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/esm/inheritsLoose */ "./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js");
+/* harmony import */ var flarum_Component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! flarum/Component */ "flarum/Component");
+/* harmony import */ var flarum_Component__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(flarum_Component__WEBPACK_IMPORTED_MODULE_2__);
 
 
  // import ShowVotersModal from './ShowVotersModal';
@@ -3067,7 +3090,7 @@ __webpack_require__.r(__webpack_exports__);
 var PollVote =
 /*#__PURE__*/
 function (_Component) {
-  Object(_babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_0__["default"])(PollVote, _Component);
+  Object(_babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_1__["default"])(PollVote, _Component);
 
   function PollVote() {
     return _Component.apply(this, arguments) || this;
@@ -3077,12 +3100,9 @@ function (_Component) {
 
   _proto.init = function init() {
     this.poll = this.props.poll;
-    this.options = this.poll.options() || [];
-    this.votes = this.poll.votes() || [];
-    this.vote = this.votes.find(function (v) {
-      return v.user() && v.user().id() === app.session.user.id();
-    });
-    this.voted = m.prop(!!this.vote); // if (app.session)
+    this.vote = m.prop();
+    this.voted = m.prop(false);
+    this.updateData();
   };
 
   _proto.view = function view() {
@@ -3091,53 +3111,103 @@ function (_Component) {
     return m("div", null, m("h3", null, this.poll.question()), this.options.map(function (opt) {
       var hasVoted = _this.voted();
 
-      var voted = _this.vote.id() === opt.id();
+      var voted = _this.vote() && _this.vote().option().id() === opt.id();
 
       var votes = _this.votes.filter(function (v) {
         return v.option().id() === opt.id();
       }).length;
 
       var percent = Math.round(votes / _this.poll.votes().length * 100);
-      return m("div", {
-        className: "PollOption " + (hasVoted && 'PollVoted')
-      }, m("div", {
+      var attrs = voted ? {
         title: hasVoted && app.translator.transChoice('fof-polls.forum.tooltip.votes', votes, {
           count: String(votes)
         }).join(''),
-        className: "PollBar",
-        "data-selected": voted,
         config: function config(element) {
           $(element).tooltip({
             placement: 'right'
           });
         }
-      }, !_this.poll.hasEnded() && !_this.voted && app.session.user.canVote() && m("label", {
-        className: "checkbox"
-      }, voted ? m("input", {
-        onchange: _this.changeVote.bind(_this, opt),
-        type: "checkbox",
+      } : {};
+      var inputAttrs = voted ? {
         checked: true
-      }) : m("input", {
+      } : {};
+      return m("div", {
+        className: "PollOption " + (hasVoted && 'PollVoted')
+      }, m("div", Object(_babel_runtime_helpers_esm_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, attrs, {
+        className: "PollBar",
+        "data-selected": voted
+      }), !_this.poll.hasEnded() && app.session.user.canVotePolls() && m("label", {
+        className: "checkbox"
+      }, m("input", Object(_babel_runtime_helpers_esm_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({
         onchange: _this.changeVote.bind(_this, opt),
         type: "checkbox"
-      }), m("span", {
+      }, inputAttrs)), m("span", {
         className: "checkmark"
       })), m("div", {
-        style: '--width: ' + percent + '%',
+        style: hasVoted && '--width: ' + percent + '%',
         className: "PollOption-active"
       }), m("label", {
         style: !_this.poll.hasEnded() ? 'margin-left: 25px' : '',
         className: "PollAnswer"
-      }, m("span", null, opt.answer())), m("label", null, m("span", {
+      }, m("span", null, opt.answer())), hasVoted && m("label", null, m("span", {
         className: percent !== 100 ? 'PollPercent PollPercent--option' : 'PollPercent'
       }, percent, "%"))));
     }));
   };
 
-  _proto.changeVote = function changeVote(option) {};
+  _proto.updateData = function updateData() {
+    this.poll = app.store.getById('polls', this.poll.id());
+    this.options = this.poll.options() || [];
+    this.votes = this.poll.votes() || [];
+    this.vote(this.votes.find(function (v) {
+      return v.user() && v.user().id() === app.session.user.id();
+    }));
+    this.voted(!!this.vote());
+  };
+
+  _proto.onError = function onError(el, error) {
+    el.srcElement.checked = false;
+    app.alerts.show(error.alert);
+  };
+
+  _proto.changeVote = function changeVote(option, el) {
+    var _this2 = this;
+
+    if (this.vote() && option.id() === this.vote().option().id()) option = null;
+
+    if (!this.vote()) {
+      this.vote(app.store.createRecord('poll_votes'));
+      this.vote().pollId(this.poll.id());
+    }
+
+    m.startComputation();
+    app.request({
+      method: 'PATCH',
+      url: app.forum.attribute('apiUrl') + "/fof/polls/" + this.poll.id() + "/vote",
+      errorHandler: this.onError.bind(this, el),
+      data: {
+        data: {
+          optionId: option ? option.id() : null
+        }
+      }
+    }).then(function (res) {
+      app.store.pushPayload(res);
+      if (!option) app.store.remove(_this2.vote());
+
+      _this2.updateData();
+
+      if (!option) {
+        m.redraw.strategy('all');
+        m.redraw();
+        m.redraw.strategy('diff');
+      }
+
+      m.endComputation();
+    });
+  };
 
   return PollVote;
-}(flarum_Component__WEBPACK_IMPORTED_MODULE_3___default.a);
+}(flarum_Component__WEBPACK_IMPORTED_MODULE_2___default.a);
 
 
 
@@ -3175,8 +3245,7 @@ app.initializers.add('fof/polls', function () {
   app.store.models.users.prototype.canEditPolls = flarum_Model__WEBPACK_IMPORTED_MODULE_0___default.a.attribute('canEditPolls');
   app.store.models.users.prototype.canStartPolls = flarum_Model__WEBPACK_IMPORTED_MODULE_0___default.a.attribute('canStartPolls');
   app.store.models.users.prototype.canSelfEditPolls = flarum_Model__WEBPACK_IMPORTED_MODULE_0___default.a.attribute('canSelfEditPolls');
-  app.store.models.users.prototype.canVote = flarum_Model__WEBPACK_IMPORTED_MODULE_0___default.a.attribute('canVote');
-  app.store.models.users.prototype.pollVotes = flarum_Model__WEBPACK_IMPORTED_MODULE_0___default.a.hasMany('poll_votes');
+  app.store.models.users.prototype.canVotePolls = flarum_Model__WEBPACK_IMPORTED_MODULE_0___default.a.attribute('canVotePolls');
   Object(_addDiscussionBadge__WEBPACK_IMPORTED_MODULE_4__["default"])();
   Object(_addDiscussionComposerItem__WEBPACK_IMPORTED_MODULE_5__["default"])();
   Object(_addPollToDiscussion__WEBPACK_IMPORTED_MODULE_6__["default"])();
@@ -3308,14 +3377,16 @@ function (_mixin) {
   var _proto = PollVote.prototype;
 
   _proto.apiEndpoint = function apiEndpoint() {
-    return "/fof/polls/votes" + (this.exists ? "/" + this.data.id : '');
+    return "/fof/polls/" + this.pollId() + "/vote";
   };
 
   return PollVote;
 }(flarum_utils_mixin__WEBPACK_IMPORTED_MODULE_2___default()(flarum_Model__WEBPACK_IMPORTED_MODULE_1___default.a, {
   poll: flarum_Model__WEBPACK_IMPORTED_MODULE_1___default.a.hasOne('poll'),
   option: flarum_Model__WEBPACK_IMPORTED_MODULE_1___default.a.hasOne('option'),
-  user: flarum_Model__WEBPACK_IMPORTED_MODULE_1___default.a.hasOne('user')
+  user: flarum_Model__WEBPACK_IMPORTED_MODULE_1___default.a.hasOne('user'),
+  pollId: flarum_Model__WEBPACK_IMPORTED_MODULE_1___default.a.attribute('pollId'),
+  optionId: flarum_Model__WEBPACK_IMPORTED_MODULE_1___default.a.attribute('optionId')
 }));
 
 
@@ -3396,17 +3467,6 @@ module.exports = flarum.core.compat['components/DiscussionComposer'];
 /***/ (function(module, exports) {
 
 module.exports = flarum.core.compat['components/DiscussionList'];
-
-/***/ }),
-
-/***/ "flarum/components/LogInModal":
-/*!**************************************************************!*\
-  !*** external "flarum.core.compat['components/LogInModal']" ***!
-  \**************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = flarum.core.compat['components/LogInModal'];
 
 /***/ }),
 

@@ -32,6 +32,8 @@ class PollVote extends AbstractModel
         'updated_at',
     ];
 
+    protected $fillable = ['user_id', 'option_id'];
+
     /**
      * @param $pollId
      * @param $userId

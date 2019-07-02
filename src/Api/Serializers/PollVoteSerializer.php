@@ -1,7 +1,7 @@
 <?php
 
 
-namespace FoF\Polls\Api\Serializer;
+namespace FoF\Polls\Api\Serializers;
 
 
 use Flarum\Api\Serializer\AbstractSerializer;
@@ -24,8 +24,10 @@ class PollVoteSerializer extends AbstractSerializer
     protected function getDefaultAttributes($vote)
     {
         return [
-            'created_at' => $this->formatDate($vote->created_at),
-            'updated_at' => $this->formatDate($vote->updated_at),
+            'pollId' => $vote->poll_id,
+            'optionId' => $vote->option_id,
+            'createdAt' => $this->formatDate($vote->created_at),
+            'updatedAt' => $this->formatDate($vote->updated_at),
         ];
     }
 

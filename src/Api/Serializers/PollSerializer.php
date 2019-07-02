@@ -1,7 +1,7 @@
 <?php
 
 
-namespace FoF\Polls\Api\Serializer;
+namespace FoF\Polls\Api\Serializers;
 
 
 use Flarum\Api\Serializer\AbstractSerializer;

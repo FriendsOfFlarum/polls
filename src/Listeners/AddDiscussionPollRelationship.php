@@ -12,7 +12,7 @@ use Flarum\Api\Serializer\UserSerializer;
 use Flarum\Discussion\Discussion;
 use Flarum\Event\GetApiRelationship;
 use Flarum\Event\GetModelRelationship;
-use FoF\Polls\Api\Serializer\PollSerializer;
+use FoF\Polls\Api\Serializers\PollSerializer;
 use FoF\Polls\Poll;
 use Illuminate\Contracts\Events\Dispatcher;
 
