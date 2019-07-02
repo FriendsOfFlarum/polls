@@ -1,42 +1,30 @@
 <?php
+
 /*
- * This file is part of reflar/polls.
+ * This file is part of fof/polls.
  *
- * Copyright (c) ReFlar.
+ * Copyright (c) 2019 FriendsOfFlarum.
  *
- * https://reflar.redevs.org
- *
- * For the full copyright and license information, please view the license.md
+ * For the full copyright and license information, please view the LICENSE.md
  * file that was distributed with this source code.
  */
 
-namespace Reflar\Polls;
+namespace FoF\Polls;
 
+use Flarum\Discussion\Event\Saving;
 use Flarum\Extend;
-use Illuminate\Contracts\Events\Dispatcher;
-use Reflar\Polls\Api\Controllers;
+use Illuminate\Events\Dispatcher;
 
 return [
-    (new Extend\Frontend('admin'))
-        ->js(__DIR__.'/js/dist/admin.js'),
     (new Extend\Frontend('forum'))
         ->js(__DIR__.'/js/dist/forum.js')
-        ->css(__DIR__.'/resources/less/forum.less')
-        ->css(__DIR__.'/resources/css/dist/DateTimePicker.min.css'),
-    new Extend\Locales(__DIR__.'/resources/locale'),
-    (new Extend\Routes('api'))
-        ->get('/reflar/polls', 'polls.index', Controllers\ListPollController::class)
-        ->patch('/reflar/polls/{id}', 'polls.update', Controllers\UpdatePollController::class)
-        ->patch('/reflar/polls/{id}/endDate', 'polls.endDate.update', Controllers\UpdateEndDateController::class)
-        ->delete('/reflar/polls/{id}', 'polls.delete', Controllers\DeletePollController::class)
-        ->get('/reflar/polls/votes', 'polls.votes.index', Controllers\ListVotesController::class)
-        ->post('/reflar/polls/votes', 'polls.votes.create', Controllers\CreateVoteController::class)
-        ->patch('/reflar/polls/votes/{id}', 'polls.votes.update', Controllers\UpdateVoteController::class)
-        ->post('/reflar/polls/answers', 'polls.answers.create', Controllers\CreateAnswerController::class)
-        ->patch('/reflar/polls/answers/{id}', 'polls.answers.update', Controllers\UpdateAnswerController::class)
-        ->delete('/reflar/polls/answers/{id}', 'polls.answers.delete', Controllers\DeleteAnswerController::class),
-    function (Dispatcher $events) {
+        ->css(__DIR__.'/resources/less/forum.less'),
+    (new Extend\Frontend('admin'))
+        ->js(__DIR__.'/js/dist/admin.js')
+        ->css(__DIR__.'/resources/less/admin.less'),
+    new Extend\Locales(__DIR__ . '/resources/locale'),
+    new Extend\Compat(function (Dispatcher $events) {
         $events->subscribe(Listeners\AddDiscussionPollRelationship::class);
-        $events->subscribe(Listeners\SavePollToDatabase::class);
-    },
+        $events->listen(Saving::class, Listeners\SavePollsToDatabase::class);
+    })
 ];

@@ -1,46 +1,48 @@
 {
-    "name": "reflar/polls",
-    "description": "A poll extension for your flarum Forum.",
-    "keywords": [
-        "extension",
-        "flarum",
-        "polls",
-        "poll",
-        "answer",
-        "reflar"
-    ],
-    "type": "flarum-extension",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Shahiem Seymor",
-            "email": "shahiem.seymor@reflar.email",
-            "homepage": "https://reflar.io"
-        }
-    ],
-    "support": {
-        "issues": "https://github.com/ReFlar/polls/issues",
-        "source": "https://github.com/ReFlar/polls"
+  "name": "fof/polls",
+  "description": " A Flarum extension that adds polls to your discussions",
+  "keywords": [
+    "flarum"
+  ],
+  "type": "flarum-extension",
+  "license": "MIT",
+  "require": {
+    "flarum/core": "^0.1.0-beta.8"
+  },
+  "replace": {
+    "reflar/polls": "^1.3.4"
+  },
+  "conflict": {
+    "reflar/polls": "< 1.3.4"
+  },
+  "authors": [
+    {
+      "name": "David Sevilla Martin",
+      "email": "david.s@redevs.org",
+      "role": "Developer"
     },
-    "require": {
-        "flarum/core": "^0.1.0-beta.8"
-    },
-    "extra": {
-        "flarum-extension": {
-            "title": "ReFlar Polls",
-            "icon": {
-                "name": "fa fa-signal",
-                "backgroundColor": "#263238",
-                "color": "#ffffff"
-            }
-        },
-        "flagrow": {
-            "discuss": "https://discuss.flarum.org/d/9762-poll"
-        }
-    },
-    "autoload": {
-        "psr-4": {
-            "Reflar\\Polls\\": "src/"
-        }
+    {
+      "name": "Shahiem Seymor",
+      "role": "Original Developer"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "FoF\\Polls\\": "src/",
+      "FoF\\Polls\\Migrations\\": "migrations/"
+    }
+  },
+  "extra": {
+    "flarum-extension": {
+      "title": "FoF Polls",
+      "icon": {
+        "name": "fas fa-signal",
+        "backgroundColor": "#e74c3c",
+        "color": "#fff"
+      }
+    },
+    "flagrow": {
+      "discuss": ""
+    }
+  }
 }

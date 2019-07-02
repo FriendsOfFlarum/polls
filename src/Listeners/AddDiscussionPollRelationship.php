@@ -1,16 +1,8 @@
 <?php
-/*
- * This file is part of reflar/polls.
- *
- * Copyright (c) ReFlar.
- *
- * https://reflar.redevs.org
- *
- * For the full copyright and license information, please view the license.md
- * file that was distributed with this source code.
- */
 
-namespace Reflar\Polls\Listeners;
+
+namespace FoF\Polls\Listeners;
+
 
 use Flarum\Api\Controller;
 use Flarum\Api\Event\Serializing;
@@ -20,12 +12,13 @@ use Flarum\Api\Serializer\UserSerializer;
 use Flarum\Discussion\Discussion;
 use Flarum\Event\GetApiRelationship;
 use Flarum\Event\GetModelRelationship;
+use FoF\Polls\Api\Serializer\PollSerializer;
+use FoF\Polls\Poll;
 use Illuminate\Contracts\Events\Dispatcher;
-use Reflar\Polls\Api\Serializers\QuestionSerializer;
-use Reflar\Polls\Question;
 
 class AddDiscussionPollRelationship
 {
+
     /**
      * @param Dispatcher $events
      */
@@ -39,25 +32,23 @@ class AddDiscussionPollRelationship
 
     /**
      * @param GetModelRelationship $event
-     *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function getModelRelationship(GetModelRelationship $event)
     {
-        if ($event->isRelationship(Discussion::class, 'Poll')) {
-            return $event->model->hasOne(Question::class, 'discussion_id', 'id', null, 'end_date', 'Poll');
+        if ($event->isRelationship(Discussion::class, 'poll')) {
+            return $event->model->hasOne(Poll::class);
         }
     }
 
     /**
      * @param GetApiRelationship $event
-     *
      * @return \Tobscure\JsonApi\Relationship
      */
     public function getApiRelationship(GetApiRelationship $event)
     {
-        if ($event->isRelationship(DiscussionSerializer::class, 'Poll')) {
-            return $event->serializer->hasOne($event->model, QuestionSerializer::class, 'Poll');
+        if ($event->isRelationship(DiscussionSerializer::class, 'poll')) {
+            return $event->serializer->hasOne($event->model, PollSerializer::class, 'poll');
         }
     }
 
@@ -70,23 +61,27 @@ class AddDiscussionPollRelationship
             $event->attributes['canEditPolls'] = $event->actor->can('discussion.polls');
             $event->attributes['canStartPolls'] = $event->actor->can('startPolls');
             $event->attributes['canSelfEditPolls'] = $event->actor->can('selfEditPolls');
-            $event->attributes['canVote'] = $event->actor->can('votePolls');
+            $event->attributes['canVotePolls'] = $event->actor->can('votePolls');
         }
     }
-
     /**
      * @param WillGetData $event
      */
     public function includeRelationship(WillGetData $event)
     {
-        if ($event->isController(Controller\ListDiscussionsController::class)
-            || $event->isController(Controller\ShowDiscussionController::class)
+        if ($event->isController(Controller\ShowDiscussionController::class)
             || $event->isController(Controller\CreateDiscussionController::class)
             || $event->isController(Controller\UpdateDiscussionController::class)
         ) {
-            $event->addInclude('Poll');
-            $event->addInclude('Poll.answers');
-            $event->addInclude('Poll.votes');
+            $event->addInclude('poll');
+            $event->addInclude('poll.options');
+            $event->addInclude('poll.votes');
+            $event->addInclude('poll.votes.user');
+            $event->addInclude('poll.votes.option');
+        }
+
+        if ($event->isController(Controller\ListDiscussionsController::class)) {
+            $event->addInclude('poll');
         }
     }
 }

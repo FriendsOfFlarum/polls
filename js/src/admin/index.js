@@ -1,46 +1,46 @@
-import app from 'flarum/app';
-import { extend, override } from 'flarum/extend';
-
+import { extend } from 'flarum/extend';
 import PermissionGrid from 'flarum/components/PermissionGrid';
 
-app.initializers.add('reflar-polls', app => {
+app.initializers.add('fof/polls', () => {
     extend(PermissionGrid.prototype, 'moderateItems', items => {
         items.add(
             'reflar-polls',
             {
                 icon: 'fa fa-pencil-alt',
-                label: app.translator.trans('reflar-polls.admin.permissions.moderate'),
+                label: app.translator.trans('fof-polls.admin.permissions.moderate'),
                 permission: 'discussion.polls',
             },
             95
         );
     });
+
     extend(PermissionGrid.prototype, 'startItems', items => {
         items.add(
-            'reflar-polls-start',
+            'fof-polls-start',
             {
                 icon: 'fa fa-signal',
-                label: app.translator.trans('reflar-polls.admin.permissions.start'),
+                label: app.translator.trans('fof-polls.admin.permissions.start'),
                 permission: 'startPolls',
             },
             95
         );
     });
+
     extend(PermissionGrid.prototype, 'replyItems', items => {
         items.add(
-            'reflar-polls-edit',
+            'fof-polls-edit',
             {
                 icon: 'fa fa-pencil-alt',
-                label: app.translator.trans('reflar-polls.admin.permissions.self_edit'),
+                label: app.translator.trans('fof-polls.admin.permissions.self_edit'),
                 permission: 'selfEditPolls',
             },
             70
         );
         items.add(
-            'reflar-polls-vote',
+            'fof-polls-vote',
             {
                 icon: 'fa fa-signal',
-                label: app.translator.trans('reflar-polls.admin.permissions.vote'),
+                label: app.translator.trans('fof-polls.admin.permissions.vote'),
                 permission: 'votePolls',
             },
             80

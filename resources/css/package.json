@@ -1,9 +1,0 @@
-{
-    "private": true,
-    "devDependencies": {
-        "gulp": "^3.8.11"
-    },
-    "dependencies": {
-        "datetimepicker": "0.1.38"
-    }
-}

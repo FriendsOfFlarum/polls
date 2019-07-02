@@ -1,38 +1,29 @@
-# Polls by ReFlar
+# Polls by FriendsOfFlarum
 
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ReFlar/polls/blob/master/LICENSE) [![Latest Stable Version](https://img.shields.io/packagist/v/reflar/polls.svg)](https://github.com/ReFlar/polls)
+![License](https://img.shields.io/badge/license-MIT-blue.svg) [![Latest Stable Version](https://img.shields.io/packagist/v/fof/polls.svg)](https://packagist.org/packages/fof/polls) [![OpenCollective](https://img.shields.io/badge/opencollective-fof-blue.svg)](https://opencollective.com/fof/donate) [![Patreon](https://img.shields.io/badge/patreon-datitisev-f96854.svg?logo=patreon)](https://patreon.com/datitisev)
 
-A Flarum extension that adds polls to your discussions.
+A [Flarum](http://flarum.org) extension. A Flarum extension that adds polls to your discussions.
 
-### Installation :balloon:
+### Installation
 
-Install it with composer:
+Use [Bazaar](https://discuss.flarum.org/d/5151-flagrow-bazaar-the-extension-marketplace) or install manually with composer:
 
 ```sh
-composer require reflar/polls
+composer require fof/polls
 ```
 
+### Updating
 
-### TODO 📝
+```sh
+composer update fof/polls
+```
 
-- ~~Translations~~
-- ~~Edit a Poll~~
-- ~~Remove a Poll~~
-- Poll customize settings
-- ~~Expiry date field of a poll~~
+### Links
 
-### Issues 🐛
+[<img src="https://opencollective.com/fof/donate/button@2x.png?color=blue" height="25" />](https://opencollective.com/fof/donate)
+[<img src="https://c5.patreon.com/external/logo/become_a_patron_button.png" height="25" />](https://patreon.com/datitisev)
 
-[Open an issue on Github](https://github.com/ReFlar/poll/issues)
+- [Packagist](https://packagist.org/packages/fof/polls)
+- [GitHub](https://github.com/packages/FriendsOfFlarum/polls)
 
-Suggestions? Please feel free to give me some suggestions
-
-### Links 🔗
-
-- [Github](https://github.com/ReFlar/polls)
-- [Packagist](https://packagist.org/packages/reflar/polls)
-- [Buy me a house with $1 💰](https://paypal.me/shahiemseymor)
-
-
-
-
+An extension by [FriendsOfFlarum](https://github.com/FriendsOfFlarum).
