@@ -18,6 +18,7 @@ use FoF\Polls\Poll;
 use FoF\Polls\PollOption;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
+use InvalidArgumentException;
 
 class EditPollHandler
 {
@@ -66,11 +67,13 @@ class EditPollHandler
         }
 
         if (isset($attributes['endDate'])) {
-            $date = Carbon::createFromTimeString($attributes['endDate']);
+            try {
+                $date = Carbon::createFromTimeString($attributes['endDate']);
 
-            if (!$poll->hasEnded() && $date->isFuture() && ($poll->end_date === null || $poll->end_date->lessThanOrEqualTo($date))) {
-                $poll->end_date = $date;
-            }
+                if (!$poll->hasEnded() && $date->isFuture() && ($poll->end_date === null || $poll->end_date->lessThanOrEqualTo($date))) {
+                    $poll->end_date = $date;
+                }
+            } catch (InvalidArgumentException $ignored) {};
         }
 
         $poll->save();
