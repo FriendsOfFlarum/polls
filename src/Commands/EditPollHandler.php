@@ -39,7 +39,7 @@ class EditPollHandler
     public function handle(EditPoll $command)
     {
         /**
-         * @var Poll
+         * @var $poll Poll
          */
         $actor = $command->actor;
         $poll = Poll::findOrFail($command->pollId);
@@ -66,11 +66,18 @@ class EditPollHandler
         }
 
         if (isset($attributes['endDate'])) {
-            $date = Carbon::createFromTimeString($attributes['endDate']);
+            $endDate = $attributes['endDate'];
 
-            if (!$poll->hasEnded() && $date->isFuture() && ($poll->end_date === null || $poll->end_date->lessThanOrEqualTo($date))) {
-                $poll->end_date = $date;
+            if (is_string($endDate)) {
+                $date = Carbon::createFromTimeString($attributes['endDate']);
+
+                if (!$poll->hasEnded() && $date->isFuture() && ($poll->end_date === null || $poll->end_date->lessThanOrEqualTo($date))) {
+                    $poll->end_date = $date;
+                }
+            } else if (is_bool($endDate) && !$endDate) {
+                $poll->end_date = null;
             }
+
         }
 
         $poll->save();

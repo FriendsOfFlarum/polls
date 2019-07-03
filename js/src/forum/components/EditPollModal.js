@@ -77,7 +77,7 @@ export default class EditPollModal extends CreatePollModal {
         return this.poll
             .save({
                 question: this.question(),
-                endDate: this.endDate(),
+                endDate: this.endDate() || false,
                 publicPoll: this.publicPoll(),
                 options,
             })
