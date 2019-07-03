@@ -6,6 +6,7 @@ namespace FoF\Polls\Listeners;
 
 use Flarum\Discussion\Event\Saving;
 use Flarum\User\AssertPermissionTrait;
+use FoF\Polls\Events\PollWasCreated;
 use FoF\Polls\Poll;
 use FoF\Polls\PollOption;
 use FoF\Polls\Validators\PollOptionValidator;
@@ -16,11 +17,6 @@ use Illuminate\Support\Arr;
 class SavePollsToDatabase
 {
     use AssertPermissionTrait;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $events;
 
     /**
      * @var PollValidator
@@ -39,10 +35,8 @@ class SavePollsToDatabase
      * @param PollValidator $validator
      * @param PollOptionValidator $optionValidator
      */
-    public function __construct(Dispatcher $events, PollValidator $validator, PollOptionValidator $optionValidator)
+    public function __construct(PollValidator $validator, PollOptionValidator $optionValidator)
     {
-        $this->events = $events;
-
         $this->validator = $validator;
         $this->optionValidator = $optionValidator;
     }
@@ -74,9 +68,7 @@ class SavePollsToDatabase
 
             $poll->save();
 
-//            $this->events->fire(
-//                new PollWasCreated($discussion, $poll, $event->actor)
-//            );
+            app()->make('events')->fire(new PollWasCreated($event->actor, $poll));
 
             foreach ($options as $answer) {
                 if (empty($answer)) {

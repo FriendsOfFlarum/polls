@@ -4,6 +4,7 @@ namespace FoF\Polls\Commands;
 
 use Flarum\User\AssertPermissionTrait;
 use Flarum\User\Exception\PermissionDeniedException;
+use FoF\Polls\Events\PollWasVoted;
 use FoF\Polls\Poll;
 use FoF\Polls\PollVote;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -54,6 +55,8 @@ class VotePollHandler
             ], [
                 'option_id' => $optionId,
             ]);
+
+            app()->make('events')->fire(new PollWasVoted($actor, $poll, $vote,$vote !== null));
         }
 
         return $poll;
