@@ -18,7 +18,6 @@ use FoF\Polls\Poll;
 use FoF\Polls\PollOption;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
-use InvalidArgumentException;
 
 class EditPollHandler
 {
