@@ -39,7 +39,7 @@ class EditPollHandler
     public function handle(EditPoll $command)
     {
         /**
-         * @var $poll Poll
+         * @var Poll
          */
         $actor = $command->actor;
         $poll = Poll::findOrFail($command->pollId);
@@ -74,10 +74,9 @@ class EditPollHandler
                 if (!$poll->hasEnded() && $date->isFuture() && ($poll->end_date === null || $poll->end_date->lessThanOrEqualTo($date))) {
                     $poll->end_date = $date;
                 }
-            } else if (is_bool($endDate) && !$endDate) {
+            } elseif (is_bool($endDate) && !$endDate) {
                 $poll->end_date = null;
             }
-
         }
 
         $poll->save();
