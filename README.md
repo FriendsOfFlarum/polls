@@ -12,6 +12,17 @@ Use [Bazaar](https://discuss.flarum.org/d/5151-flagrow-bazaar-the-extension-mark
 composer require fof/polls
 ```
 
+#### Migrating from ReFlar Polls
+
+Make sure you've updated to the latest `reflar/polls` version and run `php flarum migrate` BEFORE installing `fof/polls`.
+You will not be able to install this extension if you have a version of ReFlar Polls older than v1.3.4 as well.
+
+```sh
+$ composer require reflar/polls
+$ php flarum migrate
+$ composer require fof/polls
+```
+
 ### Updating
 
 ```sh
