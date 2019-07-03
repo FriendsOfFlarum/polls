@@ -7,9 +7,9 @@ fof-polls:
       vote: Vote on polls
 
   forum:
-    days_remaining: Poll ends {time}
+    days_remaining: Poll ends {time}.
     no_permission: You don't have permission to vote
-    poll_ended: This poll has ended
+    poll_ended: This poll has ended.
     public_poll: View voters
 
     composer_discussion:

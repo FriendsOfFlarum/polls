@@ -1,6 +1,8 @@
 import Component from 'flarum/Component';
+import Button from 'flarum/components/Button';
+import LogInModal from 'flarum/components/LogInModal';
 
-// import ShowVotersModal from './ShowVotersModal';
+import ListVotersModal from './ListVotersModal';
 
 export default class PollVote extends Component {
     init() {
@@ -46,7 +48,7 @@ export default class PollVote extends Component {
                     return (
                         <div className={`PollOption ${hasVoted && 'PollVoted'}`}>
                             <div {...attrs} className="PollBar" data-selected={voted}>
-                                {!this.poll.hasEnded() && app.session.user.canVotePolls() && (
+                                {((!this.poll.hasEnded() && app.session.user && app.session.user.canVotePolls()) || !app.session.user) && (
                                     <label className="checkbox">
                                         <input onchange={this.changeVote.bind(this, opt)} type="checkbox" {...inputAttrs} />
                                         <span className="checkmark" />
@@ -66,6 +68,27 @@ export default class PollVote extends Component {
                         </div>
                     );
                 })}
+
+                {this.poll.publicPoll()
+                    ? Button.component({
+                          className: 'Button Button--primary PublicPollButton',
+                          children: app.translator.trans('fof-polls.forum.public_poll'),
+                          onclick: () => this.showVoters(),
+                      })
+                    : ''}
+
+                {app.session.user && !app.session.user.canVotePolls() ? (
+                    <div className="helpText PollInfoText">{app.translator.trans('fof-polls.forum.no_permission')}</div>
+                ) : this.poll.hasEnded() ? (
+                    <div className="helpText PollInfoText">{app.translator.trans('fof-polls.forum.poll_ended')}</div>
+                ) : this.poll.endDate() !== null ? (
+                    <div className="helpText PollInfoText">
+                        <i class="icon fa fa-clock-o" />
+                        {app.translator.trans('fof-polls.forum.days_remaining', { time: moment(this.poll.endDate()).fromNow() })}
+                    </div>
+                ) : (
+                    ''
+                )}
             </div>
         );
     }
@@ -75,18 +98,24 @@ export default class PollVote extends Component {
         this.options = this.poll.options() || [];
         this.votes = this.poll.votes() || [];
 
-        this.vote(this.votes.find(v => v.user() && v.user().id() === app.session.user.id()));
+        this.vote(app.session.user ? this.votes.find(v => v.user() && v.user().id() === app.session.user.id()) : null);
 
         this.voted(!!this.vote());
     }
 
-    onError(el, error) {
-        el.srcElement.checked = false;
+    onError(evt, error) {
+        evt.target.checked = false;
 
         app.alerts.show(error.alert);
     }
 
-    changeVote(option, el) {
+    changeVote(option, evt) {
+        if (!app.session.user) {
+            app.modal.show(new LogInModal());
+            evt.target.checked = false;
+            return;
+        }
+
         if (
             this.vote() &&
             option.id() ===
@@ -107,7 +136,7 @@ export default class PollVote extends Component {
         app.request({
             method: 'PATCH',
             url: `${app.forum.attribute('apiUrl')}/fof/polls/${this.poll.id()}/vote`,
-            errorHandler: this.onError.bind(this, el),
+            errorHandler: this.onError.bind(this, evt),
             data: {
                 data: {
                     optionId: option ? option.id() : null,
@@ -128,5 +157,13 @@ export default class PollVote extends Component {
 
             m.endComputation();
         });
+    }
+
+    showVoters() {
+        app.modal.show(
+            new ListVotersModal({
+                poll: this.poll,
+            })
+        );
     }
 }

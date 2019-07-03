@@ -63,11 +63,7 @@ class SavePollsToDatabase
             $this->optionValidator->assertValid(['answer' => $option]);
         }
 
-        app('log')->debug('———————');
-
         $event->discussion->afterSave(function ($discussion) use ($options, $attributes, $event) {
-            app('log')->debug('|> creating poll');
-
             $poll = Poll::build(
                 Arr::get($attributes, 'question'),
                 $discussion->id,
@@ -78,8 +74,6 @@ class SavePollsToDatabase
 
             $poll->save();
 
-            app('log')->debug('|> creating poll options');
-
 //            $this->events->fire(
 //                new PollWasCreated($discussion, $poll, $event->actor)
 //            );
@@ -89,16 +83,14 @@ class SavePollsToDatabase
                     continue;
                 }
 
-                app('log')->debug("\t-> adding '{$answer}'");
-
                 $option = PollOption::build($answer);
 
                 $poll->options()->save($option);
             }
 
-            app('log')->debug("|> done");
+            return $discussion;
         });
 
-        app('log')->debug("|> all done");
+        return $event->discussion;
     }
 }

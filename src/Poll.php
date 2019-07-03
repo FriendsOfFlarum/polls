@@ -58,7 +58,7 @@ class Poll extends AbstractModel
      * @return bool
      */
     public function hasEnded() {
-        return $this->end_date !== null && $this->end_date->isFuture();
+        return $this->end_date !== null && $this->end_date->isPast();
     }
 
     /**

@@ -25,7 +25,7 @@ class PollSerializer extends AbstractSerializer
         return [
             'question'  => $poll->question,
             'hasEnded'  => $poll->hasEnded(),
-            'isPublic'  => (bool) $poll->public_poll,
+            'publicPoll'  => (bool) $poll->public_poll,
             'endDate'   => $this->formatDate($poll->end_date),
             'createdAt' => $this->formatDate($poll->created_at),
             'updatedAt' => $this->formatDate($poll->updated_at),

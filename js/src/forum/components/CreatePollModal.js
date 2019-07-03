@@ -1,6 +1,7 @@
-import Modal from 'flarum/components/Modal';
 import Button from 'flarum/components/Button';
+import Modal from 'flarum/components/Modal';
 import Switch from 'flarum/components/Switch';
+
 import flatpickr from 'flatpickr';
 
 export default class CreatePollModal extends Modal {
@@ -25,12 +26,12 @@ export default class CreatePollModal extends Modal {
         }
     }
 
-    className() {
-        return 'PollDiscussionModal Modal--small';
-    }
-
     title() {
         return app.translator.trans('fof-polls.forum.modal.add_title');
+    }
+
+    className() {
+        return 'PollDiscussionModal Modal--small';
     }
 
     configDatePicker(el, isInitialized) {
@@ -38,7 +39,7 @@ export default class CreatePollModal extends Modal {
 
         flatpickr(el, {
             enableTime: true,
-            minDate: 'today',
+            minDate: this.endDate() || 'today',
             dateFormat: 'Y-m-d H:i',
             defaultDate: this.endDate(),
             wrap: true,
@@ -69,27 +70,7 @@ export default class CreatePollModal extends Modal {
                             })}
                         </label>
 
-                        {Object.keys(this.options).map((el, i) => (
-                            <div className={this.options[i + 1] === '' ? 'Form-group hide' : 'Form-group'}>
-                                <fieldset className="Poll-answer-input">
-                                    <input
-                                        className="FormControl"
-                                        type="text"
-                                        name={'answer' + (i + 1)}
-                                        bidi={this.options[i]}
-                                        placeholder={app.translator.trans('fof-polls.forum.modal.option_placeholder') + ' #' + (i + 1)}
-                                    />
-                                </fieldset>
-                                {i >= 2
-                                    ? Button.component({
-                                          type: 'button',
-                                          className: 'Button Button--warning Poll-option-button',
-                                          icon: 'fas fa-minus',
-                                          onclick: i >= 2 ? this.removeOption.bind(this, i) : '',
-                                      })
-                                    : ''}
-                            </div>
-                        ))}
+                        {this.displayOptions()}
                     </div>
 
                     <div className="Form-group">
@@ -118,11 +99,36 @@ export default class CreatePollModal extends Modal {
                             type: 'submit',
                             className: 'Button Button--primary PollModal-SubmitButton',
                             children: app.translator.trans('fof-polls.forum.modal.submit'),
+                            loading: this.loading,
                         })}
                     </div>
                 </div>
             </div>,
         ];
+    }
+
+    displayOptions() {
+        return Object.keys(this.options).map((el, i) => (
+            <div className={this.options[i + 1] === '' ? 'Form-group hide' : 'Form-group'}>
+                <fieldset className="Poll-answer-input">
+                    <input
+                        className="FormControl"
+                        type="text"
+                        name={'answer' + (i + 1)}
+                        bidi={this.options[i]}
+                        placeholder={app.translator.trans('fof-polls.forum.modal.option_placeholder') + ' #' + (i + 1)}
+                    />
+                </fieldset>
+                {i >= 2
+                    ? Button.component({
+                          type: 'button',
+                          className: 'Button Button--warning Poll-option-button',
+                          icon: 'fas fa-minus',
+                          onclick: i >= 2 ? this.removeOption.bind(this, i) : '',
+                      })
+                    : ''}
+            </div>
+        ));
     }
 
     addOption() {
@@ -137,7 +143,7 @@ export default class CreatePollModal extends Modal {
     }
 
     removeOption(option) {
-        this.options = this.options.filter((a, i) => i !== option);
+        this.options.splice(option, 1);
     }
 
     onsubmit(e) {
@@ -167,7 +173,5 @@ export default class CreatePollModal extends Modal {
         this.props.onsubmit(poll);
 
         app.modal.close();
-
-        m.redraw.strategy('none');
     }
 }

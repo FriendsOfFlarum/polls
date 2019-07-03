@@ -46,16 +46,6 @@ class VotePollHandler
          */
         $vote = $poll->votes()->where('user_id', $actor->id)->first();
 
-//        if ($vote === null) {
-//            $poll->votes()->create([
-//                'user_id' => $actor->id,
-//                'option_id' => $optionId
-//            ]);
-//        } else {
-//            $vote->option_id = $optionId;
-//            $vote->save();
-//        }
-
         if ($optionId === null && $vote !== null) {
             $vote->delete();
         } else if ($optionId !== null) {

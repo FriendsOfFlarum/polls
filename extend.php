@@ -25,6 +25,8 @@ return [
         ->css(__DIR__.'/resources/less/admin.less'),
     new Extend\Locales(__DIR__ . '/resources/locale'),
     (new Extend\Routes('api'))
+        ->patch('/fof/polls/{id}', 'fof.polls.edit', Controllers\EditPollController::class)
+        ->delete('/fof/polls/{id}', 'fof.polls.delete', Controllers\DeletePollController::class)
         ->patch('/fof/polls/{id}/vote', 'fof.polls.vote', Controllers\VotePollController::class),
     new Extend\Compat(function (Dispatcher $events) {
         $events->subscribe(Listeners\AddDiscussionPollRelationship::class);

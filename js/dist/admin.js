@@ -118,7 +118,7 @@ __webpack_require__.r(__webpack_exports__);
 
 app.initializers.add('fof/polls', function () {
   Object(flarum_extend__WEBPACK_IMPORTED_MODULE_0__["extend"])(flarum_components_PermissionGrid__WEBPACK_IMPORTED_MODULE_1___default.a.prototype, 'moderateItems', function (items) {
-    items.add('reflar-polls', {
+    items.add('fof-polls', {
       icon: 'fa fa-pencil-alt',
       label: app.translator.trans('fof-polls.admin.permissions.moderate'),
       permission: 'discussion.polls'

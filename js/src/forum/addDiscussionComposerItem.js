@@ -4,8 +4,6 @@ import DiscussionComposer from 'flarum/components/DiscussionComposer';
 import CreatePollModal from './components/CreatePollModal';
 
 export default () => {
-    DiscussionComposer.prototype.poll = null;
-
     DiscussionComposer.prototype.addPoll = function() {
         app.modal.show(
             new CreatePollModal({

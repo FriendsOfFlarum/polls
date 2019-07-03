@@ -25,7 +25,7 @@ return AbstractMigration::make(
 
             $table->boolean('public_poll');
 
-            $table->date('end_date')->nullable();
+            $table->timestamp('end_date')->nullable();
             $table->timestamps();
 
             $table->foreign('discussion_id')->references('id')->on('discussions')->onDelete('cascade');

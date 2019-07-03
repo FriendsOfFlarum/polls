@@ -3,9 +3,11 @@ import Model from 'flarum/Model';
 import Poll from './models/Poll';
 import PollOption from './models/PollOption';
 import PollVote from './models/PollVote';
+
 import addDiscussionBadge from './addDiscussionBadge';
 import addDiscussionComposerItem from './addDiscussionComposerItem';
 import addPollToDiscussion from './addPollToDiscussion';
+import addDiscussionControls from './addDiscussionControls';
 
 app.initializers.add('fof/polls', () => {
     app.store.models.polls = Poll;
@@ -20,6 +22,7 @@ app.initializers.add('fof/polls', () => {
     app.store.models.users.prototype.canVotePolls = Model.attribute('canVotePolls');
 
     addDiscussionBadge();
+    addDiscussionControls();
     addDiscussionComposerItem();
     addPollToDiscussion();
 });

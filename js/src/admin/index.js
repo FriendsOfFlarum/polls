@@ -4,7 +4,7 @@ import PermissionGrid from 'flarum/components/PermissionGrid';
 app.initializers.add('fof/polls', () => {
     extend(PermissionGrid.prototype, 'moderateItems', items => {
         items.add(
-            'reflar-polls',
+            'fof-polls',
             {
                 icon: 'fa fa-pencil-alt',
                 label: app.translator.trans('fof-polls.admin.permissions.moderate'),

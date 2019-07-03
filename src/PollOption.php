@@ -26,6 +26,8 @@ class PollOption extends AbstractModel
         'updated_at',
     ];
 
+    protected $fillable = ['answer'];
+
     /**
      * @param $answer
      *
