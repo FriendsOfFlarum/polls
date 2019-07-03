@@ -73,7 +73,8 @@ class EditPollHandler
                 if (!$poll->hasEnded() && $date->isFuture() && ($poll->end_date === null || $poll->end_date->lessThanOrEqualTo($date))) {
                     $poll->end_date = $date;
                 }
-            } catch (InvalidArgumentException $ignored) {};
+            } catch (InvalidArgumentException $ignored) {
+            }
         }
 
         $poll->save();
