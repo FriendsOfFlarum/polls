@@ -67,13 +67,10 @@ class EditPollHandler
         }
 
         if (isset($attributes['endDate'])) {
-            try {
-                $date = Carbon::createFromTimeString($attributes['endDate']);
+            $date = Carbon::createFromTimeString($attributes['endDate']);
 
-                if (!$poll->hasEnded() && $date->isFuture() && ($poll->end_date === null || $poll->end_date->lessThanOrEqualTo($date))) {
-                    $poll->end_date = $date;
-                }
-            } catch (InvalidArgumentException $ignored) {
+            if (!$poll->hasEnded() && $date->isFuture() && ($poll->end_date === null || $poll->end_date->lessThanOrEqualTo($date))) {
+                $poll->end_date = $date;
             }
         }
 

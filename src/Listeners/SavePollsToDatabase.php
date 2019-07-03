@@ -11,6 +11,7 @@
 
 namespace FoF\Polls\Listeners;
 
+use Carbon\Carbon;
 use Flarum\Discussion\Event\Saving;
 use Flarum\User\AssertPermissionTrait;
 use FoF\Polls\Events\PollWasCreated;
@@ -66,11 +67,13 @@ class SavePollsToDatabase
         }
 
         $event->discussion->afterSave(function ($discussion) use ($options, $attributes, $event) {
+            $endDate = Arr::get($attributes, 'endDate');
+
             $poll = Poll::build(
                 Arr::get($attributes, 'question'),
                 $discussion->id,
                 $event->actor->id,
-                Arr::get($attributes, 'endDate'),
+                $endDate !== null ? Carbon::createFromTimeString($endDate) : null,
                 Arr::get($attributes, 'publicPoll')
             );
 
