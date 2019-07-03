@@ -44,7 +44,7 @@ class PollSerializer extends AbstractSerializer
     {
         return $this->hasMany(
             $model,
-            PollOptionSerializer::class,
+            PollOptionSerializer::class
         );
     }
 
@@ -52,7 +52,7 @@ class PollSerializer extends AbstractSerializer
     {
         return $this->hasMany(
             $model,
-            PollVoteSerializer::class,
+            PollVoteSerializer::class
         );
     }
 }
