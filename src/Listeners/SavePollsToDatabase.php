@@ -87,10 +87,6 @@ class SavePollsToDatabase
 
                 $poll->options()->save($option);
             }
-
-            return $discussion;
         });
-
-        return $event->discussion;
     }
 }
