@@ -5,7 +5,7 @@
  *
  * Copyright (c) 2019 FriendsOfFlarum.
  *
- * For the full copyright and license information, please view the LICENSE.md
+ * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
@@ -80,7 +80,7 @@ class EditPollHandler
             $ids = $options->pluck('id');
 
             $poll->options()->each(function ($option) use ($ids) {
-                /**
+                /*
                  * @var PollOption
                  */
                 if (!$ids->contains($option->id)) {
