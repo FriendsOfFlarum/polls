@@ -1,12 +1,19 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) 2019 FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
+ */
 
 namespace FoF\Polls\Api\Controllers;
 
-
 use Flarum\Api\Controller\AbstractShowController;
-use FoF\Polls\Commands\VotePoll;
 use FoF\Polls\Api\Serializers\PollSerializer;
+use FoF\Polls\Commands\VotePoll;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
@@ -38,7 +45,8 @@ class VotePollController extends AbstractShowController
      * Get the data to be serialized and assigned to the response document.
      *
      * @param ServerRequestInterface $request
-     * @param Document $document
+     * @param Document               $document
+     *
      * @return mixed
      */
     protected function data(ServerRequestInterface $request, Document $document)

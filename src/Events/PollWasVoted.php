@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) 2019 FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
+ */
 
 namespace FoF\Polls\Events;
 
@@ -32,10 +40,10 @@ class PollWasVoted
     /**
      * PollWasCreated constructor.
      *
-     * @param User $actor
-     * @param Poll $poll
+     * @param User     $actor
+     * @param Poll     $poll
      * @param PollVote $vote
-     * @param bool $changed
+     * @param bool     $changed
      */
     public function __construct(User $actor, Poll $poll, PollVote $vote, $changed = false)
     {

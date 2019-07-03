@@ -1,8 +1,15 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) 2019 FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
+ */
 
 namespace FoF\Polls\Listeners;
-
 
 use Flarum\Api\Controller;
 use Flarum\Api\Event\Serializing;
@@ -18,7 +25,6 @@ use Illuminate\Contracts\Events\Dispatcher;
 
 class AddDiscussionPollRelationship
 {
-
     /**
      * @param Dispatcher $events
      */
@@ -32,6 +38,7 @@ class AddDiscussionPollRelationship
 
     /**
      * @param GetModelRelationship $event
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function getModelRelationship(GetModelRelationship $event)
@@ -43,6 +50,7 @@ class AddDiscussionPollRelationship
 
     /**
      * @param GetApiRelationship $event
+     *
      * @return \Tobscure\JsonApi\Relationship
      */
     public function getApiRelationship(GetApiRelationship $event)
@@ -64,6 +72,7 @@ class AddDiscussionPollRelationship
             $event->attributes['canVotePolls'] = $event->actor->can('votePolls');
         }
     }
+
     /**
      * @param WillGetData $event
      */

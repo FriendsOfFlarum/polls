@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) 2019 FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
+ */
+
 namespace FoF\Polls\Commands;
 
 use Flarum\User\AssertPermissionTrait;
@@ -20,17 +29,17 @@ class VotePollHandler
     private $events;
 
     /**
-     * @param Dispatcher        $events
+     * @param Dispatcher $events
      */
     public function __construct(Dispatcher $events)
     {
         $this->events = $events;
     }
 
-
-    public function handle(VotePoll $command) {
+    public function handle(VotePoll $command)
+    {
         /**
-         * @var $poll Poll
+         * @var Poll
          */
         $actor = $command->actor;
         $poll = Poll::findOrFail($command->pollId);
@@ -43,20 +52,20 @@ class VotePollHandler
         }
 
         /**
-         * @var $vote PollVote|null
+         * @var PollVote|null
          */
         $vote = $poll->votes()->where('user_id', $actor->id)->first();
 
         if ($optionId === null && $vote !== null) {
             $vote->delete();
-        } else if ($optionId !== null) {
+        } elseif ($optionId !== null) {
             $poll->votes()->updateOrCreate([
                 'user_id' => $actor->id,
             ], [
                 'option_id' => $optionId,
             ]);
 
-            app()->make('events')->fire(new PollWasVoted($actor, $poll, $vote,$vote !== null));
+            app()->make('events')->fire(new PollWasVoted($actor, $poll, $vote, $vote !== null));
         }
 
         return $poll;

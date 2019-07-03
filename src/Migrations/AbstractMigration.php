@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) 2019 FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
+ */
+
 namespace FoF\Polls\Migrations;
 
 use Illuminate\Database\Schema\Builder;
@@ -7,12 +16,14 @@ use Illuminate\Database\Schema\Builder;
 class AbstractMigration
 {
     /**
-     * @param callable $up called if not migrating from reflar/polls
+     * @param callable $up       called if not migrating from reflar/polls
      * @param callable $existing called if migrating from reflar/polls
-     * @param callable $down called when rolling back migrations
+     * @param callable $down     called when rolling back migrations
+     *
      * @return array
      */
-    public static function make(callable $up, callable $existing, callable $down) {
+    public static function make(callable $up, callable $existing, callable $down)
+    {
         return [
             'up' => function (Builder $schema) use ($existing, $up) {
                 if ($schema->getConnection()->table('migrations')->where('extension', 'reflar-polls')->exists()) {

@@ -1,8 +1,15 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) 2019 FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
+ */
 
 namespace FoF\Polls;
-
 
 use Flarum\Database\AbstractModel;
 use Flarum\Discussion\Discussion;
@@ -57,35 +64,40 @@ class Poll extends AbstractModel
     /**
      * @return bool
      */
-    public function hasEnded() {
+    public function hasEnded()
+    {
         return $this->end_date !== null && $this->end_date->isPast();
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function discussion() {
+    public function discussion()
+    {
         return $this->belongsTo(Discussion::class);
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function options() {
+    public function options()
+    {
         return $this->hasMany(PollOption::class);
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function votes() {
+    public function votes()
+    {
         return $this->hasMany(PollVote::class);
     }
 }

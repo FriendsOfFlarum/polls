@@ -1,8 +1,15 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) 2019 FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
+ */
 
 namespace FoF\Polls\Listeners;
-
 
 use Flarum\Discussion\Event\Saving;
 use Flarum\User\AssertPermissionTrait;
@@ -31,8 +38,8 @@ class SavePollsToDatabase
     /**
      * SavePollToDatabase constructor.
      *
-     * @param Dispatcher $events
-     * @param PollValidator $validator
+     * @param Dispatcher          $events
+     * @param PollValidator       $validator
      * @param PollOptionValidator $optionValidator
      */
     public function __construct(PollValidator $validator, PollOptionValidator $optionValidator)
@@ -41,7 +48,8 @@ class SavePollsToDatabase
         $this->optionValidator = $optionValidator;
     }
 
-    public function handle(Saving $event) {
+    public function handle(Saving $event)
+    {
         if ($event->discussion->exists || !isset($event->data['attributes']['poll'])) {
             return;
         }

@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) 2019 FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
+ */
+
 namespace FoF\Polls\Commands;
 
 use Flarum\User\User;
@@ -22,8 +31,8 @@ class VotePoll
     public $data;
 
     /**
-     * @param User $actor
-     * @param int $pollId
+     * @param User  $actor
+     * @param int   $pollId
      * @param array $data
      */
     public function __construct(User $actor, int $pollId, array $data)

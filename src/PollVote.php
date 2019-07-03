@@ -1,8 +1,15 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) 2019 FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
+ */
 
 namespace FoF\Polls;
-
 
 use Flarum\Database\AbstractModel;
 use Flarum\User\User;
@@ -52,15 +59,18 @@ class PollVote extends AbstractModel
         return $vote;
     }
 
-    public function poll() {
+    public function poll()
+    {
         return $this->belongsTo(Poll::class);
     }
 
-    public function option() {
+    public function option()
+    {
         return $this->belongsTo(PollOption::class);
     }
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }
