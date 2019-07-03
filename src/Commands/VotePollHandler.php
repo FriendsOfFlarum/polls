@@ -59,7 +59,7 @@ class VotePollHandler
         if ($optionId === null && $vote !== null) {
             $vote->delete();
         } elseif ($optionId !== null) {
-            $poll->votes()->updateOrCreate([
+            $vote = $poll->votes()->updateOrCreate([
                 'user_id' => $actor->id,
             ], [
                 'option_id' => $optionId,
