@@ -44,25 +44,23 @@
     fieldset {
       flex-grow: 1;
     }
+  }
 
-    .Poll-option-button {
-      flex-shrink: 1;
-      border-width: 1px;
-      border-color: #000;
-      border-style: dotted;
+  .PollModal--button {
+    flex-shrink: 1;
+    margin-left: 10px;
+    text-align: right;
 
-      margin-left: 10px;
-      padding: 6px 6px 6px 12px;
+    .Button--color(@muted-color; darken(@control-bg, 5%));
 
-      &.small {
-        padding: 1px 0 1px 7px;
-        float: right;
-        text-align: right;
+    .icon {
+      margin-right: 0;
+      font-size: 12px;
+    }
 
-        .icon {
-          font-size: 12px;
-        }
-      }
+    &.small {
+      padding: 2px 7px;
+      float: right;
     }
   }
 
@@ -76,10 +74,6 @@
     .Button {
       flex-shrink: 1;
       margin-left: 10px;
-      padding: 6px 6px 6px 12px;
-      border-width: 1px;
-      border-color: #000;
-      border-style: dotted;
     }
   }
 

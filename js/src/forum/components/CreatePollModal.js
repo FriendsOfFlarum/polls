@@ -63,8 +63,7 @@ export default class CreatePollModal extends Modal {
                             <span>{app.translator.trans('fof-polls.forum.modal.options_label')}</span>
 
                             {Button.component({
-                                className: 'Button Poll-option-button small',
-                                type: 'button',
+                                className: 'Button PollModal--button small',
                                 icon: 'fas fa-plus',
                                 onclick: this.addOption.bind(this),
                             })}
@@ -79,7 +78,7 @@ export default class CreatePollModal extends Modal {
                         <div className="PollModal--date" config={this.configDatePicker.bind(this)}>
                             <input style="opacity: 1; color: inherit" className="FormControl" data-input />
                             {Button.component({
-                                className: 'Button Button--warning Poll-option-button',
+                                className: 'Button PollModal--button',
                                 icon: 'fas fa-times',
                                 'data-clear': true,
                             })}
