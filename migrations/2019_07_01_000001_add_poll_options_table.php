@@ -10,6 +10,7 @@
  */
 
 use FoF\Polls\Migrations\AbstractMigration;
+use FoF\Polls\PollOption;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\Builder;
 
@@ -29,6 +30,9 @@ return AbstractMigration::make(
     },
 
     function (Builder $schema) {
+        // delete poll options that don't have a poll
+        PollOption::query()->doesntHave('poll')->delete();
+
         $schema->table('poll_options', function (Blueprint $table) {
             $table->dropForeign(['poll_id']);
         });

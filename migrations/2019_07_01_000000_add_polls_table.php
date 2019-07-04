@@ -10,6 +10,7 @@
  */
 
 use FoF\Polls\Migrations\AbstractMigration;
+use FoF\Polls\Poll;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\Builder;
 
@@ -34,6 +35,29 @@ return AbstractMigration::make(
     },
 
     function (Builder $schema) {
+        // delete polls whose discussion was deleted
+        $polls = Poll::doesntHave('discussion')->get();
+
+        if ($polls->count() !== 0) {
+            app('log')->info("[fof/polls] deleting {$polls->count()} polls");
+
+            foreach ($polls as $poll) {
+                /**
+                 * @var Poll $poll
+                 */
+                app('log')->info("[fof/polls] |> deleting #{$poll->id}");
+
+                $poll->votes()->delete();
+                $poll->options()->delete();
+                $poll->delete();
+            }
+        }
+
+         // set user to null if user was deleted
+        Poll::query()->whereNotNull('user_id')->doesntHave('user')->update([
+            'user_id' => null
+        ]);
+
         $schema->table('polls', function (Blueprint $table) {
             $table->integer('discussion_id')->unsigned()->change();
             $table->integer('user_id')->unsigned()->nullable()->change();

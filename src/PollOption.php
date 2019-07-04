@@ -57,7 +57,5 @@ class PollOption extends AbstractModel
     public function votes()
     {
         return $this->hasMany(PollVote::class);
-//            ->where('poll_id', $this->poll_id)
-//            ->where('option_id', $this->id);
     }
 }

@@ -16,6 +16,7 @@ use Flarum\Discussion\Discussion;
 use Flarum\User\User;
 
 /**
+ * @property int $id
  * @property string $question
  * @property bool $public_poll
  * @property Discussion $discussion
