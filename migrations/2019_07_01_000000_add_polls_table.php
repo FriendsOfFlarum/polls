@@ -42,7 +42,7 @@ return AbstractMigration::make(
             app('log')->info("[fof/polls] deleting {$polls->count()} polls");
 
             foreach ($polls as $poll) {
-                /**
+                /*
                  * @var Poll $poll
                  */
                 app('log')->info("[fof/polls] |> deleting #{$poll->id}");
@@ -53,9 +53,9 @@ return AbstractMigration::make(
             }
         }
 
-         // set user to null if user was deleted
+        // set user to null if user was deleted
         Poll::query()->whereNotNull('user_id')->doesntHave('user')->update([
-            'user_id' => null
+            'user_id' => null,
         ]);
 
         $schema->table('polls', function (Blueprint $table) {
