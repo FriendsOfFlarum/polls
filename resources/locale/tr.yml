@@ -1,0 +1,44 @@
+fof-polls:
+  admin:
+    permissions:
+      moderate: Anketi düzenle veya sil
+      self_edit: Kullanıcıların anketlerini düzenlemesine izin ver
+      start: Anket oluştur
+      vote: Ankete oy ver
+
+  forum:
+    days_remaining: Sona erme tarihi {time}.
+    no_permission: Oy vermek için yetkiniz bulunmamaktadır
+    poll_ended: Bu anket sona ermiştir.
+    public_poll: Oy verenler
+
+    composer_discussion:
+      add_poll: Anket Oluştur
+      edit_poll: => Anketi Düzenle
+
+    modal:
+      add_title: Anket Oluştur
+      add_option_label: Seçenek Ekle
+      date_placeholder: Anket sona erme süresi (Opsiyonel)
+      edit_title: Anketi Düzenle
+      include_question: Bir soru eklemelisiniz
+      max: En fazla 10 cevap ekleyebilirsiniz
+      min: En az 2 cevap eklemeniz gerekmektedir
+      no_voters: Oy Kullanılmamış
+      option_placeholder: Cevap
+      options_label: Cevaplar
+      public_poll_label: Kullanıcıların cevap verenleri görmesine izin ver
+      question_placeholder: Soru
+      submit: Gönder
+
+    moderation:
+      delete: Anketi Sil
+      delete_confirm: Anketi silmek istediğinize emin misiniz?
+      edit: Anketi Düzenle
+
+    tooltip:
+      badge: Anket
+      votes: "1 oy|{count} oy"
+
+    votes_modal:
+      title: Oy Verenler
