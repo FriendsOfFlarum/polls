@@ -1,0 +1,44 @@
+fof-polls:
+  admin:
+    permissions:
+      moderate: Umfragen bearbeiten & entfernen
+      self_edit: Benutzern erlauben ihre eigenen Umfragen zu bearbeiten
+      start: Umfragen starten
+      vote: Bei Umfragen abstimmen
+
+  forum:
+    days_remaining: Umfrage endet {time}.
+    no_permission: Du hast kein Abstimmungsrecht
+    poll_ended: Diese Umfrage ist beendet.
+    public_poll: Stimmen anzeigen
+
+    composer_discussion:
+      add_poll: Umfrage hinzufügen
+      edit_poll: => fof-polls.forum.moderation.edit
+
+    modal:
+      add_title: Eine Umfrage hinzufügen
+      add_option_label: Eine Option hinzufügen
+      date_placeholder: Enddatum der Umfrage (optional)
+      edit_title: Umfrage bearbeiten
+      include_question: Du musst eine Frage hinzufügen.
+      max: Du kannst maximal 10 Antworten haben
+      min: Du musst mindestens 2 Antworten einfügen
+      no_voters: Keine Abstimmungen
+      option_placeholder: Antwort
+      options_label: Antworten
+      public_poll_label: Den Leuten erlauben zu sehen, wer abgestimmt hat.
+      question_placeholder: Frage
+      submit: Absenden
+
+    moderation:
+      delete: Umfrage entfernen
+      delete_confirm: Sind Sie sicher, dass Sie diese Umfrage löschen möchten?
+      edit: Umfrage bearbeiten
+
+    tooltip:
+      badge: Umfrage
+      votes: "1 Stimme|{count} Stimmen"
+
+    votes_modal:
+      title: Stimmen
