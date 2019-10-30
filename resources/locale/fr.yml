@@ -1,0 +1,43 @@
+fof-polls:
+  admin:
+    permissions:
+      moderate: Editer et supprimer des sondages
+      self_edit: Autoriser les utilisateurs à éditer leurs sondages
+      start: Démarrer un sondage
+      vote: Vote sur un sondage
+
+  forum:
+    days_remaining: Le sondage se termine {time}.
+    no_permission: Vous n'avez pas la permission de voter.
+    poll_ended: The sondage est terminé.
+    public_poll: Afficher les votes
+
+    composer_discussion:
+      add_poll: Ajouter un sondage
+      edit_poll: => fof-polls.forum.moderation.edit
+
+    modal:
+      add_title: Ajouter un sondage
+      add_option_label: Ajouter une option
+      date_placeholder: Date de fin du sondage (Optionnel)
+      edit_title: Editer le sondage
+      include_question: Vous devez inclure une question
+      max: Vous pouvez avoir un maximum de 10 réponses
+      min: Vous devez avoir un minimum de 2 réponses
+      no_voters: Pas de votes
+      option_placeholder: Répondre
+      options_label: Réponses
+      public_poll_label: Permettre aux membres de voir qui a voté
+      question_placeholder: Question
+      submit: Soumettre
+
+    moderation:
+      delete: Supprimer le sondage
+      delete_confirm: Etes vous sûr de vouloir supprimer ce sondage ?
+      edit: Editer le sondage
+    tooltip:
+      badge: Sondage
+      votes: "1 vote|{count} votes"
+
+    votes_modal:
+      title: Votes
