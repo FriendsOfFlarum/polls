@@ -18,6 +18,7 @@ use FoF\Polls\Poll;
 use FoF\Polls\PollVote;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
+use Pusher\Pusher;
 
 class VotePollHandler
 {
@@ -65,9 +66,52 @@ class VotePollHandler
                 'option_id' => $optionId,
             ]);
 
-            app()->make('events')->fire(new PollWasVoted($actor, $poll, $vote, $vote !== null));
+            app('events')->fire(new PollWasVoted($actor, $poll, $vote, $vote !== null));
+
+            $this->pushNewVote($vote);
         }
 
         return $poll;
+    }
+
+    /**
+     * @param $vote
+     * @throws \Pusher\PusherException
+     */
+    public function pushNewVote($vote)
+    {
+        if ($pusher = $this->getPusher()) {
+            $pusher->trigger('public', 'newPollVote', $vote);
+        }
+    }
+
+    /**
+     * @return bool|\Illuminate\Foundation\Application|mixed|Pusher
+     * @throws \Pusher\PusherException
+     */
+    private function getPusher()
+    {
+        if (!class_exists(Pusher::class)) {
+            return false;
+        }
+
+        if (app()->bound(Pusher::class)) {
+            return app(Pusher::class);
+        } else {
+            $settings = app('flarum.settings');
+
+            $options = [];
+
+            if ($cluster = $settings->get('flarum-pusher.app_cluster')) {
+                $options['cluster'] = $cluster;
+            }
+
+            return new Pusher(
+                $settings->get('flarum-pusher.app_key'),
+                $settings->get('flarum-pusher.app_secret'),
+                $settings->get('flarum-pusher.app_id'),
+                $options
+            );
+        }
     }
 }
