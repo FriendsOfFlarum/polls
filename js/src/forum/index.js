@@ -1,6 +1,4 @@
-import { extend } from 'flarum/extend';
 import Model from 'flarum/Model';
-import CommentPost from 'flarum/components/CommentPost';
 
 import Poll from './models/Poll';
 import PollOption from './models/PollOption';
