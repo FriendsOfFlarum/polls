@@ -76,6 +76,7 @@ class VotePollHandler
 
     /**
      * @param $vote
+     *
      * @throws \Pusher\PusherException
      */
     public function pushNewVote($vote)
@@ -86,8 +87,9 @@ class VotePollHandler
     }
 
     /**
-     * @return bool|\Illuminate\Foundation\Application|mixed|Pusher
      * @throws \Pusher\PusherException
+     *
+     * @return bool|\Illuminate\Foundation\Application|mixed|Pusher
      */
     private function getPusher()
     {

@@ -28,7 +28,6 @@ return AbstractMigration::make(
             $table->foreign('poll_id')->references('id')->on('polls')->onDelete('cascade');
         });
     },
-
     function (Builder $schema) {
         // delete poll options that don't have a poll
         PollOption::query()->doesntHave('poll')->delete();
@@ -41,7 +40,6 @@ return AbstractMigration::make(
             $table->foreign('poll_id')->references('id')->on('polls')->onDelete('cascade');
         });
     },
-
     function (Builder $schema) {
         $schema->dropIfExists('poll_options');
     }
