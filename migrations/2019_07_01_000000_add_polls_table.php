@@ -33,7 +33,6 @@ return AbstractMigration::make(
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });
     },
-
     function (Builder $schema) {
         // delete polls whose discussion was deleted
         $polls = Poll::doesntHave('discussion')->get();
@@ -66,7 +65,6 @@ return AbstractMigration::make(
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });
     },
-
     function (Builder $schema) {
         $schema->dropIfExists('polls');
     }
