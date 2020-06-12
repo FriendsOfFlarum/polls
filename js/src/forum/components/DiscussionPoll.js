@@ -46,7 +46,7 @@ export default class PollVote extends Component {
                         : {};
 
                     return (
-                        <div className={`PollOption ${hasVoted && 'PollVoted'}`}>
+                        <div className={`PollOption ${hasVoted && 'PollVoted'} ${this.poll.hasEnded() && 'PollEnded'}`}>
                             <div {...attrs} className="PollBar" data-selected={voted}>
                                 {((!this.poll.hasEnded() && app.session.user && app.session.user.canVotePolls()) || !app.session.user) && (
                                     <label className="checkbox">
@@ -56,7 +56,7 @@ export default class PollVote extends Component {
                                 )}
 
                                 <div style={hasVoted && '--width: ' + percent + '%'} className="PollOption-active" />
-                                <label style={!this.poll.hasEnded() ? 'margin-left: 25px' : ''} className="PollAnswer">
+                                <label className="PollAnswer">
                                     <span>{opt.answer()}</span>
                                 </label>
                                 {hasVoted && (

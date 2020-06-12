@@ -142,7 +142,10 @@
     background: transparent;
     float: left;
     width: 85%;
-    padding: 10px 10px 10px 0;
+    padding: 10px 10px 10px 40px;
+    .PollEnded& {
+      padding-left: 10px;
+    }
     position: relative;
     margin-left: 15px;
     border-radius: 4px;
@@ -164,9 +167,8 @@
         font-weight: 600;
       }
     }
-    label.PollAnswer span {
-      display: inline-block;
-      width: 90%;
+    .PollAnswer span {
+      padding-left: 0;
     }
 
     &[data-selected=true] {
@@ -184,6 +186,7 @@
 
   label.checkbox {
     margin-bottom: 0;
+    margin-left: -40px;
 
     input[type="checkbox"] {
       position: absolute;
