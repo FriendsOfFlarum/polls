@@ -16,13 +16,13 @@ use Flarum\Discussion\Discussion;
 use Flarum\User\User;
 
 /**
- * @property int $id
- * @property string $question
- * @property bool $public_poll
- * @property Discussion $discussion
- * @property USer $user
- * @property int $discussion_id
- * @property int $user_id
+ * @property int            $id
+ * @property string         $question
+ * @property bool           $public_poll
+ * @property Discussion     $discussion
+ * @property USer           $user
+ * @property int            $discussion_id
+ * @property int            $user_id
  * @property \Carbon\Carbon $end_date
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at

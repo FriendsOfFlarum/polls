@@ -14,10 +14,10 @@ namespace FoF\Polls;
 use Flarum\Database\AbstractModel;
 
 /**
- * @property int $id
- * @property string $answer
- * @property Poll $poll
- * @property int $poll_id
+ * @property int            $id
+ * @property string         $answer
+ * @property Poll           $poll
+ * @property int            $poll_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  */

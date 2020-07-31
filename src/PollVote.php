@@ -15,12 +15,12 @@ use Flarum\Database\AbstractModel;
 use Flarum\User\User;
 
 /**
- * @property Poll $poll
- * @property PollOption $option
- * @property User $user
- * @property int $poll_id
- * @property int $option_id
- * @property int $user_id
+ * @property Poll           $poll
+ * @property PollOption     $option
+ * @property User           $user
+ * @property int            $poll_id
+ * @property int            $option_id
+ * @property int            $user_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  */
