@@ -2,14 +2,14 @@ import { extend } from 'flarum/extend';
 import CommentPost from 'flarum/components/CommentPost';
 
 import DiscussionPoll from './components/DiscussionPoll';
-
+import Stream from 'flarum/utils/Stream';
 // import PollVote from './components/PollVote';
 
 export default () => {
     extend(CommentPost.prototype, 'content', function(content) {
-        const discussion = this.props.post.discussion();
+        const discussion = this.attrs.post.discussion();
 
-        if (discussion.poll() && this.props.post.number() === 1) {
+        if (discussion.poll() && this.attrs.post.number() === 1) {
             content.push(
                 DiscussionPoll.component({
                     poll: discussion.poll(),
@@ -30,23 +30,23 @@ export default () => {
 
                     let poll = app.store.getById(
                         'polls',
-                        this.props.post
+                        this.attrs.post
                             .discussion()
                             .poll()
                             .id()
                     );
 
                     if (parseInt(poll.id()) === parseInt(data['poll_id'])) {
-                        m.startComputation();
+                        //m.startComputation();
 
                         let vote = {};
 
                         Object.keys(data).map(key => {
-                            vote[key] = m.prop(data[key]);
+                            vote[key] = Stream(data[key]);
                         });
 
-                        vote['option'] = m.prop(app.store.getById('poll_options', data['option_id']));
-                        vote['user'] = m.prop(app.store.getById('users', data['user_id']));
+                        vote['option'] = Stream(app.store.getById('poll_options', data['option_id']));
+                        vote['user'] = Stream(app.store.getById('users', data['user_id']));
 
                         let newVotes = poll.votes();
 
@@ -58,11 +58,12 @@ export default () => {
 
                         newVotes.push(vote);
 
-                        poll.votes = m.prop(newVotes);
+                        poll.votes = Stream(newVotes);
 
-                        m.redraw.strategy('all');
+                        //m.redraw.strategy('all');
+                        m.redraw();
 
-                        m.endComputation();
+                        //m.endComputation();
                     }
                 });
 

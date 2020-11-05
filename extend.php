@@ -11,6 +11,7 @@
 
 namespace FoF\Polls;
 
+use Flarum\Discussion\Discussion;
 use Flarum\Discussion\Event\Saving;
 use Flarum\Extend;
 use FoF\Polls\Api\Controllers;
@@ -20,16 +21,23 @@ return [
     (new Extend\Frontend('forum'))
         ->js(__DIR__.'/js/dist/forum.js')
         ->css(__DIR__.'/resources/less/forum.less'),
+
     (new Extend\Frontend('admin'))
         ->js(__DIR__.'/js/dist/admin.js')
         ->css(__DIR__.'/resources/less/admin.less'),
+
     new Extend\Locales(__DIR__.'/resources/locale'),
+
     (new Extend\Routes('api'))
         ->patch('/fof/polls/{id}', 'fof.polls.edit', Controllers\EditPollController::class)
         ->delete('/fof/polls/{id}', 'fof.polls.delete', Controllers\DeletePollController::class)
         ->patch('/fof/polls/{id}/vote', 'fof.polls.vote', Controllers\VotePollController::class),
-    new Extend\Compat(function (Dispatcher $events) {
+
+    (new Extend\Model(Discussion::class))
+        ->hasOne('poll', Poll::class, 'discussion_id', 'id'),
+        
+    function (Dispatcher $events) {
         $events->subscribe(Listeners\AddDiscussionPollRelationship::class);
         $events->listen(Saving::class, Listeners\SavePollsToDatabase::class);
-    }),
+    },
 ];

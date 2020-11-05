@@ -1,25 +1,26 @@
 import Button from 'flarum/components/Button';
 import Modal from 'flarum/components/Modal';
 import Switch from 'flarum/components/Switch';
+import Stream from 'flarum/utils/Stream';
 
 import flatpickr from 'flatpickr';
 
 export default class CreatePollModal extends Modal {
-    init() {
-        super.init();
+    oninit(vdom) {
+        super.oninit(vdom);
 
-        this.options = [m.prop(''), m.prop('')];
+        this.options = [Stream(''), Stream('')];
 
-        this.question = m.prop('');
+        this.question = Stream('');
 
-        this.endDate = m.prop();
+        this.endDate = Stream();
 
-        this.publicPoll = m.prop(false);
+        this.publicPoll = Stream(false);
 
-        if (this.props.poll) {
-            const poll = this.props.poll;
+        if (this.attrs.poll) {
+            const poll = this.attrs.poll;
 
-            this.options = poll.relationships.options.map(o => m.prop(o));
+            this.options = poll.relationships.options.map(o => Stream(o));
             this.question(poll.question);
             this.endDate(!poll.endDate || isNaN(poll.endDate.getTime()) ? null : poll.endDate);
             this.publicPoll(poll.publicPoll);
@@ -88,18 +89,16 @@ export default class CreatePollModal extends Modal {
                     <div className="Form-group">
                         {Switch.component({
                             state: this.publicPoll() || false,
-                            children: app.translator.trans('fof-polls.forum.modal.public_poll_label'),
                             onchange: this.publicPoll,
-                        })}
+                        }, app.translator.trans('fof-polls.forum.modal.public_poll_label'))}
                     </div>
 
                     <div className="Form-group">
                         {Button.component({
                             type: 'submit',
                             className: 'Button Button--primary PollModal-SubmitButton',
-                            children: app.translator.trans('fof-polls.forum.modal.submit'),
                             loading: this.loading,
-                        })}
+                        }, app.translator.trans('fof-polls.forum.modal.submit'))}
                     </div>
                 </div>
             </div>,
@@ -135,7 +134,7 @@ export default class CreatePollModal extends Modal {
         const max = (setting && parseInt(setting)) || 11;
 
         if (this.options.length < max) {
-            this.options.push(m.prop(''));
+            this.options.push(Stream(''));
         } else {
             alert(app.translator.trans('fof-polls.forum.modal.max'));
         }
@@ -169,7 +168,7 @@ export default class CreatePollModal extends Modal {
 
         poll.relationships = { options };
 
-        this.props.onsubmit(poll);
+        this.attrs.onsubmit(poll);
 
         app.modal.close();
     }

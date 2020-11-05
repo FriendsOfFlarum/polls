@@ -19,9 +19,8 @@ export default () => {
                 'fof-polls-edit',
                 Button.component({
                     icon: 'fas fa-check-square',
-                    children: app.translator.trans('fof-polls.forum.moderation.edit'),
-                    onclick: () => app.modal.show(new EditPollModal({ poll })),
-                })
+                    onclick: () => app.modal.show(EditPollModal, { poll }),
+                }, app.translator.trans('fof-polls.forum.moderation.edit'))
             );
         }
 
@@ -29,17 +28,16 @@ export default () => {
             'fof-polls-remove',
             Button.component({
                 icon: 'fas fa-trash',
-                children: app.translator.trans('fof-polls.forum.moderation.delete'),
                 onclick: () => {
                     if (confirm(app.translator.trans('fof-polls.forum.moderation.delete_confirm'))) {
                         poll.delete().then(() => {
-                            m.redraw.strategy('all');
-                            m.redraw();
-                            m.redraw.strategy('diff');
+                            //m.redraw.strategy('all');
+                            m.redraw.sync();
+                            //m.redraw.strategy('diff');
                         });
                     }
                 },
-            })
+            }, app.translator.trans('fof-polls.forum.moderation.delete'))
         );
     });
 };

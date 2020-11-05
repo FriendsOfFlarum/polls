@@ -1,16 +1,16 @@
 import Button from 'flarum/components/Button';
 
 import CreatePollModal from './CreatePollModal';
-
+import Stream from 'flarum/utils/Stream';
 export default class EditPollModal extends CreatePollModal {
-    init() {
-        this.poll = this.props.poll;
+    oninit(vdom) {
+        this.poll = this.attrs.poll;
 
         this.options = this.poll.options();
-        this.optionAnswers = this.options.map(o => m.prop(o.answer()));
-        this.question = m.prop(this.poll.question());
-        this.endDate = m.prop(this.poll.endDate());
-        this.publicPoll = m.prop(this.poll.publicPoll());
+        this.optionAnswers = this.options.map(o => Stream(o.answer()));
+        this.question = Stream(this.poll.question());
+        this.endDate = Stream(this.poll.endDate());
+        this.publicPoll = Stream(this.poll.publicPoll());
     }
 
     title() {
@@ -48,7 +48,7 @@ export default class EditPollModal extends CreatePollModal {
 
         if (this.options.length < max) {
             this.options.push(app.store.createRecord('poll_options'));
-            this.optionAnswers.push(m.prop(''));
+            this.optionAnswers.push(Stream(''));
         } else {
             alert(app.translator.trans('fof-polls.forum.modal.max'));
         }

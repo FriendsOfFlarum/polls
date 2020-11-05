@@ -13,7 +13,6 @@ namespace FoF\Polls\Listeners;
 
 use Carbon\Carbon;
 use Flarum\Discussion\Event\Saving;
-use Flarum\User\AssertPermissionTrait;
 use FoF\Polls\Events\PollWasCreated;
 use FoF\Polls\Poll;
 use FoF\Polls\PollOption;
@@ -21,11 +20,8 @@ use FoF\Polls\Validators\PollOptionValidator;
 use FoF\Polls\Validators\PollValidator;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
-
 class SavePollsToDatabase
 {
-    use AssertPermissionTrait;
-
     /**
      * @var PollValidator
      */
@@ -37,16 +33,22 @@ class SavePollsToDatabase
     protected $optionValidator;
 
     /**
+     * @var Dispatcher
+     */
+    protected $events;
+
+    /**
      * SavePollToDatabase constructor.
      *
      * @param Dispatcher          $events
      * @param PollValidator       $validator
      * @param PollOptionValidator $optionValidator
      */
-    public function __construct(PollValidator $validator, PollOptionValidator $optionValidator)
+    public function __construct(PollValidator $validator, PollOptionValidator $optionValidator, Dispatcher $events)
     {
         $this->validator = $validator;
         $this->optionValidator = $optionValidator;
+        $this->events = $events;
     }
 
     public function handle(Saving $event)
@@ -55,7 +57,7 @@ class SavePollsToDatabase
             return;
         }
 
-        $this->assertCan($event->actor, 'startPolls');
+        $event->actor->assertCan('startPolls');
 
         $attributes = $event->data['attributes']['poll'];
         $options = Arr::get($attributes, 'relationships.options', []);
@@ -79,7 +81,7 @@ class SavePollsToDatabase
 
             $poll->save();
 
-            app()->make('events')->fire(new PollWasCreated($event->actor, $poll));
+            $this->events->dispatch(new PollWasCreated($event->actor, $poll));
 
             foreach ($options as $answer) {
                 if (empty($answer)) {

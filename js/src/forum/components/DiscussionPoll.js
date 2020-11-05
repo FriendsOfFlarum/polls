@@ -3,13 +3,13 @@ import Button from 'flarum/components/Button';
 import LogInModal from 'flarum/components/LogInModal';
 
 import ListVotersModal from './ListVotersModal';
-
+import Stream from 'flarum/utils/Stream';
 export default class PollVote extends Component {
-    init() {
-        this.poll = this.props.poll;
+    oninit(vdom) {
+        this.poll = this.attrs.poll;
 
-        this.vote = m.prop();
-        this.voted = m.prop(false);
+        this.vote = Stream();
+        this.voted = Stream(false);
 
         this.updateData();
     }
@@ -74,9 +74,8 @@ export default class PollVote extends Component {
                 {this.poll.publicPoll()
                     ? Button.component({
                           className: 'Button Button--primary PublicPollButton',
-                          children: app.translator.trans('fof-polls.forum.public_poll'),
                           onclick: () => this.showVoters(),
-                      })
+                      }, app.translator.trans('fof-polls.forum.public_poll'))
                     : ''}
 
                 {app.session.user && !app.session.user.canVotePolls() ? (
@@ -86,7 +85,7 @@ export default class PollVote extends Component {
                 ) : this.poll.endDate() !== null ? (
                     <div className="helpText PollInfoText">
                         <i class="icon fa fa-clock-o" />
-                        {app.translator.trans('fof-polls.forum.days_remaining', { time: moment(this.poll.endDate()).fromNow() })}
+                        {app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(this.poll.endDate()).fromNow() })}
                     </div>
                 ) : (
                     ''
@@ -113,7 +112,7 @@ export default class PollVote extends Component {
 
     changeVote(option, evt) {
         if (!app.session.user) {
-            app.modal.show(new LogInModal());
+            app.modal.show(LogInModal);
             evt.target.checked = false;
             return;
         }
@@ -152,9 +151,9 @@ export default class PollVote extends Component {
             this.updateData();
 
             if (!option) {
-                m.redraw.strategy('all');
-                m.redraw();
-                m.redraw.strategy('diff');
+                //m.redraw.strategy('all');
+                m.redraw.sync();
+                //m.redraw.strategy('diff');
             }
 
             m.endComputation();
@@ -163,9 +162,9 @@ export default class PollVote extends Component {
 
     showVoters() {
         app.modal.show(
-            new ListVotersModal({
+            ListVotersModal, {
                 poll: this.poll,
-            })
+            }
         );
     }
 }
