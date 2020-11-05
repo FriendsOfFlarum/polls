@@ -20,6 +20,7 @@ use FoF\Polls\Validators\PollOptionValidator;
 use FoF\Polls\Validators\PollValidator;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
+
 class SavePollsToDatabase
 {
     /**

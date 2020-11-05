@@ -35,7 +35,7 @@ return [
 
     (new Extend\Model(Discussion::class))
         ->hasOne('poll', Poll::class, 'discussion_id', 'id'),
-        
+
     function (Dispatcher $events) {
         $events->subscribe(Listeners\AddDiscussionPollRelationship::class);
         $events->listen(Saving::class, Listeners\SavePollsToDatabase::class);
