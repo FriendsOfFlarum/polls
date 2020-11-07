@@ -6,8 +6,8 @@ import Stream from 'flarum/utils/Stream';
 import flatpickr from 'flatpickr';
 
 export default class CreatePollModal extends Modal {
-    oninit(vdom) {
-        super.oninit(vdom);
+    oninit(vnode) {
+        super.oninit(vnode);
 
         this.options = [Stream(''), Stream('')];
 
@@ -35,10 +35,8 @@ export default class CreatePollModal extends Modal {
         return 'PollDiscussionModal Modal--small';
     }
 
-    configDatePicker(el, isInitialized) {
-        if (isInitialized) return;
-
-        flatpickr(el, {
+    configDatePicker(vnode) {
+        flatpickr(vnode.dom, {
             enableTime: true,
             minDate: this.endDate() || 'today',
             dateFormat: 'Y-m-d H:i',
@@ -76,7 +74,7 @@ export default class CreatePollModal extends Modal {
                     <div className="Form-group">
                         <label className="label">{app.translator.trans('fof-polls.forum.modal.date_placeholder')}</label>
 
-                        <div className="PollModal--date" config={this.configDatePicker.bind(this)}>
+                        <div className="PollModal--date" oncreate={this.configDatePicker.bind(this)}>
                             <input style="opacity: 1; color: inherit" className="FormControl" data-input />
                             {Button.component({
                                 className: 'Button PollModal--button',

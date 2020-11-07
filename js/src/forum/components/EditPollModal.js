@@ -3,7 +3,7 @@ import Button from 'flarum/components/Button';
 import CreatePollModal from './CreatePollModal';
 import Stream from 'flarum/utils/Stream';
 export default class EditPollModal extends CreatePollModal {
-    oninit(vdom) {
+    oninit(nvode) {
         this.poll = this.attrs.poll;
 
         this.options = this.poll.options();
