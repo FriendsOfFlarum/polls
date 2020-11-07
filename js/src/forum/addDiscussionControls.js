@@ -32,7 +32,7 @@ export default () => {
                     if (confirm(app.translator.trans('fof-polls.forum.moderation.delete_confirm'))) {
                         poll.delete().then(() => {
                             //m.redraw.strategy('all');
-                            m.redraw.sync();
+                            m.redraw();
                             //m.redraw.strategy('diff');
                         });
                     }

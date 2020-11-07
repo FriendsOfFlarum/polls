@@ -5,7 +5,8 @@ import LogInModal from 'flarum/components/LogInModal';
 import ListVotersModal from './ListVotersModal';
 import Stream from 'flarum/utils/Stream';
 export default class PollVote extends Component {
-    oninit(vdom) {
+    oninit(vnode) {
+        super.oninit(vnode);
         this.poll = this.attrs.poll;
 
         this.vote = Stream();
@@ -132,7 +133,7 @@ export default class PollVote extends Component {
             this.vote().pollId(this.poll.id());
         }
 
-        m.startComputation();
+        //m.startComputation();
 
         app.request({
             method: 'PATCH',
@@ -152,11 +153,11 @@ export default class PollVote extends Component {
 
             if (!option) {
                 //m.redraw.strategy('all');
-                m.redraw.sync();
+                m.redraw();
                 //m.redraw.strategy('diff');
             }
 
-            m.endComputation();
+            //m.endComputation();
         });
     }
 
