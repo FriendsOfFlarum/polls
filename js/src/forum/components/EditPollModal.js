@@ -3,7 +3,8 @@ import Stream from 'flarum/utils/Stream';
 import CreatePollModal from './CreatePollModal';
 
 export default class EditPollModal extends CreatePollModal {
-    init() {
+    oninit(vnode) {
+        super.oninit(vnode);
         this.poll = this.attrs.poll;
 
         this.options = this.poll.options();

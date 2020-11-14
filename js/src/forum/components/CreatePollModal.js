@@ -16,7 +16,7 @@ export default class CreatePollModal extends Modal {
 
         this.publicPoll = Stream(false);
 
-        if (this.props.poll) {
+        if (this.attrs.poll) {
             const poll = this.attrs.poll;
 
             this.options = poll.relationships.options.map(o => Stream(o));
