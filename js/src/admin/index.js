@@ -2,7 +2,7 @@ import { extend } from 'flarum/extend';
 import PermissionGrid from 'flarum/components/PermissionGrid';
 
 app.initializers.add('fof/polls', () => {
-    extend(PermissionGrid.prototype, 'moderateItems', items => {
+    extend(PermissionGrid.prototype, 'moderateItems', (items) => {
         items.add(
             'fof-polls',
             {
@@ -14,7 +14,7 @@ app.initializers.add('fof/polls', () => {
         );
     });
 
-    extend(PermissionGrid.prototype, 'startItems', items => {
+    extend(PermissionGrid.prototype, 'startItems', (items) => {
         items.add(
             'fof-polls-start',
             {
@@ -26,7 +26,7 @@ app.initializers.add('fof/polls', () => {
         );
     });
 
-    extend(PermissionGrid.prototype, 'replyItems', items => {
+    extend(PermissionGrid.prototype, 'replyItems', (items) => {
         items.add(
             'fof-polls-edit',
             {

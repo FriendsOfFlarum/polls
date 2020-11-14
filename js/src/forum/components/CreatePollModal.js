@@ -1,25 +1,25 @@
 import Button from 'flarum/components/Button';
 import Modal from 'flarum/components/Modal';
 import Switch from 'flarum/components/Switch';
-
+import Stream from 'flarum/utils/Stream';
 import flatpickr from 'flatpickr';
 
 export default class CreatePollModal extends Modal {
-    init() {
-        super.init();
+    oninit(vnode) {
+        super.oninit(vnode);
 
-        this.options = [m.prop(''), m.prop('')];
+        this.options = [Stream(''), Stream('')];
 
-        this.question = m.prop('');
+        this.question = Stream('');
 
-        this.endDate = m.prop();
+        this.endDate = Stream();
 
-        this.publicPoll = m.prop(false);
+        this.publicPoll = Stream(false);
 
-        if (this.props.poll) {
-            const poll = this.props.poll;
+        if (this.attrs.poll && this.attrs.poll.relationships) {
+            const poll = this.attrs.poll;
 
-            this.options = poll.relationships.options.map(o => m.prop(o));
+            this.options = poll.relationships.options.map((o) => Stream(o));
             this.question(poll.question);
             this.endDate(!poll.endDate || isNaN(poll.endDate.getTime()) ? null : poll.endDate);
             this.publicPoll(poll.publicPoll);
@@ -34,17 +34,15 @@ export default class CreatePollModal extends Modal {
         return 'PollDiscussionModal Modal--small';
     }
 
-    configDatePicker(el, isInitialized) {
-        if (isInitialized) return;
-
-        flatpickr(el, {
+    configDatePicker(vnode) {
+        flatpickr(vnode.dom, {
             enableTime: true,
             minDate: this.endDate() || 'today',
             dateFormat: 'Y-m-d H:i',
             defaultDate: this.endDate(),
             wrap: true,
 
-            onChange: dates => this.endDate(dates[0]),
+            onChange: (dates) => this.endDate(dates[0]),
         });
     }
 
@@ -75,7 +73,7 @@ export default class CreatePollModal extends Modal {
                     <div className="Form-group">
                         <label className="label">{app.translator.trans('fof-polls.forum.modal.date_placeholder')}</label>
 
-                        <div className="PollModal--date" config={this.configDatePicker.bind(this)}>
+                        <div className="PollModal--date" oncreate={this.configDatePicker.bind(this)}>
                             <input style="opacity: 1; color: inherit" className="FormControl" data-input />
                             {Button.component({
                                 className: 'Button PollModal--button',
@@ -86,20 +84,24 @@ export default class CreatePollModal extends Modal {
                     </div>
 
                     <div className="Form-group">
-                        {Switch.component({
-                            state: this.publicPoll() || false,
-                            children: app.translator.trans('fof-polls.forum.modal.public_poll_label'),
-                            onchange: this.publicPoll,
-                        })}
+                        {Switch.component(
+                            {
+                                state: this.publicPoll() || false,
+                                onchange: this.publicPoll,
+                            },
+                            app.translator.trans('fof-polls.forum.modal.public_poll_label')
+                        )}
                     </div>
 
                     <div className="Form-group">
-                        {Button.component({
-                            type: 'submit',
-                            className: 'Button Button--primary PollModal-SubmitButton',
-                            children: app.translator.trans('fof-polls.forum.modal.submit'),
-                            loading: this.loading,
-                        })}
+                        {Button.component(
+                            {
+                                type: 'submit',
+                                className: 'Button Button--primary PollModal-SubmitButton',
+                                loading: this.loading,
+                            },
+                            app.translator.trans('fof-polls.forum.modal.submit')
+                        )}
                     </div>
                 </div>
             </div>,
@@ -135,7 +137,7 @@ export default class CreatePollModal extends Modal {
         const max = (setting && parseInt(setting)) || 11;
 
         if (this.options.length < max) {
-            this.options.push(m.prop(''));
+            this.options.push(Stream(''));
         } else {
             alert(app.translator.trans('fof-polls.forum.modal.max'));
         }
@@ -153,7 +155,7 @@ export default class CreatePollModal extends Modal {
             endDate: this.endDate(),
             publicPoll: this.publicPoll(),
         };
-        const options = this.options.map(a => a()).filter(Boolean);
+        const options = this.options.map((a) => a()).filter(Boolean);
 
         if (this.question() === '') {
             alert(app.translator.trans('fof-polls.forum.modal.include_question'));
@@ -169,7 +171,7 @@ export default class CreatePollModal extends Modal {
 
         poll.relationships = { options };
 
-        this.props.onsubmit(poll);
+        this.attrs.onsubmit(poll);
 
         app.modal.close();
     }

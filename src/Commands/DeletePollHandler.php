@@ -11,15 +11,13 @@
 
 namespace FoF\Polls\Commands;
 
-use Flarum\User\AssertPermissionTrait;
 use Flarum\User\Exception\PermissionDeniedException;
+use Flarum\User\User;
 use FoF\Polls\Poll;
 use Illuminate\Contracts\Events\Dispatcher;
 
 class DeletePollHandler
 {
-    use AssertPermissionTrait;
-
     /**
      * @var Dispatcher
      */
@@ -36,7 +34,7 @@ class DeletePollHandler
     public function handle(DeletePoll $command)
     {
         /**
-         * @var Poll
+         * @var User
          */
         $actor = $command->actor;
         $poll = Poll::findOrFail($command->pollId);

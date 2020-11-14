@@ -1,15 +1,16 @@
 import Component from 'flarum/Component';
 import Button from 'flarum/components/Button';
 import LogInModal from 'flarum/components/LogInModal';
-
+import Stream from 'flarum/utils/Stream';
 import ListVotersModal from './ListVotersModal';
 
 export default class PollVote extends Component {
-    init() {
-        this.poll = this.props.poll;
+    oninit(vnode) {
+        super.oninit(vnode);
+        this.poll = this.attrs.poll;
 
-        this.vote = m.prop();
-        this.voted = m.prop(false);
+        this.vote = Stream();
+        this.voted = Stream(false);
 
         this.updateData();
     }
@@ -19,22 +20,18 @@ export default class PollVote extends Component {
             <div>
                 <h3>{this.poll.question()}</h3>
 
-                {this.options.map(opt => {
+                {this.options.map((opt) => {
                     const hasVoted = this.voted();
-                    const voted =
-                        this.vote() &&
-                        this.vote()
-                            .option()
-                            .id() === opt.id();
-                    const votes = this.votes.filter(v => v.option().id() === opt.id()).length;
+                    const voted = this.vote() && this.vote().option().id() === opt.id();
+                    const votes = this.votes.filter((v) => v.option().id() === opt.id()).length;
                     const percent = Math.round((votes / this.poll.votes().length) * 100);
 
                     const attrs = voted
                         ? {
                               title:
                                   hasVoted && app.translator.transChoice('fof-polls.forum.tooltip.votes', votes, { count: String(votes) }).join(''),
-                              config: function(element) {
-                                  $(element).tooltip({ placement: 'right' });
+                              oncreate: function (vnode) {
+                                  $(vnode.dom).tooltip({ placement: 'right' });
                               },
                           }
                         : {};
@@ -72,11 +69,13 @@ export default class PollVote extends Component {
                 <div style="clear: both;" />
 
                 {this.poll.publicPoll()
-                    ? Button.component({
-                          className: 'Button Button--primary PublicPollButton',
-                          children: app.translator.trans('fof-polls.forum.public_poll'),
-                          onclick: () => this.showVoters(),
-                      })
+                    ? Button.component(
+                          {
+                              className: 'Button Button--primary PublicPollButton',
+                              onclick: () => this.showVoters(),
+                          },
+                          app.translator.trans('fof-polls.forum.public_poll')
+                      )
                     : ''}
 
                 {app.session.user && !app.session.user.canVotePolls() ? (
@@ -86,7 +85,7 @@ export default class PollVote extends Component {
                 ) : this.poll.endDate() !== null ? (
                     <div className="helpText PollInfoText">
                         <i class="icon fa fa-clock-o" />
-                        {app.translator.trans('fof-polls.forum.days_remaining', { time: moment(this.poll.endDate()).fromNow() })}
+                        {app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(this.poll.endDate()).fromNow() })}
                     </div>
                 ) : (
                     ''
@@ -100,7 +99,7 @@ export default class PollVote extends Component {
         this.options = this.poll.options() || [];
         this.votes = this.poll.votes() || [];
 
-        this.vote(app.session.user ? this.votes.find(v => v.user() && v.user().id() === app.session.user.id()) : null);
+        this.vote(app.session.user ? this.votes.find((v) => v.user() && v.user().id() === app.session.user.id()) : null);
 
         this.voted(!!this.vote());
     }
@@ -113,19 +112,12 @@ export default class PollVote extends Component {
 
     changeVote(option, evt) {
         if (!app.session.user) {
-            app.modal.show(new LogInModal());
+            app.modal.show(LogInModal);
             evt.target.checked = false;
             return;
         }
 
-        if (
-            this.vote() &&
-            option.id() ===
-                this.vote()
-                    .option()
-                    .id()
-        )
-            option = null;
+        if (this.vote() && option.id() === this.vote().option().id()) option = null;
 
         if (!this.vote()) {
             this.vote(app.store.createRecord('poll_votes'));
@@ -133,18 +125,16 @@ export default class PollVote extends Component {
             this.vote().pollId(this.poll.id());
         }
 
-        m.startComputation();
-
         app.request({
             method: 'PATCH',
             url: `${app.forum.attribute('apiUrl')}/fof/polls/${this.poll.id()}/vote`,
             errorHandler: this.onError.bind(this, evt),
-            data: {
+            body: {
                 data: {
                     optionId: option ? option.id() : null,
                 },
             },
-        }).then(res => {
+        }).then((res) => {
             app.store.pushPayload(res);
 
             if (!option) app.store.remove(this.vote());
@@ -152,20 +142,15 @@ export default class PollVote extends Component {
             this.updateData();
 
             if (!option) {
-                m.redraw.strategy('all');
-                m.redraw();
-                m.redraw.strategy('diff');
+                m.redraw.sync();
             }
-
-            m.endComputation();
+            m.redraw();
         });
     }
 
     showVoters() {
-        app.modal.show(
-            new ListVotersModal({
-                poll: this.poll,
-            })
-        );
+        app.modal.show(ListVotersModal, {
+            poll: this.poll,
+        });
     }
 }

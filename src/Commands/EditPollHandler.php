@@ -12,17 +12,14 @@
 namespace FoF\Polls\Commands;
 
 use Carbon\Carbon;
-use Flarum\User\AssertPermissionTrait;
 use Flarum\User\Exception\PermissionDeniedException;
+use Flarum\User\User;
 use FoF\Polls\Poll;
-use FoF\Polls\PollOption;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
 
 class EditPollHandler
 {
-    use AssertPermissionTrait;
-
     /**
      * @var Dispatcher
      */
@@ -39,7 +36,7 @@ class EditPollHandler
     public function handle(EditPoll $command)
     {
         /**
-         * @var Poll
+         * @var User
          */
         $actor = $command->actor;
         $poll = Poll::findOrFail($command->pollId);
