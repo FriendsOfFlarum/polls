@@ -37,16 +37,22 @@ class SavePollsToDatabase
     protected $optionValidator;
 
     /**
+     * @var Dispatcher
+     */
+    protected $events;
+
+    /**
      * SavePollToDatabase constructor.
      *
      * @param Dispatcher          $events
      * @param PollValidator       $validator
      * @param PollOptionValidator $optionValidator
      */
-    public function __construct(PollValidator $validator, PollOptionValidator $optionValidator)
+    public function __construct(PollValidator $validator, PollOptionValidator $optionValidator, Dispatcher $events)
     {
         $this->validator = $validator;
         $this->optionValidator = $optionValidator;
+        $this->events = $events;
     }
 
     public function handle(Saving $event)
@@ -79,7 +85,7 @@ class SavePollsToDatabase
 
             $poll->save();
 
-            app()->make('events')->fire(new PollWasCreated($event->actor, $poll));
+            $this->events->dispatch(new PollWasCreated($event->actor, $poll));
 
             foreach ($options as $answer) {
                 if (empty($answer)) {

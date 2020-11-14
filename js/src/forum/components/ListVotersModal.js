@@ -15,7 +15,7 @@ export default class ShowVotersModal extends Modal {
         return (
             <div className="Modal-body">
                 <ul className="VotesModal-list">
-                    {this.props.poll.options().map(opt => {
+                    {this.attrs.poll.options().map(opt => {
                         const votes = this.props.poll
                             .votes()
                             .filter(v => opt.id() === v.option().id())

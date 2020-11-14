@@ -1,15 +1,16 @@
 import Component from 'flarum/Component';
 import Button from 'flarum/components/Button';
 import LogInModal from 'flarum/components/LogInModal';
-
+import Stream from 'flarum/utils/Stream';
 import ListVotersModal from './ListVotersModal';
 
 export default class PollVote extends Component {
-    init() {
-        this.poll = this.props.poll;
+    oninit(vnode) {
+        super.oninit(vnode);
+        this.poll = this.attrs.poll;
 
-        this.vote = m.prop();
-        this.voted = m.prop(false);
+        this.vote = Stream();
+        this.voted = Stream(false);
 
         this.updateData();
     }
@@ -33,8 +34,8 @@ export default class PollVote extends Component {
                         ? {
                               title:
                                   hasVoted && app.translator.transChoice('fof-polls.forum.tooltip.votes', votes, { count: String(votes) }).join(''),
-                              config: function(element) {
-                                  $(element).tooltip({ placement: 'right' });
+                              oncreate: function(vnode) {
+                                  $(vnode.dom).tooltip({ placement: 'right' });
                               },
                           }
                         : {};
@@ -74,9 +75,8 @@ export default class PollVote extends Component {
                 {this.poll.publicPoll()
                     ? Button.component({
                           className: 'Button Button--primary PublicPollButton',
-                          children: app.translator.trans('fof-polls.forum.public_poll'),
                           onclick: () => this.showVoters(),
-                      })
+                      }, app.translator.trans('fof-polls.forum.public_poll'))
                     : ''}
 
                 {app.session.user && !app.session.user.canVotePolls() ? (
@@ -86,7 +86,7 @@ export default class PollVote extends Component {
                 ) : this.poll.endDate() !== null ? (
                     <div className="helpText PollInfoText">
                         <i class="icon fa fa-clock-o" />
-                        {app.translator.trans('fof-polls.forum.days_remaining', { time: moment(this.poll.endDate()).fromNow() })}
+                        {app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(this.poll.endDate()).fromNow() })}
                     </div>
                 ) : (
                     ''
@@ -113,7 +113,7 @@ export default class PollVote extends Component {
 
     changeVote(option, evt) {
         if (!app.session.user) {
-            app.modal.show(new LogInModal());
+            app.modal.show(LogInModal);
             evt.target.checked = false;
             return;
         }
@@ -133,13 +133,11 @@ export default class PollVote extends Component {
             this.vote().pollId(this.poll.id());
         }
 
-        m.startComputation();
-
         app.request({
             method: 'PATCH',
             url: `${app.forum.attribute('apiUrl')}/fof/polls/${this.poll.id()}/vote`,
             errorHandler: this.onError.bind(this, evt),
-            data: {
+            body: {
                 data: {
                     optionId: option ? option.id() : null,
                 },
@@ -152,20 +150,17 @@ export default class PollVote extends Component {
             this.updateData();
 
             if (!option) {
-                m.redraw.strategy('all');
-                m.redraw();
-                m.redraw.strategy('diff');
+                m.redraw.sync();
             }
-
-            m.endComputation();
+            m.redraw();
         });
     }
 
     showVoters() {
         app.modal.show(
-            new ListVotersModal({
+            ListVotersModal, {
                 poll: this.poll,
-            })
+            }
         );
     }
 }

@@ -6,10 +6,10 @@ import CreatePollModal from './components/CreatePollModal';
 export default () => {
     DiscussionComposer.prototype.addPoll = function() {
         app.modal.show(
-            new CreatePollModal({
+            CreatePollModal, {
                 poll: this.poll,
                 onsubmit: poll => (this.poll = poll),
-            })
+            }
         );
     };
 
