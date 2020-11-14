@@ -19,7 +19,7 @@ export default () => {
                 'fof-polls-edit',
                 Button.component({
                     icon: 'fas fa-check-square',
-                    onclick: () => app.modal.show(EditPollModal, { poll }),
+                    onclick: () => app.modal.show(EditPollModal, { poll: poll }),
                 }, app.translator.trans('fof-polls.forum.moderation.edit'))
             );
         }

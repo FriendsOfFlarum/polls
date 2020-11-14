@@ -44,7 +44,7 @@ export default () => {
                         });
 
                         vote['option'] = Stream(app.store.getById('poll_options', data['option_id']));
-                        vote['user'] = Steram(app.store.getById('users', data['user_id']));
+                        vote['user'] = Stream(app.store.getById('users', data['user_id']));
 
                         let newVotes = poll.votes();
 

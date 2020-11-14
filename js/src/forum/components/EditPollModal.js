@@ -5,6 +5,7 @@ import CreatePollModal from './CreatePollModal';
 export default class EditPollModal extends CreatePollModal {
     oninit(vnode) {
         super.oninit(vnode);
+
         this.poll = this.attrs.poll;
 
         this.options = this.poll.options();
