@@ -6,7 +6,7 @@ import DiscussionPoll from './components/DiscussionPoll';
 // import PollVote from './components/PollVote';
 
 export default () => {
-    extend(CommentPost.prototype, 'content', function(content) {
+    extend(CommentPost.prototype, 'content', function (content) {
         const discussion = this.attrs.post.discussion();
 
         if (discussion.poll() && this.attrs.post.number() === 1) {
@@ -18,28 +18,20 @@ export default () => {
         }
     });
 
-    extend(CommentPost.prototype, 'oncreate', function(context) {
-
+    extend(CommentPost.prototype, 'oncreate', function (context) {
         if (app.pusher) {
-            app.pusher.then(channels => {
-                channels.main.bind('newPollVote', data => {
+            app.pusher.then((channels) => {
+                channels.main.bind('newPollVote', (data) => {
                     var userId = parseInt(data['user_id']);
 
                     if (userId == app.session.user.id()) return;
 
-                    let poll = app.store.getById(
-                        'polls',
-                        this.attrs.post
-                            .discussion()
-                            .poll()
-                            .id()
-                    );
+                    let poll = app.store.getById('polls', this.attrs.post.discussion().poll().id());
 
                     if (parseInt(poll.id()) === parseInt(data['poll_id'])) {
-
                         let vote = {};
 
-                        Object.keys(data).map(key => {
+                        Object.keys(data).map((key) => {
                             vote[key] = Stream(data[key]);
                         });
 

@@ -4,17 +4,15 @@ import DiscussionComposer from 'flarum/components/DiscussionComposer';
 import CreatePollModal from './components/CreatePollModal';
 
 export default () => {
-    DiscussionComposer.prototype.addPoll = function() {
-        app.modal.show(
-            CreatePollModal, {
-                poll: this.poll,
-                onsubmit: poll => (this.poll = poll),
-            }
-        );
+    DiscussionComposer.prototype.addPoll = function () {
+        app.modal.show(CreatePollModal, {
+            poll: this.poll,
+            onsubmit: (poll) => (this.poll = poll),
+        });
     };
 
     // Add button to DiscussionComposer header
-    extend(DiscussionComposer.prototype, 'headerItems', function(items) {
+    extend(DiscussionComposer.prototype, 'headerItems', function (items) {
         if (app.session.user.canStartPolls()) {
             items.add(
                 'polls',
@@ -28,7 +26,7 @@ export default () => {
         }
     });
 
-    extend(DiscussionComposer.prototype, 'data', function(data) {
+    extend(DiscussionComposer.prototype, 'data', function (data) {
         if (this.poll) {
             data.poll = this.poll;
         }

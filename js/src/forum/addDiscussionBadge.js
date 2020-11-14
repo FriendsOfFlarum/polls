@@ -4,11 +4,11 @@ import DiscussionList from 'flarum/components/DiscussionList';
 import Discussion from 'flarum/models/Discussion';
 
 export default () => {
-    extend(DiscussionList.prototype, 'requestParams', params => {
+    extend(DiscussionList.prototype, 'requestParams', (params) => {
         params.include.push('poll');
     });
 
-    extend(Discussion.prototype, 'badges', function(badges) {
+    extend(Discussion.prototype, 'badges', function (badges) {
         if (this.poll()) {
             badges.add(
                 'poll',

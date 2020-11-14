@@ -19,7 +19,7 @@ export default class CreatePollModal extends Modal {
         if (this.attrs.poll && this.attrs.poll.relationships) {
             const poll = this.attrs.poll;
 
-            this.options = poll.relationships.options.map(o => Stream(o));
+            this.options = poll.relationships.options.map((o) => Stream(o));
             this.question(poll.question);
             this.endDate(!poll.endDate || isNaN(poll.endDate.getTime()) ? null : poll.endDate);
             this.publicPoll(poll.publicPoll);
@@ -35,7 +35,6 @@ export default class CreatePollModal extends Modal {
     }
 
     configDatePicker(vnode) {
-
         flatpickr(vnode.dom, {
             enableTime: true,
             minDate: this.endDate() || 'today',
@@ -43,7 +42,7 @@ export default class CreatePollModal extends Modal {
             defaultDate: this.endDate(),
             wrap: true,
 
-            onChange: dates => this.endDate(dates[0]),
+            onChange: (dates) => this.endDate(dates[0]),
         });
     }
 
@@ -85,18 +84,24 @@ export default class CreatePollModal extends Modal {
                     </div>
 
                     <div className="Form-group">
-                        {Switch.component({
-                            state: this.publicPoll() || false,
-                            onchange: this.publicPoll,
-                        }, app.translator.trans('fof-polls.forum.modal.public_poll_label'))}
+                        {Switch.component(
+                            {
+                                state: this.publicPoll() || false,
+                                onchange: this.publicPoll,
+                            },
+                            app.translator.trans('fof-polls.forum.modal.public_poll_label')
+                        )}
                     </div>
 
                     <div className="Form-group">
-                        {Button.component({
-                            type: 'submit',
-                            className: 'Button Button--primary PollModal-SubmitButton',
-                            loading: this.loading,
-                        }, app.translator.trans('fof-polls.forum.modal.submit'))}
+                        {Button.component(
+                            {
+                                type: 'submit',
+                                className: 'Button Button--primary PollModal-SubmitButton',
+                                loading: this.loading,
+                            },
+                            app.translator.trans('fof-polls.forum.modal.submit')
+                        )}
                     </div>
                 </div>
             </div>,
@@ -150,7 +155,7 @@ export default class CreatePollModal extends Modal {
             endDate: this.endDate(),
             publicPoll: this.publicPoll(),
         };
-        const options = this.options.map(a => a()).filter(Boolean);
+        const options = this.options.map((a) => a()).filter(Boolean);
 
         if (this.question() === '') {
             alert(app.translator.trans('fof-polls.forum.modal.include_question'));

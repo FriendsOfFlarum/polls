@@ -9,7 +9,7 @@ export default class EditPollModal extends CreatePollModal {
         this.poll = this.attrs.poll;
 
         this.options = this.poll.options();
-        this.optionAnswers = this.options.map(o => Stream(o.answer()));
+        this.optionAnswers = this.options.map((o) => Stream(o.answer()));
         this.question = Stream(this.poll.question());
         this.endDate = Stream(this.poll.endDate());
         this.publicPoll = Stream(this.poll.publicPoll());
@@ -86,7 +86,7 @@ export default class EditPollModal extends CreatePollModal {
             .then(() => {
                 document.location.reload();
             })
-            .catch(e => {
+            .catch((e) => {
                 this.loaded();
                 this.onerror(e);
             });

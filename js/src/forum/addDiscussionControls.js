@@ -5,7 +5,7 @@ import Button from 'flarum/components/Button';
 import EditPollModal from './components/EditPollModal';
 
 export default () => {
-    extend(PostControls, 'moderationControls', function(items, post) {
+    extend(PostControls, 'moderationControls', function (items, post) {
         const discussion = post.discussion();
         const poll = discussion.poll();
         const user = app.session.user;
@@ -17,25 +17,31 @@ export default () => {
         if (!poll.hasEnded()) {
             items.add(
                 'fof-polls-edit',
-                Button.component({
-                    icon: 'fas fa-check-square',
-                    onclick: () => app.modal.show(EditPollModal, { poll: poll }),
-                }, app.translator.trans('fof-polls.forum.moderation.edit'))
+                Button.component(
+                    {
+                        icon: 'fas fa-check-square',
+                        onclick: () => app.modal.show(EditPollModal, { poll: poll }),
+                    },
+                    app.translator.trans('fof-polls.forum.moderation.edit')
+                )
             );
         }
 
         items.add(
             'fof-polls-remove',
-            Button.component({
-                icon: 'fas fa-trash',
-                onclick: () => {
-                    if (confirm(app.translator.trans('fof-polls.forum.moderation.delete_confirm'))) {
-                        poll.delete().then(() => {
-                            m.redraw.sync();
-                        });
-                    }
+            Button.component(
+                {
+                    icon: 'fas fa-trash',
+                    onclick: () => {
+                        if (confirm(app.translator.trans('fof-polls.forum.moderation.delete_confirm'))) {
+                            poll.delete().then(() => {
+                                m.redraw.sync();
+                            });
+                        }
+                    },
                 },
-            }, app.translator.trans('fof-polls.forum.moderation.delete'))
+                app.translator.trans('fof-polls.forum.moderation.delete')
+            )
         );
     });
 };

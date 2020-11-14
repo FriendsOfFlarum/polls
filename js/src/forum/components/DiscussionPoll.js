@@ -20,21 +20,17 @@ export default class PollVote extends Component {
             <div>
                 <h3>{this.poll.question()}</h3>
 
-                {this.options.map(opt => {
+                {this.options.map((opt) => {
                     const hasVoted = this.voted();
-                    const voted =
-                        this.vote() &&
-                        this.vote()
-                            .option()
-                            .id() === opt.id();
-                    const votes = this.votes.filter(v => v.option().id() === opt.id()).length;
+                    const voted = this.vote() && this.vote().option().id() === opt.id();
+                    const votes = this.votes.filter((v) => v.option().id() === opt.id()).length;
                     const percent = Math.round((votes / this.poll.votes().length) * 100);
 
                     const attrs = voted
                         ? {
                               title:
                                   hasVoted && app.translator.transChoice('fof-polls.forum.tooltip.votes', votes, { count: String(votes) }).join(''),
-                              oncreate: function(vnode) {
+                              oncreate: function (vnode) {
                                   $(vnode.dom).tooltip({ placement: 'right' });
                               },
                           }
@@ -73,10 +69,13 @@ export default class PollVote extends Component {
                 <div style="clear: both;" />
 
                 {this.poll.publicPoll()
-                    ? Button.component({
-                          className: 'Button Button--primary PublicPollButton',
-                          onclick: () => this.showVoters(),
-                      }, app.translator.trans('fof-polls.forum.public_poll'))
+                    ? Button.component(
+                          {
+                              className: 'Button Button--primary PublicPollButton',
+                              onclick: () => this.showVoters(),
+                          },
+                          app.translator.trans('fof-polls.forum.public_poll')
+                      )
                     : ''}
 
                 {app.session.user && !app.session.user.canVotePolls() ? (
@@ -100,7 +99,7 @@ export default class PollVote extends Component {
         this.options = this.poll.options() || [];
         this.votes = this.poll.votes() || [];
 
-        this.vote(app.session.user ? this.votes.find(v => v.user() && v.user().id() === app.session.user.id()) : null);
+        this.vote(app.session.user ? this.votes.find((v) => v.user() && v.user().id() === app.session.user.id()) : null);
 
         this.voted(!!this.vote());
     }
@@ -118,14 +117,7 @@ export default class PollVote extends Component {
             return;
         }
 
-        if (
-            this.vote() &&
-            option.id() ===
-                this.vote()
-                    .option()
-                    .id()
-        )
-            option = null;
+        if (this.vote() && option.id() === this.vote().option().id()) option = null;
 
         if (!this.vote()) {
             this.vote(app.store.createRecord('poll_votes'));
@@ -142,7 +134,7 @@ export default class PollVote extends Component {
                     optionId: option ? option.id() : null,
                 },
             },
-        }).then(res => {
+        }).then((res) => {
             app.store.pushPayload(res);
 
             if (!option) app.store.remove(this.vote());
@@ -157,10 +149,8 @@ export default class PollVote extends Component {
     }
 
     showVoters() {
-        app.modal.show(
-            ListVotersModal, {
-                poll: this.poll,
-            }
-        );
+        app.modal.show(ListVotersModal, {
+            poll: this.poll,
+        });
     }
 }
