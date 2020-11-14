@@ -13,7 +13,6 @@ namespace FoF\Polls\Listeners;
 
 use Carbon\Carbon;
 use Flarum\Discussion\Event\Saving;
-use Flarum\User\AssertPermissionTrait;
 use FoF\Polls\Events\PollWasCreated;
 use FoF\Polls\Poll;
 use FoF\Polls\PollOption;
@@ -24,8 +23,6 @@ use Illuminate\Support\Arr;
 
 class SavePollsToDatabase
 {
-    use AssertPermissionTrait;
-
     /**
      * @var PollValidator
      */
@@ -61,7 +58,7 @@ class SavePollsToDatabase
             return;
         }
 
-        $this->assertCan($event->actor, 'startPolls');
+        $event->actor->assertCan('startPolls');
 
         $attributes = $event->data['attributes']['poll'];
         $options = Arr::get($attributes, 'relationships.options', []);

@@ -11,7 +11,6 @@
 
 namespace FoF\Polls\Commands;
 
-use Flarum\User\AssertPermissionTrait;
 use Flarum\User\Exception\PermissionDeniedException;
 use Flarum\User\User;
 use FoF\Polls\Events\PollWasVoted;
@@ -23,8 +22,6 @@ use Pusher\Pusher;
 
 class VotePollHandler
 {
-    use AssertPermissionTrait;
-
     /**
      * @var Dispatcher
      */
