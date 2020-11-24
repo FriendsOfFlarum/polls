@@ -10,7 +10,7 @@ export default () => {
         const poll = discussion.poll();
         const user = app.session.user;
 
-        if (!(poll && ((user && user.canEditPolls()) || (post.user().canSelfEditPolls() && post.user().id() === user.id())) && post.number() === 1)) {
+        if (!(poll && ((user && user.canEditPolls()) || (post.user() && post.user().canSelfEditPolls() && post.user().id() === user.id())) && post.number() === 1)) {
             return;
         }
 

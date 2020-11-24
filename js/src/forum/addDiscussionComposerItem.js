@@ -13,7 +13,7 @@ export default () => {
 
     // Add button to DiscussionComposer header
     extend(DiscussionComposer.prototype, 'headerItems', function (items) {
-        if (app.session.user.canStartPolls()) {
+        if (app.session.user && app.session.user.canStartPolls()) {
             items.add(
                 'polls',
                 <a className="DiscussionComposer-poll" onclick={this.addPoll.bind(this)}>
