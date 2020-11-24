@@ -26,7 +26,7 @@ export default () => {
                 channels.main.bind('newPollVote', data => {
                     var userId = parseInt(data['user_id']);
 
-                    if (userId == app.session.user.id()) return;
+                    if (app.session.user && userId == app.session.user.id()) return;
 
                     let poll = app.store.getById(
                         'polls',
@@ -51,7 +51,7 @@ export default () => {
                         let newVotes = poll.votes();
 
                         newVotes.some((vote, i) => {
-                            if (parseInt(vote.user().id()) === userId) {
+                            if (vote.user() && parseInt(vote.user().id()) === userId) {
                                 newVotes.splice(i, 1);
                             }
                         });
