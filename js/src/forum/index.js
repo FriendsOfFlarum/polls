@@ -9,6 +9,9 @@ import addDiscussionComposerItem from './addDiscussionComposerItem';
 import addPollToDiscussion from './addPollToDiscussion';
 import addDiscussionControls from './addDiscussionControls';
 
+export * from './components';
+export * from './models';
+
 app.initializers.add('fof/polls', () => {
     app.store.models.polls = Poll;
     app.store.models.poll_options = PollOption;

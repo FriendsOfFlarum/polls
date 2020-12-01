@@ -4,7 +4,7 @@ import LogInModal from 'flarum/components/LogInModal';
 import Stream from 'flarum/utils/Stream';
 import ListVotersModal from './ListVotersModal';
 
-export default class PollVote extends Component {
+export default class DiscussionPoll extends Component {
     oninit(vnode) {
         super.oninit(vnode);
         this.poll = this.attrs.poll;

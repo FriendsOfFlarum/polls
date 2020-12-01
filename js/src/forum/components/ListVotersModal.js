@@ -2,7 +2,7 @@ import Modal from 'flarum/components/Modal';
 import avatar from 'flarum/helpers/avatar';
 import username from 'flarum/helpers/username';
 
-export default class ShowVotersModal extends Modal {
+export default class ListVotersModal extends Modal {
     className() {
         return 'Modal--small';
     }
