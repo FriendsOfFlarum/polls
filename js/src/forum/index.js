@@ -1,6 +1,4 @@
-import { extend } from 'flarum/extend';
 import Model from 'flarum/Model';
-import CommentPost from 'flarum/components/CommentPost';
 
 import Poll from './models/Poll';
 import PollOption from './models/PollOption';
@@ -10,6 +8,9 @@ import addDiscussionBadge from './addDiscussionBadge';
 import addDiscussionComposerItem from './addDiscussionComposerItem';
 import addPollToDiscussion from './addPollToDiscussion';
 import addDiscussionControls from './addDiscussionControls';
+
+export * from './components';
+export * from './models';
 
 app.initializers.add('fof/polls', () => {
     app.store.models.polls = Poll;

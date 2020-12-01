@@ -4,7 +4,7 @@ import LogInModal from 'flarum/components/LogInModal';
 
 import ListVotersModal from './ListVotersModal';
 
-export default class PollVote extends Component {
+export default class DiscussionPoll extends Component {
     init() {
         this.poll = this.props.poll;
 
