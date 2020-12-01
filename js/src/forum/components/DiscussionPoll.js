@@ -107,7 +107,7 @@ export default class DiscussionPoll extends Component {
     onError(evt, error) {
         evt.target.checked = false;
 
-        app.alerts.show(error.alert);
+        throw error;
     }
 
     changeVote(option, evt) {

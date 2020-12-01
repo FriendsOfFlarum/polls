@@ -46,6 +46,8 @@ class VotePollHandler
 
         $optionId = Arr::get($data, 'optionId');
 
+        $actor->assertCan('votePolls');
+
         if ($poll->hasEnded()) {
             throw new PermissionDeniedException();
         }
