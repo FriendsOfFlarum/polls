@@ -23,14 +23,14 @@ use FoF\Polls\Api\Serializers\PollSerializer;
 
 return [
     (new Extend\Frontend('forum'))
-        ->js(__DIR__ . '/js/dist/forum.js')
-        ->css(__DIR__ . '/resources/less/forum.less'),
+        ->js(__DIR__.'/js/dist/forum.js')
+        ->css(__DIR__.'/resources/less/forum.less'),
 
     (new Extend\Frontend('admin'))
-        ->js(__DIR__ . '/js/dist/admin.js')
-        ->css(__DIR__ . '/resources/less/admin.less'),
+        ->js(__DIR__.'/js/dist/admin.js')
+        ->css(__DIR__.'/resources/less/admin.less'),
 
-    new Extend\Locales(__DIR__ . '/resources/locale'),
+    new Extend\Locales(__DIR__.'/resources/locale'),
 
     (new Extend\Routes('api'))
         ->patch('/fof/polls/{id}', 'fof.polls.edit', Controllers\EditPollController::class)
@@ -52,6 +52,7 @@ return [
             $attributes['canStartPolls'] = $serializer->getActor()->can('startPolls');
             $attributes['canSelfEditPolls'] = $serializer->getActor()->can('selfEditPolls');
             $attributes['canVotePolls'] = $serializer->getActor()->can('votePolls');
+
             return $attributes;
         }),
 
