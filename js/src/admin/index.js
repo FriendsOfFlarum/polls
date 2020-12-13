@@ -1,7 +1,10 @@
 import { extend } from 'flarum/extend';
 import PermissionGrid from 'flarum/components/PermissionGrid';
+import PollsSettingsModal from './PollsSettingsModal';
 
 app.initializers.add('fof/polls', () => {
+    app.extensionSettings['fof-polls'] = () => app.modal.show(PollsSettingsModal);
+
     extend(PermissionGrid.prototype, 'moderateItems', (items) => {
         items.add(
             'fof-polls',
