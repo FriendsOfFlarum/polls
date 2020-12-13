@@ -14,8 +14,8 @@ namespace FoF\Polls;
 use Flarum\Discussion\Discussion;
 use Flarum\Discussion\Event\Saving;
 use Flarum\Extend;
-use FoF\Polls\Api\Controllers;
 use FoF\Extend\Extend\ExtensionSettings;
+use FoF\Polls\Api\Controllers;
 use Illuminate\Events\Dispatcher;
 
 return [
