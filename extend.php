@@ -15,6 +15,7 @@ use Flarum\Discussion\Discussion;
 use Flarum\Discussion\Event\Saving;
 use Flarum\Extend;
 use FoF\Polls\Api\Controllers;
+use FoF\Extend\Extend\ExtensionSettings;
 use Illuminate\Events\Dispatcher;
 
 return [
@@ -27,6 +28,9 @@ return [
         ->css(__DIR__.'/resources/less/admin.less'),
 
     new Extend\Locales(__DIR__.'/resources/locale'),
+
+    (new ExtensionSettings())
+        ->addKey('fof-polls.first_day_of_week', 0),
 
     (new Extend\Routes('api'))
         ->patch('/fof/polls/{id}', 'fof.polls.edit', Controllers\EditPollController::class)

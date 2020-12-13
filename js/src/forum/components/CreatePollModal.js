@@ -24,6 +24,8 @@ export default class CreatePollModal extends Modal {
             this.endDate(!poll.endDate || isNaN(poll.endDate.getTime()) ? null : poll.endDate);
             this.publicPoll(poll.publicPoll);
         }
+
+        this.flatpickrLocale = require('./FlatPickrLocale').default;
     }
 
     title() {
@@ -41,6 +43,7 @@ export default class CreatePollModal extends Modal {
             dateFormat: 'Y-m-d H:i',
             defaultDate: this.endDate(),
             wrap: true,
+            locale: this.flatpickrLocale,
 
             onChange: (dates) => this.endDate(dates[0]),
         });

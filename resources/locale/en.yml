@@ -5,6 +5,10 @@ fof-polls:
       self_edit: Allow users to edit their own polls
       start: Start a poll
       vote: Vote on polls
+    
+    settings:
+      title: FoF Polls
+      first_day_of_week: First day of week
 
   forum:
     days_remaining: Poll ends {time}.
@@ -42,3 +46,84 @@ fof-polls:
 
     votes_modal:
       title: Voters
+
+    calendar:
+      range_separator: To
+
+      sunday:
+        short: Sun
+        long: Sunday
+
+      monday:
+        short: Mon
+        long: Monday
+
+      tuesday:
+        short: Tue
+        long: Tuesday
+
+      wednesday:
+        short: Wed
+        long: Wednesday
+
+      thursday:
+        short: Thu
+        long: Thursday
+
+      friday:
+        short: Fri
+        long: Friday
+
+      saturday:
+        short: Sat
+        long: Saturday
+
+      january:
+        short: Jan
+        long: January
+
+      february:
+        short: Feb
+        long: February
+
+      march:
+        short: Mar
+        long: March
+
+      april:
+        short: Apr
+        long: April
+
+      may:
+        short: May 
+        long: May
+
+      june:
+        short: Jun
+        long: June
+
+      july:
+        short: Jul
+        long: July
+
+      august:
+        short: Aug
+        long: August
+
+      september:
+        short: Sep
+        long: September
+
+      october:
+        short: Oct
+        long: October
+
+      november:
+        short: Nov
+        long: November
+
+      december:
+        short: Dec
+        long: December
+
+
