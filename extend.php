@@ -11,11 +11,15 @@
 
 namespace FoF\Polls;
 
+use Flarum\Api\Controller;
+use Flarum\Api\Serializer\DiscussionSerializer;
+use Flarum\Api\Serializer\UserSerializer;
 use Flarum\Discussion\Discussion;
 use Flarum\Discussion\Event\Saving;
 use Flarum\Extend;
+use Flarum\User\User;
 use FoF\Polls\Api\Controllers;
-use Illuminate\Events\Dispatcher;
+use FoF\Polls\Api\Serializers\PollSerializer;
 
 return [
     (new Extend\Frontend('forum'))
@@ -39,7 +43,28 @@ return [
     (new Extend\Event())
         ->listen(Saving::class, Listeners\SavePollsToDatabase::class),
 
-    function (Dispatcher $events) {
-        $events->subscribe(Listeners\AddDiscussionPollRelationship::class);
-    },
+    (new Extend\ApiSerializer(DiscussionSerializer::class))
+        ->hasOne('poll', PollSerializer::class),
+
+    (new Extend\ApiSerializer(UserSerializer::class))
+        ->mutate(function (UserSerializer $serializer, User $user, array $attributes): array {
+            $attributes['canEditPolls'] = $serializer->getActor()->can('discussion.polls');
+            $attributes['canStartPolls'] = $serializer->getActor()->can('startPolls');
+            $attributes['canSelfEditPolls'] = $serializer->getActor()->can('selfEditPolls');
+            $attributes['canVotePolls'] = $serializer->getActor()->can('votePolls');
+
+            return $attributes;
+        }),
+
+    (new Extend\ApiController(Controller\ListDiscussionsController::class))
+        ->addInclude('poll'),
+
+    (new Extend\ApiController(Controller\ShowDiscussionController::class))
+        ->addInclude(['poll', 'poll.options', 'poll.votes', 'poll.votes.user', 'poll.votes.option']),
+
+    (new Extend\ApiController(Controller\CreateDiscussionController::class))
+        ->addInclude(['poll', 'poll.options', 'poll.votes', 'poll.votes.user', 'poll.votes.option']),
+
+    (new Extend\ApiController(Controller\UpdateDiscussionController::class))
+        ->addInclude(['poll', 'poll.options', 'poll.votes', 'poll.votes.user', 'poll.votes.option']),
 ];
