@@ -50,7 +50,7 @@ class DeletePollController extends AbstractDeleteController
         return $this->bus->dispatch(
             new DeletePoll(
                 $request->getAttribute('actor'),
-                Arr::get($request->getQueryParams(), 'id'),
+                Arr::get($request->getQueryParams(), 'id')
             )
         );
     }
