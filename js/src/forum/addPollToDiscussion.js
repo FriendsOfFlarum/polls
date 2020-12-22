@@ -18,7 +18,7 @@ export default () => {
         }
     });
 
-    extend(CommentPost.prototype, 'oncreate', function (context) {
+    extend(CommentPost.prototype, 'oncreate', function (call, vnode) {
         if (app.pusher) {
             app.pusher.then((channels) => {
                 channels.main.bind('newPollVote', (data) => {
@@ -54,7 +54,7 @@ export default () => {
                     }
                 });
 
-                extend(context, 'onremove', () => channels.main.unbind('newPollVote'));
+                extend(vnode, 'onremove', () => channels.main.unbind('newPollVote'));
             });
         }
     });
