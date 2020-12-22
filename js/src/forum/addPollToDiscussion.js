@@ -54,7 +54,7 @@ export default () => {
                     }
                 });
 
-                extend(context, 'onunload', () => channels.main.unbind('newPollVote'));
+                extend(context, 'onremove', () => channels.main.unbind('newPollVote'));
             });
         }
     });
