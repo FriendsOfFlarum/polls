@@ -3,7 +3,7 @@
 /*
  * This file is part of fof/polls.
  *
- * Copyright (c) 2019 FriendsOfFlarum.
+ * Copyright (c) FriendsOfFlarum.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -17,18 +17,17 @@ use Flarum\User\User;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
- * @property int            $id
- * @property string         $question
- * @property bool           $public_poll
- * @property int            $vote_count
- * @property Discussion     $discussion
- * @property User           $user
- * @property int            $discussion_id
- * @property int            $user_id
- * @property \Carbon\Carbon $end_date
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- *
+ * @property int                   $id
+ * @property string                $question
+ * @property bool                  $public_poll
+ * @property int                   $vote_count
+ * @property Discussion            $discussion
+ * @property User                  $user
+ * @property int                   $discussion_id
+ * @property int                   $user_id
+ * @property \Carbon\Carbon        $end_date
+ * @property \Carbon\Carbon        $created_at
+ * @property \Carbon\Carbon        $updated_at
  * @property PollVote[]|Collection $votes
  * @property PollVote[]|Collection $myVotes
  */

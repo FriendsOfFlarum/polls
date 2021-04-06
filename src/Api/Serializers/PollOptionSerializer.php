@@ -3,7 +3,7 @@
 /*
  * This file is part of fof/polls.
  *
- * Copyright (c) 2019 FriendsOfFlarum.
+ * Copyright (c) FriendsOfFlarum.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -32,7 +32,7 @@ class PollOptionSerializer extends AbstractSerializer
     {
         return [
             'answer'    => $option->answer,
-            'voteCount' => (int)$option->vote_count,
+            'voteCount' => (int) $option->vote_count,
             'createdAt' => $this->formatDate($option->created_at),
             'updatedAt' => $this->formatDate($option->updated_at),
         ];

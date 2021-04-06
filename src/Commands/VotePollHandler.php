@@ -3,7 +3,7 @@
 /*
  * This file is part of fof/polls.
  *
- * Copyright (c) 2019 FriendsOfFlarum.
+ * Copyright (c) FriendsOfFlarum.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -76,7 +76,7 @@ class VotePollHandler
                 $vote->save();
             } else {
                 $vote = $poll->votes()->create([
-                    'user_id' => $actor->id,
+                    'user_id'   => $actor->id,
                     'option_id' => $optionId,
                 ]);
             }
@@ -107,7 +107,7 @@ class VotePollHandler
     }
 
     /**
-     * Pushes a new vote through websocket. Kept for backward compatibility, but we are no longer using it
+     * Pushes a new vote through websocket. Kept for backward compatibility, but we are no longer using it.
      *
      * @param PollVote $vote
      *
@@ -121,7 +121,7 @@ class VotePollHandler
     }
 
     /**
-     * Pushes an updated option through websocket
+     * Pushes an updated option through websocket.
      *
      * @param PollOption $option
      *
@@ -131,9 +131,9 @@ class VotePollHandler
     {
         if ($pusher = $this->getPusher()) {
             $pusher->trigger('public', 'updatedPollOption', [
-                'pollId' => $option->poll->id,
-                'pollVoteCount' => $option->poll->vote_count,
-                'optionId' => $option->id,
+                'pollId'          => $option->poll->id,
+                'pollVoteCount'   => $option->poll->vote_count,
+                'optionId'        => $option->id,
                 'optionVoteCount' => $option->vote_count,
             ]);
         }
