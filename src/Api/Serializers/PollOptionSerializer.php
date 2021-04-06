@@ -37,7 +37,7 @@ class PollOptionSerializer extends AbstractSerializer
         ];
 
         if ($this->actor->can('seeVoteCount', $option->poll)) {
-            $attributes['voteCount'] = (int)$option->vote_count;
+            $attributes['voteCount'] = (int) $option->vote_count;
         }
 
         return $attributes;
