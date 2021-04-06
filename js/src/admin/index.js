@@ -5,11 +5,11 @@ app.initializers.add('fof/polls', () => {
         .for('fof-polls')
         .registerPermission(
             {
-                icon: 'fa fa-pencil-alt',
-                label: app.translator.trans('fof-polls.admin.permissions.moderate'),
-                permission: 'discussion.polls',
+                icon: 'fa fa-signal',
+                label: app.translator.trans('fof-polls.admin.permissions.view_results_without_voting'),
+                permission: 'viewPollResultsWithoutVoting',
             },
-            'moderate'
+            'view'
         )
         .registerPermission(
             {
@@ -25,7 +25,7 @@ app.initializers.add('fof/polls', () => {
                 label: app.translator.trans('fof-polls.admin.permissions.self_edit'),
                 permission: 'selfEditPolls',
             },
-            'reply'
+            'start'
         )
         .registerPermission(
             {
@@ -34,5 +34,21 @@ app.initializers.add('fof/polls', () => {
                 permission: 'votePolls',
             },
             'reply'
+        )
+        .registerPermission(
+            {
+                icon: 'fa fa-signal',
+                label: app.translator.trans('fof-polls.admin.permissions.change_vote'),
+                permission: 'changeVotePolls',
+            },
+            'reply'
+        )
+        .registerPermission(
+            {
+                icon: 'fa fa-pencil-alt',
+                label: app.translator.trans('fof-polls.admin.permissions.moderate'),
+                permission: 'discussion.polls',
+            },
+            'moderate'
         );
 });

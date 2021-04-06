@@ -7,6 +7,8 @@ export default class Poll extends mixin(Model, {
     endDate: Model.attribute('endDate'),
     publicPoll: Model.attribute('publicPoll'),
     voteCount: Model.attribute('voteCount'),
+    canSeeVotes: Model.attribute('canSeeVotes'),
+    canChangeVote: Model.attribute('canChangeVote'),
 
     options: Model.hasMany('options'),
     votes: Model.hasMany('votes'),

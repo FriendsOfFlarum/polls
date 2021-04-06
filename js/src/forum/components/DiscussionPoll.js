@@ -13,6 +13,7 @@ export default class DiscussionPoll extends Component {
 
     view() {
         const hasVoted = this.myVotes.length > 0;
+        const totalVotes = this.poll.voteCount();
 
         return (
             <div>
@@ -21,25 +22,25 @@ export default class DiscussionPoll extends Component {
                 {this.options.map((opt) => {
                     const voted = this.myVotes.some(vote => vote.option() === opt);
                     const votes = opt.voteCount();
-                    const percent = Math.round((votes / this.poll.voteCount()) * 100);
+                    const percent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
 
-                    const title = hasVoted && app.translator.transChoice('fof-polls.forum.tooltip.votes', votes, {count: String(votes)}).join('');
+                    const title = isNaN(votes) ? '' : app.translator.transChoice('fof-polls.forum.tooltip.votes', votes, {count: String(votes)}).join('');
 
                     return (
                         <div className={`PollOption ${hasVoted && 'PollVoted'} ${this.poll.hasEnded() && 'PollEnded'}`}>
                             <div title={title} className="PollBar" data-selected={voted}>
                                 {((!this.poll.hasEnded() && app.session.user && app.session.user.canVotePolls()) || !app.session.user) && (
                                     <label className="checkbox">
-                                        <input onchange={this.changeVote.bind(this, opt)} type="checkbox" checked={voted} />
+                                        <input onchange={this.changeVote.bind(this, opt)} type="checkbox" checked={voted} disabled={hasVoted && !this.poll.canChangeVote()} />
                                         <span className="checkmark" />
                                     </label>
                                 )}
 
-                                <div style={hasVoted && '--width: ' + percent + '%'} className="PollOption-active" />
+                                <div style={!isNaN(votes) && '--width: ' + percent + '%'} className="PollOption-active" />
                                 <label className="PollAnswer">
                                     <span>{opt.answer()}</span>
                                 </label>
-                                {hasVoted && (
+                                {!isNaN(votes) && (
                                     <label>
                                         <span className={percent !== 100 ? 'PollPercent PollPercent--option' : 'PollPercent'}>{percent}%</span>
                                     </label>
@@ -51,7 +52,7 @@ export default class DiscussionPoll extends Component {
 
                 <div style="clear: both;" />
 
-                {this.poll.publicPoll()
+                {this.poll.canSeeVotes()
                     ? Button.component(
                           {
                               className: 'Button Button--primary PublicPollButton',

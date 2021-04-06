@@ -73,4 +73,7 @@ return [
 
     (new Extend\Console())
         ->command(Console\RefreshVoteCountCommand::class),
+
+    (new Extend\Policy())
+        ->modelPolicy(Poll::class, Access\PollPolicy::class),
 ];
