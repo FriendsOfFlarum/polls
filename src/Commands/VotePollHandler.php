@@ -11,8 +11,8 @@
 
 namespace FoF\Polls\Commands;
 
+use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\User\Exception\PermissionDeniedException;
-use Flarum\User\User;
 use FoF\Polls\Events\PollWasVoted;
 use FoF\Polls\Poll;
 use FoF\Polls\PollOption;
@@ -29,18 +29,22 @@ class VotePollHandler
     private $events;
 
     /**
-     * @param Dispatcher $events
+     * @var SettingsRepositoryInterface
      */
-    public function __construct(Dispatcher $events)
+    private $settings;
+
+    /**
+     * @param Dispatcher $events
+     * @param SettingsRepositoryInterface $settings
+     */
+    public function __construct(Dispatcher $events, SettingsRepositoryInterface $settings)
     {
         $this->events = $events;
+        $this->settings = $settings;
     }
 
     public function handle(VotePoll $command)
     {
-        /**
-         * @var $actor User
-         */
         $actor = $command->actor;
         /**
          * @var $poll Poll
@@ -153,18 +157,16 @@ class VotePollHandler
         if (app()->bound(Pusher::class)) {
             return app(Pusher::class);
         } else {
-            $settings = app('flarum.settings');
-
             $options = [];
 
-            if ($cluster = $settings->get('flarum-pusher.app_cluster')) {
+            if ($cluster = $this->settings->get('flarum-pusher.app_cluster')) {
                 $options['cluster'] = $cluster;
             }
 
             return new Pusher(
-                $settings->get('flarum-pusher.app_key'),
-                $settings->get('flarum-pusher.app_secret'),
-                $settings->get('flarum-pusher.app_id'),
+                $this->settings->get('flarum-pusher.app_key'),
+                $this->settings->get('flarum-pusher.app_secret'),
+                $this->settings->get('flarum-pusher.app_id'),
                 $options
             );
         }
