@@ -34,7 +34,7 @@ class VotePollHandler
     private $settings;
 
     /**
-     * @param Dispatcher $events
+     * @param Dispatcher                  $events
      * @param SettingsRepositoryInterface $settings
      */
     public function __construct(Dispatcher $events, SettingsRepositoryInterface $settings)
