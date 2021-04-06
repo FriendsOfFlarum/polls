@@ -26,7 +26,9 @@ class VotePollController extends AbstractShowController
      */
     public $serializer = PollSerializer::class;
 
-    public $include = ['options', 'votes', 'votes.option', 'votes.user'];
+    public $include = ['options', 'myVotes', 'myVotes.option'];
+
+    public $optionalInclude = ['votes', 'votes.option', 'votes.user'];
 
     /**
      * @var Dispatcher

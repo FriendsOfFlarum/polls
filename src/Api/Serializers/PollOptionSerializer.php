@@ -32,6 +32,7 @@ class PollOptionSerializer extends AbstractSerializer
     {
         return [
             'answer'    => $option->answer,
+            'voteCount' => (int)$option->vote_count,
             'createdAt' => $this->formatDate($option->created_at),
             'updatedAt' => $this->formatDate($option->updated_at),
         ];

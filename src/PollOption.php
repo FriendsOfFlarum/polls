@@ -18,6 +18,7 @@ use Flarum\Database\AbstractModel;
  * @property string         $answer
  * @property Poll           $poll
  * @property int            $poll_id
+ * @property int            $vote_count
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  */
@@ -56,6 +57,13 @@ class PollOption extends AbstractModel
 
     public function votes()
     {
-        return $this->hasMany(PollVote::class);
+        return $this->hasMany(PollVote::class, 'option_id');
+    }
+
+    public function refreshVoteCount(): self
+    {
+        $this->vote_count = $this->votes()->count();
+
+        return $this;
     }
 }

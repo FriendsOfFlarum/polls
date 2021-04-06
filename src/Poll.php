@@ -14,18 +14,23 @@ namespace FoF\Polls;
 use Flarum\Database\AbstractModel;
 use Flarum\Discussion\Discussion;
 use Flarum\User\User;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @property int            $id
  * @property string         $question
  * @property bool           $public_poll
+ * @property int            $vote_count
  * @property Discussion     $discussion
- * @property USer           $user
+ * @property User           $user
  * @property int            $discussion_id
  * @property int            $user_id
  * @property \Carbon\Carbon $end_date
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
+ *
+ * @property PollVote[]|Collection $votes
+ * @property PollVote[]|Collection $myVotes
  */
 class Poll extends AbstractModel
 {
@@ -100,5 +105,26 @@ class Poll extends AbstractModel
     public function votes()
     {
         return $this->hasMany(PollVote::class);
+    }
+
+    public function refreshVoteCount(): self
+    {
+        $this->vote_count = $this->votes()->count();
+
+        return $this;
+    }
+
+    protected static $stateUser;
+
+    public function myVotes(User $user = null)
+    {
+        $user = $user ?: static::$stateUser;
+
+        return $this->votes()->where('user_id', $user ? $user->id : null);
+    }
+
+    public static function setStateUser(User $user)
+    {
+        static::$stateUser = $user;
     }
 }

@@ -3,6 +3,7 @@ import mixin from 'flarum/utils/mixin';
 
 export default class PollOption extends mixin(Model, {
     answer: Model.attribute('answer'),
+    voteCount: Model.attribute('voteCount'),
 
     poll: Model.hasOne('polls'),
     votes: Model.hasMany('votes'),

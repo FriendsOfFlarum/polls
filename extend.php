@@ -60,11 +60,17 @@ return [
         ->addInclude('poll'),
 
     (new Extend\ApiController(Controller\ShowDiscussionController::class))
-        ->addInclude(['poll', 'poll.options', 'poll.votes', 'poll.votes.user', 'poll.votes.option']),
+        ->addInclude(['poll', 'poll.options', 'poll.myVotes', 'poll.myVotes.option'])
+        ->addOptionalInclude(['poll.votes', 'poll.votes.user', 'poll.votes.option']),
 
     (new Extend\ApiController(Controller\CreateDiscussionController::class))
-        ->addInclude(['poll', 'poll.options', 'poll.votes', 'poll.votes.user', 'poll.votes.option']),
+        ->addInclude(['poll', 'poll.options', 'poll.myVotes', 'poll.myVotes.option'])
+        ->addOptionalInclude(['poll.votes', 'poll.votes.user', 'poll.votes.option']),
 
     (new Extend\ApiController(Controller\UpdateDiscussionController::class))
-        ->addInclude(['poll', 'poll.options', 'poll.votes', 'poll.votes.user', 'poll.votes.option']),
+        ->addInclude(['poll', 'poll.options', 'poll.myVotes', 'poll.myVotes.option'])
+        ->addOptionalInclude(['poll.votes', 'poll.votes.user', 'poll.votes.option']),
+
+    (new Extend\Console())
+        ->command(Console\RefreshVoteCountCommand::class),
 ];
