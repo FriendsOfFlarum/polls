@@ -65,6 +65,10 @@ class VotePollHandler
          */
         $vote = $poll->votes()->where('user_id', $actor->id)->first();
 
+        if ($vote) {
+            $actor->assertCan('changeVote', $poll);
+        }
+
         $previousOption = null;
 
         if ($optionId === null && $vote !== null) {

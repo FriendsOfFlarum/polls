@@ -1,10 +1,12 @@
 fof-polls:
   admin:
     permissions:
-      moderate: Edit & remove polls
-      self_edit: Allow users to edit their own polls
+      view_results_without_voting: View results without voting
       start: Start a poll
+      self_edit: Allow users to edit their own polls
       vote: Vote on polls
+      change_vote: Change vote
+      moderate: Edit & remove polls
 
   forum:
     days_remaining: Poll ends {time}.
