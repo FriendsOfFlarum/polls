@@ -30,11 +30,7 @@ class PollPolicy extends AbstractPolicy
 
     public function seeVotes(User $actor, Poll $poll)
     {
-        if ($actor->can('viewPollResultsWithoutVoting')) {
-            return $this->allow();
-        }
-
-        if ($poll->myVotes($actor)->count() && $poll->public_poll) {
+        if (($poll->myVotes($actor)->count() || $actor->can('viewPollResultsWithoutVoting')) && $poll->public_poll) {
             return $this->allow();
         }
     }
