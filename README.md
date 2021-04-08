@@ -6,8 +6,6 @@ A [Flarum](http://flarum.org) extension. A Flarum extension that adds polls to y
 
 ### Installation
 
-Use [Bazaar](https://discuss.flarum.org/d/5151-flagrow-bazaar-the-extension-marketplace) or install manually with composer:
-
 ```sh
 composer require fof/polls
 ```
@@ -28,6 +26,20 @@ $ composer require fof/polls
 ```sh
 composer update fof/polls
 ```
+
+### Metadata update
+
+To improve performance, Polls calculates and stores the number of votes when it changes.
+
+As long as the extension is active, Polls will automatically keep those numbers up to date and you don't need to do anything.
+
+If you are updating from a version prior to 0.3.3, if you disabled the extension for a while or if you made manual changes to the database you should run the following command to refresh the numbers:
+
+```sh
+php flarum fof:polls:refresh
+```
+
+You can only run the command when the extension is enabled in the admin panel.
 
 ### Links
 
