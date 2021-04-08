@@ -3,7 +3,7 @@
 /*
  * This file is part of fof/polls.
  *
- * Copyright (c) 2019 FriendsOfFlarum.
+ * Copyright (c) FriendsOfFlarum.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -34,6 +34,7 @@ class PollSerializer extends AbstractSerializer
             'question'    => $poll->question,
             'hasEnded'    => $poll->hasEnded(),
             'publicPoll'  => (bool) $poll->public_poll,
+            'voteCount'   => (int) $poll->vote_count,
             'endDate'     => $this->formatDate($poll->end_date),
             'createdAt'   => $this->formatDate($poll->created_at),
             'updatedAt'   => $this->formatDate($poll->updated_at),
@@ -50,6 +51,19 @@ class PollSerializer extends AbstractSerializer
 
     public function votes($model)
     {
+        return $this->hasMany(
+            $model,
+            PollVoteSerializer::class
+        );
+    }
+
+    public function myVotes($model)
+    {
+        Poll::setStateUser($this->actor);
+
+        // When called inside ShowDiscussionController, Flarum has already pre-loaded our relationship incorrectly
+        $model->unsetRelation('myVotes');
+
         return $this->hasMany(
             $model,
             PollVoteSerializer::class

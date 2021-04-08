@@ -1,7 +1,6 @@
 import Component from 'flarum/Component';
 import Button from 'flarum/components/Button';
 import LogInModal from 'flarum/components/LogInModal';
-import Stream from 'flarum/utils/Stream';
 import ListVotersModal from './ListVotersModal';
 
 export default class DiscussionPoll extends Component {
@@ -9,45 +8,29 @@ export default class DiscussionPoll extends Component {
         super.oninit(vnode);
         this.poll = this.attrs.poll;
 
-        this.vote = Stream();
-        this.voted = Stream(false);
-
         this.updateData();
     }
 
     view() {
+        const hasVoted = this.myVotes.length > 0;
+
         return (
             <div>
                 <h3>{this.poll.question()}</h3>
 
                 {this.options.map((opt) => {
-                    const hasVoted = this.voted();
-                    const voted = this.vote() && this.vote().option().id() === opt.id();
-                    const votes = this.votes.filter((v) => v.option().id() === opt.id()).length;
-                    const percent = Math.round((votes / this.poll.votes().length) * 100);
+                    const voted = this.myVotes.some(vote => vote.option() === opt);
+                    const votes = opt.voteCount();
+                    const percent = Math.round((votes / this.poll.voteCount()) * 100);
 
-                    const attrs = voted
-                        ? {
-                              title:
-                                  hasVoted && app.translator.transChoice('fof-polls.forum.tooltip.votes', votes, { count: String(votes) }).join(''),
-                              oncreate: function (vnode) {
-                                  $(vnode.dom).tooltip({ placement: 'right' });
-                              },
-                          }
-                        : {};
-
-                    const inputAttrs = voted
-                        ? {
-                              checked: true,
-                          }
-                        : {};
+                    const title = hasVoted && app.translator.transChoice('fof-polls.forum.tooltip.votes', votes, {count: String(votes)}).join('');
 
                     return (
                         <div className={`PollOption ${hasVoted && 'PollVoted'} ${this.poll.hasEnded() && 'PollEnded'}`}>
-                            <div {...attrs} className="PollBar" data-selected={voted}>
+                            <div title={title} className="PollBar" data-selected={voted}>
                                 {((!this.poll.hasEnded() && app.session.user && app.session.user.canVotePolls()) || !app.session.user) && (
                                     <label className="checkbox">
-                                        <input onchange={this.changeVote.bind(this, opt)} type="checkbox" {...inputAttrs} />
+                                        <input onchange={this.changeVote.bind(this, opt)} type="checkbox" checked={voted} />
                                         <span className="checkmark" />
                                     </label>
                                 )}
@@ -95,13 +78,8 @@ export default class DiscussionPoll extends Component {
     }
 
     updateData() {
-        this.poll = app.store.getById('polls', this.poll.id());
         this.options = this.poll.options() || [];
-        this.votes = this.poll.votes() || [];
-
-        this.vote(app.session.user ? this.votes.find((v) => v.user() && v.user().id() === app.session.user.id()) : null);
-
-        this.voted(!!this.vote());
+        this.myVotes = this.poll.myVotes() || [];
     }
 
     onError(evt, error) {
@@ -117,13 +95,8 @@ export default class DiscussionPoll extends Component {
             return;
         }
 
-        if (this.vote() && option.id() === this.vote().option().id()) option = null;
-
-        if (!this.vote()) {
-            this.vote(app.store.createRecord('poll_votes'));
-
-            this.vote().pollId(this.poll.id());
-        }
+        // if we click on our current vote, we want to "un-vote"
+        if (this.myVotes.some(vote => vote.option() === option)) option = null;
 
         app.request({
             method: 'PATCH',
@@ -137,20 +110,20 @@ export default class DiscussionPoll extends Component {
         }).then((res) => {
             app.store.pushPayload(res);
 
-            if (!option) app.store.remove(this.vote());
-
             this.updateData();
 
-            if (!option) {
-                m.redraw.sync();
-            }
             m.redraw();
         });
     }
 
     showVoters() {
-        app.modal.show(ListVotersModal, {
-            poll: this.poll,
-        });
+        // Load all the votes only when opening the votes list
+        app.store.find('discussions', this.attrs.discussion.id(), {
+            include: 'poll.votes,poll.votes.user,poll.votes.option',
+        }).then(() => {
+            app.modal.show(ListVotersModal, {
+                poll: this.poll,
+            });
+        })
     }
 }

@@ -3,7 +3,7 @@
 /*
  * This file is part of fof/polls.
  *
- * Copyright (c) 2019 FriendsOfFlarum.
+ * Copyright (c) FriendsOfFlarum.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -60,11 +60,17 @@ return [
         ->addInclude('poll'),
 
     (new Extend\ApiController(Controller\ShowDiscussionController::class))
-        ->addInclude(['poll', 'poll.options', 'poll.votes', 'poll.votes.user', 'poll.votes.option']),
+        ->addInclude(['poll', 'poll.options', 'poll.myVotes', 'poll.myVotes.option'])
+        ->addOptionalInclude(['poll.votes', 'poll.votes.user', 'poll.votes.option']),
 
     (new Extend\ApiController(Controller\CreateDiscussionController::class))
-        ->addInclude(['poll', 'poll.options', 'poll.votes', 'poll.votes.user', 'poll.votes.option']),
+        ->addInclude(['poll', 'poll.options', 'poll.myVotes', 'poll.myVotes.option'])
+        ->addOptionalInclude(['poll.votes', 'poll.votes.user', 'poll.votes.option']),
 
     (new Extend\ApiController(Controller\UpdateDiscussionController::class))
-        ->addInclude(['poll', 'poll.options', 'poll.votes', 'poll.votes.user', 'poll.votes.option']),
+        ->addInclude(['poll', 'poll.options', 'poll.myVotes', 'poll.myVotes.option'])
+        ->addOptionalInclude(['poll.votes', 'poll.votes.user', 'poll.votes.option']),
+
+    (new Extend\Console())
+        ->command(Console\RefreshVoteCountCommand::class),
 ];

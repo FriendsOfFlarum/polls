@@ -1,9 +1,6 @@
 import { extend } from 'flarum/extend';
 import CommentPost from 'flarum/components/CommentPost';
-import Stream from 'flarum/utils/Stream';
 import DiscussionPoll from './components/DiscussionPoll';
-
-// import PollVote from './components/PollVote';
 
 export default () => {
     extend(CommentPost.prototype, 'content', function (content) {
@@ -12,49 +9,58 @@ export default () => {
         if (discussion.poll() && this.attrs.post.number() === 1) {
             content.push(
                 DiscussionPoll.component({
+                    discussion,
                     poll: discussion.poll(),
                 })
             );
         }
     });
 
+    extend(CommentPost.prototype, 'oninit', function () {
+        this.subtree.check(() => {
+            const discussion = this.attrs.post.discussion();
+
+            if (!discussion.poll() || this.attrs.post.number() !== 1) {
+                return '';
+            }
+
+            // Make the post redraw everytime the poll or option vote count changed, or when the user vote changed
+            return JSON.stringify([
+                discussion.poll().voteCount(),
+                (discussion.poll().myVotes() || []).map(vote => vote.option().id()),
+                discussion.poll().options().map(option => option.voteCount()),
+            ]);
+        });
+    });
+
     extend(CommentPost.prototype, 'oncreate', function (call, vnode) {
         if (app.pusher) {
             app.pusher.then((channels) => {
-                channels.main.bind('newPollVote', (data) => {
-                    var userId = parseInt(data['user_id']);
+                // We will listen for updates to all polls and options
+                // Even if that model is not in the current discussion, it doesn't really matter
+                channels.main.bind('updatedPollOption', (data) => {
+                    const poll = app.store.getById('polls', data['pollId']);
 
-                    if (app.session.user && userId == app.session.user.id()) return;
-
-                    let poll = app.store.getById('polls', this.attrs.post.discussion().poll().id());
-
-                    if (parseInt(poll.id()) === parseInt(data['poll_id'])) {
-                        let vote = {};
-
-                        Object.keys(data).map((key) => {
-                            vote[key] = Stream(data[key]);
+                    if (poll) {
+                        poll.pushAttributes({
+                            voteCount: data['pollVoteCount'],
                         });
 
-                        vote['option'] = Stream(app.store.getById('poll_options', data['option_id']));
-                        vote['user'] = Stream(app.store.getById('users', data['user_id']));
+                        // Not redrawing here, as the option below should trigger the redraw already
+                    }
 
-                        let newVotes = poll.votes();
+                    const option = app.store.getById('poll_options', data['optionId']);
 
-                        newVotes.some((vote, i) => {
-                            if (parseInt(vote.user() && vote.user().id()) === userId) {
-                                newVotes.splice(i, 1);
-                            }
+                    if (option) {
+                        option.pushAttributes({
+                            voteCount: data['optionVoteCount'],
                         });
 
-                        newVotes.push(vote);
-
-                        poll.votes = Stream(newVotes);
-
-                        m.redraw.sync();
+                        m.redraw();
                     }
                 });
 
-                extend(vnode, 'onremove', () => channels.main.unbind('newPollVote'));
+                extend(vnode, 'onremove', () => channels.main.unbind('updatedPollOption'));
             });
         }
     });
