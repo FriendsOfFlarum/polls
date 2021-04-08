@@ -1,6 +1,6 @@
-import Modal from 'flarum/components/Modal';
-import avatar from 'flarum/helpers/avatar';
-import username from 'flarum/helpers/username';
+import Modal from 'flarum/common/components/Modal';
+import avatar from 'flarum/common/helpers/avatar';
+import username from 'flarum/common/helpers/username';
 
 export default class ListVotersModal extends Modal {
     className() {
@@ -16,9 +16,7 @@ export default class ListVotersModal extends Modal {
             <div className="Modal-body">
                 <ul className="VotesModal-list">
                     {this.attrs.poll.options().map((opt) => {
-                        const votes = (this.attrs.poll.votes() || [])
-                            .filter((v) => opt.id() === v.option().id())
-                            .map((v) => v.user());
+                        const votes = (this.attrs.poll.votes() || []).filter((v) => opt.id() === v.option().id()).map((v) => v.user());
 
                         return (
                             <div>

@@ -1,5 +1,5 @@
-import { extend } from 'flarum/extend';
-import CommentPost from 'flarum/components/CommentPost';
+import { extend } from 'flarum/common/extend';
+import CommentPost from 'flarum/forum/components/CommentPost';
 import DiscussionPoll from './components/DiscussionPoll';
 
 export default () => {
@@ -27,8 +27,11 @@ export default () => {
             // Make the post redraw everytime the poll or option vote count changed, or when the user vote changed
             return JSON.stringify([
                 discussion.poll().voteCount(),
-                (discussion.poll().myVotes() || []).map(vote => vote.option().id()),
-                discussion.poll().options().map(option => option.voteCount()),
+                (discussion.poll().myVotes() || []).map((vote) => vote.option().id()),
+                discussion
+                    .poll()
+                    .options()
+                    .map((option) => option.voteCount()),
             ]);
         });
     });

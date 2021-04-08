@@ -17,6 +17,7 @@ use FoF\Polls\Events\PollWasVoted;
 use FoF\Polls\Poll;
 use FoF\Polls\PollOption;
 use FoF\Polls\PollVote;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
 use Pusher;
@@ -34,13 +35,20 @@ class VotePollHandler
     private $settings;
 
     /**
+     * @var Container
+     */
+    private $container;
+
+    /**
      * @param Dispatcher                  $events
      * @param SettingsRepositoryInterface $settings
+     * @param Container                   $container
      */
-    public function __construct(Dispatcher $events, SettingsRepositoryInterface $settings)
+    public function __construct(Dispatcher $events, SettingsRepositoryInterface $settings, Container $container)
     {
         $this->events = $events;
         $this->settings = $settings;
+        $this->container = $container;
     }
 
     public function handle(VotePoll $command)
@@ -94,7 +102,7 @@ class VotePollHandler
 
             $vote->option->refreshVoteCount()->save();
 
-            app('events')->dispatch(new PollWasVoted($actor, $poll, $vote, $vote !== null));
+            $this->events->dispatch(new PollWasVoted($actor, $poll, $vote, $vote !== null));
 
             $this->pushNewVote($vote);
         }
@@ -158,8 +166,8 @@ class VotePollHandler
             return false;
         }
 
-        if (app()->bound(Pusher::class)) {
-            return app(Pusher::class);
+        if ($this->container->bound(Pusher::class)) {
+            return $this->container->make(Pusher::class);
         } else {
             $options = [];
 

@@ -1,5 +1,5 @@
-import { extend } from 'flarum/extend';
-import DiscussionComposer from 'flarum/components/DiscussionComposer';
+import { extend } from 'flarum/common/extend';
+import DiscussionComposer from 'flarum/forum/components/DiscussionComposer';
 
 import CreatePollModal from './components/CreatePollModal';
 

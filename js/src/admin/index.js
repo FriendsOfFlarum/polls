@@ -8,6 +8,7 @@ app.initializers.add('fof/polls', () => {
                 icon: 'fa fa-signal',
                 label: app.translator.trans('fof-polls.admin.permissions.view_results_without_voting'),
                 permission: 'viewPollResultsWithoutVoting',
+                allowGuest: true,
             },
             'view'
         )

@@ -17,7 +17,6 @@ use Flarum\Api\Serializer\UserSerializer;
 use Flarum\Discussion\Discussion;
 use Flarum\Discussion\Event\Saving;
 use Flarum\Extend;
-use Flarum\User\User;
 use FoF\Polls\Api\Controllers;
 use FoF\Polls\Api\Serializers\PollSerializer;
 
@@ -47,13 +46,13 @@ return [
         ->hasOne('poll', PollSerializer::class),
 
     (new Extend\ApiSerializer(UserSerializer::class))
-        ->mutate(function (UserSerializer $serializer, User $user, array $attributes): array {
-            $attributes['canEditPolls'] = $serializer->getActor()->can('discussion.polls');
-            $attributes['canStartPolls'] = $serializer->getActor()->can('startPolls');
-            $attributes['canSelfEditPolls'] = $serializer->getActor()->can('selfEditPolls');
-            $attributes['canVotePolls'] = $serializer->getActor()->can('votePolls');
-
-            return $attributes;
+        ->attributes(function (UserSerializer $serializer): array {
+            return [
+                'canEditPolls'     => $serializer->getActor()->can('discussion.polls'),
+                'canStartPolls'    => $serializer->getActor()->can('startPolls'),
+                'canSelfEditPolls' => $serializer->getActor()->can('selfEditPolls'),
+                'canVotePolls'     => $serializer->getActor()->can('votePolls'),
+            ];
         }),
 
     (new Extend\ApiController(Controller\ListDiscussionsController::class))

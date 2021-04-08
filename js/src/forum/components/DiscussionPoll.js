@@ -1,6 +1,6 @@
-import Component from 'flarum/Component';
-import Button from 'flarum/components/Button';
-import LogInModal from 'flarum/components/LogInModal';
+import Component from 'flarum/common/Component';
+import Button from 'flarum/common/components/Button';
+import LogInModal from 'flarum/forum/components/LogInModal';
 import ListVotersModal from './ListVotersModal';
 
 export default class DiscussionPoll extends Component {
@@ -20,18 +20,25 @@ export default class DiscussionPoll extends Component {
                 <h3>{this.poll.question()}</h3>
 
                 {this.options.map((opt) => {
-                    const voted = this.myVotes.some(vote => vote.option() === opt);
+                    const voted = this.myVotes.some((vote) => vote.option() === opt);
                     const votes = opt.voteCount();
                     const percent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
 
-                    const title = isNaN(votes) ? '' : app.translator.transChoice('fof-polls.forum.tooltip.votes', votes, {count: String(votes)}).join('');
+                    const title = isNaN(votes)
+                        ? ''
+                        : app.translator.transChoice('fof-polls.forum.tooltip.votes', votes, { count: String(votes) }).join('');
 
                     return (
                         <div className={`PollOption ${hasVoted && 'PollVoted'} ${this.poll.hasEnded() && 'PollEnded'}`}>
                             <div title={title} className="PollBar" data-selected={voted}>
                                 {((!this.poll.hasEnded() && app.session.user && app.session.user.canVotePolls()) || !app.session.user) && (
                                     <label className="checkbox">
-                                        <input onchange={this.changeVote.bind(this, opt)} type="checkbox" checked={voted} disabled={hasVoted && !this.poll.canChangeVote()} />
+                                        <input
+                                            onchange={this.changeVote.bind(this, opt)}
+                                            type="checkbox"
+                                            checked={voted}
+                                            disabled={hasVoted && !this.poll.canChangeVote()}
+                                        />
                                         <span className="checkmark" />
                                     </label>
                                 )}
@@ -97,7 +104,7 @@ export default class DiscussionPoll extends Component {
         }
 
         // if we click on our current vote, we want to "un-vote"
-        if (this.myVotes.some(vote => vote.option() === option)) option = null;
+        if (this.myVotes.some((vote) => vote.option() === option)) option = null;
 
         app.request({
             method: 'PATCH',
@@ -119,12 +126,14 @@ export default class DiscussionPoll extends Component {
 
     showVoters() {
         // Load all the votes only when opening the votes list
-        app.store.find('discussions', this.attrs.discussion.id(), {
-            include: 'poll.votes,poll.votes.user,poll.votes.option',
-        }).then(() => {
-            app.modal.show(ListVotersModal, {
-                poll: this.poll,
+        app.store
+            .find('discussions', this.attrs.discussion.id(), {
+                include: 'poll.votes,poll.votes.user,poll.votes.option',
+            })
+            .then(() => {
+                app.modal.show(ListVotersModal, {
+                    poll: this.poll,
+                });
             });
-        })
     }
 }

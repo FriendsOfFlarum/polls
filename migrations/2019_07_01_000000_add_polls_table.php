@@ -38,13 +38,13 @@ return AbstractMigration::make(
         $polls = Poll::doesntHave('discussion')->get();
 
         if ($polls->count() !== 0) {
-            app('log')->info("[fof/polls] deleting {$polls->count()} polls");
+            resolve('log')->info("[fof/polls] deleting {$polls->count()} polls");
 
             foreach ($polls as $poll) {
                 /*
                  * @var Poll $poll
                  */
-                app('log')->info("[fof/polls] |> deleting #{$poll->id}");
+                resolve('log')->info("[fof/polls] |> deleting #{$poll->id}");
 
                 $poll->votes()->delete();
                 $poll->options()->delete();

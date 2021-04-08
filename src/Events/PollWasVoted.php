@@ -28,7 +28,7 @@ class PollWasVoted
     public $poll;
 
     /**
-     * @var Vote
+     * @var PollVote
      */
     public $vote;
 

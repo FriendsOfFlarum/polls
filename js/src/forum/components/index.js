@@ -4,8 +4,8 @@ import EditPollModal from './EditPollModal';
 import ListVotersModal from './ListVotersModal';
 
 export const components = {
-  CreatePollModal,
-  DiscussionPoll,
-  EditPollModal,
-  ListVotersModal,
+    CreatePollModal,
+    DiscussionPoll,
+    EditPollModal,
+    ListVotersModal,
 };

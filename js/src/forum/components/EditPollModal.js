@@ -1,5 +1,5 @@
-import Button from 'flarum/components/Button';
-import Stream from 'flarum/utils/Stream';
+import Button from 'flarum/common/components/Button';
+import Stream from 'flarum/common/utils/Stream';
 import CreatePollModal from './CreatePollModal';
 
 export default class EditPollModal extends CreatePollModal {

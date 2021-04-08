@@ -1,6 +1,6 @@
-import { extend } from 'flarum/extend';
-import PostControls from 'flarum/utils/PostControls';
-import Button from 'flarum/components/Button';
+import { extend } from 'flarum/common/extend';
+import PostControls from 'flarum/forum/utils/PostControls';
+import Button from 'flarum/common/components/Button';
 
 import EditPollModal from './components/EditPollModal';
 
@@ -10,7 +10,13 @@ export default () => {
         const poll = discussion.poll();
         const user = app.session.user;
 
-        if (!(poll && ((user && user.canEditPolls()) || (post.user() && post.user().canSelfEditPolls() && post.user().id() === user.id())) && post.number() === 1)) {
+        if (
+            !(
+                poll &&
+                ((user && user.canEditPolls()) || (post.user() && post.user().canSelfEditPolls() && post.user().id() === user.id())) &&
+                post.number() === 1
+            )
+        ) {
             return;
         }
 

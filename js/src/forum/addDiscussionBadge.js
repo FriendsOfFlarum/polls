@@ -1,7 +1,7 @@
-import { extend } from 'flarum/extend';
-import Badge from 'flarum/components/Badge';
-import DiscussionList from 'flarum/components/DiscussionList';
-import Discussion from 'flarum/models/Discussion';
+import { extend } from 'flarum/common/extend';
+import Badge from 'flarum/common/components/Badge';
+import DiscussionList from 'flarum/forum/components/DiscussionList';
+import Discussion from 'flarum/common/models/Discussion';
 
 export default () => {
     extend(DiscussionList.prototype, 'requestParams', (params) => {

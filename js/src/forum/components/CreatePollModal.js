@@ -1,7 +1,7 @@
-import Button from 'flarum/components/Button';
-import Modal from 'flarum/components/Modal';
-import Switch from 'flarum/components/Switch';
-import Stream from 'flarum/utils/Stream';
+import Button from 'flarum/common/components/Button';
+import Modal from 'flarum/common/components/Modal';
+import Switch from 'flarum/common/components/Switch';
+import Stream from 'flarum/common/utils/Stream';
 import flatpickr from 'flatpickr';
 
 export default class CreatePollModal extends Modal {

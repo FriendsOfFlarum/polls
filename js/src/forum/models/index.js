@@ -3,7 +3,7 @@ import PollOption from './PollOption';
 import PollVote from './PollVote';
 
 export const models = {
-  Poll,
-  PollOption,
-  PollVote,
+    Poll,
+    PollOption,
+    PollVote,
 };
