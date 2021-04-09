@@ -12,7 +12,6 @@
 namespace FoF\Polls\Commands;
 
 use Flarum\Settings\SettingsRepositoryInterface;
-use Flarum\User\Exception\PermissionDeniedException;
 use FoF\Polls\Events\PollWasVoted;
 use FoF\Polls\Poll;
 use FoF\Polls\PollOption;
