@@ -8,19 +8,12 @@ export default () => {
     extend(PostControls, 'moderationControls', function (items, post) {
         const discussion = post.discussion();
         const poll = discussion.poll();
-        const user = app.session.user;
 
-        if (
-            !(
-                poll &&
-                ((user && user.canEditPolls()) || (post.user() && post.user().canSelfEditPolls() && post.user().id() === user.id())) &&
-                post.number() === 1
-            )
-        ) {
+        if (!poll) {
             return;
         }
 
-        if (!poll.hasEnded()) {
+        if (poll.canEdit()) {
             items.add(
                 'fof-polls-edit',
                 Button.component(
@@ -33,21 +26,23 @@ export default () => {
             );
         }
 
-        items.add(
-            'fof-polls-remove',
-            Button.component(
-                {
-                    icon: 'fas fa-trash',
-                    onclick: () => {
-                        if (confirm(app.translator.trans('fof-polls.forum.moderation.delete_confirm'))) {
-                            poll.delete().then(() => {
-                                m.redraw.sync();
-                            });
-                        }
+        if (poll.canDelete()) {
+            items.add(
+                'fof-polls-remove',
+                Button.component(
+                    {
+                        icon: 'fas fa-trash',
+                        onclick: () => {
+                            if (confirm(app.translator.trans('fof-polls.forum.moderation.delete_confirm'))) {
+                                poll.delete().then(() => {
+                                    m.redraw.sync();
+                                });
+                            }
+                        },
                     },
-                },
-                app.translator.trans('fof-polls.forum.moderation.delete')
-            )
-        );
+                    app.translator.trans('fof-polls.forum.moderation.delete')
+                )
+            );
+        }
     });
 };

@@ -11,38 +11,18 @@
 
 namespace FoF\Polls\Commands;
 
-use Flarum\User\Exception\PermissionDeniedException;
-use Flarum\User\User;
 use FoF\Polls\Poll;
-use Illuminate\Contracts\Events\Dispatcher;
 
 class DeletePollHandler
 {
-    /**
-     * @var Dispatcher
-     */
-    private $events;
-
-    /**
-     * @param Dispatcher $events
-     */
-    public function __construct(Dispatcher $events)
-    {
-        $this->events = $events;
-    }
-
     public function handle(DeletePoll $command)
     {
         /**
-         * @var User
+         * @var $poll Poll
          */
-        $actor = $command->actor;
         $poll = Poll::findOrFail($command->pollId);
 
-        if (!$actor->can('edit.polls')
-            && !($actor->id === $poll->user->id && $actor->can('selfEditPolls'))) {
-            throw new PermissionDeniedException();
-        }
+        $command->actor->assertCan('delete', $poll);
 
         $poll->delete();
     }

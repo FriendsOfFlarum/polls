@@ -35,10 +35,37 @@ class PollPolicy extends AbstractPolicy
         }
     }
 
+    public function vote(User $actor, Poll $poll)
+    {
+        if ($actor->hasPermission('votePolls') && !$poll->hasEnded()) {
+            return $this->allow();
+        }
+    }
+
     public function changeVote(User $actor, Poll $poll)
     {
         if ($actor->hasPermission('changeVotePolls')) {
             return $this->allow();
         }
+    }
+
+    public function edit(User $actor, Poll $poll)
+    {
+        if ($actor->hasPermission('discussion.polls')) {
+            return $this->allow();
+        }
+
+        if ($actor->hasPermission('selfEditPolls') && !$poll->hasEnded()) {
+            $ownerId = $poll->discussion->user_id;
+
+            if ($ownerId && $ownerId === $actor->id) {
+                return $this->allow();
+            }
+        }
+    }
+
+    public function delete(User $actor, Poll $poll)
+    {
+        return $this->edit($actor, $poll);
     }
 }

@@ -48,9 +48,9 @@ return [
     (new Extend\ApiSerializer(UserSerializer::class))
         ->attributes(function (UserSerializer $serializer): array {
             return [
-                'canEditPolls'     => $serializer->getActor()->can('discussion.polls'),
+                'canEditPolls'     => $serializer->getActor()->can('discussion.polls'), // Not used by the extension frontend anymore
                 'canStartPolls'    => $serializer->getActor()->can('startPolls'),
-                'canSelfEditPolls' => $serializer->getActor()->can('selfEditPolls'),
+                'canSelfEditPolls' => $serializer->getActor()->can('selfEditPolls'), // Not used by the extension frontend anymore
                 'canVotePolls'     => $serializer->getActor()->can('votePolls'),
             ];
         }),

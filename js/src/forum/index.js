@@ -19,9 +19,7 @@ app.initializers.add('fof/polls', () => {
 
     app.store.models.discussions.prototype.poll = Model.hasOne('poll');
 
-    app.store.models.users.prototype.canEditPolls = Model.attribute('canEditPolls');
     app.store.models.users.prototype.canStartPolls = Model.attribute('canStartPolls');
-    app.store.models.users.prototype.canSelfEditPolls = Model.attribute('canSelfEditPolls');
     app.store.models.users.prototype.canVotePolls = Model.attribute('canVotePolls');
 
     addDiscussionBadge();
