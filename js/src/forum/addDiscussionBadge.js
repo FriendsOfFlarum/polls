@@ -1,3 +1,5 @@
+import app from 'flarum/forum/app';
+
 import { extend } from 'flarum/common/extend';
 import Badge from 'flarum/common/components/Badge';
 import DiscussionList from 'flarum/forum/components/DiscussionList';

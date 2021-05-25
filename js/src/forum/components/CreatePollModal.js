@@ -1,3 +1,5 @@
+import app from 'flarum/forum/app';
+
 import Button from 'flarum/common/components/Button';
 import Modal from 'flarum/common/components/Modal';
 import Switch from 'flarum/common/components/Switch';
