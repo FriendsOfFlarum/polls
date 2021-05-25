@@ -12,6 +12,7 @@
 namespace FoF\Polls\Api\Controllers;
 
 use Flarum\Api\Controller\AbstractShowController;
+use Flarum\Http\RequestUtil;
 use FoF\Polls\Api\Serializers\PollSerializer;
 use FoF\Polls\Commands\VotePoll;
 use Illuminate\Contracts\Bus\Dispatcher;
@@ -55,7 +56,7 @@ class VotePollController extends AbstractShowController
     {
         return $this->bus->dispatch(
             new VotePoll(
-                $request->getAttribute('actor'),
+                RequestUtil::getActor($request),
                 Arr::get($request->getQueryParams(), 'id'),
                 Arr::get($request->getParsedBody(), 'data', [])
             )

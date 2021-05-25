@@ -12,6 +12,7 @@
 namespace FoF\Polls\Api\Controllers;
 
 use Flarum\Api\Controller\AbstractShowController;
+use Flarum\Http\RequestUtil;
 use FoF\Polls\Api\Serializers\PollSerializer;
 use FoF\Polls\Commands\EditPoll;
 use Illuminate\Contracts\Bus\Dispatcher;
@@ -53,7 +54,7 @@ class EditPollController extends AbstractShowController
     {
         return $this->bus->dispatch(
             new EditPoll(
-                $request->getAttribute('actor'),
+                RequestUtil::getActor($request),
                 Arr::get($request->getQueryParams(), 'id'),
                 Arr::get($request->getParsedBody(), 'data', [])
             )
