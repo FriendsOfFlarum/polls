@@ -26,9 +26,7 @@ export default class DiscussionPoll extends Component {
                     const votes = opt.voteCount();
                     const percent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
 
-                    const title = isNaN(votes)
-                        ? ''
-                        : app.translator.transChoice('fof-polls.forum.tooltip.votes', votes, { count: String(votes) }).join('');
+                    const title = isNaN(votes) ? '' : app.translator.trans('fof-polls.forum.tooltip.votes', { count: String(votes) }).join('');
 
                     return (
                         <div className={`PollOption ${hasVoted && 'PollVoted'} ${this.poll.hasEnded() && 'PollEnded'}`}>
