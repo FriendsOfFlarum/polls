@@ -4,6 +4,7 @@ import Component from 'flarum/common/Component';
 import Button from 'flarum/common/components/Button';
 import LogInModal from 'flarum/forum/components/LogInModal';
 import ListVotersModal from './ListVotersModal';
+import classList from 'flarum/common/utils/classList';
 
 export default class DiscussionPoll extends Component {
     oninit(vnode) {
@@ -29,7 +30,7 @@ export default class DiscussionPoll extends Component {
                     const title = isNaN(votes) ? '' : app.translator.trans('fof-polls.forum.tooltip.votes', { count: String(votes) }).join('');
 
                     return (
-                        <div className={`PollOption ${hasVoted && 'PollVoted'} ${this.poll.hasEnded() && 'PollEnded'}`}>
+                        <div className={classList('PollOption', hasVoted && 'PollVoted', this.poll.hasEnded() && 'PollEnded')}>
                             <div title={title} className="PollBar" data-selected={voted}>
                                 {((!this.poll.hasEnded() && app.session.user && app.session.user.canVotePolls()) || !app.session.user) && (
                                     <label className="checkbox">
@@ -49,7 +50,7 @@ export default class DiscussionPoll extends Component {
                                 </label>
                                 {!isNaN(votes) && (
                                     <label>
-                                        <span className={percent !== 100 ? 'PollPercent PollPercent--option' : 'PollPercent'}>{percent}%</span>
+                                        <span className={classList('PollPercent', percent !== 100 && 'PollPercent--option')}>{percent}%</span>
                                     </label>
                                 )}
                             </div>

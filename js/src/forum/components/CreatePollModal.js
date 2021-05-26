@@ -3,6 +3,7 @@ import app from 'flarum/forum/app';
 import Button from 'flarum/common/components/Button';
 import Modal from 'flarum/common/components/Modal';
 import Switch from 'flarum/common/components/Switch';
+import classList from 'flarum/common/utils/classList';
 import Stream from 'flarum/common/utils/Stream';
 import flatpickr from 'flatpickr';
 
@@ -111,8 +112,9 @@ export default class CreatePollModal extends Modal {
     }
 
     displayOptions() {
+        console.log(this.options);
         return Object.keys(this.options).map((el, i) => (
-            <div className={this.options[i + 1] === '' ? 'Form-group hide' : 'Form-group'}>
+            <div className={classList('Form-group', this.options[i + 1]() === '' && 'hide')}>
                 <fieldset className="Poll-answer-input">
                     <input
                         className="FormControl"

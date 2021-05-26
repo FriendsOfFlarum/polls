@@ -1,6 +1,7 @@
 import app from 'flarum/forum/app';
 
 import { extend } from 'flarum/common/extend';
+import classList from 'flarum/common/utils/classList';
 import DiscussionComposer from 'flarum/forum/components/DiscussionComposer';
 
 import CreatePollModal from './components/CreatePollModal';
@@ -19,7 +20,7 @@ export default () => {
             items.add(
                 'polls',
                 <a className="DiscussionComposer-poll" onclick={this.addPoll.bind(this)}>
-                    <span className={`PollLabel ${this.poll ? '' : 'none'}`}>
+                    <span className={classList('PollLabel', !this.poll && 'none')}>
                         {app.translator.trans(`fof-polls.forum.composer_discussion.${this.poll ? 'edit' : 'add'}_poll`)}
                     </span>
                 </a>,
