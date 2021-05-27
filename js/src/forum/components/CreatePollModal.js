@@ -113,7 +113,7 @@ export default class CreatePollModal extends Modal {
 
     displayOptions() {
         return Object.keys(this.options).map((el, i) => (
-            <div className={classList('Form-group', this.options[i + 1]() === '' && 'hide')}>
+            <div className="Form-group">
                 <fieldset className="Poll-answer-input">
                     <input
                         className="FormControl"
