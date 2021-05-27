@@ -12,6 +12,7 @@
 namespace FoF\Polls\Api\Controllers;
 
 use Flarum\Api\Controller\AbstractDeleteController;
+use Flarum\Http\RequestUtil;
 use FoF\Polls\Api\Serializers\PollSerializer;
 use FoF\Polls\Commands\DeletePoll;
 use Illuminate\Contracts\Bus\Dispatcher;
@@ -49,7 +50,7 @@ class DeletePollController extends AbstractDeleteController
     {
         return $this->bus->dispatch(
             new DeletePoll(
-                $request->getAttribute('actor'),
+                RequestUtil::getActor($request),
                 Arr::get($request->getQueryParams(), 'id')
             )
         );

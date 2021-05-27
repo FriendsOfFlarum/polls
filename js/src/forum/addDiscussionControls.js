@@ -1,3 +1,5 @@
+import app from 'flarum/forum/app';
+
 import { extend } from 'flarum/common/extend';
 import PostControls from 'flarum/forum/utils/PostControls';
 import Button from 'flarum/common/components/Button';
