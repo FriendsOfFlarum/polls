@@ -12,7 +12,6 @@
 namespace FoF\Polls\Commands;
 
 use Flarum\Settings\SettingsRepositoryInterface;
-use Flarum\User\Exception\PermissionDeniedException;
 use FoF\Polls\Events\PollWasVoted;
 use FoF\Polls\Poll;
 use FoF\Polls\PollOption;
@@ -62,11 +61,7 @@ class VotePollHandler
 
         $optionId = Arr::get($data, 'optionId');
 
-        $actor->assertCan('votePolls');
-
-        if ($poll->hasEnded()) {
-            throw new PermissionDeniedException();
-        }
+        $actor->assertCan('vote', $poll);
 
         /**
          * @var $vote PollVote|null

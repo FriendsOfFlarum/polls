@@ -12,46 +12,21 @@
 namespace FoF\Polls\Commands;
 
 use Carbon\Carbon;
-use Flarum\User\Exception\PermissionDeniedException;
-use Flarum\User\User;
 use FoF\Polls\Poll;
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
 
 class EditPollHandler
 {
-    /**
-     * @var Dispatcher
-     */
-    private $events;
-
-    /**
-     * @param Dispatcher $events
-     */
-    public function __construct(Dispatcher $events)
-    {
-        $this->events = $events;
-    }
-
     public function handle(EditPoll $command)
     {
         /**
-         * @var User
+         * @var $poll Poll
          */
-        $actor = $command->actor;
         $poll = Poll::findOrFail($command->pollId);
-        $data = $command->data;
 
-        if ($poll->hasEnded()) {
-            throw new PermissionDeniedException();
-        }
+        $command->actor->assertCan('edit', $poll);
 
-        if (!$actor->can('edit.polls')
-            && !($actor->id === $poll->user->id && $actor->can('selfEditPolls'))) {
-            throw new PermissionDeniedException();
-        }
-
-        $attributes = Arr::get($data, 'attributes', []);
+        $attributes = Arr::get($command->data, 'attributes', []);
         $options = collect(Arr::get($attributes, 'options', []));
 
         if (isset($attributes['question'])) {
