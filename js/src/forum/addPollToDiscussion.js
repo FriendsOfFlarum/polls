@@ -3,6 +3,7 @@ import app from 'flarum/forum/app';
 import { extend } from 'flarum/common/extend';
 import CommentPost from 'flarum/forum/components/CommentPost';
 import DiscussionPoll from './components/DiscussionPoll';
+import DiscussionPage from 'flarum/forum/components/DiscussionPage';
 
 export default () => {
     extend(CommentPost.prototype, 'content', function (content) {
@@ -38,12 +39,12 @@ export default () => {
         });
     });
 
-    extend(CommentPost.prototype, 'oncreate', function (call, vnode) {
+    extend(DiscussionPage.prototype, 'oncreate', function () {
         if (app.pusher) {
-            app.pusher.then((channels) => {
+            app.pusher.then((binding) => {
                 // We will listen for updates to all polls and options
                 // Even if that model is not in the current discussion, it doesn't really matter
-                channels.main.bind('updatedPollOption', (data) => {
+                binding.channels.main.bind('updatedPollOption', (data) => {
                     const poll = app.store.getById('polls', data['pollId']);
 
                     if (poll) {
@@ -64,8 +65,14 @@ export default () => {
                         m.redraw();
                     }
                 });
+            });
+        }
+    });
 
-                extend(vnode, 'onremove', () => channels.main.unbind('updatedPollOption'));
+    extend(DiscussionPage.prototype, 'onremove', function () {
+        if (app.pusher) {
+            app.pusher.then((binding) => {
+                binding.channels.main.unbind('updatedPollOption');
             });
         }
     });
