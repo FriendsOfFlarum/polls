@@ -9,7 +9,9 @@ export default () => {
     extend(CommentPost.prototype, 'content', function (content) {
         const discussion = this.attrs.post.discussion();
 
-        if (discussion.poll() && this.attrs.post.number() === 1) {
+        // If the options aren't loaded, it means we jumped from homepage to a profile page and are missing relationships
+        // We will simply not show the poll in that situation
+        if (discussion.poll() && Array.isArray(discussion.poll().options()) && this.attrs.post.number() === 1) {
             content.push(
                 DiscussionPoll.component({
                     discussion,
@@ -27,15 +29,21 @@ export default () => {
                 return '';
             }
 
-            // Make the post redraw everytime the poll or option vote count changed, or when the user vote changed
-            return JSON.stringify([
+            const checks = [
+                // Make the post redraw everytime the poll or option vote count changed, or when the user vote changed
                 discussion.poll().voteCount(),
                 (discussion.poll().myVotes() || []).map((vote) => vote.option().id()),
-                discussion
-                    .poll()
-                    .options()
-                    .map((option) => option.voteCount()),
-            ]);
+            ];
+
+            const options = discussion.poll().options();
+
+            // The options might not be loaded in all contexts where CommentPost is rendered (for example, user profile),
+            // if they are missing we are just going to omit this check
+            if (options) {
+                checks.push(options.map((option) => option.voteCount()));
+            }
+
+            return JSON.stringify(checks);
         });
     });
 
