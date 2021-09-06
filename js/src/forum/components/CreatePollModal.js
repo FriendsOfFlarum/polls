@@ -39,8 +39,6 @@ export default class CreatePollModal extends Modal {
     }
 
     content() {
-        console.log(this.endDate());
-
         return [
             <div className="Modal-body">
                 <div className="PollDiscussionModal-form">
