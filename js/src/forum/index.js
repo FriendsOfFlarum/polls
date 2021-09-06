@@ -15,17 +15,17 @@ export * from './components';
 export * from './models';
 
 app.initializers.add('fof/polls', () => {
-    app.store.models.polls = Poll;
-    app.store.models.poll_options = PollOption;
-    app.store.models.poll_votes = PollVote;
+  app.store.models.polls = Poll;
+  app.store.models.poll_options = PollOption;
+  app.store.models.poll_votes = PollVote;
 
-    app.store.models.discussions.prototype.poll = Model.hasOne('poll');
+  app.store.models.discussions.prototype.poll = Model.hasOne('poll');
 
-    app.store.models.users.prototype.canStartPolls = Model.attribute('canStartPolls');
-    app.store.models.users.prototype.canVotePolls = Model.attribute('canVotePolls');
+  app.store.models.users.prototype.canStartPolls = Model.attribute('canStartPolls');
+  app.store.models.users.prototype.canVotePolls = Model.attribute('canVotePolls');
 
-    addDiscussionBadge();
-    addDiscussionControls();
-    addDiscussionComposerItem();
-    addPollToDiscussion();
+  addDiscussionBadge();
+  addDiscussionControls();
+  addDiscussionComposerItem();
+  addPollToDiscussion();
 });
