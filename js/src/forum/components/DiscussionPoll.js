@@ -5,6 +5,7 @@ import Button from 'flarum/common/components/Button';
 import LogInModal from 'flarum/forum/components/LogInModal';
 import ListVotersModal from './ListVotersModal';
 import classList from 'flarum/common/utils/classList';
+import Tooltip from 'flarum/common/components/Tooltip';
 
 export default class DiscussionPoll extends Component {
   oninit(vnode) {
@@ -27,33 +28,33 @@ export default class DiscussionPoll extends Component {
           const votes = opt.voteCount();
           const percent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
 
-          const title = isNaN(votes) ? '' : app.translator.trans('fof-polls.forum.tooltip.votes', { count: String(votes) }).join('');
-
           return (
             <div className={classList('PollOption', hasVoted && 'PollVoted', this.poll.hasEnded() && 'PollEnded')}>
-              <div title={title} className="PollBar" data-selected={voted}>
-                {((!this.poll.hasEnded() && app.session.user && app.session.user.canVotePolls()) || !app.session.user) && (
-                  <label className="checkbox">
-                    <input
-                      onchange={this.changeVote.bind(this, opt)}
-                      type="checkbox"
-                      checked={voted}
-                      disabled={hasVoted && !this.poll.canChangeVote()}
-                    />
-                    <span className="checkmark" />
-                  </label>
-                )}
+              <Tooltip text={app.translator.trans('fof-polls.forum.tooltip.votes', { count: votes })}>
+                <div className="PollBar" data-selected={voted}>
+                  {((!this.poll.hasEnded() && app.session.user && app.session.user.canVotePolls()) || !app.session.user) && (
+                    <label className="checkbox">
+                      <input
+                        onchange={this.changeVote.bind(this, opt)}
+                        type="checkbox"
+                        checked={voted}
+                        disabled={hasVoted && !this.poll.canChangeVote()}
+                      />
+                      <span className="checkmark" />
+                    </label>
+                  )}
 
-                <div style={!isNaN(votes) && '--width: ' + percent + '%'} className="PollOption-active" />
-                <label className="PollAnswer">
-                  <span>{opt.answer()}</span>
-                </label>
-                {!isNaN(votes) && (
-                  <label>
-                    <span className={classList('PollPercent', percent !== 100 && 'PollPercent--option')}>{percent}%</span>
+                  <div style={!isNaN(votes) && '--width: ' + percent + '%'} className="PollOption-active" />
+                  <label className="PollAnswer">
+                    <span>{opt.answer()}</span>
                   </label>
-                )}
-              </div>
+                  {!isNaN(votes) && (
+                    <label>
+                      <span className={classList('PollPercent', percent !== 100 && 'PollPercent--option')}>{percent}%</span>
+                    </label>
+                  )}
+                </div>
+              </Tooltip>
             </div>
           );
         })}
