@@ -3,6 +3,7 @@ import app from 'flarum/forum/app';
 import Modal from 'flarum/common/components/Modal';
 import avatar from 'flarum/common/helpers/avatar';
 import username from 'flarum/common/helpers/username';
+import Link from 'flarum/common/components/Link';
 
 export default class ListVotersModal extends Modal {
   className() {
@@ -30,9 +31,7 @@ export default class ListVotersModal extends Modal {
 
                     return (
                       <li>
-                        <a {...attrs}>
-                          {avatar(u)} {username(u)}
-                        </a>
+                        <Link {...attrs}>{avatar(u)} {username(u)}</Link>
                       </li>
                     );
                   })
