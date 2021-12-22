@@ -31,7 +31,9 @@ export default class ListVotersModal extends Modal {
 
                     return (
                       <li>
-                        <Link {...attrs}>{avatar(u)} {username(u)}</Link>
+                        <Link {...attrs}>
+                          {avatar(u)} {username(u)}
+                        </Link>
                       </li>
                     );
                   })
