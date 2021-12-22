@@ -10,9 +10,10 @@
     "webpack-cli": "^4.9.1"
   },
   "scripts": {
-    "dev": "webpack --mode development --watch",
-    "build": "webpack --mode production",
-    "format": "prettier --write src"
+    "dev": "npm run build:css && webpack --mode development --watch",
+    "build": "npm run build:css && webpack --mode production",
+    "format": "prettier --write src",
+    "build:css": "cp ./node_modules/flatpickr/dist/flatpickr.min.css ../resources/less/flatpickr.min.css"
   },
   "devDependencies": {
     "@flarum/prettier-config": "^1.0.0",
