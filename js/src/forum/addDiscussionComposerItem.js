@@ -9,8 +9,8 @@ import CreatePollModal from './components/CreatePollModal';
 export default () => {
   DiscussionComposer.prototype.addPoll = function () {
     app.modal.show(CreatePollModal, {
-      poll: this.poll,
-      onsubmit: (poll) => (this.poll = poll),
+      poll: this.composer.fields.poll,
+      onsubmit: (poll) => (this.composer.fields.poll = poll),
     });
   };
 
@@ -20,8 +20,8 @@ export default () => {
       items.add(
         'polls',
         <a className="DiscussionComposer-poll" onclick={this.addPoll.bind(this)}>
-          <span className={classList('PollLabel', !this.poll && 'none')}>
-            {app.translator.trans(`fof-polls.forum.composer_discussion.${this.poll ? 'edit' : 'add'}_poll`)}
+          <span className={classList('PollLabel', !this.composer.fields.poll && 'none')}>
+            {app.translator.trans(`fof-polls.forum.composer_discussion.${this.composer.fields.poll ? 'edit' : 'add'}_poll`)}
           </span>
         </a>,
         1
@@ -30,8 +30,8 @@ export default () => {
   });
 
   extend(DiscussionComposer.prototype, 'data', function (data) {
-    if (this.poll) {
-      data.poll = this.poll;
+    if (this.composer.fields.poll) {
+      data.poll = this.composer.fields.poll;
     }
   });
 };
