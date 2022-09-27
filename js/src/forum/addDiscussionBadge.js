@@ -17,7 +17,7 @@ export default () => {
         Badge.component({
           type: 'poll',
           label: app.translator.trans('fof-polls.forum.tooltip.badge'),
-          icon: 'fa fa-signal',
+          icon: 'fas fa-signal',
         }),
         5
       );
