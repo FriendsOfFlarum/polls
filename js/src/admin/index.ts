@@ -5,7 +5,7 @@ app.initializers.add('fof/polls', () => {
     .for('fof-polls')
     .registerPermission(
       {
-        icon: 'fa fa-signal',
+        icon: 'fas fa-signal',
         label: app.translator.trans('fof-polls.admin.permissions.view_results_without_voting'),
         permission: 'viewPollResultsWithoutVoting',
         allowGuest: true,
@@ -14,7 +14,7 @@ app.initializers.add('fof/polls', () => {
     )
     .registerPermission(
       {
-        icon: 'fa fa-signal',
+        icon: 'fas fa-signal',
         label: app.translator.trans('fof-polls.admin.permissions.start'),
         permission: 'startPolls',
       },
@@ -22,7 +22,7 @@ app.initializers.add('fof/polls', () => {
     )
     .registerPermission(
       {
-        icon: 'fa fa-pencil-alt',
+        icon: 'fas fa-pencil-alt',
         label: app.translator.trans('fof-polls.admin.permissions.self_edit'),
         permission: 'selfEditPolls',
       },
@@ -30,7 +30,7 @@ app.initializers.add('fof/polls', () => {
     )
     .registerPermission(
       {
-        icon: 'fa fa-signal',
+        icon: 'fas fa-signal',
         label: app.translator.trans('fof-polls.admin.permissions.vote'),
         permission: 'votePolls',
       },
@@ -38,7 +38,7 @@ app.initializers.add('fof/polls', () => {
     )
     .registerPermission(
       {
-        icon: 'fa fa-signal',
+        icon: 'fas fa-signal',
         label: app.translator.trans('fof-polls.admin.permissions.change_vote'),
         permission: 'changeVotePolls',
       },
@@ -46,7 +46,7 @@ app.initializers.add('fof/polls', () => {
     )
     .registerPermission(
       {
-        icon: 'fa fa-pencil-alt',
+        icon: 'fas fa-pencil-alt',
         label: app.translator.trans('fof-polls.admin.permissions.moderate'),
         permission: 'discussion.polls',
       },
