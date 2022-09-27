@@ -77,7 +77,7 @@ export default class DiscussionPoll extends Component {
           <div className="helpText PollInfoText">{app.translator.trans('fof-polls.forum.poll_ended')}</div>
         ) : this.poll.endDate() !== null ? (
           <div className="helpText PollInfoText">
-            <i class="icon fa fa-clock-o" />
+            <i class="icon fas fa-clock-o" />
             {app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(this.poll.endDate()).fromNow() })}
           </div>
         ) : (
