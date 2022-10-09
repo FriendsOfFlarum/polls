@@ -10,7 +10,8 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - uses: actions/checkout@master
-            - uses: flarum/action-build@master
-              env:
+            - uses: actions/checkout@v3
+
+            - uses: flarum/action-build@v3
+              with:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
