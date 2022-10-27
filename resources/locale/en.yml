@@ -28,6 +28,7 @@ fof-polls:
       min: You must include a minimum of 2 answers
       no_voters: No Votes
       option_placeholder: Answer
+      image_option_placeholder: Image URL (optional)
       options_label: Answers
       public_poll_label: Allow people to see who voted
       question_placeholder: Question

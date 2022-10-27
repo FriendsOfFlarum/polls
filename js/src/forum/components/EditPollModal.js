@@ -33,13 +33,15 @@ export default class EditPollModal extends CreatePollModal {
             bidi={this.optionAnswers[i]}
             placeholder={app.translator.trans('fof-polls.forum.modal.option_placeholder') + ' #' + (i + 1)}
           />
-          { app.data['fof-polls.options.images']||true ? <input
-            className="FormControl"
-            type="text"
-            name={'answerImage' + (i + 1)}
-            bidi={this.optionImageUrls[i]}
-            placeholder={app.translator.trans('fof-polls.forum.modal.image_option_placeholder') + ' #' + (i + 1)}
-          /> : null }
+          {app.data['fof-polls.options.images'] || true ? (
+            <input
+              className="FormControl"
+              type="text"
+              name={'answerImage' + (i + 1)}
+              bidi={this.optionImageUrls[i]}
+              placeholder={app.translator.trans('fof-polls.forum.modal.image_option_placeholder') + ' #' + (i + 1)}
+            />
+          ) : null}
         </fieldset>
 
         {i >= 2

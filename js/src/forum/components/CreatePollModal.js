@@ -20,13 +20,13 @@ export default class CreatePollModal extends Modal {
 
     this.publicPoll = Stream(false);
 
-    const {poll} = this.attrs;
+    const { poll } = this.attrs;
 
     // When re-opening the modal for the same discussion composer where we already set poll attributes
     if (poll && Array.isArray(poll.options)) {
       this.options = [];
       this.optionImageUrls = [];
-      poll.options.forEach(option => {
+      poll.options.forEach((option) => {
         this.options.push(Stream(option.answer));
         this.optionImageUrls.push(Stream(option.imageUrl));
       });
@@ -60,9 +60,7 @@ export default class CreatePollModal extends Modal {
   content() {
     return [
       <div className="Modal-body">
-        <div className="PollDiscussionModal-form">
-          {this.fields().toArray()}
-        </div>
+        <div className="PollDiscussionModal-form">{this.fields().toArray()}</div>
       </div>,
     ];
   }
@@ -70,59 +68,79 @@ export default class CreatePollModal extends Modal {
   fields() {
     const items = new ItemList();
 
-    items.add('question', <div className="Form-group">
-      <label className="label">{app.translator.trans('fof-polls.forum.modal.question_placeholder')}</label>
+    items.add(
+      'question',
+      <div className="Form-group">
+        <label className="label">{app.translator.trans('fof-polls.forum.modal.question_placeholder')}</label>
 
-      <input type="text" name="question" className="FormControl" bidi={this.question} />
-    </div>, 100);
+        <input type="text" name="question" className="FormControl" bidi={this.question} />
+      </div>,
+      100
+    );
 
-    items.add('answers', <div className="PollModal--answers Form-group">
-      <label className="label PollModal--answers-title">
-        <span>{app.translator.trans('fof-polls.forum.modal.options_label')}</span>
+    items.add(
+      'answers',
+      <div className="PollModal--answers Form-group">
+        <label className="label PollModal--answers-title">
+          <span>{app.translator.trans('fof-polls.forum.modal.options_label')}</span>
 
-        {Button.component({
-          className: 'Button PollModal--button small',
-          icon: 'fas fa-plus',
-          onclick: this.addOption.bind(this),
-        })}
-      </label>
+          {Button.component({
+            className: 'Button PollModal--button small',
+            icon: 'fas fa-plus',
+            onclick: this.addOption.bind(this),
+          })}
+        </label>
 
-      {this.displayOptions()}
-    </div>, 80);
+        {this.displayOptions()}
+      </div>,
+      80
+    );
 
-    items.add('date', <div className="Form-group">
-      <label className="label">{app.translator.trans('fof-polls.forum.modal.date_placeholder')}</label>
+    items.add(
+      'date',
+      <div className="Form-group">
+        <label className="label">{app.translator.trans('fof-polls.forum.modal.date_placeholder')}</label>
 
-      <div className="PollModal--date" oncreate={this.configDatePicker.bind(this)}>
-        <input style="opacity: 1; color: inherit" className="FormControl" data-input />
-        {Button.component({
-          className: 'Button PollModal--button',
-          icon: 'fas fa-times',
-          'data-clear': true,
-        })}
-      </div>
-    </div>, 40);
+        <div className="PollModal--date" oncreate={this.configDatePicker.bind(this)}>
+          <input style="opacity: 1; color: inherit" className="FormControl" data-input />
+          {Button.component({
+            className: 'Button PollModal--button',
+            icon: 'fas fa-times',
+            'data-clear': true,
+          })}
+        </div>
+      </div>,
+      40
+    );
 
-    items.add('public', <div className="Form-group">
-      {Switch.component(
-        {
-          state: this.publicPoll() || false,
-          onchange: this.publicPoll,
-        },
-        app.translator.trans('fof-polls.forum.modal.public_poll_label')
-      )}
-    </div>, 20);
+    items.add(
+      'public',
+      <div className="Form-group">
+        {Switch.component(
+          {
+            state: this.publicPoll() || false,
+            onchange: this.publicPoll,
+          },
+          app.translator.trans('fof-polls.forum.modal.public_poll_label')
+        )}
+      </div>,
+      20
+    );
 
-    items.add('submit', <div className="Form-group">
-      {Button.component(
-        {
-          type: 'submit',
-          className: 'Button Button--primary PollModal-SubmitButton',
-          loading: this.loading,
-        },
-        app.translator.trans('fof-polls.forum.modal.submit')
-      )}
-    </div>, -10);
+    items.add(
+      'submit',
+      <div className="Form-group">
+        {Button.component(
+          {
+            type: 'submit',
+            className: 'Button Button--primary PollModal-SubmitButton',
+            loading: this.loading,
+          },
+          app.translator.trans('fof-polls.forum.modal.submit')
+        )}
+      </div>,
+      -10
+    );
 
     return items;
   }

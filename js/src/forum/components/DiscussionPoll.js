@@ -64,12 +64,7 @@ export default class DiscussionPoll extends Component {
           <div className="PollBar" data-selected={voted}>
             {((!this.poll.hasEnded() && app.session.user && app.session.user.canVotePolls()) || !app.session.user) && (
               <label className="checkbox">
-                <input
-                  onchange={this.changeVote.bind(this, opt)}
-                  type="checkbox"
-                  checked={voted}
-                  disabled={hasVoted && !this.poll.canChangeVote()}
-                />
+                <input onchange={this.changeVote.bind(this, opt)} type="checkbox" checked={voted} disabled={hasVoted && !this.poll.canChangeVote()} />
                 <span className="checkmark" />
               </label>
             )}
@@ -77,7 +72,7 @@ export default class DiscussionPoll extends Component {
             <div style={!isNaN(votes) && '--width: ' + percent + '%'} className="PollOption-active" />
             <label className="PollAnswer">
               <span>{opt.answer()}</span>
-              {opt.imageUrl() ? <img className="PollAnswerImage" src={opt.imageUrl()} alt={opt.answer()}/> : null}
+              {opt.imageUrl() ? <img className="PollAnswerImage" src={opt.imageUrl()} alt={opt.answer()} /> : null}
             </label>
             {!isNaN(votes) && (
               <label>

@@ -17,9 +17,7 @@ export default class ListVotersModal extends Modal {
   content() {
     return (
       <div className="Modal-body">
-        <ul className="VotesModal-list">
-          {this.attrs.poll.options().map(this.optionContent.bind(this))}
-        </ul>
+        <ul className="VotesModal-list">{this.attrs.poll.options().map(this.optionContent.bind(this))}</ul>
       </div>
     );
   }
