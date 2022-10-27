@@ -7,7 +7,7 @@ import Link from 'flarum/common/components/Link';
 
 export default class ListVotersModal extends Modal {
   className() {
-    return 'Modal--small';
+    return 'Modal--small VotesModal';
   }
 
   title() {
@@ -18,33 +18,38 @@ export default class ListVotersModal extends Modal {
     return (
       <div className="Modal-body">
         <ul className="VotesModal-list">
-          {this.attrs.poll.options().map((opt) => {
-            const votes = (this.attrs.poll.votes() || []).filter((v) => opt.id() === v.option().id()).map((v) => v.user());
-
-            return (
-              <div>
-                <h2>{opt.answer() + ':'}</h2>
-
-                {votes.length ? (
-                  votes.map((u) => {
-                    const attrs = u && { href: app.route.user(u), config: m.route };
-
-                    return (
-                      <li>
-                        <Link {...attrs}>
-                          {avatar(u)} {username(u)}
-                        </Link>
-                      </li>
-                    );
-                  })
-                ) : (
-                  <h4 style="color: #000">{app.translator.trans('fof-polls.forum.modal.no_voters')}</h4>
-                )}
-              </div>
-            );
-          })}
+          {this.attrs.poll.options().map(this.optionContent.bind(this))}
         </ul>
       </div>
+    );
+  }
+
+  optionContent(opt) {
+    const votes = (this.attrs.poll.votes() || []).filter((v) => opt.id() === v.option().id());
+
+    return (
+      <div>
+        <h2>{opt.answer() + ':'}</h2>
+
+        {votes.length ? (
+          votes.map(this.voteContent.bind(this))
+        ) : (
+          <h4 style="color: #000">{app.translator.trans('fof-polls.forum.modal.no_voters')}</h4>
+        )}
+      </div>
+    );
+  }
+
+  voteContent(vote) {
+    const user = vote.user();
+    const attrs = user && { href: app.route.user(user) };
+
+    return (
+      <li>
+        <Link {...attrs}>
+          {avatar(user)} {username(user)}
+        </Link>
+      </li>
     );
   }
 }

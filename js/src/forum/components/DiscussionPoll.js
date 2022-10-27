@@ -16,48 +16,11 @@ export default class DiscussionPoll extends Component {
   }
 
   view() {
-    const hasVoted = this.myVotes.length > 0;
-    const totalVotes = this.poll.voteCount();
-
     return (
       <div>
         <h3>{this.poll.question()}</h3>
 
-        {this.options.map((opt) => {
-          const voted = this.myVotes.some((vote) => vote.option() === opt);
-          const votes = opt.voteCount();
-          const percent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
-
-          return (
-            <div className={classList('PollOption', hasVoted && 'PollVoted', this.poll.hasEnded() && 'PollEnded')}>
-              <Tooltip text={app.translator.trans('fof-polls.forum.tooltip.votes', { count: votes })}>
-                <div className="PollBar" data-selected={voted}>
-                  {((!this.poll.hasEnded() && app.session.user && app.session.user.canVotePolls()) || !app.session.user) && (
-                    <label className="checkbox">
-                      <input
-                        onchange={this.changeVote.bind(this, opt)}
-                        type="checkbox"
-                        checked={voted}
-                        disabled={hasVoted && !this.poll.canChangeVote()}
-                      />
-                      <span className="checkmark" />
-                    </label>
-                  )}
-
-                  <div style={!isNaN(votes) && '--width: ' + percent + '%'} className="PollOption-active" />
-                  <label className="PollAnswer">
-                    <span>{opt.answer()}</span>
-                  </label>
-                  {!isNaN(votes) && (
-                    <label>
-                      <span className={classList('PollPercent', percent !== 100 && 'PollPercent--option')}>{percent}%</span>
-                    </label>
-                  )}
-                </div>
-              </Tooltip>
-            </div>
-          );
-        })}
+        {this.options.map(this.viewOption.bind(this))}
 
         <div style="clear: both;" />
 
@@ -83,6 +46,46 @@ export default class DiscussionPoll extends Component {
         ) : (
           ''
         )}
+      </div>
+    );
+  }
+
+  viewOption(opt) {
+    const hasVoted = this.myVotes.length > 0;
+    const totalVotes = this.poll.voteCount();
+
+    const voted = this.myVotes.some((vote) => vote.option() === opt);
+    const votes = opt.voteCount();
+    const percent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
+
+    return (
+      <div className={classList('PollOption', hasVoted && 'PollVoted', this.poll.hasEnded() && 'PollEnded')}>
+        <Tooltip text={app.translator.trans('fof-polls.forum.tooltip.votes', { count: votes })}>
+          <div className="PollBar" data-selected={voted}>
+            {((!this.poll.hasEnded() && app.session.user && app.session.user.canVotePolls()) || !app.session.user) && (
+              <label className="checkbox">
+                <input
+                  onchange={this.changeVote.bind(this, opt)}
+                  type="checkbox"
+                  checked={voted}
+                  disabled={hasVoted && !this.poll.canChangeVote()}
+                />
+                <span className="checkmark" />
+              </label>
+            )}
+
+            <div style={!isNaN(votes) && '--width: ' + percent + '%'} className="PollOption-active" />
+            <label className="PollAnswer">
+              <span>{opt.answer()}</span>
+              {opt.imageUrl() ? <img className="PollAnswerImage" src={opt.imageUrl()} alt={opt.answer()}/> : null}
+            </label>
+            {!isNaN(votes) && (
+              <label>
+                <span className={classList('PollPercent', percent !== 100 && 'PollPercent--option')}>{percent}%</span>
+              </label>
+            )}
+          </div>
+        </Tooltip>
       </div>
     );
   }

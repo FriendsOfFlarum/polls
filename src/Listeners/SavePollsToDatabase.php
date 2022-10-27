@@ -14,6 +14,7 @@ namespace FoF\Polls\Listeners;
 use Carbon\Carbon;
 use Flarum\Discussion\Event\Saving;
 use FoF\Polls\Events\PollWasCreated;
+use FoF\Polls\Events\SavingPollAttributes;
 use FoF\Polls\Poll;
 use FoF\Polls\PollOption;
 use FoF\Polls\Validators\PollOptionValidator;
@@ -60,16 +61,41 @@ class SavePollsToDatabase
 
         $event->actor->assertCan('startPolls');
 
-        $attributes = $event->data['attributes']['poll'];
-        $options = Arr::get($attributes, 'relationships.options', []);
+        $attributes = (array)$event->data['attributes']['poll'];
+
+        // Ideally we would use some JSON:API relationship syntax, but it's just too complicated with Flarum to generate the correct JSON payload
+        // Instead we just pass an array of option objects that are each a set of key-value pairs for the option attributes
+        // This is also the same syntax that always used by EditPollHandler
+        $rawOptionsData = Arr::get($attributes, 'options');
+
+        $optionsData = [];
+
+        if (is_array($rawOptionsData)) {
+            foreach ($rawOptionsData as $rawOptionData) {
+                $optionsData[] = [
+                    'answer' => Arr::get($rawOptionData, 'answer'),
+                    'imageUrl' => Arr::get($rawOptionData, 'imageUrl') ?: null,
+                ];
+            }
+        } else {
+            // Backward-compatibility with old syntax that only passed an array of strings
+            // We are no longer using this syntax in the extension itself
+            foreach ((array)Arr::get($attributes, 'relationships.options') as $answerText) {
+                $optionsData[] = [
+                    'answer' => (string)$answerText,
+                ];
+            }
+        }
 
         $this->validator->assertValid($attributes);
 
-        foreach ($options as $option) {
-            $this->optionValidator->assertValid(['answer' => $option]);
+        foreach ($optionsData as $optionData) {
+            // It is guaranteed all keys exist in the array because $optionData is manually created above
+            // This ensures every attribute will be validated (Flarum doesn't validate missing keys)
+            $this->optionValidator->assertValid($optionData);
         }
 
-        $event->discussion->afterSave(function ($discussion) use ($options, $attributes, $event) {
+        $event->discussion->afterSave(function ($discussion) use ($optionsData, $attributes, $event) {
             $endDate = Arr::get($attributes, 'endDate');
 
             $poll = Poll::build(
@@ -80,16 +106,14 @@ class SavePollsToDatabase
                 Arr::get($attributes, 'publicPoll')
             );
 
+            $this->events->dispatch(new SavingPollAttributes($event->actor, $poll, $attributes, $event->data));
+
             $poll->save();
 
             $this->events->dispatch(new PollWasCreated($event->actor, $poll));
 
-            foreach ($options as $answer) {
-                if (empty($answer)) {
-                    continue;
-                }
-
-                $option = PollOption::build($answer);
+            foreach ($optionsData as $optionData) {
+                $option = PollOption::build(Arr::get($optionData, 'answer'), Arr::get($optionData, 'imageUrl'));
 
                 $poll->options()->save($option);
             }

@@ -12,6 +12,7 @@ export default class EditPollModal extends CreatePollModal {
 
     this.options = this.poll.options();
     this.optionAnswers = this.options.map((o) => Stream(o.answer()));
+    this.optionImageUrls = this.options.map((o) => Stream(o.imageUrl()));
     this.question = Stream(this.poll.question());
     this.endDate = Stream(this.poll.endDate());
     this.publicPoll = Stream(this.poll.publicPoll());
@@ -32,6 +33,13 @@ export default class EditPollModal extends CreatePollModal {
             bidi={this.optionAnswers[i]}
             placeholder={app.translator.trans('fof-polls.forum.modal.option_placeholder') + ' #' + (i + 1)}
           />
+          { app.data['fof-polls.options.images']||true ? <input
+            className="FormControl"
+            type="text"
+            name={'answerImage' + (i + 1)}
+            bidi={this.optionImageUrls[i]}
+            placeholder={app.translator.trans('fof-polls.forum.modal.image_option_placeholder') + ' #' + (i + 1)}
+          /> : null }
         </fieldset>
 
         {i >= 2
@@ -53,6 +61,7 @@ export default class EditPollModal extends CreatePollModal {
     if (this.options.length < max) {
       this.options.push(app.store.createRecord('poll_options'));
       this.optionAnswers.push(Stream(''));
+      this.optionImageUrls.push(Stream(''));
     } else {
       alert(app.translator.trans('fof-polls.forum.modal.max'));
     }
@@ -61,6 +70,25 @@ export default class EditPollModal extends CreatePollModal {
   removeOption(i) {
     this.options.splice(i, 1);
     this.optionAnswers.splice(i, 1);
+    this.optionImageUrls.splice(i, 1);
+  }
+
+  data() {
+    const options = this.options.map((o, i) => {
+      if (!o.data.attributes) o.data.attributes = {};
+
+      o.data.attributes.answer = this.optionAnswers[i]();
+      o.data.attributes.imageUrl = this.optionImageUrls[i]();
+
+      return o.data;
+    });
+
+    return {
+      question: this.question(),
+      endDate: this.endDate() || false,
+      publicPoll: this.publicPoll(),
+      options,
+    };
   }
 
   onsubmit(e) {
@@ -70,21 +98,8 @@ export default class EditPollModal extends CreatePollModal {
 
     this.loading = true;
 
-    const options = this.options.map((o, i) => {
-      if (!o.data.attributes) o.data.attributes = {};
-
-      o.data.attributes.answer = this.optionAnswers[i]();
-
-      return o.data;
-    });
-
     return this.poll
-      .save({
-        question: this.question(),
-        endDate: this.endDate() || false,
-        publicPoll: this.publicPoll(),
-        options,
-      })
+      .save(this.data())
       .then(() => {
         document.location.reload();
       })

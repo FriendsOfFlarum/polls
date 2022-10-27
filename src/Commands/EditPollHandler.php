@@ -12,11 +12,30 @@
 namespace FoF\Polls\Commands;
 
 use Carbon\Carbon;
+use FoF\Polls\Events\SavingPollAttributes;
 use FoF\Polls\Poll;
+use FoF\Polls\Validators\PollOptionValidator;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
 
 class EditPollHandler
 {
+    /**
+     * @var PollOptionValidator
+     */
+    protected $optionValidator;
+
+    /**
+     * @var Dispatcher
+     */
+    protected $events;
+
+    public function __construct(PollOptionValidator $optionValidator, Dispatcher $events)
+    {
+        $this->optionValidator = $optionValidator;
+        $this->events = $events;
+    }
+
     public function handle(EditPoll $command)
     {
         /**
@@ -26,7 +45,7 @@ class EditPollHandler
 
         $command->actor->assertCan('edit', $poll);
 
-        $attributes = Arr::get($command->data, 'attributes', []);
+        $attributes = (array)Arr::get($command->data, 'attributes');
         $options = collect(Arr::get($attributes, 'options', []));
 
         if (isset($attributes['question'])) {
@@ -51,6 +70,8 @@ class EditPollHandler
             }
         }
 
+        $this->events->dispatch(new SavingPollAttributes($command->actor, $poll, $attributes, $command->data));
+
         $poll->save();
 
         // remove options not passed if 2 or more are
@@ -70,12 +91,19 @@ class EditPollHandler
         // update + add new options
         foreach ($options as $key => $opt) {
             $id = Arr::get($opt, 'id');
-            $answer = Arr::get($opt, 'attributes.answer');
+
+            $optionAttributes = [
+                'answer' => Arr::get($opt, 'attributes.answer'),
+                'imageUrl' => Arr::get($opt, 'attributes.imageUrl') ?: null,
+            ];
+
+            $this->optionValidator->assertValid($optionAttributes);
 
             $poll->options()->updateOrCreate([
                 'id' => $id,
             ], [
-                'answer' => $answer,
+                'answer' => Arr::get($optionAttributes, 'answer'),
+                'image_url' => Arr::get($optionAttributes, 'imageUrl'),
             ]);
         }
 

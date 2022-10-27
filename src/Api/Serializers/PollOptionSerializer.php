@@ -32,6 +32,7 @@ class PollOptionSerializer extends AbstractSerializer
     {
         $attributes = [
             'answer'    => $option->answer,
+            'imageUrl'    => $option->image_url,
             'createdAt' => $this->formatDate($option->created_at),
             'updatedAt' => $this->formatDate($option->updated_at),
         ];
