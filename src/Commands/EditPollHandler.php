@@ -45,7 +45,7 @@ class EditPollHandler
 
         $command->actor->assertCan('edit', $poll);
 
-        $attributes = (array)Arr::get($command->data, 'attributes');
+        $attributes = (array) Arr::get($command->data, 'attributes');
         $options = collect(Arr::get($attributes, 'options', []));
 
         if (isset($attributes['question'])) {
@@ -93,7 +93,7 @@ class EditPollHandler
             $id = Arr::get($opt, 'id');
 
             $optionAttributes = [
-                'answer' => Arr::get($opt, 'attributes.answer'),
+                'answer'   => Arr::get($opt, 'attributes.answer'),
                 'imageUrl' => Arr::get($opt, 'attributes.imageUrl') ?: null,
             ];
 
@@ -102,7 +102,7 @@ class EditPollHandler
             $poll->options()->updateOrCreate([
                 'id' => $id,
             ], [
-                'answer' => Arr::get($optionAttributes, 'answer'),
+                'answer'    => Arr::get($optionAttributes, 'answer'),
                 'image_url' => Arr::get($optionAttributes, 'imageUrl'),
             ]);
         }

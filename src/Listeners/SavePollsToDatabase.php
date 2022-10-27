@@ -61,7 +61,7 @@ class SavePollsToDatabase
 
         $event->actor->assertCan('startPolls');
 
-        $attributes = (array)$event->data['attributes']['poll'];
+        $attributes = (array) $event->data['attributes']['poll'];
 
         // Ideally we would use some JSON:API relationship syntax, but it's just too complicated with Flarum to generate the correct JSON payload
         // Instead we just pass an array of option objects that are each a set of key-value pairs for the option attributes
@@ -73,16 +73,16 @@ class SavePollsToDatabase
         if (is_array($rawOptionsData)) {
             foreach ($rawOptionsData as $rawOptionData) {
                 $optionsData[] = [
-                    'answer' => Arr::get($rawOptionData, 'answer'),
+                    'answer'   => Arr::get($rawOptionData, 'answer'),
                     'imageUrl' => Arr::get($rawOptionData, 'imageUrl') ?: null,
                 ];
             }
         } else {
             // Backward-compatibility with old syntax that only passed an array of strings
             // We are no longer using this syntax in the extension itself
-            foreach ((array)Arr::get($attributes, 'relationships.options') as $answerText) {
+            foreach ((array) Arr::get($attributes, 'relationships.options') as $answerText) {
                 $optionsData[] = [
-                    'answer' => (string)$answerText,
+                    'answer' => (string) $answerText,
                 ];
             }
         }

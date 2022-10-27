@@ -17,7 +17,7 @@ use FoF\Polls\Poll;
 /**
  * Dispatched while a poll is being saved
  * This event is triggered in both SavePollsToDatabase and EditPollHandler, which don't have the same data format!
- * For this reason the "attributes" part of the JSON:API payload is provided as a separate attribute since it's almost identical for both situations
+ * For this reason the "attributes" part of the JSON:API payload is provided as a separate attribute since it's almost identical for both situations.
  *
  * The create/edit authorization has already been performed when this event is dispatched, so it doesn't need to be checked again
  *
