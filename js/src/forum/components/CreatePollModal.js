@@ -156,13 +156,15 @@ export default class CreatePollModal extends Modal {
             bidi={this.options[i]}
             placeholder={app.translator.trans('fof-polls.forum.modal.option_placeholder') + ' #' + (i + 1)}
           />
-          <input
-            className="FormControl"
-            type="text"
-            name={'answerImage' + (i + 1)}
-            bidi={this.optionImageUrls[i]}
-            placeholder={app.translator.trans('fof-polls.forum.modal.image_option_placeholder') + ' #' + (i + 1)}
-          />
+          {app.forum.attribute('allowPollOptionImage') ? (
+            <input
+              className="FormControl"
+              type="text"
+              name={'answerImage' + (i + 1)}
+              bidi={this.optionImageUrls[i]}
+              placeholder={app.translator.trans('fof-polls.forum.modal.image_option_placeholder') + ' #' + (i + 1)}
+            />
+          ) : null}
         </fieldset>
         {i >= 2
           ? Button.component({

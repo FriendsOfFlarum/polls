@@ -1,5 +1,7 @@
 fof-polls:
   admin:
+    settings:
+      allow_option_image: Allow an image URL to be provided for each poll option
     permissions:
       view_results_without_voting: View results without voting
       start: Start a poll

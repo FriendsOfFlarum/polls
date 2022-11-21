@@ -13,6 +13,7 @@ namespace FoF\Polls\Listeners;
 
 use Carbon\Carbon;
 use Flarum\Discussion\Event\Saving;
+use Flarum\Settings\SettingsRepositoryInterface;
 use FoF\Polls\Events\PollWasCreated;
 use FoF\Polls\Events\SavingPollAttributes;
 use FoF\Polls\Poll;
@@ -40,17 +41,16 @@ class SavePollsToDatabase
     protected $events;
 
     /**
-     * SavePollToDatabase constructor.
-     *
-     * @param Dispatcher          $events
-     * @param PollValidator       $validator
-     * @param PollOptionValidator $optionValidator
+     * @var SettingsRepositoryInterface
      */
-    public function __construct(PollValidator $validator, PollOptionValidator $optionValidator, Dispatcher $events)
+    protected $settings;
+
+    public function __construct(PollValidator $validator, PollOptionValidator $optionValidator, Dispatcher $events, SettingsRepositoryInterface $settings)
     {
         $this->validator = $validator;
         $this->optionValidator = $optionValidator;
         $this->events = $events;
+        $this->settings = $settings;
     }
 
     public function handle(Saving $event)
@@ -113,7 +113,13 @@ class SavePollsToDatabase
             $this->events->dispatch(new PollWasCreated($event->actor, $poll));
 
             foreach ($optionsData as $optionData) {
-                $option = PollOption::build(Arr::get($optionData, 'answer'), Arr::get($optionData, 'imageUrl'));
+                $imageUrl = Arr::get($optionData, 'imageUrl');
+
+                if (!$this->settings->get('fof-polls.allowOptionImage')) {
+                    $imageUrl = null;
+                }
+
+                $option = PollOption::build(Arr::get($optionData, 'answer'), $imageUrl);
 
                 $poll->options()->save($option);
             }

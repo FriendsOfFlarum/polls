@@ -75,4 +75,7 @@ return [
 
     (new Extend\Policy())
         ->modelPolicy(Poll::class, Access\PollPolicy::class),
+
+    (new Extend\Settings())
+        ->serializeToForum('allowPollOptionImage', 'fof-polls.allowOptionImage', 'boolval'),
 ];

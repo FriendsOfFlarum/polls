@@ -12,6 +12,7 @@
 namespace FoF\Polls\Commands;
 
 use Carbon\Carbon;
+use Flarum\Settings\SettingsRepositoryInterface;
 use FoF\Polls\Events\SavingPollAttributes;
 use FoF\Polls\Poll;
 use FoF\Polls\Validators\PollOptionValidator;
@@ -30,10 +31,16 @@ class EditPollHandler
      */
     protected $events;
 
-    public function __construct(PollOptionValidator $optionValidator, Dispatcher $events)
+    /**
+     * @var SettingsRepositoryInterface
+     */
+    protected $settings;
+
+    public function __construct(PollOptionValidator $optionValidator, Dispatcher $events, SettingsRepositoryInterface $settings)
     {
         $this->optionValidator = $optionValidator;
         $this->events = $events;
+        $this->settings = $settings;
     }
 
     public function handle(EditPoll $command)
@@ -96,6 +103,10 @@ class EditPollHandler
                 'answer'   => Arr::get($opt, 'attributes.answer'),
                 'imageUrl' => Arr::get($opt, 'attributes.imageUrl') ?: null,
             ];
+
+            if (!$this->settings->get('fof-polls.allowOptionImage')) {
+                unset($optionAttributes['imageUrl']);
+            }
 
             $this->optionValidator->assertValid($optionAttributes);
 

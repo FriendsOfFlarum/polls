@@ -33,7 +33,7 @@ export default class EditPollModal extends CreatePollModal {
             bidi={this.optionAnswers[i]}
             placeholder={app.translator.trans('fof-polls.forum.modal.option_placeholder') + ' #' + (i + 1)}
           />
-          {app.data['fof-polls.options.images'] || true ? (
+          {app.forum.attribute('allowPollOptionImage') ? (
             <input
               className="FormControl"
               type="text"
