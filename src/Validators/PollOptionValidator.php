@@ -18,7 +18,8 @@ class PollOptionValidator extends AbstractValidator
     protected function getRules()
     {
         return [
-            'answer' => 'required',
+            'answer'   => ['required', 'string', 'max:255'],
+            'imageUrl' => ['nullable', 'url', 'max:255'],
         ];
     }
 }

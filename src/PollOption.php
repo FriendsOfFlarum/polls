@@ -16,6 +16,7 @@ use Flarum\Database\AbstractModel;
 /**
  * @property int            $id
  * @property string         $answer
+ * @property string         $image_url
  * @property Poll           $poll
  * @property int            $poll_id
  * @property int            $vote_count
@@ -34,18 +35,19 @@ class PollOption extends AbstractModel
         'updated_at',
     ];
 
-    protected $fillable = ['answer'];
+    protected $fillable = ['answer', 'image_url'];
 
     /**
      * @param $answer
      *
      * @return static
      */
-    public static function build($answer)
+    public static function build($answer, $imageUrl = null)
     {
         $option = new static();
 
         $option->answer = $answer;
+        $option->image_url = $imageUrl;
 
         return $option;
     }

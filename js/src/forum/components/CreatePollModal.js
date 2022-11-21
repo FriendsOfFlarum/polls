@@ -3,7 +3,7 @@ import app from 'flarum/forum/app';
 import Button from 'flarum/common/components/Button';
 import Modal from 'flarum/common/components/Modal';
 import Switch from 'flarum/common/components/Switch';
-import classList from 'flarum/common/utils/classList';
+import ItemList from 'flarum/common/utils/ItemList';
 import Stream from 'flarum/common/utils/Stream';
 import flatpickr from 'flatpickr';
 
@@ -12,6 +12,7 @@ export default class CreatePollModal extends Modal {
     super.oninit(vnode);
 
     this.options = [Stream(''), Stream('')];
+    this.optionImageUrls = [Stream(''), Stream('')];
 
     this.question = Stream('');
 
@@ -19,10 +20,17 @@ export default class CreatePollModal extends Modal {
 
     this.publicPoll = Stream(false);
 
-    if (this.attrs.poll && this.attrs.poll.relationships) {
-      const poll = this.attrs.poll;
+    const { poll } = this.attrs;
 
-      this.options = poll.relationships.options.map((o) => Stream(o));
+    // When re-opening the modal for the same discussion composer where we already set poll attributes
+    if (poll && Array.isArray(poll.options)) {
+      this.options = [];
+      this.optionImageUrls = [];
+      poll.options.forEach((option) => {
+        this.options.push(Stream(option.answer));
+        this.optionImageUrls.push(Stream(option.imageUrl));
+      });
+
       this.question(poll.question);
       this.endDate(!poll.endDate || isNaN(poll.endDate.getTime()) ? null : poll.endDate);
       this.publicPoll(poll.publicPoll);
@@ -52,63 +60,89 @@ export default class CreatePollModal extends Modal {
   content() {
     return [
       <div className="Modal-body">
-        <div className="PollDiscussionModal-form">
-          <div className="Form-group">
-            <label className="label">{app.translator.trans('fof-polls.forum.modal.question_placeholder')}</label>
-
-            <input type="text" name="question" className="FormControl" bidi={this.question} />
-          </div>
-
-          <div className="PollModal--answers Form-group">
-            <label className="label PollModal--answers-title">
-              <span>{app.translator.trans('fof-polls.forum.modal.options_label')}</span>
-
-              {Button.component({
-                className: 'Button PollModal--button small',
-                icon: 'fas fa-plus',
-                onclick: this.addOption.bind(this),
-              })}
-            </label>
-
-            {this.displayOptions()}
-          </div>
-
-          <div className="Form-group">
-            <label className="label">{app.translator.trans('fof-polls.forum.modal.date_placeholder')}</label>
-
-            <div className="PollModal--date" oncreate={this.configDatePicker.bind(this)}>
-              <input style="opacity: 1; color: inherit" className="FormControl" data-input />
-              {Button.component({
-                className: 'Button PollModal--button',
-                icon: 'fas fa-times',
-                'data-clear': true,
-              })}
-            </div>
-          </div>
-
-          <div className="Form-group">
-            {Switch.component(
-              {
-                state: this.publicPoll() || false,
-                onchange: this.publicPoll,
-              },
-              app.translator.trans('fof-polls.forum.modal.public_poll_label')
-            )}
-          </div>
-
-          <div className="Form-group">
-            {Button.component(
-              {
-                type: 'submit',
-                className: 'Button Button--primary PollModal-SubmitButton',
-                loading: this.loading,
-              },
-              app.translator.trans('fof-polls.forum.modal.submit')
-            )}
-          </div>
-        </div>
+        <div className="PollDiscussionModal-form">{this.fields().toArray()}</div>
       </div>,
     ];
+  }
+
+  fields() {
+    const items = new ItemList();
+
+    items.add(
+      'question',
+      <div className="Form-group">
+        <label className="label">{app.translator.trans('fof-polls.forum.modal.question_placeholder')}</label>
+
+        <input type="text" name="question" className="FormControl" bidi={this.question} />
+      </div>,
+      100
+    );
+
+    items.add(
+      'answers',
+      <div className="PollModal--answers Form-group">
+        <label className="label PollModal--answers-title">
+          <span>{app.translator.trans('fof-polls.forum.modal.options_label')}</span>
+
+          {Button.component({
+            className: 'Button PollModal--button small',
+            icon: 'fas fa-plus',
+            onclick: this.addOption.bind(this),
+          })}
+        </label>
+
+        {this.displayOptions()}
+      </div>,
+      80
+    );
+
+    items.add(
+      'date',
+      <div className="Form-group">
+        <label className="label">{app.translator.trans('fof-polls.forum.modal.date_placeholder')}</label>
+
+        <div className="PollModal--date" oncreate={this.configDatePicker.bind(this)}>
+          <input style="opacity: 1; color: inherit" className="FormControl" data-input />
+          {Button.component({
+            className: 'Button PollModal--button',
+            icon: 'fas fa-times',
+            'data-clear': true,
+          })}
+        </div>
+      </div>,
+      40
+    );
+
+    items.add(
+      'public',
+      <div className="Form-group">
+        {Switch.component(
+          {
+            state: this.publicPoll() || false,
+            onchange: this.publicPoll,
+          },
+          app.translator.trans('fof-polls.forum.modal.public_poll_label')
+        )}
+      </div>,
+      20
+    );
+
+    items.add(
+      'submit',
+      <div className="Form-group">
+        {Button.component(
+          {
+            type: 'submit',
+            className: 'Button Button--primary PollModal-SubmitButton',
+            loading: this.loading,
+          },
+          app.translator.trans('fof-polls.forum.modal.submit')
+        )}
+      </div>,
+      -10
+    );
+
+    return items;
   }
 
   displayOptions() {
@@ -122,6 +156,15 @@ export default class CreatePollModal extends Modal {
             bidi={this.options[i]}
             placeholder={app.translator.trans('fof-polls.forum.modal.option_placeholder') + ' #' + (i + 1)}
           />
+          {app.forum.attribute('allowPollOptionImage') ? (
+            <input
+              className="FormControl"
+              type="text"
+              name={'answerImage' + (i + 1)}
+              bidi={this.optionImageUrls[i]}
+              placeholder={app.translator.trans('fof-polls.forum.modal.image_option_placeholder') + ' #' + (i + 1)}
+            />
+          ) : null}
         </fieldset>
         {i >= 2
           ? Button.component({
@@ -141,6 +184,7 @@ export default class CreatePollModal extends Modal {
 
     if (this.options.length < max) {
       this.options.push(Stream(''));
+      this.optionImageUrls.push(Stream(''));
     } else {
       alert(app.translator.trans('fof-polls.forum.modal.max'));
     }
@@ -148,33 +192,51 @@ export default class CreatePollModal extends Modal {
 
   removeOption(option) {
     this.options.splice(option, 1);
+    this.optionImageUrls.splice(option, 1);
+  }
+
+  data() {
+    const poll = {
+      question: this.question(),
+      endDate: this.endDate(),
+      publicPoll: this.publicPoll(),
+      options: [],
+    };
+
+    this.options.forEach((answer, index) => {
+      if (answer()) {
+        poll.options.push({
+          answer: answer(),
+          imageUrl: this.optionImageUrls[index](),
+        });
+      }
+    });
+
+    if (this.question() === '') {
+      alert(app.translator.trans('fof-polls.forum.modal.include_question'));
+
+      return null;
+    }
+
+    if (poll.options.length < 2) {
+      alert(app.translator.trans('fof-polls.forum.modal.min'));
+
+      return null;
+    }
+
+    return poll;
   }
 
   onsubmit(e) {
     e.preventDefault();
 
-    const poll = {
-      question: this.question(),
-      endDate: this.endDate(),
-      publicPoll: this.publicPoll(),
-    };
-    const options = this.options.map((a) => a()).filter(Boolean);
+    const data = this.data();
 
-    if (this.question() === '') {
-      alert(app.translator.trans('fof-polls.forum.modal.include_question'));
-
+    if (data === null) {
       return;
     }
 
-    if (options.length < 2) {
-      alert(app.translator.trans('fof-polls.forum.modal.min'));
-
-      return;
-    }
-
-    poll.relationships = { options };
-
-    this.attrs.onsubmit(poll);
+    this.attrs.onsubmit(data);
 
     app.modal.close();
   }

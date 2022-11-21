@@ -3,6 +3,11 @@ import app from 'flarum/admin/app';
 app.initializers.add('fof/polls', () => {
   app.extensionData
     .for('fof-polls')
+    .registerSetting({
+      setting: 'fof-polls.allowOptionImage',
+      type: 'switch',
+      label: app.translator.trans('fof-polls.admin.settings.allow_option_image'),
+    })
     .registerPermission(
       {
         icon: 'fas fa-signal',

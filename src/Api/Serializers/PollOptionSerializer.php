@@ -31,9 +31,10 @@ class PollOptionSerializer extends AbstractSerializer
     protected function getDefaultAttributes($option)
     {
         $attributes = [
-            'answer'    => $option->answer,
-            'createdAt' => $this->formatDate($option->created_at),
-            'updatedAt' => $this->formatDate($option->updated_at),
+            'answer'      => $option->answer,
+            'imageUrl'    => $option->image_url,
+            'createdAt'   => $this->formatDate($option->created_at),
+            'updatedAt'   => $this->formatDate($option->updated_at),
         ];
 
         if ($this->actor->can('seeVoteCount', $option->poll)) {
