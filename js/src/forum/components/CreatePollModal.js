@@ -128,15 +128,19 @@ export default class CreatePollModal extends Modal {
       20
     );
 
-    items.add('allow-multiple-votes', <div className="Form-group">
-      {Switch.component(
-        {
-          state: this.allowMultipleVotes() || false,
-          onchange: this.allowMultipleVotes,
-        },
-        app.translator.trans('fof-polls.forum.modal.allow_multiple_votes_label')
-      )}
-    </div>, 20)
+    items.add(
+      'allow-multiple-votes',
+      <div className="Form-group">
+        {Switch.component(
+          {
+            state: this.allowMultipleVotes() || false,
+            onchange: this.allowMultipleVotes,
+          },
+          app.translator.trans('fof-polls.forum.modal.allow_multiple_votes_label')
+        )}
+      </div>,
+      20
+    );
 
     items.add(
       'submit',

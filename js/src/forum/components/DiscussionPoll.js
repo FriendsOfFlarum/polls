@@ -58,31 +58,31 @@ export default class DiscussionPoll extends Component {
     const votes = opt.voteCount();
     const percent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
 
-    const poll = <div className="PollBar" data-selected={voted}>
-      {((!this.poll.hasEnded() && app.session.user && app.session.user.canVotePolls()) || !app.session.user) && (
-        <label className="checkbox">
-          <input onchange={this.changeVote.bind(this, opt)} type="checkbox" checked={voted} disabled={hasVoted && !this.poll.canChangeVote()} />
-          <span className="checkmark" />
-        </label>
-      )}
+    const poll = (
+      <div className="PollBar" data-selected={voted}>
+        {((!this.poll.hasEnded() && app.session.user && app.session.user.canVotePolls()) || !app.session.user) && (
+          <label className="checkbox">
+            <input onchange={this.changeVote.bind(this, opt)} type="checkbox" checked={voted} disabled={hasVoted && !this.poll.canChangeVote()} />
+            <span className="checkmark" />
+          </label>
+        )}
 
-      <div style={!isNaN(votes) && '--width: ' + percent + '%'} className="PollOption-active" />
-      <label className="PollAnswer">
-        <span>{opt.answer()}</span>
-        {opt.imageUrl() ? <img className="PollAnswerImage" src={opt.imageUrl()} alt={opt.answer()} /> : null}
-      </label>
-      {!isNaN(votes) && (
-        <label>
-          <span className={classList('PollPercent', percent !== 100 && 'PollPercent--option')}>{percent}%</span>
+        <div style={!isNaN(votes) && '--width: ' + percent + '%'} className="PollOption-active" />
+        <label className="PollAnswer">
+          <span>{opt.answer()}</span>
+          {opt.imageUrl() ? <img className="PollAnswerImage" src={opt.imageUrl()} alt={opt.answer()} /> : null}
         </label>
-      )}
-    </div>;
+        {!isNaN(votes) && (
+          <label>
+            <span className={classList('PollPercent', percent !== 100 && 'PollPercent--option')}>{percent}%</span>
+          </label>
+        )}
+      </div>
+    );
 
     return (
       <div className={classList('PollOption', hasVoted && 'PollVoted', this.poll.hasEnded() && 'PollEnded')}>
-        {!isNaN(votes) ? <Tooltip text={app.translator.trans('fof-polls.forum.tooltip.votes', { count: votes })}>
-          {poll}
-        </Tooltip> : poll}
+        {!isNaN(votes) ? <Tooltip text={app.translator.trans('fof-polls.forum.tooltip.votes', { count: votes })}>{poll}</Tooltip> : poll}
       </div>
     );
   }
@@ -108,7 +108,7 @@ export default class DiscussionPoll extends Component {
     // // if we click on our current vote, we want to "un-vote"
     // if (this.myVotes.some((vote) => vote.option() === option)) option = null;
 
-    const optionIds = new Set(this.poll.myVotes().map(v => v.option().id()));
+    const optionIds = new Set(this.poll.myVotes().map((v) => v.option().id()));
     const isUnvoting = optionIds.delete(option.id());
     const allowsMultiple = this.poll.allowMultipleVotes();
 
