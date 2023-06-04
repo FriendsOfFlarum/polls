@@ -17,12 +17,10 @@ use Flarum\User\Exception\PermissionDeniedException;
 use FoF\Polls\Events\PollVotesChanged;
 use FoF\Polls\Events\PollWasVoted;
 use FoF\Polls\Poll;
-use FoF\Polls\PollOption;
 use FoF\Polls\PollVote;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\ConnectionResolverInterface;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Factory;
 use Pusher;
@@ -142,7 +140,6 @@ class MultipleVotesPollHandler
         $currentVoteOptions = $myVotesWithOptions->pluck('option');
         $deletedVoteOptions = $deletedVotes->pluck('option');
 
-
         // Legacy event for backward compatibility with single-vote polls. Can be removed in breaking release.
         if (!$poll->allow_multiple_votes && !$myVotesWithOptions->isEmpty()) {
             $this->events->dispatch(new PollWasVoted($actor, $poll, $myVotesWithOptions->first(), !$deletedVotes->isEmpty() && !$newOptionIds->isEmpty()));
@@ -187,7 +184,7 @@ class MultipleVotesPollHandler
             $pusher->trigger('public', 'updatedPollOptions', [
                 'pollId'          => $poll->id,
                 'pollVoteCount'   => $poll->vote_count,
-                'options' =>            $options->pluck('vote_count', 'id')->toArray(),
+                'options'         => $options->pluck('vote_count', 'id')->toArray(),
             ]);
         }
     }
@@ -202,7 +199,8 @@ class MultipleVotesPollHandler
      *
      * @return bool|\Illuminate\Foundation\Application|mixed|Pusher
      */
-    public static function pusher(Container $container, SettingsRepositoryInterface $settings) {
+    public static function pusher(Container $container, SettingsRepositoryInterface $settings)
+    {
         if (!class_exists(Pusher::class)) {
             return false;
         }

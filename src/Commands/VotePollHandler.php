@@ -20,7 +20,6 @@ use FoF\Polls\PollVote;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
-use Pusher;
 
 /**
  * Legacy handler for single-vote polls functionality. Kept for backwards compatibility.
@@ -76,7 +75,7 @@ class VotePollHandler
             $actor->assertCan('changeVote', $poll);
 
             if ($poll->allow_multiple_votes) {
-                throw new PermissionDeniedException; // TODO change to proper error
+                throw new PermissionDeniedException(); // TODO change to proper error
             }
         }
 
@@ -152,11 +151,11 @@ class VotePollHandler
             $pusher->trigger('public', 'updatedPollOptions', [
                 'pollId'          => $option->poll->id,
                 'pollVoteCount'   => $option->poll->vote_count,
-                'options'        => [
+                'options'         => [
                     [
                         'id'          => $option->id,
                         'voteCount'   => $option->vote_count,
-                    ]
+                    ],
                 ],
             ]);
         }

@@ -40,8 +40,8 @@ class PollVotesChanged
     /**
      * PollWasCreated constructor.
      *
-     * @param User $actor
-     * @param Poll $poll
+     * @param User       $actor
+     * @param Poll       $poll
      * @param Collection $unvotedOptionIds
      * @param Collection $votedOptionIds
      */

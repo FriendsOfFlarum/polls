@@ -31,17 +31,17 @@ class PollSerializer extends AbstractSerializer
     protected function getDefaultAttributes($poll)
     {
         $attributes = [
-            'question'      => $poll->question,
-            'hasEnded'      => $poll->hasEnded(),
-            'publicPoll'    => (bool) $poll->public_poll,
+            'question'           => $poll->question,
+            'hasEnded'           => $poll->hasEnded(),
+            'publicPoll'         => (bool) $poll->public_poll,
             'allowMultipleVotes' => (bool) $poll->allow_multiple_votes,
-            'endDate'       => $this->formatDate($poll->end_date),
-            'createdAt'     => $this->formatDate($poll->created_at),
-            'updatedAt'     => $this->formatDate($poll->updated_at),
-            'canEdit'       => $this->actor->can('edit', $poll),
-            'canDelete'     => $this->actor->can('delete', $poll),
-            'canSeeVotes'   => $this->actor->can('seeVotes', $poll),
-            'canChangeVote' => $this->actor->can('changeVote', $poll),
+            'endDate'            => $this->formatDate($poll->end_date),
+            'createdAt'          => $this->formatDate($poll->created_at),
+            'updatedAt'          => $this->formatDate($poll->updated_at),
+            'canEdit'            => $this->actor->can('edit', $poll),
+            'canDelete'          => $this->actor->can('delete', $poll),
+            'canSeeVotes'        => $this->actor->can('seeVotes', $poll),
+            'canChangeVote'      => $this->actor->can('changeVote', $poll),
         ];
 
         if ($this->actor->can('seeVoteCount', $poll)) {
