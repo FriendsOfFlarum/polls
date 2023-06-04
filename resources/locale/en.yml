@@ -33,6 +33,7 @@ fof-polls:
       image_option_placeholder: Image URL (optional)
       options_label: Answers
       public_poll_label: Allow people to see who voted
+      allow_multiple_votes_label: Allow people to vote for multiple options
       question_placeholder: Question
       submit: Submit
 

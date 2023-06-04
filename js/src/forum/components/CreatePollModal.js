@@ -19,6 +19,7 @@ export default class CreatePollModal extends Modal {
     this.endDate = Stream();
 
     this.publicPoll = Stream(false);
+    this.allowMultipleVotes = Stream(false);
 
     const { poll } = this.attrs;
 
@@ -127,6 +128,16 @@ export default class CreatePollModal extends Modal {
       20
     );
 
+    items.add('allow-multiple-votes', <div className="Form-group">
+      {Switch.component(
+        {
+          state: this.allowMultipleVotes() || false,
+          onchange: this.allowMultipleVotes,
+        },
+        app.translator.trans('fof-polls.forum.modal.allow_multiple_votes_label')
+      )}
+    </div>, 20)
+
     items.add(
       'submit',
       <div className="Form-group">
@@ -200,6 +211,7 @@ export default class CreatePollModal extends Modal {
       question: this.question(),
       endDate: this.endDate(),
       publicPoll: this.publicPoll(),
+      allowMultipleVotes: this.allowMultipleVotes(),
       options: [],
     };
 

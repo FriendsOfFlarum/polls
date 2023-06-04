@@ -58,29 +58,31 @@ export default class DiscussionPoll extends Component {
     const votes = opt.voteCount();
     const percent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
 
+    const poll = <div className="PollBar" data-selected={voted}>
+      {((!this.poll.hasEnded() && app.session.user && app.session.user.canVotePolls()) || !app.session.user) && (
+        <label className="checkbox">
+          <input onchange={this.changeVote.bind(this, opt)} type="checkbox" checked={voted} disabled={hasVoted && !this.poll.canChangeVote()} />
+          <span className="checkmark" />
+        </label>
+      )}
+
+      <div style={!isNaN(votes) && '--width: ' + percent + '%'} className="PollOption-active" />
+      <label className="PollAnswer">
+        <span>{opt.answer()}</span>
+        {opt.imageUrl() ? <img className="PollAnswerImage" src={opt.imageUrl()} alt={opt.answer()} /> : null}
+      </label>
+      {!isNaN(votes) && (
+        <label>
+          <span className={classList('PollPercent', percent !== 100 && 'PollPercent--option')}>{percent}%</span>
+        </label>
+      )}
+    </div>;
+
     return (
       <div className={classList('PollOption', hasVoted && 'PollVoted', this.poll.hasEnded() && 'PollEnded')}>
-        <Tooltip text={app.translator.trans('fof-polls.forum.tooltip.votes', { count: votes })}>
-          <div className="PollBar" data-selected={voted}>
-            {((!this.poll.hasEnded() && app.session.user && app.session.user.canVotePolls()) || !app.session.user) && (
-              <label className="checkbox">
-                <input onchange={this.changeVote.bind(this, opt)} type="checkbox" checked={voted} disabled={hasVoted && !this.poll.canChangeVote()} />
-                <span className="checkmark" />
-              </label>
-            )}
-
-            <div style={!isNaN(votes) && '--width: ' + percent + '%'} className="PollOption-active" />
-            <label className="PollAnswer">
-              <span>{opt.answer()}</span>
-              {opt.imageUrl() ? <img className="PollAnswerImage" src={opt.imageUrl()} alt={opt.answer()} /> : null}
-            </label>
-            {!isNaN(votes) && (
-              <label>
-                <span className={classList('PollPercent', percent !== 100 && 'PollPercent--option')}>{percent}%</span>
-              </label>
-            )}
-          </div>
-        </Tooltip>
+        {!isNaN(votes) ? <Tooltip text={app.translator.trans('fof-polls.forum.tooltip.votes', { count: votes })}>
+          {poll}
+        </Tooltip> : poll}
       </div>
     );
   }
@@ -103,17 +105,28 @@ export default class DiscussionPoll extends Component {
       return;
     }
 
-    // if we click on our current vote, we want to "un-vote"
-    if (this.myVotes.some((vote) => vote.option() === option)) option = null;
+    // // if we click on our current vote, we want to "un-vote"
+    // if (this.myVotes.some((vote) => vote.option() === option)) option = null;
 
-    app
+    const optionIds = new Set(this.poll.myVotes().map(v => v.option().id()));
+    const isUnvoting = optionIds.delete(option.id());
+    const allowsMultiple = this.poll.allowMultipleVotes();
+
+    if (!allowsMultiple) {
+      optionIds.clear();
+    }
+
+    if (!isUnvoting) {
+      optionIds.add(option.id());
+    }
+
+    return app
       .request({
         method: 'PATCH',
-        url: `${app.forum.attribute('apiUrl')}/fof/polls/${this.poll.id()}/vote`,
-        errorHandler: this.onError.bind(this, evt),
+        url: `${app.forum.attribute('apiUrl')}/fof/polls/${this.poll.id()}/votes`,
         body: {
           data: {
-            optionId: option ? option.id() : null,
+            optionIds: Array.from(optionIds),
           },
         },
       })
@@ -123,6 +136,9 @@ export default class DiscussionPoll extends Component {
         this.updateData();
 
         m.redraw();
+      })
+      .catch(() => {
+        evt.target.checked = isUnvoting;
       });
   }
 

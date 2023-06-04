@@ -52,7 +52,7 @@ export default () => {
       app.pusher.then((binding) => {
         // We will listen for updates to all polls and options
         // Even if that model is not in the current discussion, it doesn't really matter
-        binding.channels.main.bind('updatedPollOption', (data) => {
+        binding.channels.main.bind('updatedPollOptions', (data) => {
           const poll = app.store.getById('polls', data['pollId']);
 
           if (poll) {
@@ -63,15 +63,19 @@ export default () => {
             // Not redrawing here, as the option below should trigger the redraw already
           }
 
-          const option = app.store.getById('poll_options', data['optionId']);
+          const changedOptions = data['options'];
 
-          if (option) {
-            option.pushAttributes({
-              voteCount: data['optionVoteCount'],
-            });
+          for (const optionId in changedOptions) {
+            const option = app.store.getById('poll_options', optionId);
 
-            m.redraw();
+            if (option) {
+              option.pushAttributes({
+                voteCount: changedOptions[optionId],
+              });
+            }
           }
+
+          m.redraw();
         });
       });
     }
@@ -80,7 +84,7 @@ export default () => {
   extend(DiscussionPage.prototype, 'onremove', function () {
     if (app.pusher) {
       app.pusher.then((binding) => {
-        binding.channels.main.unbind('updatedPollOption');
+        binding.channels.main.unbind('updatedPollOptions');
       });
     }
   });

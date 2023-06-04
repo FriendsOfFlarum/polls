@@ -16,6 +16,7 @@ export default class EditPollModal extends CreatePollModal {
     this.question = Stream(this.poll.question());
     this.endDate = Stream(this.poll.endDate());
     this.publicPoll = Stream(this.poll.publicPoll());
+    this.allowMultipleVotes = Stream(this.poll.allowMultipleVotes());
   }
 
   title() {
@@ -89,6 +90,7 @@ export default class EditPollModal extends CreatePollModal {
       question: this.question(),
       endDate: this.endDate() || false,
       publicPoll: this.publicPoll(),
+      allowMultipleVotes: this.allowMultipleVotes(),
       options,
     };
   }
