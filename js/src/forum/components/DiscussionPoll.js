@@ -16,6 +16,10 @@ export default class DiscussionPoll extends Component {
   }
 
   view() {
+    let maxVotes = this.poll.allowMultipleVotes() ? this.poll.maxVotes() : 1;
+
+    if (maxVotes === 0) maxVotes = this.options.length;
+
     return (
       <div>
         <h3>{this.poll.question()}</h3>
@@ -34,18 +38,33 @@ export default class DiscussionPoll extends Component {
             )
           : ''}
 
-        {app.session.user && !app.session.user.canVotePolls() ? (
-          <div className="helpText PollInfoText">{app.translator.trans('fof-polls.forum.no_permission')}</div>
-        ) : this.poll.hasEnded() ? (
-          <div className="helpText PollInfoText">{app.translator.trans('fof-polls.forum.poll_ended')}</div>
-        ) : this.poll.endDate() !== null ? (
-          <div className="helpText PollInfoText">
-            <i class="icon fas fa-clock-o" />
-            {app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(this.poll.endDate()).fromNow() })}
-          </div>
-        ) : (
-          ''
-        )}
+        <div className="helpText PollInfoText">
+          {app.session.user && !app.session.user.canVotePolls() && (
+            <span>
+              <i className="icon fas fa-times-circle" />
+              {app.translator.trans('fof-polls.forum.no_permission')}
+            </span>
+          )}
+          {this.poll.hasEnded() && (
+            <span>
+              <i class="icon fas fa-clock" />
+              {app.translator.trans('fof-polls.forum.poll_ended')}
+            </span>
+          )}
+          {this.poll.endDate() !== null && (
+            <span>
+              <i class="icon fas fa-clock" />
+              {app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(this.poll.endDate()).fromNow() })}
+            </span>
+          )}
+
+          {app.session.user?.canVotePolls() && (
+            <span>
+              <i className="icon fas fa-poll" />
+              {app.translator.trans('fof-polls.forum.max_votes_allowed', { max: maxVotes })}
+            </span>
+          )}
+        </div>
       </div>
     );
   }
