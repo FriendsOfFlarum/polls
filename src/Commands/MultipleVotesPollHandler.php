@@ -130,7 +130,7 @@ class MultipleVotesPollHandler
             }
 
             // Vote options
-            $newOptionIds->each(function ($optionId) use ($options, $myVotes, $poll, $actor) {
+            $newOptionIds->each(function ($optionId) use ($myVotes, $poll, $actor) {
                 $vote = $poll->votes()->create([
                     'user_id'   => $actor->id,
                     'option_id' => $optionId,
