@@ -88,7 +88,9 @@ class MultipleVotesPollHandler
 
         $maxVotes = $poll->allow_multiple_votes ? $poll->max_votes : 1;
 
-        if ($maxVotes == 0) $maxVotes = $options->count();
+        if ($maxVotes == 0) {
+            $maxVotes = $options->count();
+        }
 
         $validator = $this->validation->make([
             'options' => $optionIds,
