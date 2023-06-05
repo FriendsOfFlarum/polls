@@ -83,8 +83,8 @@ class MultipleVotesPollHandler
         $actor->assertCan('vote', $poll);
 
         $optionIds = Arr::get($data, 'optionIds');
-        $options = $poll->options()->get();
-        $votes = $poll->myVotes($actor)->get();
+        $options = $poll->options;
+        $myVotes = $poll->myVotes($actor)->get();
 
         $maxVotes = $poll->allow_multiple_votes ? $poll->max_votes : 1;
 
@@ -113,47 +113,60 @@ class MultipleVotesPollHandler
             throw new ValidationException(['options' => $validator->getMessageBag()->first('options')]);
         }
 
-        $deletedVotes = $votes->filter(function ($vote) use ($optionIds) {
+        $deletedVotes = $myVotes->filter(function ($vote) use ($optionIds) {
             return !in_array((string) $vote->option_id, $optionIds);
         });
-        $newOptionIds = collect($optionIds)->filter(function ($optionId) use ($votes) {
-            return !$votes->contains('option_id', $optionId);
+        $newOptionIds = collect($optionIds)->filter(function ($optionId) use ($myVotes) {
+            return !$myVotes->contains('option_id', $optionId);
         });
 
-        $this->db->transaction(function () use ($newOptionIds, $deletedVotes, $poll, $actor) {
+        $this->db->transaction(function () use ($myVotes, $options, $newOptionIds, $deletedVotes, $poll, $actor) {
             // Unvote options
-            $poll->myVotes($actor)->whereIn('id', $deletedVotes->pluck('id'))->delete();
-            $deletedVotes->each->unsetRelation('option');
-            $deletedVotes->pluck('option')->each->refreshVoteCount()->each->save();
+            if ($deletedVotes->isNotEmpty()) {
+                $poll->myVotes($actor)->whereIn('id', $deletedVotes->pluck('id'))->delete();
+                $deletedVotes->each->unsetRelation('option');
+
+                $myVotes->forget($deletedVotes->pluck('id')->toArray());
+            }
 
             // Vote options
-            $newOptionIds->each(function ($optionId) use ($poll, $actor) {
+            $newOptionIds->each(function ($optionId) use ($options, $myVotes, $poll, $actor) {
                 $vote = $poll->votes()->create([
                     'user_id'   => $actor->id,
                     'option_id' => $optionId,
                 ]);
 
-                $vote->option->refreshVoteCount()->save();
+                $myVotes->push($vote);
 
                 $this->pushNewVote($vote);
             });
 
-            $poll->refreshVoteCount()->save();
+            // Update vote counts of options & poll
+            $changedOptions = $options->whereIn('id', $deletedVotes->pluck('option_id')->toArray())
+                ->concat($options->whereIn('id', $newOptionIds->toArray()));
+
+            $changedOptions->each->refreshVoteCount()->each->save();
+
+            if ($deletedVotes->isNotEmpty() || $newOptionIds->isNotEmpty()) {
+                $poll->refreshVoteCount()->save();
+            }
         });
 
-        $myVotesWithOptions = $poll->myVotes($actor)->with('option')->get();
-        $currentVoteOptions = $myVotesWithOptions->pluck('option');
-        $deletedVoteOptions = $deletedVotes->pluck('option');
+        $currentVoteOptions = $options->whereIn('id', $myVotes->pluck('option_id'))->except($deletedVotes->pluck('option_id')->toArray());
+        $deletedVoteOptions = $options->whereIn('id', $deletedVotes->pluck('option_id'));
 
         // Legacy event for backward compatibility with single-vote polls. Can be removed in breaking release.
-        if (!$poll->allow_multiple_votes && !$myVotesWithOptions->isEmpty()) {
-            $this->events->dispatch(new PollWasVoted($actor, $poll, $myVotesWithOptions->first(), !$deletedVotes->isEmpty() && !$newOptionIds->isEmpty()));
+        if (!$poll->allow_multiple_votes && !$myVotes->isEmpty()) {
+            $this->events->dispatch(new PollWasVoted($actor, $poll, $myVotes->first(), !$deletedVotes->isEmpty() && !$newOptionIds->isEmpty()));
         }
 
         $this->events->dispatch(new PollVotesChanged($actor, $poll, $deletedVoteOptions->pluck('option.id'), $newOptionIds));
 
         try {
-            $this->pushUpdatedOptions($poll, $currentVoteOptions->concat($deletedVoteOptions));
+            $changedOptionsIds = $currentVoteOptions->concat($deletedVoteOptions)->pluck('id');
+            $changedOptions = $options->whereIn('id', $changedOptionsIds);
+
+            $this->pushUpdatedOptions($poll, $changedOptions);
         } catch (\Exception $e) {
             // We don't want to display an error to the user if the websocket functionality fails.
             $reporters = resolve('container')->tagged(Reporter::class);
