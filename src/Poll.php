@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Collection;
  * @property string                $question
  * @property bool                  $public_poll
  * @property bool                  $allow_multiple_votes
+ * @property int                  $max_votes
  * @property int                   $vote_count
  * @property Discussion            $discussion
  * @property User                  $user

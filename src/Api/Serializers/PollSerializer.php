@@ -35,6 +35,7 @@ class PollSerializer extends AbstractSerializer
             'hasEnded'           => $poll->hasEnded(),
             'publicPoll'         => (bool) $poll->public_poll,
             'allowMultipleVotes' => (bool) $poll->allow_multiple_votes,
+            'maxVotes'           => $poll->max_votes,
             'endDate'            => $this->formatDate($poll->end_date),
             'createdAt'          => $this->formatDate($poll->created_at),
             'updatedAt'          => $this->formatDate($poll->updated_at),

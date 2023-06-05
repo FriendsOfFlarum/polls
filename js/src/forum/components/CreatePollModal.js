@@ -20,6 +20,7 @@ export default class CreatePollModal extends Modal {
 
     this.publicPoll = Stream(false);
     this.allowMultipleVotes = Stream(false);
+    this.maxVotes = Stream(0);
 
     const { poll } = this.attrs;
 
@@ -43,7 +44,7 @@ export default class CreatePollModal extends Modal {
   }
 
   className() {
-    return 'PollDiscussionModal Modal--small';
+    return 'PollDiscussionModal Modal--medium';
   }
 
   configDatePicker(vnode) {
@@ -139,8 +140,22 @@ export default class CreatePollModal extends Modal {
           app.translator.trans('fof-polls.forum.modal.allow_multiple_votes_label')
         )}
       </div>,
-      20
+      15
     );
+
+    if (this.allowMultipleVotes()) {
+      items.add(
+        'max-votes',
+        <div className="Form-group">
+          <label className="label">{app.translator.trans('fof-polls.forum.modal.max_votes_label')}</label>
+
+          <input type="number" min="0" max={this.options.length} name="maxVotes" className="FormControl" bidi={this.maxVotes} />
+
+          <p className="helpText">{app.translator.trans('fof-polls.forum.modal.max_votes_help')}</p>
+        </div>,
+        15
+      );
+    }
 
     items.add(
       'submit',

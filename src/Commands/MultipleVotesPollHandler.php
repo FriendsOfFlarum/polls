@@ -11,6 +11,7 @@
 
 namespace FoF\Polls\Commands;
 
+use Flarum\Foundation\ErrorHandling\Reporter;
 use Flarum\Foundation\ValidationException;
 use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\User\Exception\PermissionDeniedException;
@@ -85,7 +86,9 @@ class MultipleVotesPollHandler
         $options = $poll->options()->get();
         $votes = $poll->myVotes($actor)->get();
 
-        $maxVotes = $poll->allow_multiple_votes ? $options->count() : 1;
+        $maxVotes = $poll->allow_multiple_votes ? $poll->max_votes : 1;
+
+        if ($maxVotes == 0) $maxVotes = $options->count();
 
         $validator = $this->validation->make([
             'options' => $optionIds,
@@ -93,7 +96,7 @@ class MultipleVotesPollHandler
             'options' => [
                 'present',
                 'array',
-                'between:0,'.$maxVotes,
+                'max:'.$maxVotes,
                 function ($attribute, $value, $fail) use ($options) {
                     foreach ($value as $optionId) {
                         if (!$options->contains('id', $optionId)) {
@@ -151,7 +154,11 @@ class MultipleVotesPollHandler
             $this->pushUpdatedOptions($poll, $currentVoteOptions->concat($deletedVoteOptions));
         } catch (\Exception $e) {
             // We don't want to display an error to the user if the websocket functionality fails.
-            resolve('log')->error($e);
+            $reporters = resolve('container')->tagged(Reporter::class);
+
+            foreach ($reporters as $reporter) {
+                $reporter->report($e);
+            }
         }
 
         return $poll;
