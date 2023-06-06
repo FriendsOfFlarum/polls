@@ -34,7 +34,8 @@ return [
     (new Extend\Routes('api'))
         ->patch('/fof/polls/{id}', 'fof.polls.edit', Controllers\EditPollController::class)
         ->delete('/fof/polls/{id}', 'fof.polls.delete', Controllers\DeletePollController::class)
-        ->patch('/fof/polls/{id}/vote', 'fof.polls.vote', Controllers\VotePollController::class),
+        ->patch('/fof/polls/{id}/vote', 'fof.polls.vote', Controllers\VotePollController::class)
+        ->patch('/fof/polls/{id}/votes', 'fof.polls.votes', Controllers\MultipleVotesPollController::class),
 
     (new Extend\Model(Discussion::class))
         ->hasOne('poll', Poll::class, 'discussion_id', 'id'),

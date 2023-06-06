@@ -12,6 +12,7 @@
 namespace FoF\Polls\Commands;
 
 use Flarum\Settings\SettingsRepositoryInterface;
+use Flarum\User\Exception\PermissionDeniedException;
 use FoF\Polls\Events\PollWasVoted;
 use FoF\Polls\Poll;
 use FoF\Polls\PollOption;
@@ -19,24 +20,26 @@ use FoF\Polls\PollVote;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
-use Pusher;
 
+/**
+ * Legacy handler for single-vote polls functionality. Kept for backwards compatibility.
+ */
 class VotePollHandler
 {
     /**
      * @var Dispatcher
      */
-    private $events;
+    protected $events;
 
     /**
      * @var SettingsRepositoryInterface
      */
-    private $settings;
+    protected $settings;
 
     /**
      * @var Container
      */
-    private $container;
+    protected $container;
 
     /**
      * @param Dispatcher                  $events
@@ -70,6 +73,10 @@ class VotePollHandler
 
         if ($vote) {
             $actor->assertCan('changeVote', $poll);
+
+            if ($poll->allow_multiple_votes) {
+                throw new PermissionDeniedException(); // TODO change to proper error
+            }
         }
 
         $previousOption = null;
@@ -92,7 +99,7 @@ class VotePollHandler
                 ]);
             }
 
-            // Forget the relation in case is was loaded for $previousOption
+            // Forget the relation in case it was loaded for $previousOption
             $vote->unsetRelation('option');
 
             $vote->option->refreshVoteCount()->save();
@@ -141,41 +148,21 @@ class VotePollHandler
     public function pushUpdatedOption(PollOption $option)
     {
         if ($pusher = $this->getPusher()) {
-            $pusher->trigger('public', 'updatedPollOption', [
+            $pusher->trigger('public', 'updatedPollOptions', [
                 'pollId'          => $option->poll->id,
                 'pollVoteCount'   => $option->poll->vote_count,
-                'optionId'        => $option->id,
-                'optionVoteCount' => $option->vote_count,
+                'options'         => [
+                    [
+                        'id'          => $option->id,
+                        'voteCount'   => $option->vote_count,
+                    ],
+                ],
             ]);
         }
     }
 
-    /**
-     * @throws \Pusher\PusherException
-     *
-     * @return bool|\Illuminate\Foundation\Application|mixed|Pusher
-     */
     private function getPusher()
     {
-        if (!class_exists(Pusher::class)) {
-            return false;
-        }
-
-        if ($this->container->bound(Pusher::class)) {
-            return $this->container->make(Pusher::class);
-        } else {
-            $options = [];
-
-            if ($cluster = $this->settings->get('flarum-pusher.app_cluster')) {
-                $options['cluster'] = $cluster;
-            }
-
-            return new Pusher(
-                $this->settings->get('flarum-pusher.app_key'),
-                $this->settings->get('flarum-pusher.app_secret'),
-                $this->settings->get('flarum-pusher.app_id'),
-                $options
-            );
-        }
+        return MultipleVotesPollHandler::pusher($this->container, $this->settings);
     }
 }

@@ -241,8 +241,12 @@
   padding: 0;
   margin: 0;
 
+  h4 {
+    color: var(--text-color);
+  }
+
   a {
-    color: @text-color;
+    color: var(--text-color);
     font-size: 15px;
     font-weight: bold;
     display: block;
@@ -267,6 +271,14 @@
 
 .PollInfoText {
   margin-left: 15px;
+
+  span {
+    display: block;
+  }
+
+  .icon {
+    width: 15px;
+  }
 }
 
 @keyframes slideIn {

@@ -29,11 +29,7 @@ export default class ListVotersModal extends Modal {
       <div>
         <h2>{opt.answer() + ':'}</h2>
 
-        {votes.length ? (
-          votes.map(this.voteContent.bind(this))
-        ) : (
-          <h4 style="color: #000">{app.translator.trans('fof-polls.forum.modal.no_voters')}</h4>
-        )}
+        {votes.length ? votes.map(this.voteContent.bind(this)) : <h4>{app.translator.trans('fof-polls.forum.modal.no_voters')}</h4>}
       </div>
     );
   }

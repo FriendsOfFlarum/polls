@@ -63,6 +63,15 @@ class EditPollHandler
             $poll->public_poll = (bool) $attributes['publicPoll'];
         }
 
+        if (isset($attributes['allowMultipleVotes'])) {
+            $poll->allow_multiple_votes = (bool) $attributes['allowMultipleVotes'];
+        }
+
+        if (isset($attributes['maxVotes'])) {
+            $maxVotes = (int) $attributes['maxVotes'];
+            $poll->max_votes = min(max($maxVotes, 0), $options->count());
+        }
+
         if (isset($attributes['endDate'])) {
             $endDate = $attributes['endDate'];
 

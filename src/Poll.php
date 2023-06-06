@@ -20,6 +20,8 @@ use Illuminate\Database\Eloquent\Collection;
  * @property int                   $id
  * @property string                $question
  * @property bool                  $public_poll
+ * @property bool                  $allow_multiple_votes
+ * @property int                   $max_votes
  * @property int                   $vote_count
  * @property Discussion            $discussion
  * @property User                  $user
@@ -37,7 +39,9 @@ class Poll extends AbstractModel
      * {@inheritdoc}
      */
     public $timestamps = true;
-
+    /**
+     * @var bool|mixed
+     */
     protected $dates = [
         'created_at',
         'updated_at',
