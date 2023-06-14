@@ -103,7 +103,9 @@ class SavePollsToDatabase
                 $discussion->id,
                 $event->actor->id,
                 $endDate !== null ? Carbon::createFromTimeString($endDate) : null,
-                Arr::get($attributes, 'publicPoll')
+                Arr::get($attributes, 'publicPoll'),
+                Arr::get($attributes, 'allowMultipleVotes'),
+                Arr::get($attributes, 'maxVotes')
             );
 
             $this->events->dispatch(new SavingPollAttributes($event->actor, $poll, $attributes, $event->data));

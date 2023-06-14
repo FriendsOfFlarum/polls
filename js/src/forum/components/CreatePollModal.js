@@ -231,6 +231,7 @@ export default class CreatePollModal extends Modal {
       endDate: this.endDate(),
       publicPoll: this.publicPoll(),
       allowMultipleVotes: this.allowMultipleVotes(),
+      maxVotes: this.maxVotes(),
       options: [],
     };
 
