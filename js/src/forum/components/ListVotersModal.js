@@ -4,10 +4,25 @@ import Modal from 'flarum/common/components/Modal';
 import avatar from 'flarum/common/helpers/avatar';
 import username from 'flarum/common/helpers/username';
 import Link from 'flarum/common/components/Link';
+import Stream from 'flarum/common/utils/Stream';
+import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 
 export default class ListVotersModal extends Modal {
+  oninit(vnode) {
+    super.oninit(vnode);
+
+    this.loading = Stream(true);
+
+    app.store
+      .find('discussions', this.attrs.discussion.id(), {
+        include: 'poll.votes,poll.votes.user,poll.votes.option',
+      })
+      .then(() => this.loading(false))
+      .finally(() => m.redraw());
+  }
+
   className() {
-    return 'Modal--small VotesModal';
+    return 'Modal--medium VotesModal';
   }
 
   title() {
@@ -17,7 +32,7 @@ export default class ListVotersModal extends Modal {
   content() {
     return (
       <div className="Modal-body">
-        <ul className="VotesModal-list">{this.attrs.poll.options().map(this.optionContent.bind(this))}</ul>
+        {this.loading() ? <LoadingIndicator /> : <ul className="VotesModal-list">{this.attrs.poll.options().map(this.optionContent.bind(this))}</ul>}
       </div>
     );
   }
