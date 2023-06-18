@@ -24,11 +24,7 @@ export default class DiscussionPoll extends Component {
       <div className="Post-poll">
         <h3>{this.poll.question()}</h3>
 
-        <div className="PollOptions">
-          {this.options.map(this.viewOption.bind(this))}
-        </div>
-
-        <div style="clear: both;" />
+        <div className="PollOptions">{this.options.map(this.viewOption.bind(this))}</div>
 
         {this.poll.canSeeVotes()
           ? Button.component(
@@ -47,16 +43,12 @@ export default class DiscussionPoll extends Component {
               {app.translator.trans('fof-polls.forum.no_permission')}
             </span>
           )}
-          {this.poll.hasEnded() && (
-            <span>
-              <i class="icon fas fa-clock" />
-              {app.translator.trans('fof-polls.forum.poll_ended')}
-            </span>
-          )}
           {this.poll.endDate() !== null && (
             <span>
               <i class="icon fas fa-clock" />
-              {app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(this.poll.endDate()).fromNow() })}
+              {this.poll.hasEnded()
+                ? app.translator.trans('fof-polls.forum.poll_ended')
+                : app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(this.poll.endDate()).fromNow() })}
             </span>
           )}
 
@@ -165,14 +157,15 @@ export default class DiscussionPoll extends Component {
 
   showVoters() {
     // Load all the votes only when opening the votes list
-    app.store
-      .find('discussions', this.attrs.discussion.id(), {
-        include: 'poll.votes,poll.votes.user,poll.votes.option',
-      })
-      .then(() => {
-        app.modal.show(ListVotersModal, {
-          poll: this.poll,
-        });
-      });
+    // app.store
+    //   .find('discussions', this.attrs.discussion.id(), {
+    //     include: 'poll.votes,poll.votes.user,poll.votes.option',
+    //   })
+    //   .then(() => {
+    app.modal.show(ListVotersModal, {
+      poll: this.poll,
+      discussion: this.attrs.discussion,
+    });
+    // });
   }
 }
