@@ -21,10 +21,12 @@ export default class DiscussionPoll extends Component {
     if (maxVotes === 0) maxVotes = this.options.length;
 
     return (
-      <div>
+      <div className="Post-poll">
         <h3>{this.poll.question()}</h3>
 
-        {this.options.map(this.viewOption.bind(this))}
+        <div className="PollOptions">
+          {this.options.map(this.viewOption.bind(this))}
+        </div>
 
         <div style="clear: both;" />
 

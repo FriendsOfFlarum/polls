@@ -94,17 +94,17 @@
   }
 }
 
-.PollOption {
-  margin-bottom: 15px;
-  width: 45%;
-  margin-right: 15px;
-  float: left;
-
-  &:nth-child(odd) {
-    float: right;
+.Post-poll {
+  .PollOptions {
+    display: grid;
+    grid: auto-flow / repeat(auto-fit, minmax(250px, 1fr));
+    column-gap: 30px;
+    row-gap: 15px;
   }
+}
 
-  .PollOption-active {
+.PollOption {
+  & &-active {
     height: 100%;
     left: 0;
     position: absolute;
@@ -123,8 +123,6 @@
 
   /* Percent */
   .PollPercent {
-    float: right;
-    position: relative;
     padding-right: 5px;
   }
 
@@ -146,9 +144,7 @@
 
   .PollBar {
     background: transparent;
-    float: left;
-    width: 85%;
-    padding: 10px 10px 10px 40px;
+    padding: 10px;
     .PollEnded& {
       padding-left: 10px;
     }
@@ -157,6 +153,10 @@
     border-radius: 4px;
     border: 2px solid @muted-color;
     overflow: hidden;
+
+    display: flex;
+    column-gap: 10px;
+    align-items: flex-start;
 
     &:hover {
       background: #f3f3f39e;
@@ -167,14 +167,13 @@
       z-index: 2;
 
       span {
-        padding-left: 15px;
         font-size: 11px;
         line-height: 19px;
         font-weight: 600;
       }
     }
-    .PollAnswer span {
-      padding-left: 0;
+    .PollAnswer {
+      flex-grow: 1;
     }
 
     &[data-selected=true] {
@@ -192,7 +191,6 @@
 
   label.checkbox {
     margin-bottom: 0;
-    margin-left: -40px;
 
     input[type="checkbox"] {
       position: absolute;
@@ -210,7 +208,6 @@
 
     .checkmark {
       position: absolute;
-      margin-left: 10px;
       top: 0;
       left: 0;
       height: 20px;
@@ -266,7 +263,7 @@
 
 .PublicPollButton {
   display: block;
-  margin: 10px 0px 15px 15px;
+  margin: 20px 15px;
 }
 
 .PollInfoText {
