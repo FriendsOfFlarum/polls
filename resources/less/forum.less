@@ -232,31 +232,43 @@
   }
 }
 
-.VotesModal-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.VotesModal {
+  &-list {
+    display: grid;
+    grid: auto-flow / repeat(auto-fill, minmax(150px, 1fr));
+    column-gap: 10px;
+    row-gap: 10px;
+    margin-bottom: 20px;
+
+    a {
+      color: var(--text-color);
+      font-size: 15px;
+      font-weight: bold;
+      display: block;
+      text-decoration: none;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+
+      &:hover .username {
+        text-decoration: underline;
+      }
+    }
+    .Avatar {
+      .Avatar--size(32px);
+      vertical-align: middle;
+      margin-right: 5px;
+    }
+  }
+
+  h2 {
+    margin-bottom: 15px;
+  }
 
   h4 {
     color: var(--text-color);
-  }
-
-  a {
-    color: var(--text-color);
-    font-size: 15px;
-    font-weight: bold;
-    display: block;
-    margin-bottom: 10px;
-    text-decoration: none;
-
-    &:hover .username {
-      text-decoration: underline;
-    }
-  }
-  .Avatar {
-    .Avatar--size(32px);
-    vertical-align: middle;
-    margin-right: 5px;
+    margin-top: 0;
+    margin-bottom: 20px;
   }
 }
 

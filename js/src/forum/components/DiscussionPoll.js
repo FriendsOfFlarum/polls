@@ -157,15 +157,9 @@ export default class DiscussionPoll extends Component {
 
   showVoters() {
     // Load all the votes only when opening the votes list
-    // app.store
-    //   .find('discussions', this.attrs.discussion.id(), {
-    //     include: 'poll.votes,poll.votes.user,poll.votes.option',
-    //   })
-    //   .then(() => {
     app.modal.show(ListVotersModal, {
       poll: this.poll,
       discussion: this.attrs.discussion,
     });
-    // });
   }
 }
