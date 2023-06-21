@@ -21,6 +21,8 @@ export default class CreatePollModal extends Modal {
     this.allowMultipleVotes = Stream(false);
     this.maxVotes = Stream(0);
 
+    this.datepickerMinDate = this.formatDate(undefined);
+
     const { poll } = this.attrs;
 
     // When re-opening the modal for the same discussion composer where we already set poll attributes
@@ -36,9 +38,12 @@ export default class CreatePollModal extends Modal {
       this.publicPoll(poll.publicPoll);
 
       this.endDate(this.formatDate(poll.endDate));
-    }
 
-    this.datepickerMinDate = this.formatDate(poll?.endDate, undefined);
+      // Replace minimum of 'today' for poll end date only if the poll is not already closed
+      if (this.endDate() && dayjs(poll.endDate).isAfter(dayjs())) {
+        this.datepickerMinDate = this.formatDate(poll.endDate);
+      }
+    }
   }
 
   title() {
@@ -101,6 +106,16 @@ export default class CreatePollModal extends Modal {
             onclick: this.endDate.bind(this, null),
           })}
         </div>
+
+        {this.endDate() && (
+          <p className="helpText">
+            <i class="icon fas fa-clock" />
+            &nbsp;
+            {dayjs(this.endDate()).isBefore(dayjs())
+              ? app.translator.trans('fof-polls.forum.poll_ended')
+              : app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(this.endDate()).fromNow() })}
+          </p>
+        )}
       </div>,
       40
     );

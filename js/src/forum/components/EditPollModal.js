@@ -19,7 +19,9 @@ export default class EditPollModal extends CreatePollModal {
     this.allowMultipleVotes = Stream(this.poll.allowMultipleVotes());
     this.maxVotes = Stream(this.poll.maxVotes() || 0);
 
-    this.datepickerMinDate = this.formatDate(this.endDate(), undefined);
+    if (this.endDate() && dayjs(this.poll.endDate()).isAfter(dayjs())) {
+      this.datepickerMinDate = this.formatDate(this.endDate());
+    }
   }
 
   title() {
