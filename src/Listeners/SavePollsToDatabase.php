@@ -99,7 +99,9 @@ class SavePollsToDatabase
             $endDate = Arr::get($attributes, 'endDate');
             $carbonDate = Carbon::parse($endDate);
 
-            if (!$carbonDate->isFuture()) $carbonDate = null;
+            if (!$carbonDate->isFuture()) {
+                $carbonDate = null;
+            }
 
             $poll = Poll::build(
                 Arr::get($attributes, 'question'),
