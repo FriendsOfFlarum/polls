@@ -94,17 +94,19 @@
   }
 }
 
-.PollOption {
-  margin-bottom: 15px;
-  width: 45%;
-  margin-right: 15px;
-  float: left;
-
-  &:nth-child(odd) {
-    float: right;
+.Post-poll {
+  .PollOptions {
+    display: grid;
+    grid: auto-flow / repeat(auto-fit, minmax(~"min(250px, 100%)", 1fr));
+    column-gap: 30px;
+    row-gap: 15px;
+    margin-left: 15px;
+    align-items: start;
   }
+}
 
-  .PollOption-active {
+.PollOption {
+  & &-active {
     height: 100%;
     left: 0;
     position: absolute;
@@ -123,8 +125,6 @@
 
   /* Percent */
   .PollPercent {
-    float: right;
-    position: relative;
     padding-right: 5px;
   }
 
@@ -142,21 +142,20 @@
   .PollAnswerImage {
     display: block; // Put image on its own line below label text
     max-width: 100%;
+    margin-top: 10px;
   }
 
   .PollBar {
     background: transparent;
-    float: left;
-    width: 85%;
-    padding: 10px 10px 10px 40px;
-    .PollEnded& {
-      padding-left: 10px;
-    }
+    padding: 10px;
     position: relative;
-    margin-left: 15px;
     border-radius: 4px;
     border: 2px solid @muted-color;
     overflow: hidden;
+
+    display: flex;
+    column-gap: 10px;
+    align-items: flex-start;
 
     &:hover {
       background: #f3f3f39e;
@@ -167,14 +166,13 @@
       z-index: 2;
 
       span {
-        padding-left: 15px;
         font-size: 11px;
         line-height: 19px;
         font-weight: 600;
       }
     }
-    .PollAnswer span {
-      padding-left: 0;
+    .PollAnswer {
+      flex-grow: 1;
     }
 
     &[data-selected=true] {
@@ -192,7 +190,6 @@
 
   label.checkbox {
     margin-bottom: 0;
-    margin-left: -40px;
 
     input[type="checkbox"] {
       position: absolute;
@@ -210,7 +207,6 @@
 
     .checkmark {
       position: absolute;
-      margin-left: 10px;
       top: 0;
       left: 0;
       height: 20px;
@@ -236,37 +232,49 @@
   }
 }
 
-.VotesModal-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.VotesModal {
+  &-list {
+    display: grid;
+    grid: auto-flow / repeat(auto-fill, minmax(150px, 1fr));
+    column-gap: 10px;
+    row-gap: 10px;
+    margin-bottom: 20px;
+
+    a {
+      color: var(--text-color);
+      font-size: 15px;
+      font-weight: bold;
+      display: block;
+      text-decoration: none;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+
+      &:hover .username {
+        text-decoration: underline;
+      }
+    }
+    .Avatar {
+      .Avatar--size(32px);
+      vertical-align: middle;
+      margin-right: 5px;
+    }
+  }
+
+  h2 {
+    margin-bottom: 15px;
+  }
 
   h4 {
     color: var(--text-color);
-  }
-
-  a {
-    color: var(--text-color);
-    font-size: 15px;
-    font-weight: bold;
-    display: block;
-    margin-bottom: 10px;
-    text-decoration: none;
-
-    &:hover .username {
-      text-decoration: underline;
-    }
-  }
-  .Avatar {
-    .Avatar--size(32px);
-    vertical-align: middle;
-    margin-right: 5px;
+    margin-top: 0;
+    margin-bottom: 20px;
   }
 }
 
 .PublicPollButton {
   display: block;
-  margin: 10px 0px 15px 15px;
+  margin: 20px 15px;
 }
 
 .PollInfoText {
