@@ -97,12 +97,15 @@ class SavePollsToDatabase
 
         $event->discussion->afterSave(function ($discussion) use ($optionsData, $attributes, $event) {
             $endDate = Arr::get($attributes, 'endDate');
+            $carbonDate = Carbon::parse($endDate);
+
+            if (!$carbonDate->isFuture()) $carbonDate = null;
 
             $poll = Poll::build(
                 Arr::get($attributes, 'question'),
                 $discussion->id,
                 $event->actor->id,
-                $endDate !== null ? Carbon::createFromTimeString($endDate) : null,
+                $carbonDate != null ? $carbonDate->utc() : null,
                 Arr::get($attributes, 'publicPoll'),
                 Arr::get($attributes, 'allowMultipleVotes'),
                 Arr::get($attributes, 'maxVotes')
