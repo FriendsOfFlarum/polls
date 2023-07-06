@@ -35,7 +35,6 @@ return [
                 })
                 ->update(['polls.discussion_id' => $db->raw('discussions.first_post_id')]);
 
-
             // Update polls whose discussions have a null first post ID associated
             $firstPosts = $db->table('posts')
                 ->where('number', '=', 1);

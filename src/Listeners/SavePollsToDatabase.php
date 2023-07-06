@@ -67,7 +67,7 @@ class SavePollsToDatabase
             $translator = resolve(TranslatorInterface::class);
 
             throw new ValidationException([
-                'poll' => $translator->trans('fof-polls.forum.composer_discussion.no_permission_alert')
+                'poll' => $translator->trans('fof-polls.forum.composer_discussion.no_permission_alert'),
             ]);
         }
 
