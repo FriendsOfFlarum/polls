@@ -14,8 +14,8 @@ export default class ListVotersModal extends Modal {
     this.loading = Stream(true);
 
     app.store
-      .find('discussions', this.attrs.discussion.id(), {
-        include: 'poll.votes,poll.votes.user,poll.votes.option',
+      .find('fof/polls', this.attrs.poll.id(), {
+        include: 'votes,votes.user,votes.option',
       })
       .then(() => this.loading(false))
       .finally(() => m.redraw());

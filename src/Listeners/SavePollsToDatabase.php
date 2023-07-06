@@ -12,7 +12,7 @@
 namespace FoF\Polls\Listeners;
 
 use Carbon\Carbon;
-use Flarum\Discussion\Event\Saving;
+use Flarum\Post\Event\Saving;
 use Flarum\Settings\SettingsRepositoryInterface;
 use FoF\Polls\Events\PollWasCreated;
 use FoF\Polls\Events\SavingPollAttributes;
@@ -55,7 +55,7 @@ class SavePollsToDatabase
 
     public function handle(Saving $event)
     {
-        if ($event->discussion->exists || !isset($event->data['attributes']['poll'])) {
+        if ($event->post->exists || !isset($event->data['attributes']['poll'])) {
             return;
         }
 
@@ -95,7 +95,7 @@ class SavePollsToDatabase
             $this->optionValidator->assertValid($optionData);
         }
 
-        $event->discussion->afterSave(function ($discussion) use ($optionsData, $attributes, $event) {
+        $event->post->afterSave(function ($post) use ($optionsData, $attributes, $event) {
             $endDate = Arr::get($attributes, 'endDate');
             $carbonDate = Carbon::parse($endDate);
 
@@ -105,7 +105,7 @@ class SavePollsToDatabase
 
             $poll = Poll::build(
                 Arr::get($attributes, 'question'),
-                $discussion->id,
+                $post->id,
                 $event->actor->id,
                 $carbonDate != null ? $carbonDate->utc() : null,
                 Arr::get($attributes, 'publicPoll'),

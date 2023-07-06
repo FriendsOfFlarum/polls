@@ -111,7 +111,8 @@ export default class EditPollModal extends CreatePollModal {
     return this.poll
       .save(this.data())
       .then(() => {
-        document.location.reload();
+        this.hide();
+        m.redraw();
       })
       .catch((e) => {
         this.loaded();
