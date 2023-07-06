@@ -273,9 +273,18 @@ export default class CreatePollModal extends Modal {
       return;
     }
 
-    this.attrs.onsubmit(data);
+    const promise = this.attrs.onsubmit(data);
 
-    app.modal.close();
+    if (promise instanceof Promise) {
+      this.loading = true;
+
+      promise.then(this.hide.bind(this), (err) => {
+        console.error(err);
+        this.loaded();
+      });
+    } else {
+      app.modal.close();
+    }
   }
 
   formatDate(date, def = false) {

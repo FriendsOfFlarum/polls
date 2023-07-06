@@ -9,21 +9,15 @@ import Tooltip from 'flarum/common/components/Tooltip';
 import EditPollModal from './EditPollModal';
 
 export default class PostPoll extends Component {
-  oninit(vnode) {
-    super.oninit(vnode);
-    this.poll = this.attrs.poll;
-
-    this.updateData();
-  }
-
   view() {
-    const poll = this.poll;
+    const poll = this.attrs.poll;
+    const options = poll.options() || [];
     let maxVotes = poll.allowMultipleVotes() ? poll.maxVotes() : 1;
 
-    if (maxVotes === 0) maxVotes = this.options.length;
+    if (maxVotes === 0) maxVotes = options.length;
 
     return (
-      <div className="Post-poll">
+      <div className="Post-poll" data-id={poll.id()}>
         <div className="PollHeading">
           <h3 className="PollHeading-title">{poll.question()}</h3>
 
@@ -45,7 +39,7 @@ export default class PostPoll extends Component {
           )}
         </div>
 
-        <div className="PollOptions">{this.options.map(this.viewOption.bind(this))}</div>
+        <div className="PollOptions">{options.map(this.viewOption.bind(this))}</div>
 
         <div className="helpText PollInfoText">
           {app.session.user && !poll.canVote() && !poll.hasEnded() && (
@@ -75,21 +69,22 @@ export default class PostPoll extends Component {
   }
 
   viewOption(opt) {
-    const hasVoted = this.myVotes.length > 0;
-    const totalVotes = this.poll.voteCount();
+    const poll = this.attrs.poll;
+    const hasVoted = poll.myVotes()?.length > 0;
+    const totalVotes = poll.voteCount();
 
-    const voted = this.myVotes.some((vote) => vote.option() === opt);
+    const voted = poll.myVotes()?.some?.((vote) => vote.option() === opt);
     const votes = opt.voteCount();
     const percent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
 
     // isNaN(null) is false, so we have to check type directly now that API always returns the field
     const canSeeVoteCount = typeof votes === 'number';
 
-    const poll = (
+    const bar = (
       <div className="PollBar" data-selected={voted}>
-        {((!this.poll.hasEnded() && this.poll.canVote()) || !app.session.user) && (
+        {((!poll.hasEnded() && poll.canVote()) || !app.session.user) && (
           <label className="checkbox">
-            <input onchange={this.changeVote.bind(this, opt)} type="checkbox" checked={voted} disabled={hasVoted && !this.poll.canChangeVote()} />
+            <input onchange={this.changeVote.bind(this, opt)} type="checkbox" checked={voted} disabled={hasVoted && !poll.canChangeVote()} />
             <span className="checkmark" />
           </label>
         )}
@@ -110,21 +105,10 @@ export default class PostPoll extends Component {
     return (
       <div className={classList('PollOption', hasVoted && 'PollVoted', this.poll.hasEnded() && 'PollEnded', opt.imageUrl() && 'PollOption-hasImage')}>
         <Tooltip tooltipVisible={canSeeVoteCount ? undefined : false} text={app.translator.trans('fof-polls.forum.tooltip.votes', { count: votes })}>
-          {poll}
+          {bar}
         </Tooltip>
       </div>
     );
-  }
-
-  updateData() {
-    this.options = this.poll.options() || [];
-    this.myVotes = this.poll.myVotes() || [];
-  }
-
-  onError(evt, error) {
-    evt.target.checked = false;
-
-    throw error;
   }
 
   changeVote(option, evt) {
@@ -137,9 +121,9 @@ export default class PostPoll extends Component {
     // // if we click on our current vote, we want to "un-vote"
     // if (this.myVotes.some((vote) => vote.option() === option)) option = null;
 
-    const optionIds = new Set(this.poll.myVotes().map((v) => v.option().id()));
+    const optionIds = new Set(this.attrs.poll.myVotes().map((v) => v.option().id()));
     const isUnvoting = optionIds.delete(option.id());
-    const allowsMultiple = this.poll.allowMultipleVotes();
+    const allowsMultiple = this.attrs.poll.allowMultipleVotes();
 
     if (!allowsMultiple) {
       optionIds.clear();
@@ -152,7 +136,7 @@ export default class PostPoll extends Component {
     return app
       .request({
         method: 'PATCH',
-        url: `${app.forum.attribute('apiUrl')}/fof/polls/${this.poll.id()}/votes`,
+        url: `${app.forum.attribute('apiUrl')}/fof/polls/${this.attrs.poll.id()}/votes`,
         body: {
           data: {
             optionIds: Array.from(optionIds),
@@ -174,14 +158,14 @@ export default class PostPoll extends Component {
   showVoters() {
     // Load all the votes only when opening the votes list
     app.modal.show(ListVotersModal, {
-      poll: this.poll,
+      poll: this.attrs.poll,
       post: this.attrs.post,
     });
   }
 
   deletePoll() {
     if (confirm(app.translator.trans('fof-polls.forum.moderation.delete_confirm'))) {
-      this.poll.delete().then(() => {
+      this.attrs.poll.delete().then(() => {
         m.redraw.sync();
       });
     }

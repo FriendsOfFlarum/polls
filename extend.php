@@ -34,6 +34,7 @@ return [
     new Extend\Locales(__DIR__.'/resources/locale'),
 
     (new Extend\Routes('api'))
+        ->post('/fof/polls', 'fof.polls.create', Controllers\CreatePollController::class)
         ->get('/fof/polls/{id}', 'fof.polls.show', Controllers\ShowPollController::class)
         ->patch('/fof/polls/{id}', 'fof.polls.edit', Controllers\EditPollController::class)
         ->delete('/fof/polls/{id}', 'fof.polls.delete', Controllers\DeletePollController::class)
@@ -94,7 +95,8 @@ return [
         ->command(Console\RefreshVoteCountCommand::class),
 
     (new Extend\Policy())
-        ->modelPolicy(Poll::class, Access\PollPolicy::class),
+        ->modelPolicy(Poll::class, Access\PollPolicy::class)
+        ->modelPolicy(Post::class, Access\PostPolicy::class),
 
     (new Extend\Settings())
         ->serializeToForum('allowPollOptionImage', 'fof-polls.allowOptionImage', 'boolval'),
