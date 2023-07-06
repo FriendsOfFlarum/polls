@@ -58,7 +58,7 @@ return [
                 resolve('log')->warning("[fof/polls] deleting {$deletingPolls->count()} polls with no associated post");
                 resolve('log')->warning("[fof/polls] |> #{$deletingPolls->pluck('id')->join(', #')}");
             } else {
-                resolve('log')->info("[fof/polls] no polls to delete in v2 migration");
+                resolve('log')->info('[fof/polls] no polls to delete in v2 migration');
             }
 
             $deletingPolls->delete();
