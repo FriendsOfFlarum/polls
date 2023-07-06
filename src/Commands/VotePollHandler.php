@@ -105,8 +105,6 @@ class VotePollHandler
             $vote->option->refreshVoteCount()->save();
 
             $this->events->dispatch(new PollWasVoted($actor, $poll, $vote, $vote !== null));
-
-            $this->pushNewVote($vote);
         }
 
         $poll->refreshVoteCount()->save();
@@ -122,20 +120,6 @@ class VotePollHandler
         }
 
         return $poll;
-    }
-
-    /**
-     * Pushes a new vote through websocket. Kept for backward compatibility, but we are no longer using it.
-     *
-     * @param PollVote $vote
-     *
-     * @throws \Pusher\PusherException
-     */
-    public function pushNewVote($vote)
-    {
-        if ($pusher = $this->getPusher()) {
-            $pusher->trigger('public', 'newPollVote', $vote);
-        }
     }
 
     /**

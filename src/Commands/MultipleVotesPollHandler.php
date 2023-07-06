@@ -137,8 +137,6 @@ class MultipleVotesPollHandler
                 ]);
 
                 $myVotes->push($vote);
-
-                $this->pushNewVote($vote);
             });
 
             // Update vote counts of options & poll
@@ -177,20 +175,6 @@ class MultipleVotesPollHandler
         }
 
         return $poll;
-    }
-
-    /**
-     * Pushes a new vote through websocket. Kept for backward compatibility, but we are no longer using it.
-     *
-     * @param PollVote $vote
-     *
-     * @throws \Pusher\PusherException
-     */
-    public function pushNewVote($vote)
-    {
-        if ($pusher = $this->getPusher()) {
-            $pusher->trigger('public', 'newPollVote', $vote);
-        }
     }
 
     /**
