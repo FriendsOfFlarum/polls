@@ -37,9 +37,9 @@ class CreatePoll
     public $savePollOns;
 
     /**
-     * @param User $actor
-     * @param Post $post
-     * @param array $data
+     * @param User          $actor
+     * @param Post          $post
+     * @param array         $data
      * @param callable|null $savePollOn
      */
     public function __construct(User $actor, Post $post, array $data, callable $savePollOn = null)

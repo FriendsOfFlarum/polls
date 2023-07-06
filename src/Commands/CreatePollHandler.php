@@ -52,7 +52,6 @@ class CreatePollHandler
         $this->settings = $settings;
     }
 
-
     public function handle(CreatePoll $command)
     {
         $command->actor->assertCan('startPoll', $command->post);

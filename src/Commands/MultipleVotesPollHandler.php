@@ -18,7 +18,6 @@ use Flarum\User\Exception\PermissionDeniedException;
 use FoF\Polls\Events\PollVotesChanged;
 use FoF\Polls\Events\PollWasVoted;
 use FoF\Polls\Poll;
-use FoF\Polls\PollVote;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\ConnectionResolverInterface;

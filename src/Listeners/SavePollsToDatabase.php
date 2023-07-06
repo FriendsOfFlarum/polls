@@ -11,21 +11,12 @@
 
 namespace FoF\Polls\Listeners;
 
-use Carbon\Carbon;
 use Flarum\Foundation\ValidationException;
-use Flarum\Http\RequestUtil;
 use Flarum\Post\Event\Saving;
-use Flarum\Post\Post;
-use Flarum\Settings\SettingsRepositoryInterface;
 use FoF\Polls\Commands\CreatePoll;
-use FoF\Polls\Events\PollWasCreated;
-use FoF\Polls\Events\SavingPollAttributes;
-use FoF\Polls\Poll;
-use FoF\Polls\PollOption;
 use FoF\Polls\Validators\PollOptionValidator;
 use FoF\Polls\Validators\PollValidator;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Support\Arr;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SavePollsToDatabase
