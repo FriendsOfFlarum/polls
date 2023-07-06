@@ -5,7 +5,6 @@ import Modal from 'flarum/common/components/Modal';
 import Switch from 'flarum/common/components/Switch';
 import ItemList from 'flarum/common/utils/ItemList';
 import Stream from 'flarum/common/utils/Stream';
-import flatpickr from 'flatpickr';
 
 export default class CreatePollModal extends Modal {
   oninit(vnode) {
@@ -22,6 +21,8 @@ export default class CreatePollModal extends Modal {
     this.allowMultipleVotes = Stream(false);
     this.maxVotes = Stream(0);
 
+    this.datepickerMinDate = this.formatDate(undefined);
+
     const { poll } = this.attrs;
 
     // When re-opening the modal for the same discussion composer where we already set poll attributes
@@ -34,8 +35,14 @@ export default class CreatePollModal extends Modal {
       });
 
       this.question(poll.question);
-      this.endDate(!poll.endDate || isNaN(poll.endDate.getTime()) ? null : poll.endDate);
       this.publicPoll(poll.publicPoll);
+
+      this.endDate(this.formatDate(poll.endDate));
+
+      // Replace minimum of 'today' for poll end date only if the poll is not already closed
+      if (this.endDate() && dayjs(poll.endDate).isAfter(dayjs())) {
+        this.datepickerMinDate = this.formatDate(poll.endDate);
+      }
     }
   }
 
@@ -45,18 +52,6 @@ export default class CreatePollModal extends Modal {
 
   className() {
     return 'PollDiscussionModal Modal--medium';
-  }
-
-  configDatePicker(vnode) {
-    flatpickr(vnode.dom, {
-      enableTime: true,
-      minDate: this.endDate() || 'today',
-      dateFormat: 'Y-m-d H:i',
-      defaultDate: this.endDate(),
-      wrap: true,
-
-      onChange: (dates) => this.endDate(dates[0]),
-    });
   }
 
   content() {
@@ -103,14 +98,24 @@ export default class CreatePollModal extends Modal {
       <div className="Form-group">
         <label className="label">{app.translator.trans('fof-polls.forum.modal.date_placeholder')}</label>
 
-        <div className="PollModal--date" oncreate={this.configDatePicker.bind(this)}>
-          <input style="opacity: 1; color: inherit" className="FormControl" data-input />
+        <div className="PollModal--date">
+          <input className="FormControl" type="datetime-local" name="date" bidi={this.endDate} min={this.datepickerMinDate} />
           {Button.component({
             className: 'Button PollModal--button',
             icon: 'fas fa-times',
-            'data-clear': true,
+            onclick: this.endDate.bind(this, null),
           })}
         </div>
+
+        {this.endDate() && (
+          <p className="helpText">
+            <i class="icon fas fa-clock" />
+            &nbsp;
+            {dayjs(this.endDate()).isBefore(dayjs())
+              ? app.translator.trans('fof-polls.forum.poll_ended')
+              : app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(this.endDate()).fromNow() })}
+          </p>
+        )}
       </div>,
       40
     );
@@ -228,7 +233,7 @@ export default class CreatePollModal extends Modal {
   data() {
     const poll = {
       question: this.question(),
-      endDate: this.endDate(),
+      endDate: this.dateToTimestamp(this.endDate()),
       publicPoll: this.publicPoll(),
       allowMultipleVotes: this.allowMultipleVotes(),
       maxVotes: this.maxVotes(),
@@ -271,5 +276,21 @@ export default class CreatePollModal extends Modal {
     this.attrs.onsubmit(data);
 
     app.modal.close();
+  }
+
+  formatDate(date, def = false) {
+    const dayjsDate = dayjs(date);
+
+    if (!dayjsDate.isValid()) return def !== false ? this.formatDate(def) : null;
+
+    return dayjsDate.format('YYYY-MM-DDTHH:mm');
+  }
+
+  dateToTimestamp(date) {
+    const dayjsDate = dayjs(date);
+
+    if (!dayjsDate.isValid()) return null;
+
+    return dayjsDate.format();
   }
 }

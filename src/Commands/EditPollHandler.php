@@ -76,10 +76,10 @@ class EditPollHandler
             $endDate = $attributes['endDate'];
 
             if (is_string($endDate)) {
-                $date = Carbon::createFromTimeString($attributes['endDate']);
+                $date = Carbon::parse($endDate);
 
                 if (!$poll->hasEnded() && $date->isFuture() && ($poll->end_date === null || $poll->end_date->lessThanOrEqualTo($date))) {
-                    $poll->end_date = $date;
+                    $poll->end_date = $date->utc();
                 }
             } elseif (is_bool($endDate) && !$endDate) {
                 $poll->end_date = null;

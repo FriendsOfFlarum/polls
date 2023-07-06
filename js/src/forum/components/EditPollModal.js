@@ -14,10 +14,14 @@ export default class EditPollModal extends CreatePollModal {
     this.optionAnswers = this.options.map((o) => Stream(o.answer()));
     this.optionImageUrls = this.options.map((o) => Stream(o.imageUrl()));
     this.question = Stream(this.poll.question());
-    this.endDate = Stream(this.poll.endDate());
+    this.endDate = Stream(this.formatDate(this.poll.endDate()));
     this.publicPoll = Stream(this.poll.publicPoll());
     this.allowMultipleVotes = Stream(this.poll.allowMultipleVotes());
     this.maxVotes = Stream(this.poll.maxVotes() || 0);
+
+    if (this.endDate() && dayjs(this.poll.endDate()).isAfter(dayjs())) {
+      this.datepickerMinDate = this.formatDate(this.endDate());
+    }
   }
 
   title() {
@@ -89,7 +93,7 @@ export default class EditPollModal extends CreatePollModal {
 
     return {
       question: this.question(),
-      endDate: this.endDate() || false,
+      endDate: this.dateToTimestamp(this.endDate()),
       publicPoll: this.publicPoll(),
       allowMultipleVotes: this.allowMultipleVotes(),
       maxVotes: this.maxVotes(),
