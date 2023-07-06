@@ -23,6 +23,7 @@ use FoF\Polls\Validators\PollOptionValidator;
 use FoF\Polls\Validators\PollValidator;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SavePollsToDatabase
 {
@@ -60,8 +61,14 @@ class SavePollsToDatabase
             return;
         }
 
+        // 'assertCan' throws a generic no permission error, but we want to be more specific.
+        // There are a lot of different reasons why a user might not be able to post a discussion.
         if ($event->actor->cannot('polls.start', $event->post->discussion)) {
-            throw new ValidationException(['poll' => 'You do not have permission to start a poll.']);
+            $translator = resolve(TranslatorInterface::class);
+
+            throw new ValidationException([
+                'poll' => $translator->trans('fof-polls.forum.composer_discussion.no_permission_alert')
+            ]);
         }
 
         $attributes = (array) $event->data['attributes']['poll'];

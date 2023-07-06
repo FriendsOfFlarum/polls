@@ -20,6 +20,7 @@ fof-polls:
     composer_discussion:
       add_poll: Add Poll
       edit_poll: => fof-polls.forum.moderation.edit
+      no_permission_alert: You do not have permission to start a poll.
 
     modal:
       add_title: Add a Poll
