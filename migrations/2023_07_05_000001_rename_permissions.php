@@ -16,12 +16,13 @@ return [
     'up' => function (Builder $schema) {
         $db = $schema->getConnection();
 
-        $schema->getConnection()->table('group_permission')
+        $db->table('group_permission')
             ->where('permission', 'LIKE', '%discussion.polls')
             ->get()
-            ->each(function (Permission $row) {
-                $row->permission = str_replace('discussion.polls', 'discussion.polls.moderate', $row->permission);
-                $row->update();
+            ->each(function ($row) use ($db) {
+                $db->table('group_permission')
+                    ->where('permission', $row->permission)
+                    ->update(['permission' => str_replace('discussion.polls', 'discussion.polls.moderate', $row->permission)]);
             });
 
         $db->table('group_permission')
@@ -45,6 +46,17 @@ return [
             ->update(['permission' => 'discussion.polls.vote']);
     },
     'down' => function (Builder $schema) {
-        //
+        $schema->getConnection()->table('group_permission')
+            ->where(function (\Illuminate\Database\Query\Builder $query) {
+                // Tags will scope these permissions to the tag, so we need to use LIKE
+                foreach (['moderate', 'start', 'viewResultsWithoutVoting', 'vote'] as $permission) {
+                    $query->orWhere('permission', 'LIKE', "%discussion.polls.$permission");
+                }
+
+                foreach (['changeVote', 'selfEdit'] as $permission) {
+                    $query->orWhere('permission', 'polls.'.$permission);
+                }
+            })
+            ->delete();
     },
 ];

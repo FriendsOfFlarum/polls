@@ -50,10 +50,18 @@ return [
                 ->update(['polls.discussion_id' => $db->raw('first_posts.id')]);
 
             // Delete polls that don't have an associated post
-            // TODO Is this a good idea? Not sure what situations can result in first_post_id being null but the discussion still existing with an associated first post.
-            $db->table('polls')
-                ->where('discussion_id', 0)
-                ->delete();
+            $deletingPolls = $db->table('polls')
+                ->where('discussion_id', 0);
+            $count = $deletingPolls->count();
+
+            if ($count > 0) {
+                resolve('log')->warning("[fof/polls] deleting {$deletingPolls->count()} polls with no associated post");
+                resolve('log')->warning("[fof/polls] |> #{$deletingPolls->pluck('id')->join(', #')}");
+            } else {
+                resolve('log')->info("[fof/polls] no polls to delete in v2 migration");
+            }
+
+            $deletingPolls->delete();
         });
 
         $schema->table('polls', function (Blueprint $table) {
@@ -62,6 +70,6 @@ return [
         });
     },
     'down' => function (Builder $schema) {
-        // TODO is a down migration needed for this?
+        //
     },
 ];
