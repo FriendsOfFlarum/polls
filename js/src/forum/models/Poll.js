@@ -13,7 +13,7 @@ export default class Poll extends Model {
   canVote = Model.attribute('canVote');
   canEdit = Model.attribute('canEdit');
   canDelete = Model.attribute('canDelete');
-  canSeeVotes = Model.attribute('canSeeVotes');
+  canSeeVoters = Model.attribute('canSeeVoters');
   canChangeVote = Model.attribute('canChangeVote');
 
   options = Model.hasMany('options');

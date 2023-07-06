@@ -21,7 +21,7 @@ export default class PostPoll extends Component {
         <div className="PollHeading">
           <h3 className="PollHeading-title">{poll.question()}</h3>
 
-          {poll.canSeeVotes() && (
+          {poll.canSeeVoters() && (
             <Tooltip text={app.translator.trans('fof-polls.forum.public_poll')}>
               <Button className="Button PollHeading-voters" onclick={this.showVoters.bind(this)} icon="fas fa-poll" />
             </Tooltip>
