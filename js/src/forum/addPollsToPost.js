@@ -33,8 +33,6 @@ export default () => {
           ]
       );
 
-      // console.log('[fof/polls] CommentPost#oninit checks', checks);
-
       return JSON.stringify(checks);
     });
   });
