@@ -12,6 +12,7 @@
 namespace FoF\Polls\Listeners;
 
 use Carbon\Carbon;
+use Flarum\Foundation\ValidationException;
 use Flarum\Post\Event\Saving;
 use Flarum\Settings\SettingsRepositoryInterface;
 use FoF\Polls\Events\PollWasCreated;
@@ -59,7 +60,9 @@ class SavePollsToDatabase
             return;
         }
 
-        $event->actor->assertCan('startPolls');
+        if ($event->actor->cannot('polls.start', $event->post->discussion)) {
+            throw new ValidationException(['poll' => 'You do not have permission to start a poll.']);
+        }
 
         $attributes = (array) $event->data['attributes']['poll'];
 

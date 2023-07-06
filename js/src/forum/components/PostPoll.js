@@ -51,7 +51,7 @@ export default class PostPoll extends Component {
           : ''}
 
         <div className="helpText PollInfoText">
-          {app.session.user && !app.session.user.canVotePolls() && (
+          {app.session.user && !poll.canVote() && (
             <span>
               <i className="icon fas fa-times-circle" />
               {app.translator.trans('fof-polls.forum.no_permission')}
@@ -66,7 +66,7 @@ export default class PostPoll extends Component {
             </span>
           )}
 
-          {app.session.user?.canVotePolls() && (
+          {poll.canVote() && (
             <span>
               <i className="icon fas fa-poll" />
               {app.translator.trans('fof-polls.forum.max_votes_allowed', { max: maxVotes })}
@@ -87,7 +87,7 @@ export default class PostPoll extends Component {
 
     const poll = (
       <div className="PollBar" data-selected={voted}>
-        {((!this.poll.hasEnded() && app.session.user && app.session.user.canVotePolls()) || !app.session.user) && (
+        {((!this.poll.hasEnded() && this.poll.canVote()) || !app.session.user) && (
           <label className="checkbox">
             <input onchange={this.changeVote.bind(this, opt)} type="checkbox" checked={voted} disabled={hasVoted && !this.poll.canChangeVote()} />
             <span className="checkmark" />

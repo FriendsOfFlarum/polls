@@ -52,6 +52,9 @@ return [
     (new Extend\ApiSerializer(DiscussionSerializer::class))
         ->attribute('hasPoll', function (DiscussionSerializer $serializer, Discussion $discussion): bool {
             return $discussion->polls()->exists();
+        })
+        ->attribute('canStartPoll', function (DiscussionSerializer $serializer, Discussion $discussion): bool {
+            return $serializer->getActor()->can('polls.start', $discussion);
         }),
 
     (new Extend\ApiSerializer(PostSerializer::class))
@@ -60,10 +63,7 @@ return [
     (new Extend\ApiSerializer(UserSerializer::class))
         ->attributes(function (UserSerializer $serializer): array {
             return [
-                'canEditPolls'     => $serializer->getActor()->can('discussion.polls'), // Not used by the extension frontend anymore
-                'canStartPolls'    => $serializer->getActor()->can('startPolls'),
-                'canSelfEditPolls' => $serializer->getActor()->can('selfEditPolls'), // Not used by the extension frontend anymore
-                'canVotePolls'     => $serializer->getActor()->can('votePolls'),
+                'canStartPolls'     => $serializer->getActor()->can('discussion.polls.start'), // used for discussion composer
             ];
         }),
 

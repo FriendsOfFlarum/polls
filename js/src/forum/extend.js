@@ -11,7 +11,7 @@ export default [
 
   new Extend.Model(Post).hasMany('polls'),
 
-  new Extend.Model(User).attribute('canStartPolls').attribute('canVotePolls'),
+  new Extend.Model(User).attribute('canStartPolls'),
 
-  new Extend.Model(Discussion).attribute('hasPoll'),
+  new Extend.Model(Discussion).attribute('hasPoll').attribute('canStartPoll'),
 ];
