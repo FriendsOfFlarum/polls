@@ -26,6 +26,13 @@ export default class PostPoll extends Component {
       <div className="Post-poll">
         <div className="PollHeading">
           <h3 className="PollHeading-title">{poll.question()}</h3>
+
+          {poll.canSeeVotes() && (
+            <Tooltip text={app.translator.trans('fof-polls.forum.public_poll')}>
+              <Button className="Button PollHeading-voters" onclick={this.showVoters.bind(this)} icon="fas fa-poll" />
+            </Tooltip>
+          )}
+
           {poll.canEdit() && (
             <Tooltip text={app.translator.trans('fof-polls.forum.moderation.edit')}>
               <Button className="Button PollHeading-edit" onclick={app.modal.show.bind(app.modal, EditPollModal, { poll })} icon="fas fa-pen" />
@@ -40,18 +47,8 @@ export default class PostPoll extends Component {
 
         <div className="PollOptions">{this.options.map(this.viewOption.bind(this))}</div>
 
-        {poll.canSeeVotes()
-          ? Button.component(
-              {
-                className: 'Button Button--primary PublicPollButton',
-                onclick: () => this.showVoters(),
-              },
-              app.translator.trans('fof-polls.forum.public_poll')
-            )
-          : ''}
-
         <div className="helpText PollInfoText">
-          {app.session.user && !poll.canVote() && (
+          {app.session.user && !poll.canVote() && !poll.hasEnded() && (
             <span>
               <i className="icon fas fa-times-circle" />
               {app.translator.trans('fof-polls.forum.no_permission')}
