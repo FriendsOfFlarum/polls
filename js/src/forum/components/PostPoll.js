@@ -103,7 +103,10 @@ export default class PostPoll extends Component {
     );
 
     return (
-      <div className={classList('PollOption', hasVoted && 'PollVoted', this.poll.hasEnded() && 'PollEnded', opt.imageUrl() && 'PollOption-hasImage')}>
+      <div
+        className={classList('PollOption', hasVoted && 'PollVoted', poll.hasEnded() && 'PollEnded', opt.imageUrl() && 'PollOption-hasImage')}
+        data-id={opt.id()}
+      >
         <Tooltip tooltipVisible={canSeeVoteCount ? undefined : false} text={app.translator.trans('fof-polls.forum.tooltip.votes', { count: votes })}>
           {bar}
         </Tooltip>
@@ -145,8 +148,6 @@ export default class PostPoll extends Component {
       })
       .then((res) => {
         app.store.pushPayload(res);
-
-        this.updateData();
 
         m.redraw();
       })

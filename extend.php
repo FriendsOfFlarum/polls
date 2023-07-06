@@ -38,7 +38,6 @@ return [
         ->get('/fof/polls/{id}', 'fof.polls.show', Controllers\ShowPollController::class)
         ->patch('/fof/polls/{id}', 'fof.polls.edit', Controllers\EditPollController::class)
         ->delete('/fof/polls/{id}', 'fof.polls.delete', Controllers\DeletePollController::class)
-        ->patch('/fof/polls/{id}/vote', 'fof.polls.vote', Controllers\VotePollController::class)
         ->patch('/fof/polls/{id}/votes', 'fof.polls.votes', Controllers\MultipleVotesPollController::class),
 
     (new Extend\Model(Post::class))
