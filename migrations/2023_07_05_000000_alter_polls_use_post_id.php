@@ -22,6 +22,8 @@ return [
         });
 
         $db->transaction(function () use ($db) {
+            $prefix = $db->getTablePrefix();
+
             // Don't run through this step if no rows exist in the polls table
             if (!$db->table('polls')->exists()) {
                 return;
@@ -33,21 +35,21 @@ return [
                     $join->on('polls.discussion_id', '=', 'discussions.id')
                         ->where('discussions.first_post_id', '!=', null);
                 })
-                ->update(['polls.discussion_id' => $db->raw('discussions.first_post_id')]);
+                ->update(['polls.discussion_id' => $db->raw("{$prefix}discussions.first_post_id")]);
 
             // Update polls whose discussions have a null first post ID associated
             $firstPosts = $db->table('posts')
                 ->where('number', '=', 1);
 
             $db->table('polls')
-                ->join('discussions', function (JoinClause $join) {
+                ->join('discussions as discussions', function (JoinClause $join) {
                     $join->on('polls.discussion_id', '=', 'discussions.id')
                         ->where('discussions.first_post_id', '=', null);
                 })
                 ->leftJoinSub($firstPosts, 'first_posts', function (JoinClause $join) {
                     $join->on('first_posts.discussion_id', '=', 'discussions.id');
                 })
-                ->update(['polls.discussion_id' => $db->raw('first_posts.id')]);
+                ->update(['polls.discussion_id' => $db->raw("{$prefix}first_posts.id")]);
 
             // Delete polls that don't have an associated post
             $deletingPolls = $db->table('polls')
