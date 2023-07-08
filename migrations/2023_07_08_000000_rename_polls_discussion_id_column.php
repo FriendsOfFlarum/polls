@@ -24,5 +24,5 @@ return [
             $table->renameColumn('post_id', 'discussion_id');
             $table->foreign('discussion_id')->references('id')->on('discussions')->onDelete('cascade');
         });
-    }
+    },
 ];

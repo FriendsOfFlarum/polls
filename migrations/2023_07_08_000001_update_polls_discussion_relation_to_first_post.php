@@ -86,5 +86,5 @@ return [
         $schema->table('polls', function (Blueprint $table) {
             $table->dropForeign(['post_id']);
         });
-    }
+    },
 ];
