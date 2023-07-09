@@ -25,11 +25,9 @@ export default () => {
       const checks = polls?.map?.(
         (poll) =>
           poll && [
-            // Make the post redraw everytime the poll or option vote count changed, or when the user vote changed
-            poll.voteCount(),
-            poll.allowMultipleVotes() && poll.maxVotes(),
-            (poll.myVotes() || []).map((vote) => vote.option().id()),
-            poll.options()?.map((option) => option.voteCount()),
+            poll.data?.attributes,
+            poll.options()?.map((option) => option?.data?.attributes),
+            poll.myVotes()?.map((vote) => vote.option()?.id()),
           ]
       );
 
@@ -58,7 +56,7 @@ export default () => {
           for (const optionId in changedOptions) {
             const option = app.store.getById('poll_options', optionId);
 
-            if (option) {
+            if (option && option.voteCount() !== undefined) {
               option.pushAttributes({
                 voteCount: changedOptions[optionId],
               });
