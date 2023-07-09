@@ -85,6 +85,9 @@ export default class PostPoll extends Component {
     const votes = opt.voteCount();
     const percent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
 
+    // isNaN(null) is false, so we have to check type directly now that API always returns the field
+    const canSeeVoteCount = typeof votes === 'number';
+
     const poll = (
       <div className="PollBar" data-selected={voted}>
         {((!this.poll.hasEnded() && this.poll.canVote()) || !app.session.user) && (
@@ -94,12 +97,12 @@ export default class PostPoll extends Component {
           </label>
         )}
 
-        <div style={!isNaN(votes) && '--width: ' + percent + '%'} className="PollOption-active" />
+        <div style={canSeeVoteCount && '--width: ' + percent + '%'} className="PollOption-active" />
         <label className="PollAnswer">
           <span>{opt.answer()}</span>
           {opt.imageUrl() ? <img className="PollAnswerImage" src={opt.imageUrl()} alt={opt.answer()} /> : null}
         </label>
-        {!isNaN(votes) && (
+        {canSeeVoteCount && (
           <label>
             <span className={classList('PollPercent', percent !== 100 && 'PollPercent--option')}>{percent}%</span>
           </label>
@@ -109,7 +112,9 @@ export default class PostPoll extends Component {
 
     return (
       <div className={classList('PollOption', hasVoted && 'PollVoted', this.poll.hasEnded() && 'PollEnded', opt.imageUrl() && 'PollOption-hasImage')}>
-        {!isNaN(votes) ? <Tooltip text={app.translator.trans('fof-polls.forum.tooltip.votes', { count: votes })}>{poll}</Tooltip> : poll}
+        <Tooltip tooltipVisible={canSeeVoteCount ? undefined : false} text={app.translator.trans('fof-polls.forum.tooltip.votes', { count: votes })}>
+          {poll}
+        </Tooltip>
       </div>
     );
   }
