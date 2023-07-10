@@ -9,6 +9,12 @@ import Tooltip from 'flarum/common/components/Tooltip';
 import EditPollModal from './EditPollModal';
 
 export default class PostPoll extends Component {
+  oninit(vnode) {
+    super.oninit(vnode);
+
+    this.loadingOptions = false;
+  }
+
   view() {
     const poll = this.attrs.poll;
     const options = poll.options() || [];
@@ -79,12 +85,13 @@ export default class PostPoll extends Component {
 
     // isNaN(null) is false, so we have to check type directly now that API always returns the field
     const canSeeVoteCount = typeof votes === 'number';
+    const isDisabled = this.loadingOptions || (hasVoted && !poll.canChangeVote());
 
     const bar = (
       <div className="PollBar" data-selected={voted}>
         {((!poll.hasEnded() && poll.canVote()) || !app.session.user) && (
           <label className="checkbox">
-            <input onchange={this.changeVote.bind(this, opt)} type="checkbox" checked={voted} disabled={hasVoted && !poll.canChangeVote()} />
+            <input onchange={this.changeVote.bind(this, opt)} type="checkbox" checked={voted} disabled={isDisabled} />
             <span className="checkmark" />
           </label>
         )}
@@ -107,9 +114,13 @@ export default class PostPoll extends Component {
         className={classList('PollOption', hasVoted && 'PollVoted', poll.hasEnded() && 'PollEnded', opt.imageUrl() && 'PollOption-hasImage')}
         data-id={opt.id()}
       >
-        <Tooltip tooltipVisible={canSeeVoteCount ? undefined : false} text={app.translator.trans('fof-polls.forum.tooltip.votes', { count: votes })}>
-          {bar}
-        </Tooltip>
+        {canSeeVoteCount ? (
+          <Tooltip text={app.translator.trans('fof-polls.forum.tooltip.votes', { count: votes })} onremove={this.hideOptionTooltip}>
+            {bar}
+          </Tooltip>
+        ) : (
+          bar
+        )}
       </div>
     );
   }
@@ -133,6 +144,9 @@ export default class PostPoll extends Component {
       optionIds.add(option.id());
     }
 
+    this.loadingOptions = true;
+    m.redraw();
+
     return app
       .request({
         method: 'PATCH',
@@ -146,10 +160,15 @@ export default class PostPoll extends Component {
       .then((res) => {
         app.store.pushPayload(res);
 
-        m.redraw();
+        // m.redraw();
       })
       .catch(() => {
         evt.target.checked = isUnvoting;
+      })
+      .finally(() => {
+        this.loadingOptions = false;
+
+        m.redraw();
       });
   }
 
@@ -167,5 +186,15 @@ export default class PostPoll extends Component {
         m.redraw.sync();
       });
     }
+  }
+
+  /**
+   * Attempting to use the `tooltipVisible` attr on the Tooltip component set to 'false' when no vote count
+   * caused the tooltip to break on click. This is a workaround to hide the tooltip when no vote count is available,
+   * called on 'onremove' of the Tooltip component. It doesn't always work as intended either, but it does the job.
+   */
+  hideOptionTooltip(vnode) {
+    vnode.attrs.tooltipVisible = false;
+    vnode.state.updateVisibility();
   }
 }
