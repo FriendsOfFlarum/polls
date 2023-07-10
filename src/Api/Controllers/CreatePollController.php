@@ -14,6 +14,7 @@ namespace FoF\Polls\Api\Controllers;
 use Flarum\Api\Controller\AbstractCreateController;
 use Flarum\Bus\Dispatcher;
 use Flarum\Http\RequestUtil;
+use Flarum\Post\PostRepository;
 use FoF\Polls\Api\Serializers\PollSerializer;
 use FoF\Polls\Commands\CreatePoll;
 use Illuminate\Support\Arr;
@@ -27,12 +28,18 @@ class CreatePollController extends AbstractCreateController
     public $include = ['options'];
 
     /**
+     * @var PostRepository
+     */
+    protected $posts;
+
+    /**
      * @var Dispatcher
      */
     protected $bus;
 
-    public function __construct(Dispatcher $bus)
+    public function __construct(PostRepository $posts, Dispatcher $bus)
     {
+        $this->posts = $posts;
         $this->bus = $bus;
     }
 
@@ -43,7 +50,7 @@ class CreatePollController extends AbstractCreateController
         return $this->bus->dispatch(
             new CreatePoll(
                 RequestUtil::getActor($request),
-                $postId,
+                $this->posts->findOrFail($postId),
                 Arr::get($request->getParsedBody(), 'data.attributes')
             )
         );

@@ -61,9 +61,7 @@ class CreatePollHandler
 
     public function handle(CreatePoll $command)
     {
-        $post = $this->posts->findOrFail($command->postId, $command->actor);
-
-        $command->actor->assertCan('startPoll', $post);
+        $command->actor->assertCan('startPoll', $command->post);
 
         $attributes = $command->data;
 
@@ -90,7 +88,7 @@ class CreatePollHandler
             $this->optionValidator->assertValid($optionData);
         }
 
-        return ($command->savePollOn)(function () use ($post, $optionsData, $attributes, $command) {
+        return ($command->savePollOn)(function () use ($optionsData, $attributes, $command) {
             $endDate = Arr::get($attributes, 'endDate');
             $carbonDate = Carbon::parse($endDate);
 
@@ -100,7 +98,7 @@ class CreatePollHandler
 
             $poll = Poll::build(
                 Arr::get($attributes, 'question'),
-                $post->id,
+                $command->post->id,
                 $command->actor->id,
                 $carbonDate != null ? $carbonDate->utc() : null,
                 Arr::get($attributes, 'publicPoll'),
