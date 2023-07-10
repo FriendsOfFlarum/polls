@@ -26,8 +26,8 @@ export default () => {
         (poll) =>
           poll && [
             poll.data?.attributes,
-            poll.options()?.map((option) => option?.data?.attributes),
-            poll.myVotes()?.map((vote) => vote.option()?.id()),
+            poll.options().map?.((option) => option?.data?.attributes),
+            poll.myVotes().map?.((vote) => vote.option()?.id()),
           ]
       );
 

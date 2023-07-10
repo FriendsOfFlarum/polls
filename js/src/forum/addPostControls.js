@@ -11,12 +11,19 @@ export default () => {
       onsubmit: (data) =>
         app.store
           .createRecord('polls')
-          .save({
-            ...data,
-            relationships: {
-              post,
+          .save(
+            {
+              ...data,
+              relationships: {
+                post,
+              },
             },
-          })
+            {
+              data: {
+                include: 'options,myVotes,myVotes.option',
+              },
+            }
+          )
           .then((poll) => {
             post.rawRelationship('polls')?.push?.({ type: 'polls', id: poll.id() });
 
