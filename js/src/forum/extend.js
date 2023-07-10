@@ -9,7 +9,7 @@ import PollVote from './models/PollVote';
 export default [
   new Extend.Store().add('polls', Poll).add('poll_options', PollOption).add('poll_votes', PollVote),
 
-  new Extend.Model(Post).hasMany('polls'),
+  new Extend.Model(Post).hasMany('polls').attribute('canStartPoll'),
 
   new Extend.Model(Forum).attribute('canStartPolls'),
 

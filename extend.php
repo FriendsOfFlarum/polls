@@ -60,7 +60,7 @@ return [
     (new Extend\ApiSerializer(PostSerializer::class))
         ->hasMany('polls', PollSerializer::class)
         ->attribute('canStartPoll', function (PostSerializer $serializer, Post $post): bool {
-            return $serializer->getActor()->can('startPoll', $post->discussion);
+            return $serializer->getActor()->can('startPoll', $post);
         }),
 
     (new Extend\ApiSerializer(ForumSerializer::class))
