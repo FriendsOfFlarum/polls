@@ -14,7 +14,6 @@ namespace FoF\Polls\Api\Controllers;
 use Flarum\Api\Controller\AbstractCreateController;
 use Flarum\Bus\Dispatcher;
 use Flarum\Http\RequestUtil;
-use Flarum\Post\Post;
 use FoF\Polls\Api\Serializers\PollSerializer;
 use FoF\Polls\Commands\CreatePoll;
 use Illuminate\Support\Arr;
