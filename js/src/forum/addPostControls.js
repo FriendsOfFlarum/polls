@@ -32,7 +32,7 @@ export default () => {
     });
 
   extend(PostControls, 'moderationControls', function (items, post) {
-    if (!post.isHidden() && post.canEdit() && post.discussion().canStartPoll?.()) {
+    if (!post.isHidden() && post.contentType() === 'comment' && post.canEdit() && post.discussion().canStartPoll?.()) {
       items.add(
         'addPoll',
         <Button icon="fas fa-poll" onclick={createPoll.bind(this, post)}>

@@ -99,6 +99,10 @@
 }
 
 .Post-poll {
+  .Post--hidden & {
+    opacity: 0.5;
+  }
+
   .PollOptions {
     display: grid;
     grid: auto-flow / repeat(auto-fit, minmax(~"min(250px, 100%)", 1fr));
@@ -146,8 +150,11 @@
     width: var(--width, 0);
     background-color: @muted-color;
 
-    animation: slideIn 1s ease-in-out;
-    transition: width 0.75s ease-in-out;
+    // Don't animate if the post is hidden
+    &:not(.Post--hidden &) {
+      animation: slideIn 1s ease-in-out;
+      transition: width 0.75s ease-in-out;
+    }
 
     .checkmark {
       background-color: #fabc67;

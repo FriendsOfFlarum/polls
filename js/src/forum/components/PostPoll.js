@@ -121,10 +121,7 @@ export default class PostPoll extends Component {
       return;
     }
 
-    // // if we click on our current vote, we want to "un-vote"
-    // if (this.myVotes.some((vote) => vote.option() === option)) option = null;
-
-    const optionIds = new Set(this.attrs.poll.myVotes().map((v) => v.option().id()));
+    const optionIds = new Set(this.attrs.poll.myVotes().map?.((v) => v.option().id()));
     const isUnvoting = optionIds.delete(option.id());
     const allowsMultiple = this.attrs.poll.allowMultipleVotes();
 

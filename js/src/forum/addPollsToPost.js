@@ -9,7 +9,7 @@ export default () => {
   extend(CommentPost.prototype, 'content', function (content) {
     const post = this.attrs.post;
 
-    if (post.polls()) {
+    if ((!post.isHidden() || this.revealContent) && post.polls()) {
       for (const poll of post.polls()) {
         if (poll) {
           content.push(<PostPoll post={post} poll={poll} />);
