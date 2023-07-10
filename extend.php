@@ -99,4 +99,7 @@ return [
 
     (new Extend\Settings())
         ->serializeToForum('allowPollOptionImage', 'fof-polls.allowOptionImage', 'boolval'),
+
+    (new Extend\ModelVisibility(Poll::class))
+        ->scope(Access\ScopePollVisibility::class),
 ];

@@ -22,9 +22,9 @@ class CreatePoll
     public $actor;
 
     /**
-     * @var Post
+     * @var int
      */
-    public $post;
+    public $postId;
 
     /**
      * @var array
@@ -42,10 +42,10 @@ class CreatePoll
      * @param array         $data
      * @param callable|null $savePollOn
      */
-    public function __construct(User $actor, Post $post, array $data, callable $savePollOn = null)
+    public function __construct(User $actor, int $postId, array $data, callable $savePollOn = null)
     {
         $this->actor = $actor;
-        $this->post = $post;
+        $this->postId = $postId;
         $this->data = $data;
         $this->savePollOn = $savePollOn ?: function (callable $callback) {
             return $callback();

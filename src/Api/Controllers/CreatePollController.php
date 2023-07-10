@@ -39,10 +39,12 @@ class CreatePollController extends AbstractCreateController
 
     protected function data(ServerRequestInterface $request, Document $document)
     {
+        $postId = Arr::get($request->getParsedBody(), 'data.relationships.post.data.id');
+
         return $this->bus->dispatch(
             new CreatePoll(
                 RequestUtil::getActor($request),
-                Post::findOrFail(Arr::get($request->getParsedBody(), 'data.relationships.post.data.id')),
+                $postId,
                 Arr::get($request->getParsedBody(), 'data.attributes')
             )
         );

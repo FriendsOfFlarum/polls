@@ -17,6 +17,7 @@ use FoF\Polls\Events\PollWasCreated;
 use FoF\Polls\Events\SavingPollAttributes;
 use FoF\Polls\Poll;
 use FoF\Polls\PollOption;
+use FoF\Polls\PollRepository;
 use FoF\Polls\Validators\PollOptionValidator;
 use FoF\Polls\Validators\PollValidator;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -44,17 +45,25 @@ class CreatePollHandler
      */
     protected $settings;
 
-    public function __construct(PollValidator $validator, PollOptionValidator $optionValidator, Dispatcher $events, SettingsRepositoryInterface $settings)
+    /**
+     * @var PollRepository
+     */
+    protected $polls;
+
+    public function __construct(PollRepository $polls, PollValidator $validator, PollOptionValidator $optionValidator, Dispatcher $events, SettingsRepositoryInterface $settings)
     {
         $this->validator = $validator;
         $this->optionValidator = $optionValidator;
         $this->events = $events;
         $this->settings = $settings;
+        $this->polls = $polls;
     }
 
     public function handle(CreatePoll $command)
     {
-        $command->actor->assertCan('startPoll', $command->post);
+        $post = $this->polls->findOrFail($command->postId, $command->actor);
+
+        $command->actor->assertCan('startPoll', $post);
 
         $attributes = $command->data;
 
@@ -81,7 +90,7 @@ class CreatePollHandler
             $this->optionValidator->assertValid($optionData);
         }
 
-        return ($command->savePollOn)(function () use ($optionsData, $attributes, $command) {
+        return ($command->savePollOn)(function () use ($post, $optionsData, $attributes, $command) {
             $endDate = Arr::get($attributes, 'endDate');
             $carbonDate = Carbon::parse($endDate);
 
@@ -91,7 +100,7 @@ class CreatePollHandler
 
             $poll = Poll::build(
                 Arr::get($attributes, 'question'),
-                $command->post->id,
+                $post->id,
                 $command->actor->id,
                 $carbonDate != null ? $carbonDate->utc() : null,
                 Arr::get($attributes, 'publicPoll'),

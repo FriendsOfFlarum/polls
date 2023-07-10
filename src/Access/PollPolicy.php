@@ -31,6 +31,13 @@ class PollPolicy extends AbstractPolicy
         }
     }
 
+    public function view(User $actor, Poll $poll)
+    {
+        if ($actor->can('view', $poll->post)) {
+            return $this->allow();
+        }
+    }
+
     public function vote(User $actor, Poll $poll)
     {
         if ($actor->can('polls.vote', $poll->post->discussion) && !$poll->hasEnded()) {

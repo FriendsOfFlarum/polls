@@ -18,6 +18,7 @@ use Flarum\User\Exception\PermissionDeniedException;
 use FoF\Polls\Events\PollVotesChanged;
 use FoF\Polls\Events\PollWasVoted;
 use FoF\Polls\Poll;
+use FoF\Polls\PollRepository;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\ConnectionResolverInterface;
@@ -53,12 +54,18 @@ class MultipleVotesPollHandler
     private $db;
 
     /**
+     * @var PollRepository
+     */
+    private $polls;
+
+    /**
      * @param Dispatcher                  $events
      * @param SettingsRepositoryInterface $settings
      * @param Container                   $container
      */
-    public function __construct(Dispatcher $events, SettingsRepositoryInterface $settings, Container $container, Factory $validation, ConnectionResolverInterface $db)
+    public function __construct(PollRepository $polls, Dispatcher $events, SettingsRepositoryInterface $settings, Container $container, Factory $validation, ConnectionResolverInterface $db)
     {
+        $this->polls = $polls;
         $this->events = $events;
         $this->settings = $settings;
         $this->container = $container;
@@ -73,11 +80,9 @@ class MultipleVotesPollHandler
     public function handle(MultipleVotesPoll $command)
     {
         $actor = $command->actor;
-        /**
-         * @var $poll Poll
-         */
-        $poll = Poll::findOrFail($command->pollId);
         $data = $command->data;
+
+        $poll = $this->polls->findOrFail($command->pollId, $actor);
 
         $actor->assertCan('vote', $poll);
 
