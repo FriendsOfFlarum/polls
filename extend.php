@@ -13,8 +13,8 @@ namespace FoF\Polls;
 
 use Flarum\Api\Controller;
 use Flarum\Api\Serializer\DiscussionSerializer;
+use Flarum\Api\Serializer\ForumSerializer;
 use Flarum\Api\Serializer\PostSerializer;
-use Flarum\Api\Serializer\UserSerializer;
 use Flarum\Discussion\Discussion;
 use Flarum\Extend;
 use Flarum\Post\Event\Saving;
@@ -58,13 +58,14 @@ return [
         }),
 
     (new Extend\ApiSerializer(PostSerializer::class))
-        ->hasMany('polls', PollSerializer::class),
+        ->hasMany('polls', PollSerializer::class)
+        ->attribute('canStartPoll', function (PostSerializer $serializer, Post $post): bool {
+            return $serializer->getActor()->can('startPoll', $post->discussion);
+        }),
 
-    (new Extend\ApiSerializer(UserSerializer::class))
-        ->attributes(function (UserSerializer $serializer): array {
-            return [
-                'canStartPolls'     => $serializer->getActor()->can('discussion.polls.start'), // used for discussion composer
-            ];
+    (new Extend\ApiSerializer(ForumSerializer::class))
+        ->attribute('canStartPolls', function (ForumSerializer $serializer): bool {
+            return $serializer->getActor()->can('discussion.polls.start');
         }),
 
     (new Extend\ApiController(Controller\ListDiscussionsController::class))

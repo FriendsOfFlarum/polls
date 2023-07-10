@@ -1,6 +1,6 @@
 import Extend from 'flarum/common/extenders';
 import Post from 'flarum/common/models/Post';
-import User from 'flarum/common/models/User';
+import Forum from 'flarum/common/models/Forum';
 import Discussion from 'flarum/common/models/Discussion';
 import Poll from './models/Poll';
 import PollOption from './models/PollOption';
@@ -11,7 +11,7 @@ export default [
 
   new Extend.Model(Post).hasMany('polls'),
 
-  new Extend.Model(User).attribute('canStartPolls'),
+  new Extend.Model(Forum).attribute('canStartPolls'),
 
   new Extend.Model(Discussion).attribute('hasPoll').attribute('canStartPoll'),
 ];
