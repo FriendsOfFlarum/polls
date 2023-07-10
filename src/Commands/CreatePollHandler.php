@@ -12,12 +12,12 @@
 namespace FoF\Polls\Commands;
 
 use Carbon\Carbon;
+use Flarum\Post\PostRepository;
 use Flarum\Settings\SettingsRepositoryInterface;
 use FoF\Polls\Events\PollWasCreated;
 use FoF\Polls\Events\SavingPollAttributes;
 use FoF\Polls\Poll;
 use FoF\Polls\PollOption;
-use FoF\Polls\PollRepository;
 use FoF\Polls\Validators\PollOptionValidator;
 use FoF\Polls\Validators\PollValidator;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -46,22 +46,22 @@ class CreatePollHandler
     protected $settings;
 
     /**
-     * @var PollRepository
+     * @var PostRepository
      */
-    protected $polls;
+    protected $posts;
 
-    public function __construct(PollRepository $polls, PollValidator $validator, PollOptionValidator $optionValidator, Dispatcher $events, SettingsRepositoryInterface $settings)
+    public function __construct(PostRepository $posts, PollValidator $validator, PollOptionValidator $optionValidator, Dispatcher $events, SettingsRepositoryInterface $settings)
     {
         $this->validator = $validator;
         $this->optionValidator = $optionValidator;
         $this->events = $events;
         $this->settings = $settings;
-        $this->polls = $polls;
+        $this->posts = $posts;
     }
 
     public function handle(CreatePoll $command)
     {
-        $post = $this->polls->findOrFail($command->postId, $command->actor);
+        $post = $this->posts->findOrFail($command->postId, $command->actor);
 
         $command->actor->assertCan('startPoll', $post);
 
