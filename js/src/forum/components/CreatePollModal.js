@@ -298,7 +298,7 @@ export default class CreatePollModal extends Modal {
   dateToTimestamp(date) {
     const dayjsDate = dayjs(date);
 
-    if (!dayjsDate.isValid()) return null;
+    if (!dayjsDate.isValid()) return false;
 
     return dayjsDate.format();
   }
