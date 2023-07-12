@@ -58,10 +58,10 @@ class PollPolicy extends AbstractPolicy
             return $this->allow();
         }
 
-        if ($actor->hasPermission('polls.selfEdit') && !$poll->hasEnded() && $actor->can('edit', $poll->post)) {
-            $ownerId = $poll->post->user_id;
-
-            if ($ownerId && $ownerId === $actor->id) {
+        if (!$poll->hasEnded() && $actor->can('edit', $poll->post)) {
+            // User either created poll & can edit own poll or can edit all polls in post
+            if (($actor->id === $poll->user_id && $actor->hasPermission('polls.selfEdit'))
+                || ($actor->id == $poll->post->user_id && $actor->hasPermission('polls.selfPostEdit'))) {
                 return $this->allow();
             }
         }

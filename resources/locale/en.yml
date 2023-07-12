@@ -5,7 +5,8 @@ fof-polls:
     permissions:
       view_results_without_voting: View results without voting
       start: Start a poll
-      self_edit: Allow users to edit their own polls
+      self_edit: Edit created polls (requires post edit permission)
+      self_post_edit: Edit *all* polls on own posts (requires post edit permission)
       vote: Vote on polls
       change_vote: Change vote
       moderate: Edit & remove polls
