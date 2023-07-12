@@ -12,7 +12,7 @@ app.initializers.add('fof/polls', () => {
       {
         icon: 'fas fa-signal',
         label: app.translator.trans('fof-polls.admin.permissions.view_results_without_voting'),
-        permission: 'viewPollResultsWithoutVoting',
+        permission: 'discussion.polls.viewResultsWithoutVoting',
         allowGuest: true,
       },
       'view'
@@ -21,7 +21,7 @@ app.initializers.add('fof/polls', () => {
       {
         icon: 'fas fa-signal',
         label: app.translator.trans('fof-polls.admin.permissions.start'),
-        permission: 'startPolls',
+        permission: 'discussion.polls.start',
       },
       'start'
     )
@@ -29,7 +29,7 @@ app.initializers.add('fof/polls', () => {
       {
         icon: 'fas fa-pencil-alt',
         label: app.translator.trans('fof-polls.admin.permissions.self_edit'),
-        permission: 'selfEditPolls',
+        permission: 'polls.selfEdit',
       },
       'start'
     )
@@ -37,7 +37,7 @@ app.initializers.add('fof/polls', () => {
       {
         icon: 'fas fa-signal',
         label: app.translator.trans('fof-polls.admin.permissions.vote'),
-        permission: 'votePolls',
+        permission: 'discussion.polls.vote',
       },
       'reply'
     )
@@ -45,7 +45,7 @@ app.initializers.add('fof/polls', () => {
       {
         icon: 'fas fa-signal',
         label: app.translator.trans('fof-polls.admin.permissions.change_vote'),
-        permission: 'changeVotePolls',
+        permission: 'polls.changeVote',
       },
       'reply'
     )
@@ -53,7 +53,7 @@ app.initializers.add('fof/polls', () => {
       {
         icon: 'fas fa-pencil-alt',
         label: app.translator.trans('fof-polls.admin.permissions.moderate'),
-        permission: 'discussion.polls',
+        permission: 'discussion.polls.moderate',
       },
       'moderate'
     );

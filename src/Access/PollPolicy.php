@@ -19,44 +19,40 @@ class PollPolicy extends AbstractPolicy
 {
     public function seeVoteCount(User $actor, Poll $poll)
     {
-        if ($actor->can('viewPollResultsWithoutVoting')) {
-            return $this->allow();
-        }
-
-        if ($poll->myVotes($actor)->count()) {
+        if ($poll->myVotes($actor)->count() || $actor->can('polls.viewResultsWithoutVoting', $poll->post->discussion)) {
             return $this->allow();
         }
     }
 
     public function seeVotes(User $actor, Poll $poll)
     {
-        if (($poll->myVotes($actor)->count() || $actor->can('viewPollResultsWithoutVoting')) && $poll->public_poll) {
+        if (($poll->myVotes($actor)->count() || $actor->can('polls.viewResultsWithoutVoting', $poll->post->discussion)) && $poll->public_poll) {
             return $this->allow();
         }
     }
 
     public function vote(User $actor, Poll $poll)
     {
-        if ($actor->hasPermission('votePolls') && !$poll->hasEnded()) {
+        if ($actor->can('polls.vote', $poll->post->discussion) && !$poll->hasEnded()) {
             return $this->allow();
         }
     }
 
     public function changeVote(User $actor, Poll $poll)
     {
-        if ($actor->hasPermission('changeVotePolls')) {
+        if ($actor->hasPermission('polls.changeVote')) {
             return $this->allow();
         }
     }
 
     public function edit(User $actor, Poll $poll)
     {
-        if ($actor->hasPermission('discussion.polls')) {
+        if ($actor->can('polls.moderate', $poll->post->discussion)) {
             return $this->allow();
         }
 
-        if ($actor->hasPermission('selfEditPolls') && !$poll->hasEnded()) {
-            $ownerId = $poll->discussion->user_id;
+        if ($actor->hasPermission('polls.selfEdit') && !$poll->hasEnded()) {
+            $ownerId = $poll->post->user_id;
 
             if ($ownerId && $ownerId === $actor->id) {
                 return $this->allow();

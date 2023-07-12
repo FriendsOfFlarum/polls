@@ -2,46 +2,34 @@ import app from 'flarum/forum/app';
 
 import { extend } from 'flarum/common/extend';
 import CommentPost from 'flarum/forum/components/CommentPost';
-import DiscussionPoll from './components/DiscussionPoll';
+import PostPoll from './components/PostPoll';
 import DiscussionPage from 'flarum/forum/components/DiscussionPage';
 
 export default () => {
   extend(CommentPost.prototype, 'content', function (content) {
-    const discussion = this.attrs.post.discussion();
+    const post = this.attrs.post;
 
-    // If the options aren't loaded, it means we jumped from homepage to a profile page and are missing relationships
-    // We will simply not show the poll in that situation
-    if (discussion.poll() && Array.isArray(discussion.poll().options()) && this.attrs.post.number() === 1) {
-      content.push(
-        DiscussionPoll.component({
-          discussion,
-          poll: discussion.poll(),
-        })
-      );
+    if (post.polls()) {
+      for (const poll of post.polls()) {
+        if (poll) {
+          content.push(<PostPoll post={post} poll={poll} />);
+        }
+      }
     }
   });
 
   extend(CommentPost.prototype, 'oninit', function () {
     this.subtree.check(() => {
-      const discussion = this.attrs.post.discussion();
+      const polls = this.attrs.post.polls();
 
-      if (!discussion.poll() || this.attrs.post.number() !== 1) {
-        return '';
-      }
-
-      const checks = [
-        // Make the post redraw everytime the poll or option vote count changed, or when the user vote changed
-        discussion.poll().voteCount(),
-        (discussion.poll().myVotes() || []).map((vote) => vote.option().id()),
-      ];
-
-      const options = discussion.poll().options();
-
-      // The options might not be loaded in all contexts where CommentPost is rendered (for example, user profile),
-      // if they are missing we are just going to omit this check
-      if (options) {
-        checks.push(options.map((option) => option.voteCount()));
-      }
+      const checks = polls?.map?.(
+        (poll) =>
+          poll && [
+            poll.data?.attributes,
+            poll.options()?.map((option) => option?.data?.attributes),
+            poll.myVotes()?.map((vote) => vote.option()?.id()),
+          ]
+      );
 
       return JSON.stringify(checks);
     });
@@ -68,7 +56,7 @@ export default () => {
           for (const optionId in changedOptions) {
             const option = app.store.getById('poll_options', optionId);
 
-            if (option) {
+            if (option && option.voteCount() !== undefined) {
               option.pushAttributes({
                 voteCount: changedOptions[optionId],
               });

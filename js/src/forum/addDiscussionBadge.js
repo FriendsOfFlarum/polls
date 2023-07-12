@@ -11,7 +11,7 @@ export default () => {
   });
 
   extend(Discussion.prototype, 'badges', function (badges) {
-    if (this.poll()) {
+    if (this.hasPoll()) {
       badges.add(
         'poll',
         Badge.component({

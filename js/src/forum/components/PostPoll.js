@@ -6,8 +6,9 @@ import LogInModal from 'flarum/forum/components/LogInModal';
 import ListVotersModal from './ListVotersModal';
 import classList from 'flarum/common/utils/classList';
 import Tooltip from 'flarum/common/components/Tooltip';
+import EditPollModal from './EditPollModal';
 
-export default class DiscussionPoll extends Component {
+export default class PostPoll extends Component {
   oninit(vnode) {
     super.oninit(vnode);
     this.poll = this.attrs.poll;
@@ -16,17 +17,30 @@ export default class DiscussionPoll extends Component {
   }
 
   view() {
-    let maxVotes = this.poll.allowMultipleVotes() ? this.poll.maxVotes() : 1;
+    const poll = this.poll;
+    let maxVotes = poll.allowMultipleVotes() ? poll.maxVotes() : 1;
 
     if (maxVotes === 0) maxVotes = this.options.length;
 
     return (
       <div className="Post-poll">
-        <h3>{this.poll.question()}</h3>
+        <div className="PollHeading">
+          <h3 className="PollHeading-title">{poll.question()}</h3>
+          {poll.canEdit() && (
+            <Tooltip text={app.translator.trans('fof-polls.forum.moderation.edit')}>
+              <Button className="Button PollHeading-edit" onclick={app.modal.show.bind(app.modal, EditPollModal, { poll })} icon="fas fa-pen" />
+            </Tooltip>
+          )}
+          {poll.canDelete() && (
+            <Tooltip text={app.translator.trans('fof-polls.forum.moderation.delete')}>
+              <Button className="Button PollHeading-delete" onclick={this.deletePoll.bind(this)} icon="fas fa-trash" />
+            </Tooltip>
+          )}
+        </div>
 
         <div className="PollOptions">{this.options.map(this.viewOption.bind(this))}</div>
 
-        {this.poll.canSeeVotes()
+        {poll.canSeeVotes()
           ? Button.component(
               {
                 className: 'Button Button--primary PublicPollButton',
@@ -37,22 +51,22 @@ export default class DiscussionPoll extends Component {
           : ''}
 
         <div className="helpText PollInfoText">
-          {app.session.user && !app.session.user.canVotePolls() && (
+          {app.session.user && !poll.canVote() && (
             <span>
               <i className="icon fas fa-times-circle" />
               {app.translator.trans('fof-polls.forum.no_permission')}
             </span>
           )}
-          {this.poll.endDate() !== null && (
+          {poll.endDate() !== null && (
             <span>
               <i class="icon fas fa-clock" />
-              {this.poll.hasEnded()
+              {poll.hasEnded()
                 ? app.translator.trans('fof-polls.forum.poll_ended')
-                : app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(this.poll.endDate()).fromNow() })}
+                : app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(poll.endDate()).fromNow() })}
             </span>
           )}
 
-          {app.session.user?.canVotePolls() && (
+          {poll.canVote() && (
             <span>
               <i className="icon fas fa-poll" />
               {app.translator.trans('fof-polls.forum.max_votes_allowed', { max: maxVotes })}
@@ -71,21 +85,24 @@ export default class DiscussionPoll extends Component {
     const votes = opt.voteCount();
     const percent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
 
+    // isNaN(null) is false, so we have to check type directly now that API always returns the field
+    const canSeeVoteCount = typeof votes === 'number';
+
     const poll = (
       <div className="PollBar" data-selected={voted}>
-        {((!this.poll.hasEnded() && app.session.user && app.session.user.canVotePolls()) || !app.session.user) && (
+        {((!this.poll.hasEnded() && this.poll.canVote()) || !app.session.user) && (
           <label className="checkbox">
             <input onchange={this.changeVote.bind(this, opt)} type="checkbox" checked={voted} disabled={hasVoted && !this.poll.canChangeVote()} />
             <span className="checkmark" />
           </label>
         )}
 
-        <div style={!isNaN(votes) && '--width: ' + percent + '%'} className="PollOption-active" />
+        <div style={canSeeVoteCount && '--width: ' + percent + '%'} className="PollOption-active" />
         <label className="PollAnswer">
           <span>{opt.answer()}</span>
           {opt.imageUrl() ? <img className="PollAnswerImage" src={opt.imageUrl()} alt={opt.answer()} /> : null}
         </label>
-        {!isNaN(votes) && (
+        {canSeeVoteCount && (
           <label>
             <span className={classList('PollPercent', percent !== 100 && 'PollPercent--option')}>{percent}%</span>
           </label>
@@ -95,7 +112,9 @@ export default class DiscussionPoll extends Component {
 
     return (
       <div className={classList('PollOption', hasVoted && 'PollVoted', this.poll.hasEnded() && 'PollEnded', opt.imageUrl() && 'PollOption-hasImage')}>
-        {!isNaN(votes) ? <Tooltip text={app.translator.trans('fof-polls.forum.tooltip.votes', { count: votes })}>{poll}</Tooltip> : poll}
+        <Tooltip tooltipVisible={canSeeVoteCount ? undefined : false} text={app.translator.trans('fof-polls.forum.tooltip.votes', { count: votes })}>
+          {poll}
+        </Tooltip>
       </div>
     );
   }
@@ -159,7 +178,15 @@ export default class DiscussionPoll extends Component {
     // Load all the votes only when opening the votes list
     app.modal.show(ListVotersModal, {
       poll: this.poll,
-      discussion: this.attrs.discussion,
+      post: this.attrs.post,
     });
+  }
+
+  deletePoll() {
+    if (confirm(app.translator.trans('fof-polls.forum.moderation.delete_confirm'))) {
+      this.poll.delete().then(() => {
+        m.redraw.sync();
+      });
+    }
   }
 }

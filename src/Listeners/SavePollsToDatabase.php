@@ -12,7 +12,8 @@
 namespace FoF\Polls\Listeners;
 
 use Carbon\Carbon;
-use Flarum\Discussion\Event\Saving;
+use Flarum\Foundation\ValidationException;
+use Flarum\Post\Event\Saving;
 use Flarum\Settings\SettingsRepositoryInterface;
 use FoF\Polls\Events\PollWasCreated;
 use FoF\Polls\Events\SavingPollAttributes;
@@ -22,6 +23,7 @@ use FoF\Polls\Validators\PollOptionValidator;
 use FoF\Polls\Validators\PollValidator;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SavePollsToDatabase
 {
@@ -55,11 +57,19 @@ class SavePollsToDatabase
 
     public function handle(Saving $event)
     {
-        if ($event->discussion->exists || !isset($event->data['attributes']['poll'])) {
+        if ($event->post->exists || !isset($event->data['attributes']['poll'])) {
             return;
         }
 
-        $event->actor->assertCan('startPolls');
+        // 'assertCan' throws a generic no permission error, but we want to be more specific.
+        // There are a lot of different reasons why a user might not be able to post a discussion.
+        if ($event->actor->cannot('polls.start', $event->post->discussion)) {
+            $translator = resolve(TranslatorInterface::class);
+
+            throw new ValidationException([
+                'poll' => $translator->trans('fof-polls.forum.composer_discussion.no_permission_alert'),
+            ]);
+        }
 
         $attributes = (array) $event->data['attributes']['poll'];
 
@@ -95,7 +105,7 @@ class SavePollsToDatabase
             $this->optionValidator->assertValid($optionData);
         }
 
-        $event->discussion->afterSave(function ($discussion) use ($optionsData, $attributes, $event) {
+        $event->post->afterSave(function ($post) use ($optionsData, $attributes, $event) {
             $endDate = Arr::get($attributes, 'endDate');
             $carbonDate = Carbon::parse($endDate);
 
@@ -105,7 +115,7 @@ class SavePollsToDatabase
 
             $poll = Poll::build(
                 Arr::get($attributes, 'question'),
-                $discussion->id,
+                $post->id,
                 $event->actor->id,
                 $carbonDate != null ? $carbonDate->utc() : null,
                 Arr::get($attributes, 'publicPoll'),

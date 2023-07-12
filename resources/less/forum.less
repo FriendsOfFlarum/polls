@@ -1,6 +1,5 @@
-.DiscussionComposer-poll {
+.ComposerBody-poll {
   margin-right: 15px;
-  vertical-align: 2px;
 
   .PollLabel {
     font-size: 85%;
@@ -107,6 +106,28 @@
     row-gap: 15px;
     margin-left: 15px;
     align-items: start;
+  }
+
+  & + & {
+    margin-top: 2em;
+  }
+
+  .PollHeading {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+
+    &-title {
+      flex-grow: 1;
+    }
+
+    .Button {
+      flex-shrink: 1;
+
+      .icon {
+        margin-right: 0;
+      }
+    }
   }
 }
 
@@ -284,6 +305,7 @@
 
 .PollInfoText {
   margin-left: 15px;
+  margin-top: 20px;
 
   span {
     display: block;

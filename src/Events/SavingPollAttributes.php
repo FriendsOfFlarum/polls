@@ -21,7 +21,7 @@ use FoF\Polls\Poll;
  *
  * The create/edit authorization has already been performed when this event is dispatched, so it doesn't need to be checked again
  *
- * You should not throw any exception if the poll doesn't exist because this happens after the discussion has already been created and would break email and other extensions
+ * You should not throw any exception if the poll doesn't exist because this happens after the post has already been created and would break email and other extensions
  */
 class SavingPollAttributes
 {

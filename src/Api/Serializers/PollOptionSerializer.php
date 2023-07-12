@@ -35,11 +35,8 @@ class PollOptionSerializer extends AbstractSerializer
             'imageUrl'    => $option->image_url,
             'createdAt'   => $this->formatDate($option->created_at),
             'updatedAt'   => $this->formatDate($option->updated_at),
+            'voteCount'   => $this->actor->can('seeVoteCount', $option->poll) ? (int) $option->vote_count : null,
         ];
-
-        if ($this->actor->can('seeVoteCount', $option->poll)) {
-            $attributes['voteCount'] = (int) $option->vote_count;
-        }
 
         return $attributes;
     }
