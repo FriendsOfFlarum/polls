@@ -14,7 +14,7 @@ namespace FoF\Polls\Commands;
 use Carbon\Carbon;
 use Flarum\Settings\SettingsRepositoryInterface;
 use FoF\Polls\Events\SavingPollAttributes;
-use FoF\Polls\Poll;
+use FoF\Polls\PollRepository;
 use FoF\Polls\Validators\PollOptionValidator;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
@@ -36,19 +36,22 @@ class EditPollHandler
      */
     protected $settings;
 
-    public function __construct(PollOptionValidator $optionValidator, Dispatcher $events, SettingsRepositoryInterface $settings)
+    /**
+     * @var PollRepository
+     */
+    protected $polls;
+
+    public function __construct(PollRepository $polls, PollOptionValidator $optionValidator, Dispatcher $events, SettingsRepositoryInterface $settings)
     {
         $this->optionValidator = $optionValidator;
         $this->events = $events;
         $this->settings = $settings;
+        $this->polls = $polls;
     }
 
     public function handle(EditPoll $command)
     {
-        /**
-         * @var $poll Poll
-         */
-        $poll = Poll::findOrFail($command->pollId);
+        $poll = $this->polls->findOrFail($command->pollId, $command->actor);
 
         $command->actor->assertCan('edit', $poll);
 

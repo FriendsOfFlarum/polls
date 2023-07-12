@@ -42,7 +42,7 @@ class PollSerializer extends AbstractSerializer
             'canVote'            => $this->actor->can('vote', $poll),
             'canEdit'            => $this->actor->can('edit', $poll),
             'canDelete'          => $this->actor->can('delete', $poll),
-            'canSeeVotes'        => $this->actor->can('seeVotes', $poll),
+            'canSeeVoters'       => $this->actor->can('seeVoters', $poll),
             'canChangeVote'      => $this->actor->can('changeVote', $poll),
         ];
 
@@ -63,7 +63,7 @@ class PollSerializer extends AbstractSerializer
 
     public function votes($model)
     {
-        if ($this->actor->cannot('seeVotes', $model)) {
+        if ($this->actor->cannot('seeVoters', $model)) {
             return null;
         }
 

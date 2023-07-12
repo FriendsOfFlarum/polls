@@ -11,21 +11,28 @@ import EditPollModal from './EditPollModal';
 export default class PostPoll extends Component {
   oninit(vnode) {
     super.oninit(vnode);
-    this.poll = this.attrs.poll;
 
-    this.updateData();
+    this.loadingOptions = false;
   }
 
   view() {
-    const poll = this.poll;
+    const poll = this.attrs.poll;
+    const options = poll.options() || [];
     let maxVotes = poll.allowMultipleVotes() ? poll.maxVotes() : 1;
 
-    if (maxVotes === 0) maxVotes = this.options.length;
+    if (maxVotes === 0) maxVotes = options.length;
 
     return (
-      <div className="Post-poll">
+      <div className="Post-poll" data-id={poll.id()}>
         <div className="PollHeading">
           <h3 className="PollHeading-title">{poll.question()}</h3>
+
+          {poll.canSeeVoters() && (
+            <Tooltip text={app.translator.trans('fof-polls.forum.public_poll')}>
+              <Button className="Button PollHeading-voters" onclick={this.showVoters.bind(this)} icon="fas fa-poll" />
+            </Tooltip>
+          )}
+
           {poll.canEdit() && (
             <Tooltip text={app.translator.trans('fof-polls.forum.moderation.edit')}>
               <Button className="Button PollHeading-edit" onclick={app.modal.show.bind(app.modal, EditPollModal, { poll })} icon="fas fa-pen" />
@@ -38,20 +45,10 @@ export default class PostPoll extends Component {
           )}
         </div>
 
-        <div className="PollOptions">{this.options.map(this.viewOption.bind(this))}</div>
-
-        {poll.canSeeVotes()
-          ? Button.component(
-              {
-                className: 'Button Button--primary PublicPollButton',
-                onclick: () => this.showVoters(),
-              },
-              app.translator.trans('fof-polls.forum.public_poll')
-            )
-          : ''}
+        <div className="PollOptions">{options.map(this.viewOption.bind(this))}</div>
 
         <div className="helpText PollInfoText">
-          {app.session.user && !poll.canVote() && (
+          {app.session.user && !poll.canVote() && !poll.hasEnded() && (
             <span>
               <i className="icon fas fa-times-circle" />
               {app.translator.trans('fof-polls.forum.no_permission')}
@@ -78,21 +75,23 @@ export default class PostPoll extends Component {
   }
 
   viewOption(opt) {
-    const hasVoted = this.myVotes.length > 0;
-    const totalVotes = this.poll.voteCount();
+    const poll = this.attrs.poll;
+    const hasVoted = poll.myVotes()?.length > 0;
+    const totalVotes = poll.voteCount();
 
-    const voted = this.myVotes.some((vote) => vote.option() === opt);
+    const voted = poll.myVotes()?.some?.((vote) => vote.option() === opt);
     const votes = opt.voteCount();
     const percent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
 
     // isNaN(null) is false, so we have to check type directly now that API always returns the field
     const canSeeVoteCount = typeof votes === 'number';
+    const isDisabled = this.loadingOptions || (hasVoted && !poll.canChangeVote());
 
-    const poll = (
+    const bar = (
       <div className="PollBar" data-selected={voted}>
-        {((!this.poll.hasEnded() && this.poll.canVote()) || !app.session.user) && (
+        {((!poll.hasEnded() && poll.canVote()) || !app.session.user) && (
           <label className="checkbox">
-            <input onchange={this.changeVote.bind(this, opt)} type="checkbox" checked={voted} disabled={hasVoted && !this.poll.canChangeVote()} />
+            <input onchange={this.changeVote.bind(this, opt)} type="checkbox" checked={voted} disabled={isDisabled} />
             <span className="checkmark" />
           </label>
         )}
@@ -111,23 +110,19 @@ export default class PostPoll extends Component {
     );
 
     return (
-      <div className={classList('PollOption', hasVoted && 'PollVoted', this.poll.hasEnded() && 'PollEnded', opt.imageUrl() && 'PollOption-hasImage')}>
-        <Tooltip tooltipVisible={canSeeVoteCount ? undefined : false} text={app.translator.trans('fof-polls.forum.tooltip.votes', { count: votes })}>
-          {poll}
-        </Tooltip>
+      <div
+        className={classList('PollOption', hasVoted && 'PollVoted', poll.hasEnded() && 'PollEnded', opt.imageUrl() && 'PollOption-hasImage')}
+        data-id={opt.id()}
+      >
+        {canSeeVoteCount ? (
+          <Tooltip text={app.translator.trans('fof-polls.forum.tooltip.votes', { count: votes })} onremove={this.hideOptionTooltip}>
+            {bar}
+          </Tooltip>
+        ) : (
+          bar
+        )}
       </div>
     );
-  }
-
-  updateData() {
-    this.options = this.poll.options() || [];
-    this.myVotes = this.poll.myVotes() || [];
-  }
-
-  onError(evt, error) {
-    evt.target.checked = false;
-
-    throw error;
   }
 
   changeVote(option, evt) {
@@ -137,12 +132,9 @@ export default class PostPoll extends Component {
       return;
     }
 
-    // // if we click on our current vote, we want to "un-vote"
-    // if (this.myVotes.some((vote) => vote.option() === option)) option = null;
-
-    const optionIds = new Set(this.poll.myVotes().map((v) => v.option().id()));
+    const optionIds = new Set(this.attrs.poll.myVotes().map?.((v) => v.option().id()));
     const isUnvoting = optionIds.delete(option.id());
-    const allowsMultiple = this.poll.allowMultipleVotes();
+    const allowsMultiple = this.attrs.poll.allowMultipleVotes();
 
     if (!allowsMultiple) {
       optionIds.clear();
@@ -152,10 +144,13 @@ export default class PostPoll extends Component {
       optionIds.add(option.id());
     }
 
+    this.loadingOptions = true;
+    m.redraw();
+
     return app
       .request({
         method: 'PATCH',
-        url: `${app.forum.attribute('apiUrl')}/fof/polls/${this.poll.id()}/votes`,
+        url: `${app.forum.attribute('apiUrl')}/fof/polls/${this.attrs.poll.id()}/votes`,
         body: {
           data: {
             optionIds: Array.from(optionIds),
@@ -165,28 +160,41 @@ export default class PostPoll extends Component {
       .then((res) => {
         app.store.pushPayload(res);
 
-        this.updateData();
-
-        m.redraw();
+        // m.redraw();
       })
       .catch(() => {
         evt.target.checked = isUnvoting;
+      })
+      .finally(() => {
+        this.loadingOptions = false;
+
+        m.redraw();
       });
   }
 
   showVoters() {
     // Load all the votes only when opening the votes list
     app.modal.show(ListVotersModal, {
-      poll: this.poll,
+      poll: this.attrs.poll,
       post: this.attrs.post,
     });
   }
 
   deletePoll() {
     if (confirm(app.translator.trans('fof-polls.forum.moderation.delete_confirm'))) {
-      this.poll.delete().then(() => {
+      this.attrs.poll.delete().then(() => {
         m.redraw.sync();
       });
     }
+  }
+
+  /**
+   * Attempting to use the `tooltipVisible` attr on the Tooltip component set to 'false' when no vote count
+   * caused the tooltip to break on click. This is a workaround to hide the tooltip when no vote count is available,
+   * called on 'onremove' of the Tooltip component. It doesn't always work as intended either, but it does the job.
+   */
+  hideOptionTooltip(vnode) {
+    vnode.attrs.tooltipVisible = false;
+    vnode.state.updateVisibility();
   }
 }

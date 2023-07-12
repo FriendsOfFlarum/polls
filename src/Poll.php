@@ -12,6 +12,7 @@
 namespace FoF\Polls;
 
 use Flarum\Database\AbstractModel;
+use Flarum\Database\ScopeVisibilityTrait;
 use Flarum\Post\Post;
 use Flarum\User\User;
 use Illuminate\Database\Eloquent\Collection;
@@ -35,6 +36,8 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class Poll extends AbstractModel
 {
+    use ScopeVisibilityTrait;
+
     /**
      * {@inheritdoc}
      */

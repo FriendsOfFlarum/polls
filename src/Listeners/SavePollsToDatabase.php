@@ -11,18 +11,12 @@
 
 namespace FoF\Polls\Listeners;
 
-use Carbon\Carbon;
 use Flarum\Foundation\ValidationException;
 use Flarum\Post\Event\Saving;
-use Flarum\Settings\SettingsRepositoryInterface;
-use FoF\Polls\Events\PollWasCreated;
-use FoF\Polls\Events\SavingPollAttributes;
-use FoF\Polls\Poll;
-use FoF\Polls\PollOption;
+use FoF\Polls\Commands\CreatePoll;
 use FoF\Polls\Validators\PollOptionValidator;
 use FoF\Polls\Validators\PollValidator;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Support\Arr;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SavePollsToDatabase
@@ -43,16 +37,16 @@ class SavePollsToDatabase
     protected $events;
 
     /**
-     * @var SettingsRepositoryInterface
+     * @var \Flarum\Bus\Dispatcher
      */
-    protected $settings;
+    protected $bus;
 
-    public function __construct(PollValidator $validator, PollOptionValidator $optionValidator, Dispatcher $events, SettingsRepositoryInterface $settings)
+    public function __construct(PollValidator $validator, PollOptionValidator $optionValidator, Dispatcher $events, \Flarum\Bus\Dispatcher $bus)
     {
         $this->validator = $validator;
         $this->optionValidator = $optionValidator;
         $this->events = $events;
-        $this->settings = $settings;
+        $this->bus = $bus;
     }
 
     public function handle(Saving $event)
@@ -63,7 +57,7 @@ class SavePollsToDatabase
 
         // 'assertCan' throws a generic no permission error, but we want to be more specific.
         // There are a lot of different reasons why a user might not be able to post a discussion.
-        if ($event->actor->cannot('polls.start', $event->post->discussion)) {
+        if ($event->actor->cannot('startPoll', $event->post)) {
             $translator = resolve(TranslatorInterface::class);
 
             throw new ValidationException([
@@ -73,73 +67,15 @@ class SavePollsToDatabase
 
         $attributes = (array) $event->data['attributes']['poll'];
 
-        // Ideally we would use some JSON:API relationship syntax, but it's just too complicated with Flarum to generate the correct JSON payload
-        // Instead we just pass an array of option objects that are each a set of key-value pairs for the option attributes
-        // This is also the same syntax that always used by EditPollHandler
-        $rawOptionsData = Arr::get($attributes, 'options');
-
-        $optionsData = [];
-
-        if (is_array($rawOptionsData)) {
-            foreach ($rawOptionsData as $rawOptionData) {
-                $optionsData[] = [
-                    'answer'   => Arr::get($rawOptionData, 'answer'),
-                    'imageUrl' => Arr::get($rawOptionData, 'imageUrl') ?: null,
-                ];
-            }
-        } else {
-            // Backward-compatibility with old syntax that only passed an array of strings
-            // We are no longer using this syntax in the extension itself
-            foreach ((array) Arr::get($attributes, 'relationships.options') as $answerText) {
-                $optionsData[] = [
-                    'answer' => (string) $answerText,
-                ];
-            }
-        }
-
-        $this->validator->assertValid($attributes);
-
-        foreach ($optionsData as $optionData) {
-            // It is guaranteed all keys exist in the array because $optionData is manually created above
-            // This ensures every attribute will be validated (Flarum doesn't validate missing keys)
-            $this->optionValidator->assertValid($optionData);
-        }
-
-        $event->post->afterSave(function ($post) use ($optionsData, $attributes, $event) {
-            $endDate = Arr::get($attributes, 'endDate');
-            $carbonDate = Carbon::parse($endDate);
-
-            if (!$carbonDate->isFuture()) {
-                $carbonDate = null;
-            }
-
-            $poll = Poll::build(
-                Arr::get($attributes, 'question'),
-                $post->id,
-                $event->actor->id,
-                $carbonDate != null ? $carbonDate->utc() : null,
-                Arr::get($attributes, 'publicPoll'),
-                Arr::get($attributes, 'allowMultipleVotes'),
-                Arr::get($attributes, 'maxVotes')
-            );
-
-            $this->events->dispatch(new SavingPollAttributes($event->actor, $poll, $attributes, $event->data));
-
-            $poll->save();
-
-            $this->events->dispatch(new PollWasCreated($event->actor, $poll));
-
-            foreach ($optionsData as $optionData) {
-                $imageUrl = Arr::get($optionData, 'imageUrl');
-
-                if (!$this->settings->get('fof-polls.allowOptionImage')) {
-                    $imageUrl = null;
+        $this->bus->dispatch(
+            new CreatePoll(
+                $event->actor,
+                $event->post,
+                $attributes,
+                function (callable $callback) use ($event) {
+                    $event->post->afterSave($callback);
                 }
-
-                $option = PollOption::build(Arr::get($optionData, 'answer'), $imageUrl);
-
-                $poll->options()->save($option);
-            }
-        });
+            )
+        );
     }
 }

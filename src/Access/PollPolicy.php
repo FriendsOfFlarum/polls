@@ -24,9 +24,16 @@ class PollPolicy extends AbstractPolicy
         }
     }
 
-    public function seeVotes(User $actor, Poll $poll)
+    public function seeVoters(User $actor, Poll $poll)
     {
         if (($poll->myVotes($actor)->count() || $actor->can('polls.viewResultsWithoutVoting', $poll->post->discussion)) && $poll->public_poll) {
+            return $this->allow();
+        }
+    }
+
+    public function view(User $actor, Poll $poll)
+    {
+        if ($actor->can('view', $poll->post)) {
             return $this->allow();
         }
     }
@@ -51,10 +58,10 @@ class PollPolicy extends AbstractPolicy
             return $this->allow();
         }
 
-        if ($actor->hasPermission('polls.selfEdit') && !$poll->hasEnded()) {
-            $ownerId = $poll->post->user_id;
-
-            if ($ownerId && $ownerId === $actor->id) {
+        if (!$poll->hasEnded() && $actor->can('edit', $poll->post)) {
+            // User either created poll & can edit own poll or can edit all polls in post
+            if (($actor->id === $poll->user_id && $actor->hasPermission('polls.selfEdit'))
+                || ($actor->id == $poll->post->user_id && $actor->hasPermission('polls.selfPostEdit'))) {
                 return $this->allow();
             }
         }

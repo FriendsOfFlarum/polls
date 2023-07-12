@@ -18,7 +18,7 @@ export const addToComposer = (composer) => {
   // Add button to DiscussionComposer header
   extend(composer.prototype, 'headerItems', function (items) {
     const discussion = this.composer.body?.attrs?.discussion;
-    const canStartPoll = discussion?.canStartPoll() ?? app.session.user?.canStartPolls();
+    const canStartPoll = discussion?.canStartPoll() ?? app.forum.canStartPolls();
 
     if (canStartPoll) {
       items.add(

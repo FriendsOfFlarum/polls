@@ -13,8 +13,8 @@ namespace FoF\Polls;
 
 use Flarum\Api\Controller;
 use Flarum\Api\Serializer\DiscussionSerializer;
+use Flarum\Api\Serializer\ForumSerializer;
 use Flarum\Api\Serializer\PostSerializer;
-use Flarum\Api\Serializer\UserSerializer;
 use Flarum\Discussion\Discussion;
 use Flarum\Extend;
 use Flarum\Post\Event\Saving;
@@ -34,10 +34,10 @@ return [
     new Extend\Locales(__DIR__.'/resources/locale'),
 
     (new Extend\Routes('api'))
+        ->post('/fof/polls', 'fof.polls.create', Controllers\CreatePollController::class)
         ->get('/fof/polls/{id}', 'fof.polls.show', Controllers\ShowPollController::class)
         ->patch('/fof/polls/{id}', 'fof.polls.edit', Controllers\EditPollController::class)
         ->delete('/fof/polls/{id}', 'fof.polls.delete', Controllers\DeletePollController::class)
-        ->patch('/fof/polls/{id}/vote', 'fof.polls.vote', Controllers\VotePollController::class)
         ->patch('/fof/polls/{id}/votes', 'fof.polls.votes', Controllers\MultipleVotesPollController::class),
 
     (new Extend\Model(Post::class))
@@ -58,13 +58,14 @@ return [
         }),
 
     (new Extend\ApiSerializer(PostSerializer::class))
-        ->hasMany('polls', PollSerializer::class),
+        ->hasMany('polls', PollSerializer::class)
+        ->attribute('canStartPoll', function (PostSerializer $serializer, Post $post): bool {
+            return $serializer->getActor()->can('startPoll', $post);
+        }),
 
-    (new Extend\ApiSerializer(UserSerializer::class))
-        ->attributes(function (UserSerializer $serializer): array {
-            return [
-                'canStartPolls'     => $serializer->getActor()->can('discussion.polls.start'), // used for discussion composer
-            ];
+    (new Extend\ApiSerializer(ForumSerializer::class))
+        ->attribute('canStartPolls', function (ForumSerializer $serializer): bool {
+            return $serializer->getActor()->can('discussion.polls.start');
         }),
 
     (new Extend\ApiController(Controller\ListDiscussionsController::class))
@@ -94,8 +95,12 @@ return [
         ->command(Console\RefreshVoteCountCommand::class),
 
     (new Extend\Policy())
-        ->modelPolicy(Poll::class, Access\PollPolicy::class),
+        ->modelPolicy(Poll::class, Access\PollPolicy::class)
+        ->modelPolicy(Post::class, Access\PostPolicy::class),
 
     (new Extend\Settings())
         ->serializeToForum('allowPollOptionImage', 'fof-polls.allowOptionImage', 'boolval'),
+
+    (new Extend\ModelVisibility(Poll::class))
+        ->scope(Access\ScopePollVisibility::class),
 ];

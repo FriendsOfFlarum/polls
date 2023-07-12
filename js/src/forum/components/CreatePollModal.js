@@ -273,9 +273,18 @@ export default class CreatePollModal extends Modal {
       return;
     }
 
-    this.attrs.onsubmit(data);
+    const promise = this.attrs.onsubmit(data);
 
-    app.modal.close();
+    if (promise instanceof Promise) {
+      this.loading = true;
+
+      promise.then(this.hide.bind(this), (err) => {
+        console.error(err);
+        this.loaded();
+      });
+    } else {
+      app.modal.close();
+    }
   }
 
   formatDate(date, def = false) {
@@ -289,7 +298,7 @@ export default class CreatePollModal extends Modal {
   dateToTimestamp(date) {
     const dayjsDate = dayjs(date);
 
-    if (!dayjsDate.isValid()) return null;
+    if (!dayjsDate.isValid()) return false;
 
     return dayjsDate.format();
   }

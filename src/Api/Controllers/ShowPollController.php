@@ -12,8 +12,9 @@
 namespace FoF\Polls\Api\Controllers;
 
 use Flarum\Api\Controller\AbstractShowController;
+use Flarum\Http\RequestUtil;
 use FoF\Polls\Api\Serializers\PollSerializer;
-use FoF\Polls\Poll;
+use FoF\Polls\PollRepository;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
@@ -30,10 +31,23 @@ class ShowPollController extends AbstractShowController
     public $optionalInclude = ['votes', 'votes.option', 'votes.user'];
 
     /**
+     * @var PollRepository
+     */
+    protected $polls;
+
+    public function __construct(PollRepository $polls)
+    {
+        $this->polls = $polls;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function data(ServerRequestInterface $request, Document $document)
     {
-        return Poll::findOrFail(Arr::get($request->getQueryParams(), 'id'));
+        return $this->polls->findOrFail(
+            Arr::get($request->getQueryParams(), 'id'),
+            RequestUtil::getActor($request)
+        );
     }
 }
