@@ -4,7 +4,9 @@ export default class Poll extends Model {
   question = Model.attribute('question');
   hasEnded = Model.attribute('hasEnded');
   endDate = Model.attribute('endDate');
+
   publicPoll = Model.attribute('publicPoll');
+  hideVotes = Model.attribute('hideVotes');
   allowMultipleVotes = Model.attribute('allowMultipleVotes');
   maxVotes = Model.attribute('maxVotes');
 

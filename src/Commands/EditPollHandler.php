@@ -60,15 +60,12 @@ class EditPollHandler
 
         if (isset($attributes['question'])) {
             $poll->question = $attributes['question'];
-            $d = $poll->settings['public_poll'];
         }
 
-        if (isset($attributes['publicPoll'])) {
-            $poll->settings['public_poll'] = (bool) $attributes['publicPoll'];
-        }
-
-        if (isset($attributes['allowMultipleVotes'])) {
-            $poll->settings['allow_multiple_votes'] = (bool) $attributes['allowMultipleVotes'];
+        foreach (['publicPoll', 'allowMultipleVotes', 'hideVotes'] as $key) {
+            if (isset($attributes[$key])) {
+                $poll->settings[Str::snake($key)] = (bool) $attributes[$key];
+            }
         }
 
         if (isset($attributes['maxVotes'])) {

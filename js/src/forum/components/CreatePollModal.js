@@ -19,6 +19,7 @@ export default class CreatePollModal extends Modal {
     this.endDate = Stream();
 
     this.publicPoll = Stream(false);
+    this.hideVotes = Stream(false);
     this.allowMultipleVotes = Stream(false);
     this.maxVotes = Stream(0);
 
@@ -37,6 +38,9 @@ export default class CreatePollModal extends Modal {
 
       this.question(poll.question);
       this.publicPoll(poll.publicPoll);
+      this.hideVotes(poll.hideVotes);
+      this.allowMultipleVotes(poll.allowMultipleVotes);
+      this.maxVotes(poll.maxVotes || 0);
 
       this.endDate(this.formatDate(poll.endDate));
 
@@ -131,6 +135,16 @@ export default class CreatePollModal extends Modal {
           },
           app.translator.trans('fof-polls.forum.modal.public_poll_label')
         )}
+      </div>,
+      20
+    );
+
+    items.add(
+      'hide-votes',
+      <div className="Form-group">
+        <Switch state={this.endDate() && this.hideVotes()} onchange={this.hideVotes} disabled={!this.endDate()}>
+          {app.translator.trans('fof-polls.forum.modal.hide_votes_label')}
+        </Switch>
       </div>,
       20
     );

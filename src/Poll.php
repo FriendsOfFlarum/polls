@@ -25,6 +25,7 @@ use Illuminate\Support\Arr;
  * @property-read bool             $public_poll
  * @property-read bool             $allow_multiple_votes
  * @property-read int              $max_votes
+ * @property-read bool             $hide_votes
  * @property int                   $vote_count
  * @property Post                  $post
  * @property User                  $user
@@ -157,5 +158,10 @@ class Poll extends AbstractModel
 
     protected function getMaxVotesAttribute() {
         return (int) Arr::get($this->settings, 'max_votes');
+    }
+
+    protected function getHideVotesAttribute(): bool
+    {
+        return (bool) Arr::get($this->settings, 'hide_votes');
     }
 }

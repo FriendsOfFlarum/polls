@@ -86,6 +86,7 @@ export default class PostPoll extends Component {
     // isNaN(null) is false, so we have to check type directly now that API always returns the field
     const canSeeVoteCount = typeof votes === 'number';
     const isDisabled = this.loadingOptions || (hasVoted && !poll.canChangeVote());
+    const width = canSeeVoteCount ? percent : (Number(voted) / (poll.myVotes()?.length || 1)) * 100;
 
     const bar = (
       <div className="PollBar" data-selected={voted}>
@@ -96,7 +97,7 @@ export default class PostPoll extends Component {
           </label>
         )}
 
-        <div style={canSeeVoteCount && '--width: ' + percent + '%'} className="PollOption-active" />
+        <div style={`--width: ${width}%`} className="PollOption-active" />
         <label className="PollAnswer">
           <span>{opt.answer()}</span>
           {opt.imageUrl() ? <img className="PollAnswerImage" src={opt.imageUrl()} alt={opt.answer()} /> : null}
