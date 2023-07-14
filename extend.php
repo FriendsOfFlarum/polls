@@ -99,7 +99,9 @@ return [
         ->modelPolicy(Post::class, Access\PostPolicy::class),
 
     (new Extend\Settings())
-        ->serializeToForum('allowPollOptionImage', 'fof-polls.allowOptionImage', 'boolval'),
+        ->default('fof-polls.maxOptions', 10)
+        ->serializeToForum('allowPollOptionImage', 'fof-polls.allowOptionImage', 'boolval')
+        ->serializeToForum('pollMaxOptions', 'fof-polls.maxOptions', 'intval'),
 
     (new Extend\ModelVisibility(Poll::class))
         ->scope(Access\ScopePollVisibility::class),

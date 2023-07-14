@@ -5,6 +5,7 @@ import Modal from 'flarum/common/components/Modal';
 import Switch from 'flarum/common/components/Switch';
 import ItemList from 'flarum/common/utils/ItemList';
 import Stream from 'flarum/common/utils/Stream';
+import extractText from 'flarum/common/utils/extractText';
 
 export default class CreatePollModal extends Modal {
   oninit(vnode) {
@@ -214,14 +215,13 @@ export default class CreatePollModal extends Modal {
   }
 
   addOption() {
-    const setting = app.data['fof-polls.options.max'];
-    const max = (setting && parseInt(setting)) || 11;
+    const max = Math.max(app.forum.attribute('pollMaxOptions'), 2);
 
     if (this.options.length < max) {
       this.options.push(Stream(''));
       this.optionImageUrls.push(Stream(''));
     } else {
-      alert(app.translator.trans('fof-polls.forum.modal.max'));
+      alert(extractText(app.translator.trans('fof-polls.forum.modal.max', { max })));
     }
   }
 

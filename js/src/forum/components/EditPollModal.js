@@ -2,6 +2,7 @@ import app from 'flarum/forum/app';
 
 import Button from 'flarum/common/components/Button';
 import Stream from 'flarum/common/utils/Stream';
+import extractText from 'flarum/common/utils/extractText';
 import CreatePollModal from './CreatePollModal';
 
 export default class EditPollModal extends CreatePollModal {
@@ -63,15 +64,14 @@ export default class EditPollModal extends CreatePollModal {
   }
 
   addOption() {
-    const setting = app.data['fof-polls.options.max'];
-    const max = (setting && parseInt(setting)) || 11;
+    const max = Math.max(app.forum.attribute('pollMaxOptions'), 2);
 
     if (this.options.length < max) {
       this.options.push(app.store.createRecord('poll_options'));
       this.optionAnswers.push(Stream(''));
       this.optionImageUrls.push(Stream(''));
     } else {
-      alert(app.translator.trans('fof-polls.forum.modal.max'));
+      alert(extractText(app.translator.trans('fof-polls.forum.modal.max', { max })));
     }
   }
 

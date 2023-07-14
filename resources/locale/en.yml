@@ -2,6 +2,7 @@ fof-polls:
   admin:
     settings:
       allow_option_image: Allow an image URL to be provided for each poll option
+      max_options: Maximum number of options per poll
     permissions:
       view_results_without_voting: View results without voting
       start: Start a poll
@@ -29,7 +30,7 @@ fof-polls:
       date_placeholder: Poll end date (Optional)
       edit_title: Edit Poll
       include_question: You must include a question
-      max: You can have a maximum of 10 answers
+      max: You can have a maximum of {max} answers
       min: You must include a minimum of 2 answers
       no_voters: No Votes
       option_placeholder: Answer
