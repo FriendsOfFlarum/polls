@@ -60,19 +60,20 @@ class EditPollHandler
 
         if (isset($attributes['question'])) {
             $poll->question = $attributes['question'];
+            $d = $poll->settings['public_poll'];
         }
 
         if (isset($attributes['publicPoll'])) {
-            $poll->public_poll = (bool) $attributes['publicPoll'];
+            $poll->settings['public_poll'] = (bool) $attributes['publicPoll'];
         }
 
         if (isset($attributes['allowMultipleVotes'])) {
-            $poll->allow_multiple_votes = (bool) $attributes['allowMultipleVotes'];
+            $poll->settings['allow_multiple_votes'] = (bool) $attributes['allowMultipleVotes'];
         }
 
         if (isset($attributes['maxVotes'])) {
             $maxVotes = (int) $attributes['maxVotes'];
-            $poll->max_votes = min(max($maxVotes, 0), $options->count());
+            $poll->settings['max_votes'] = min(max($maxVotes, 0), $options->count());
         }
 
         if (isset($attributes['endDate'])) {

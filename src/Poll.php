@@ -15,14 +15,16 @@ use Flarum\Database\AbstractModel;
 use Flarum\Database\ScopeVisibilityTrait;
 use Flarum\Post\Post;
 use Flarum\User\User;
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 
 /**
  * @property int                   $id
  * @property string                $question
- * @property bool                  $public_poll
- * @property bool                  $allow_multiple_votes
- * @property int                   $max_votes
+ * @property-read bool             $public_poll
+ * @property-read bool             $allow_multiple_votes
+ * @property-read int              $max_votes
  * @property int                   $vote_count
  * @property Post                  $post
  * @property User                  $user
@@ -31,8 +33,11 @@ use Illuminate\Database\Eloquent\Collection;
  * @property \Carbon\Carbon        $end_date
  * @property \Carbon\Carbon        $created_at
  * @property \Carbon\Carbon        $updated_at
+ * @property PollSettings          $settings
  * @property PollVote[]|Collection $votes
  * @property PollVote[]|Collection $myVotes
+ *
+ *  @phpstan-type PollSettings     array{'public_poll': bool, 'allow_multiple_votes': bool, 'max_votes': int}
  */
 class Poll extends AbstractModel
 {
@@ -49,6 +54,10 @@ class Poll extends AbstractModel
         'created_at',
         'updated_at',
         'end_date',
+    ];
+
+    protected $casts = [
+        'settings' => AsArrayObject::class,
     ];
 
     /**
@@ -68,9 +77,11 @@ class Poll extends AbstractModel
         $poll->post_id = $postId;
         $poll->user_id = $actorId;
         $poll->end_date = $endDate;
-        $poll->public_poll = $publicPoll;
-        $poll->allow_multiple_votes = $allowMultipleVotes;
-        $poll->max_votes = $maxVotes;
+        $poll->settings = [
+            'public_poll'         => $publicPoll,
+            'allow_multiple_votes' => $allowMultipleVotes,
+            'max_votes'           => min(0, (int) $maxVotes),
+        ];
 
         return $poll;
     }
@@ -134,5 +145,17 @@ class Poll extends AbstractModel
     public static function setStateUser(User $user)
     {
         static::$stateUser = $user;
+    }
+
+    protected function getPublicPollAttribute() {
+        return (bool) Arr::get($this->settings, 'public_poll');
+    }
+
+    protected function getAllowMultipleVotesAttribute() {
+        return (bool) Arr::get($this->settings, 'allow_multiple_votes');
+    }
+
+    protected function getMaxVotesAttribute() {
+        return (int) Arr::get($this->settings, 'max_votes');
     }
 }
