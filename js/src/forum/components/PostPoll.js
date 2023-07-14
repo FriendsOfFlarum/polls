@@ -54,7 +54,7 @@ export default class PostPoll extends Component {
               {app.translator.trans('fof-polls.forum.no_permission')}
             </span>
           )}
-          {poll.endDate() !== null && (
+          {poll.endDate() && (
             <span>
               <i class="icon fas fa-clock" />
               {poll.hasEnded()

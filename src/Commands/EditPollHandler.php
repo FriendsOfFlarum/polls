@@ -16,11 +16,18 @@ use Flarum\Settings\SettingsRepositoryInterface;
 use FoF\Polls\Events\SavingPollAttributes;
 use FoF\Polls\PollRepository;
 use FoF\Polls\Validators\PollOptionValidator;
+use FoF\Polls\Validators\PollValidator;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class EditPollHandler
 {
+    /**
+     * @var PollValidator
+     */
+    protected $validator;
+
     /**
      * @var PollOptionValidator
      */
@@ -41,8 +48,9 @@ class EditPollHandler
      */
     protected $polls;
 
-    public function __construct(PollRepository $polls, PollOptionValidator $optionValidator, Dispatcher $events, SettingsRepositoryInterface $settings)
+    public function __construct(PollRepository $polls, PollValidator $validator, PollOptionValidator $optionValidator, Dispatcher $events, SettingsRepositoryInterface $settings)
     {
+        $this->validator = $validator;
         $this->optionValidator = $optionValidator;
         $this->events = $events;
         $this->settings = $settings;
@@ -57,6 +65,8 @@ class EditPollHandler
 
         $attributes = (array) Arr::get($command->data, 'attributes');
         $options = collect(Arr::get($attributes, 'options', []));
+
+        $this->validator->assertValid($attributes);
 
         if (isset($attributes['question'])) {
             $poll->question = $attributes['question'];
@@ -93,16 +103,9 @@ class EditPollHandler
 
         // remove options not passed if 2 or more are
         if ($options->isNotEmpty() && $options->count() >= 2) {
-            $ids = $options->pluck('id');
+            $ids = $options->pluck('id')->whereNotNull()->toArray();
 
-            $poll->options()->each(function ($option) use ($ids) {
-                /*
-                 * @var PollOption
-                 */
-                if (!$ids->contains($option->id)) {
-                    $option->delete();
-                }
-            });
+            $poll->options()->whereNotIn('id', $ids)->delete();
         }
 
         // update + add new options

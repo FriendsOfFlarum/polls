@@ -104,7 +104,14 @@ export default class CreatePollModal extends Modal {
         <label className="label">{app.translator.trans('fof-polls.forum.modal.date_placeholder')}</label>
 
         <div className="PollModal--date">
-          <input className="FormControl" type="datetime-local" name="date" bidi={this.endDate} min={this.datepickerMinDate} />
+          <input
+            className="FormControl"
+            type="datetime-local"
+            name="date"
+            bidi={this.endDate}
+            min={this.datepickerMinDate}
+            max={this.formatDate('2038')}
+          />
           {Button.component({
             className: 'Button PollModal--button',
             icon: 'fas fa-times',

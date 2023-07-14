@@ -12,6 +12,8 @@
 namespace FoF\Polls\Validators;
 
 use Flarum\Foundation\AbstractValidator;
+use Illuminate\Support\Fluent;
+use Illuminate\Validation\Rule;
 
 class PollValidator extends AbstractValidator
 {
@@ -20,7 +22,13 @@ class PollValidator extends AbstractValidator
         return [
             'question'   => 'required',
             'publicPoll' => 'nullable|boolean',
-            'endDate'    => 'nullable|date|after:today',
+            'endDate'    => [
+                'nullable',
+                // max of 'timestamp' SQL column is 2038-01-18
+                Rule::when(function (Fluent $input) {
+                    return !is_bool($input->get('endDate'));
+                }, 'date|after:now|before:2038-01-18'),
+            ],
         ];
     }
 }
