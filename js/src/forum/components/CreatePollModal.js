@@ -311,7 +311,7 @@ export default class CreatePollModal extends Modal {
   formatDate(date, def = false) {
     const dayjsDate = dayjs(date);
 
-    if (!dayjsDate.isValid()) return def !== false ? this.formatDate(def) : null;
+    if (date === false || !dayjsDate.isValid()) return def !== false ? this.formatDate(def) : null;
 
     return dayjsDate.format('YYYY-MM-DDTHH:mm');
   }
@@ -319,7 +319,7 @@ export default class CreatePollModal extends Modal {
   dateToTimestamp(date) {
     const dayjsDate = dayjs(date);
 
-    if (!dayjsDate.isValid()) return false;
+    if (!date || !dayjsDate.isValid()) return false;
 
     return dayjsDate.format();
   }
