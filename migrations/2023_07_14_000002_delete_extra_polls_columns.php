@@ -1,9 +1,18 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 use Flarum\Database\Migration;
 
 return Migration::dropColumns('polls', [
-    'public_poll' => ['boolean', 'default' => false],
+    'public_poll'          => ['boolean', 'default' => false],
     'allow_multiple_votes' => ['boolean', 'default' => false],
-    'max_votes' => ['integer', 'unsigned' => true, 'default' => 0],
+    'max_votes'            => ['integer', 'unsigned' => true, 'default' => 0],
 ]);

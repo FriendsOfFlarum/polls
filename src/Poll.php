@@ -20,8 +20,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 
 /**
- * @property int                   $id
- * @property string                $question
+ * @property int    $id
+ * @property string $question
  * @property-read bool             $public_poll
  * @property-read bool             $allow_multiple_votes
  * @property-read int              $max_votes
@@ -79,9 +79,9 @@ class Poll extends AbstractModel
         $poll->user_id = $actorId;
         $poll->end_date = $endDate;
         $poll->settings = [
-            'public_poll'         => $publicPoll,
+            'public_poll'          => $publicPoll,
             'allow_multiple_votes' => $allowMultipleVotes,
-            'max_votes'           => min(0, (int) $maxVotes),
+            'max_votes'            => min(0, (int) $maxVotes),
         ];
 
         return $poll;
@@ -148,15 +148,18 @@ class Poll extends AbstractModel
         static::$stateUser = $user;
     }
 
-    protected function getPublicPollAttribute() {
+    protected function getPublicPollAttribute()
+    {
         return (bool) Arr::get($this->settings, 'public_poll');
     }
 
-    protected function getAllowMultipleVotesAttribute() {
+    protected function getAllowMultipleVotesAttribute()
+    {
         return (bool) Arr::get($this->settings, 'allow_multiple_votes');
     }
 
-    protected function getMaxVotesAttribute() {
+    protected function getMaxVotesAttribute()
+    {
         return (int) Arr::get($this->settings, 'max_votes');
     }
 
