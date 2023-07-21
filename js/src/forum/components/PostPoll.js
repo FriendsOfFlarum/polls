@@ -5,6 +5,7 @@ import Button from 'flarum/common/components/Button';
 import LogInModal from 'flarum/forum/components/LogInModal';
 import ListVotersModal from './ListVotersModal';
 import classList from 'flarum/common/utils/classList';
+import ItemList from 'flarum/common/utils/ItemList';
 import Tooltip from 'flarum/common/components/Tooltip';
 import EditPollModal from './EditPollModal';
 
@@ -35,10 +36,11 @@ export default class PostPoll extends Component {
   view() {
     const poll = this.attrs.poll;
     const options = poll.options() || [];
-    const hasVoted = poll.myVotes()?.length > 0;
     let maxVotes = poll.allowMultipleVotes() ? poll.maxVotes() : 1;
 
     if (maxVotes === 0) maxVotes = options.length;
+
+    const infoItems = this.infoItems(maxVotes);
 
     return (
       <div className="Post-poll" data-id={poll.id()}>
@@ -67,35 +69,7 @@ export default class PostPoll extends Component {
           <div className="PollOptions">{options.map(this.viewOption.bind(this))}</div>
 
           <div className="Poll-sticky">
-            <div className="helpText PollInfoText">
-              {app.session.user && !poll.canVote() && !poll.hasEnded() && (
-                <span>
-                  <i className="icon fas fa-times-circle fa-fw" />
-                  {app.translator.trans('fof-polls.forum.no_permission')}
-                </span>
-              )}
-              {poll.endDate() && (
-                <span>
-                  <i class="icon fas fa-clock fa-fw" />
-                  {poll.hasEnded()
-                    ? app.translator.trans('fof-polls.forum.poll_ended')
-                    : app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(poll.endDate()).fromNow() })}
-                </span>
-              )}
-
-              {poll.canVote() && [
-                <span>
-                  <i className="icon fas fa-poll fa-fw" />
-                  {app.translator.trans('fof-polls.forum.max_votes_allowed', { max: maxVotes })}
-                </span>,
-                !poll.canChangeVote() && (
-                  <span>
-                    <i className={`icon fas fa-${hasVoted ? 'times' : 'exclamation'}-circle fa-fw`} />
-                    {app.translator.trans('fof-polls.forum.poll.cannot_change_vote')}
-                  </span>
-                ),
-              ]}
-            </div>
+            {!infoItems.isEmpty() && <div className="helpText PollInfoText">{infoItems.toArray()}</div>}
 
             {this.useSubmitUI && this.pendingSubmit && (
               <Button className="Button Button--primary Poll-submit" loading={this.loadingOptions} onclick={this.onsubmit.bind(this)}>
@@ -106,6 +80,56 @@ export default class PostPoll extends Component {
         </div>
       </div>
     );
+  }
+
+  infoItems(maxVotes) {
+    const items = new ItemList();
+    const poll = this.attrs.poll;
+    const hasVoted = poll.myVotes()?.length > 0;
+
+    if (app.session.user && !poll.canVote() && !poll.hasEnded()) {
+      items.add(
+        'no-permission',
+        <span>
+          <i className="icon fas fa-times-circle fa-fw" />
+          {app.translator.trans('fof-polls.forum.no_permission')}
+        </span>
+      );
+    }
+
+    if (poll.endDate()) {
+      items.add(
+        'end-date',
+        <span>
+          <i class="icon fas fa-clock fa-fw" />
+          {poll.hasEnded()
+            ? app.translator.trans('fof-polls.forum.poll_ended')
+            : app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(poll.endDate()).fromNow() })}
+        </span>
+      );
+    }
+
+    if (poll.canVote()) {
+      items.add(
+        'max-votes',
+        <span>
+          <i className="icon fas fa-poll fa-fw" />
+          {app.translator.trans('fof-polls.forum.max_votes_allowed', { max: maxVotes })}
+        </span>
+      );
+
+      if (!poll.canChangeVote()) {
+        items.add(
+          'cannot-change-vote',
+          <span>
+            <i className={`icon fas fa-${hasVoted ? 'times' : 'exclamation'}-circle fa-fw`} />
+            {app.translator.trans('fof-polls.forum.poll.cannot_change_vote')}
+          </span>
+        );
+      }
+    }
+
+    return items;
   }
 
   viewOption(opt) {

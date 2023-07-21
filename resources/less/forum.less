@@ -121,8 +121,12 @@
     display: flex;
     column-gap: 15px;
     z-index: 999;
-    .box-shadow(inset 0px 2px 0px 0px fade(@text-color, 20%));
     background-color: var(--body-bg);
+    .box-shadow(inset 0px 2px 0px 0px fade(@text-color, 20%));
+
+    &:empty {
+      display: none;
+    }
 
     .PollInfoText {
       flex-grow: 1;
