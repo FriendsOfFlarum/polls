@@ -103,7 +103,9 @@ class CreatePollHandler
                 $carbonDate != null ? $carbonDate->utc() : null,
                 Arr::get($attributes, 'publicPoll'),
                 Arr::get($attributes, 'allowMultipleVotes'),
-                Arr::get($attributes, 'maxVotes')
+                Arr::get($attributes, 'maxVotes'),
+                Arr::get($attributes, 'hideVotes'),
+                Arr::get($attributes, 'allowChangeVote'),
             );
 
             $this->events->dispatch(new SavingPollAttributes($command->actor, $poll, $attributes, $attributes));

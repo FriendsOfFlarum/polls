@@ -26,6 +26,7 @@ use Illuminate\Support\Arr;
  * @property-read bool             $allow_multiple_votes
  * @property-read int              $max_votes
  * @property-read bool             $hide_votes
+ * @property-read bool             $allow_change_vote
  * @property int                   $vote_count
  * @property Post                  $post
  * @property User                  $user
@@ -70,7 +71,7 @@ class Poll extends AbstractModel
      *
      * @return static
      */
-    public static function build($question, $postId, $actorId, $endDate, $publicPoll, $allowMultipleVotes = false, $maxVotes = 0)
+    public static function build($question, $postId, $actorId, $endDate, $publicPoll, $allowMultipleVotes = false, $maxVotes = 0, $hideVotes = false, $allowChangeVote = true)
     {
         $poll = new static();
 
@@ -82,6 +83,8 @@ class Poll extends AbstractModel
             'public_poll'          => $publicPoll,
             'allow_multiple_votes' => $allowMultipleVotes,
             'max_votes'            => min(0, (int) $maxVotes),
+            'hide_votes'           => $hideVotes,
+            'allow_change_vote'    => $allowChangeVote,
         ];
 
         return $poll;
@@ -166,5 +169,10 @@ class Poll extends AbstractModel
     protected function getHideVotesAttribute(): bool
     {
         return (bool) Arr::get($this->settings, 'hide_votes');
+    }
+
+    protected function getAllowChangeVoteAttribute(): bool
+    {
+        return (bool) Arr::get($this->settings, 'allow_change_vote', true);
     }
 }

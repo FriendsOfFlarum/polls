@@ -20,6 +20,7 @@ export default class CreatePollModal extends Modal {
 
     this.publicPoll = Stream(false);
     this.hideVotes = Stream(false);
+    this.allowChangeVote = Stream(true);
     this.allowMultipleVotes = Stream(false);
     this.maxVotes = Stream(0);
 
@@ -39,6 +40,7 @@ export default class CreatePollModal extends Modal {
       this.question(poll.question);
       this.publicPoll(poll.publicPoll);
       this.hideVotes(poll.hideVotes);
+      this.allowChangeVote(poll.allowChangeVote);
       this.allowMultipleVotes(poll.allowMultipleVotes);
       this.maxVotes(poll.maxVotes || 0);
 
@@ -157,6 +159,16 @@ export default class CreatePollModal extends Modal {
     );
 
     items.add(
+      'allow-change-vote',
+      <div className="Form-group">
+        <Switch state={this.allowChangeVote()} onchange={this.allowChangeVote}>
+          {app.translator.trans('fof-polls.forum.modal.allow_change_vote_label')}
+        </Switch>
+      </div>,
+      20
+    );
+
+    items.add(
       'allow-multiple-votes',
       <div className="Form-group">
         {Switch.component(
@@ -256,6 +268,8 @@ export default class CreatePollModal extends Modal {
       question: this.question(),
       endDate: this.dateToTimestamp(this.endDate()),
       publicPoll: this.publicPoll(),
+      hideVotes: this.hideVotes(),
+      allowChangeVote: this.allowChangeVote(),
       allowMultipleVotes: this.allowMultipleVotes(),
       maxVotes: this.maxVotes(),
       options: [],
@@ -301,6 +315,7 @@ export default class CreatePollModal extends Modal {
 
       promise.then(this.hide.bind(this), (err) => {
         console.error(err);
+        this.onerror(err);
         this.loaded();
       });
     } else {

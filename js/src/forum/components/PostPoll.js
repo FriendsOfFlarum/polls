@@ -5,6 +5,7 @@ import Button from 'flarum/common/components/Button';
 import LogInModal from 'flarum/forum/components/LogInModal';
 import ListVotersModal from './ListVotersModal';
 import classList from 'flarum/common/utils/classList';
+import ItemList from 'flarum/common/utils/ItemList';
 import Tooltip from 'flarum/common/components/Tooltip';
 import EditPollModal from './EditPollModal';
 
@@ -13,6 +14,23 @@ export default class PostPoll extends Component {
     super.oninit(vnode);
 
     this.loadingOptions = false;
+
+    this.useSubmitUI = !this.attrs.poll?.canChangeVote() && this.attrs.poll?.allowMultipleVotes();
+    this.pendingSubmit = false;
+    this.pendingOptions = null;
+  }
+
+  oncreate(vnode) {
+    super.oncreate(vnode);
+
+    this.preventClose = this.preventClose.bind(this);
+    window.addEventListener('beforeunload', this.preventClose);
+  }
+
+  onremove(vnode) {
+    super.onremove(vnode);
+
+    window.removeEventListener('beforeunload', this.preventClose);
   }
 
   view() {
@@ -21,6 +39,8 @@ export default class PostPoll extends Component {
     let maxVotes = poll.allowMultipleVotes() ? poll.maxVotes() : 1;
 
     if (maxVotes === 0) maxVotes = options.length;
+
+    const infoItems = this.infoItems(maxVotes);
 
     return (
       <div className="Post-poll" data-id={poll.id()}>
@@ -45,33 +65,71 @@ export default class PostPoll extends Component {
           )}
         </div>
 
-        <div className="PollOptions">{options.map(this.viewOption.bind(this))}</div>
+        <div>
+          <div className="PollOptions">{options.map(this.viewOption.bind(this))}</div>
 
-        <div className="helpText PollInfoText">
-          {app.session.user && !poll.canVote() && !poll.hasEnded() && (
-            <span>
-              <i className="icon fas fa-times-circle" />
-              {app.translator.trans('fof-polls.forum.no_permission')}
-            </span>
-          )}
-          {poll.endDate() && (
-            <span>
-              <i class="icon fas fa-clock" />
-              {poll.hasEnded()
-                ? app.translator.trans('fof-polls.forum.poll_ended')
-                : app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(poll.endDate()).fromNow() })}
-            </span>
-          )}
+          <div className="Poll-sticky">
+            {!infoItems.isEmpty() && <div className="helpText PollInfoText">{infoItems.toArray()}</div>}
 
-          {poll.canVote() && (
-            <span>
-              <i className="icon fas fa-poll" />
-              {app.translator.trans('fof-polls.forum.max_votes_allowed', { max: maxVotes })}
-            </span>
-          )}
+            {this.useSubmitUI && this.pendingSubmit && (
+              <Button className="Button Button--primary Poll-submit" loading={this.loadingOptions} onclick={this.onsubmit.bind(this)}>
+                {app.translator.trans('fof-polls.forum.poll.submit_button')}
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     );
+  }
+
+  infoItems(maxVotes) {
+    const items = new ItemList();
+    const poll = this.attrs.poll;
+    const hasVoted = poll.myVotes()?.length > 0;
+
+    if (app.session.user && !poll.canVote() && !poll.hasEnded()) {
+      items.add(
+        'no-permission',
+        <span>
+          <i className="icon fas fa-times-circle fa-fw" />
+          {app.translator.trans('fof-polls.forum.no_permission')}
+        </span>
+      );
+    }
+
+    if (poll.endDate()) {
+      items.add(
+        'end-date',
+        <span>
+          <i class="icon fas fa-clock fa-fw" />
+          {poll.hasEnded()
+            ? app.translator.trans('fof-polls.forum.poll_ended')
+            : app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(poll.endDate()).fromNow() })}
+        </span>
+      );
+    }
+
+    if (poll.canVote()) {
+      items.add(
+        'max-votes',
+        <span>
+          <i className="icon fas fa-poll fa-fw" />
+          {app.translator.trans('fof-polls.forum.max_votes_allowed', { max: maxVotes })}
+        </span>
+      );
+
+      if (!poll.canChangeVote()) {
+        items.add(
+          'cannot-change-vote',
+          <span>
+            <i className={`icon fas fa-${hasVoted ? 'times' : 'exclamation'}-circle fa-fw`} />
+            {app.translator.trans('fof-polls.forum.poll.cannot_change_vote')}
+          </span>
+        );
+      }
+    }
+
+    return items;
   }
 
   viewOption(opt) {
@@ -79,7 +137,7 @@ export default class PostPoll extends Component {
     const hasVoted = poll.myVotes()?.length > 0;
     const totalVotes = poll.voteCount();
 
-    const voted = poll.myVotes()?.some?.((vote) => vote.option() === opt);
+    const voted = this.pendingOptions ? this.pendingOptions.has(opt.id()) : poll.myVotes()?.some?.((vote) => vote.option() === opt);
     const votes = opt.voteCount();
     const percent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
 
@@ -88,9 +146,11 @@ export default class PostPoll extends Component {
     const isDisabled = this.loadingOptions || (hasVoted && !poll.canChangeVote());
     const width = canSeeVoteCount ? percent : (Number(voted) / (poll.myVotes()?.length || 1)) * 100;
 
+    const showCheckmark = !app.session.user || (!poll.hasEnded() && poll.canVote() && (!hasVoted || poll.canChangeVote()));
+
     const bar = (
       <div className="PollBar" data-selected={voted}>
-        {((!poll.hasEnded() && poll.canVote()) || !app.session.user) && (
+        {showCheckmark && (
           <label className="checkbox">
             <input onchange={this.changeVote.bind(this, opt)} type="checkbox" checked={voted} disabled={isDisabled} />
             <span className="checkmark" />
@@ -133,7 +193,7 @@ export default class PostPoll extends Component {
       return;
     }
 
-    const optionIds = new Set(this.attrs.poll.myVotes().map?.((v) => v.option().id()));
+    const optionIds = this.pendingOptions || new Set(this.attrs.poll.myVotes().map?.((v) => v.option().id()));
     const isUnvoting = optionIds.delete(option.id());
     const allowsMultiple = this.attrs.poll.allowMultipleVotes();
 
@@ -145,6 +205,23 @@ export default class PostPoll extends Component {
       optionIds.add(option.id());
     }
 
+    if (this.useSubmitUI) {
+      this.pendingOptions = optionIds.size ? optionIds : null;
+      this.pendingSubmit = !!this.pendingOptions;
+      return;
+    }
+
+    return this.submit(optionIds, null, () => (evt.target.checked = isUnvoting));
+  }
+
+  onsubmit() {
+    return this.submit(this.pendingOptions, () => {
+      this.pendingOptions = null;
+      this.pendingSubmit = false;
+    });
+  }
+
+  submit(optionIds, cb, onerror) {
     this.loadingOptions = true;
     m.redraw();
 
@@ -160,11 +237,10 @@ export default class PostPoll extends Component {
       })
       .then((res) => {
         app.store.pushPayload(res);
-
-        // m.redraw();
+        cb?.();
       })
-      .catch(() => {
-        evt.target.checked = isUnvoting;
+      .catch((err) => {
+        onerror?.(err);
       })
       .finally(() => {
         this.loadingOptions = false;
@@ -197,5 +273,15 @@ export default class PostPoll extends Component {
   hideOptionTooltip(vnode) {
     vnode.attrs.tooltipVisible = false;
     vnode.state.updateVisibility();
+  }
+
+  /**
+   * Alert before navigating away using browser's 'beforeunload' event
+   */
+  preventClose(e) {
+    if (this.pendingOptions) {
+      e.preventDefault();
+      return true;
+    }
   }
 }
