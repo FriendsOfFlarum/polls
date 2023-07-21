@@ -301,6 +301,7 @@ export default class CreatePollModal extends Modal {
 
       promise.then(this.hide.bind(this), (err) => {
         console.error(err);
+        this.onerror(err);
         this.loaded();
       });
     } else {

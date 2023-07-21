@@ -112,6 +112,24 @@
     align-items: start;
   }
 
+  .Poll-sticky {
+    position: sticky;
+    bottom: 0;
+    padding: 10px 0;
+    margin-left: 15px;
+    margin-top: 10px;
+    display: flex;
+    column-gap: 15px;
+    z-index: 999;
+    .box-shadow(inset 0px 2px 0px 0px fade(@text-color, 20%));
+    background-color: var(--body-bg);
+
+    .PollInfoText {
+      flex-grow: 1;
+      margin-bottom: 0;
+    }
+  }
+
   & + & {
     margin-top: 2em;
   }
@@ -318,15 +336,12 @@
 }
 
 .PollInfoText {
-  margin-left: 15px;
-  margin-top: 20px;
-
   span {
     display: block;
   }
 
   .icon {
-    width: 15px;
+    margin-right: 2.5px;
   }
 }
 
