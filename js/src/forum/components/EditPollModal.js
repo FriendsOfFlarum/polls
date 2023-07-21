@@ -19,6 +19,7 @@ export default class EditPollModal extends CreatePollModal {
     this.publicPoll = Stream(this.poll.publicPoll());
     this.allowMultipleVotes = Stream(this.poll.allowMultipleVotes());
     this.hideVotes = Stream(this.poll.hideVotes());
+    this.allowChangeVote = Stream(this.poll.allowChangeVote());
     this.maxVotes = Stream(this.poll.maxVotes() || 0);
 
     if (this.endDate() && dayjs(this.poll.endDate()).isAfter(dayjs())) {
@@ -97,6 +98,7 @@ export default class EditPollModal extends CreatePollModal {
       endDate: this.dateToTimestamp(this.endDate()),
       publicPoll: this.publicPoll(),
       hideVotes: this.hideVotes(),
+      allowChangeVote: this.allowChangeVote(),
       allowMultipleVotes: this.allowMultipleVotes(),
       maxVotes: this.maxVotes(),
       options,

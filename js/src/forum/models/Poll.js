@@ -7,6 +7,7 @@ export default class Poll extends Model {
 
   publicPoll = Model.attribute('publicPoll');
   hideVotes = Model.attribute('hideVotes');
+  allowChangeVote = Model.attribute('allowChangeVote');
   allowMultipleVotes = Model.attribute('allowMultipleVotes');
   maxVotes = Model.attribute('maxVotes');
 

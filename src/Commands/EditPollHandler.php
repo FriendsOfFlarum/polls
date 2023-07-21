@@ -72,7 +72,7 @@ class EditPollHandler
             $poll->question = $attributes['question'];
         }
 
-        foreach (['publicPoll', 'allowMultipleVotes', 'hideVotes'] as $key) {
+        foreach (['publicPoll', 'allowMultipleVotes', 'hideVotes', 'allowChangeVote'] as $key) {
             if (isset($attributes[$key])) {
                 $poll->settings[Str::snake($key)] = (bool) $attributes[$key];
             }
