@@ -53,6 +53,7 @@ return [
             foreach ($event->settings as $key => $value) {
                 if ($key === 'fof-polls.optionsColorBlend') {
                     resolve('fof-user-bio.formatter')->flush();
+
                     return;
                 }
             }
