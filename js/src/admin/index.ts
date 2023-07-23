@@ -9,6 +9,12 @@ app.initializers.add('fof/polls', () => {
       label: app.translator.trans('fof-polls.admin.settings.allow_option_image'),
     })
     .registerSetting({
+      setting: 'fof-polls.optionsColorBlend',
+      type: 'switch',
+      label: app.translator.trans('fof-polls.admin.settings.options_color_blend'),
+      help: app.translator.trans('fof-polls.admin.settings.options_color_blend_help'),
+    })
+    .registerSetting({
       setting: 'fof-polls.maxOptions',
       type: 'number',
       label: app.translator.trans('fof-polls.admin.settings.max_options'),

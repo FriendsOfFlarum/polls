@@ -17,8 +17,9 @@ use Flarum\Api\Serializer\ForumSerializer;
 use Flarum\Api\Serializer\PostSerializer;
 use Flarum\Discussion\Discussion;
 use Flarum\Extend;
-use Flarum\Post\Event\Saving;
+use Flarum\Post\Event\Saving as PostSaving;
 use Flarum\Post\Post;
+use Flarum\Settings\Event\Saved as SettingsSaved;
 use FoF\Polls\Api\Controllers;
 use FoF\Polls\Api\Serializers\PollSerializer;
 
@@ -47,7 +48,15 @@ return [
         ->hasMany('polls', Poll::class, 'post_id', 'first_post_id'),
 
     (new Extend\Event())
-        ->listen(Saving::class, Listeners\SavePollsToDatabase::class),
+        ->listen(PostSaving::class, Listeners\SavePollsToDatabase::class)
+        ->listen(SettingsSaved::class, function (SettingsSaved $event) {
+            foreach ($event->settings as $key => $value) {
+                if ($key === 'fof-polls.optionsColorBlend') {
+                    resolve('fof-user-bio.formatter')->flush();
+                    return;
+                }
+            }
+        }),
 
     (new Extend\ApiSerializer(DiscussionSerializer::class))
         ->attribute('hasPoll', function (DiscussionSerializer $serializer, Discussion $discussion): bool {
@@ -100,8 +109,12 @@ return [
 
     (new Extend\Settings())
         ->default('fof-polls.maxOptions', 10)
+        ->default('fof-polls.optionsColorBlend', true)
         ->serializeToForum('allowPollOptionImage', 'fof-polls.allowOptionImage', 'boolval')
-        ->serializeToForum('pollMaxOptions', 'fof-polls.maxOptions', 'intval'),
+        ->serializeToForum('pollMaxOptions', 'fof-polls.maxOptions', 'intval')
+        ->registerLessConfigVar('fof-polls-options-color-blend', 'fof-polls.optionsColorBlend', function ($value) {
+            return $value ? 'true' : 'false';
+        }),
 
     (new Extend\ModelVisibility(Poll::class))
         ->scope(Access\ScopePollVisibility::class),

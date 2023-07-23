@@ -39,6 +39,10 @@
       background-color: var(--alert-error-bg);
       color: var(--alert-error-color);
     }
+
+    + .FormControl {
+      margin-top: 5px;
+    }
   }
 
   .PollModal--answers {
@@ -115,6 +119,25 @@
     row-gap: 15px;
     margin-left: 15px;
     align-items: start;
+
+    .PollAnswer when (@fof-polls-options-color-blend = true) {
+      &-checkbox, &-text {
+        & when (@config-dark-mode =true) {
+          mix-blend-mode: difference;
+        }
+
+        & when (@config-dark-mode =false) {
+          mix-blend-mode: darken;
+        }
+      }
+    }
+
+    .PollAnswer-text::after {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      content: @fof-polls-options-color-blend ;
+    }
   }
 
   .Poll-sticky {
@@ -217,16 +240,6 @@
     grid-auto-flow: row;
     gap: 10px;
     align-items: flex-start;
-
-    .PollAnswer {
-      &-checkbox, &-text {
-        mix-blend-mode: darken;
-
-        & when (@config-dark-mode =true) {
-          mix-blend-mode: difference;
-        }
-      }
-    }
 
     .PollAnswer-checkbox {
       grid-column: 1;
