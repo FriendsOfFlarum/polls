@@ -11,16 +11,16 @@
     font-weight: 600;
     display: inline-block;
     padding: 0.1em 0.5em;
-    border-radius: @border-radius;
-    background: @body-bg;
-    color: @control-color;
+    border-radius: var(--border-radius);
+    background: var(--body-bg);
+    color: var(--control-color);
     text-transform: none;
-    border: 1px solid @primary-color;
+    border: 1px solid var(--primary-color);
 
     &.none {
       background: transparent;
-      border: 1px dotted @muted-color;
-      color: @muted-color;
+      border: 1px dotted var(--muted-color);
+      color: var(--muted-color);
     }
   }
 }
@@ -131,13 +131,6 @@
         }
       }
     }
-
-    .PollAnswer-text::after {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      content: @fof-polls-options-color-blend ;
-    }
   }
 
   .Poll-sticky {
@@ -150,7 +143,7 @@
     align-items: flex-start;
     column-gap: 15px;
     background-color: var(--body-bg);
-    .box-shadow(inset 0px 2px 0px 0px fade(@text-color, 20%));
+    .box-shadow(inset 0px 2px 0px 0px var(--muted-more-bg));
 
     &:empty {
       display: none;
@@ -196,7 +189,7 @@
   }
 
   &:hover {
-    background: #f3f3f39e;
+    background: var(--muted-more-bg);
   }
 
   /* Percent */
@@ -206,7 +199,7 @@
     font-weight: 600;
 
     &--option {
-      color: @muted-color;
+      color: var(--muted-color);
     }
   }
 
@@ -216,8 +209,8 @@
     display: inline-block;
     padding: .1em .5em;
     border-radius: 4px;
-    background: #e8ecf3;
-    color: #667c99;
+    background: transparent;
+    color: var(--muted-color);
     text-transform: none;
   }
 
