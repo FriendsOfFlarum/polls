@@ -7,6 +7,7 @@ import ListVotersModal from './ListVotersModal';
 import classList from 'flarum/common/utils/classList';
 import ItemList from 'flarum/common/utils/ItemList';
 import Tooltip from 'flarum/common/components/Tooltip';
+import icon from 'flarum/common/helpers/icon';
 import EditPollModal from './EditPollModal';
 
 export default class PostPoll extends Component {
@@ -149,24 +150,21 @@ export default class PostPoll extends Component {
     const showCheckmark = !app.session.user || (!poll.hasEnded() && poll.canVote() && (!hasVoted || poll.canChangeVote()));
 
     const bar = (
-      <div className="PollBar" data-selected={voted}>
+      <div className="PollBar" data-selected={!!voted} style={`--poll-option-width: ${width}%`}>
         {showCheckmark && (
-          <label className="checkbox">
+          <label className="PollAnswer-checkbox checkbox">
             <input onchange={this.changeVote.bind(this, opt)} type="checkbox" checked={voted} disabled={isDisabled} />
             <span className="checkmark" />
           </label>
         )}
 
-        <div style={`--width: ${width}%`} className="PollOption-active" />
-        <label className="PollAnswer">
-          <span>{opt.answer()}</span>
-          {opt.imageUrl() ? <img className="PollAnswerImage" src={opt.imageUrl()} alt={opt.answer()} /> : null}
-        </label>
-        {canSeeVoteCount && (
-          <label>
-            <span className={classList('PollPercent', percent !== 100 && 'PollPercent--option')}>{percent}%</span>
-          </label>
-        )}
+        <div className="PollAnswer-text">
+          <span className="PollAnswer-text-answer">{opt.answer()}</span>
+          {voted && !showCheckmark && icon('fas fa-check-circle', { className: 'PollAnswer-check' })}
+          {canSeeVoteCount && <span className={classList('PollPercent', percent !== 100 && 'PollPercent--option')}>{percent}%</span>}
+        </div>
+
+        {opt.imageUrl() ? <img className="PollAnswer-image" src={opt.imageUrl()} alt={opt.answer()} /> : null}
       </div>
     );
 
