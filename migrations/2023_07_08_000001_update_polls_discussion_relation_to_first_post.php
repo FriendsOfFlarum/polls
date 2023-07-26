@@ -13,6 +13,7 @@ use Illuminate\Database\Query\JoinClause;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\Builder;
 
+// Split 1/2 of 2023_07_08_000001_update_polls_discussion_relation_to_first_post.php
 return [
     'up' => function (Builder $schema) {
         $db = $schema->getConnection();
@@ -61,10 +62,6 @@ return [
 
             $deletingPolls->delete();
         });
-
-        $schema->table('polls', function (Blueprint $table) {
-            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
-        });
     },
     'down' => function (Builder $schema) {
         $db = $schema->getConnection();
@@ -81,10 +78,6 @@ return [
             $db->table('polls')
                 ->join('posts', 'polls.post_id', '=', 'posts.id')
                 ->update(['polls.post_id' => $db->raw("{$prefix}posts.discussion_id")]);
-        });
-
-        $schema->table('polls', function (Blueprint $table) {
-            $table->dropForeign(['post_id']);
         });
     },
 ];
