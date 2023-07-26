@@ -17,6 +17,7 @@ return [
     'up' => function (Builder $schema) {
         $db = $schema->getConnection();
 
+        // Do not run this migration if the values were already updated before the split
         if ($db->table('migrations')->where('migration', '2023_07_08_000001_update_polls_discussion_relation_to_first_post')->exists()) {
             return;
         }
