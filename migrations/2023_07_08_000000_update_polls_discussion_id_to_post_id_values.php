@@ -10,7 +10,6 @@
  */
 
 use Illuminate\Database\Query\JoinClause;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\Builder;
 
 // Split 1/2 of 2023_07_08_000001_update_polls_discussion_relation_to_first_post.php
