@@ -32,7 +32,7 @@ use Illuminate\Support\Arr;
  * @property User                  $user
  * @property int                   $post_id
  * @property int                   $user_id
- * @property \Carbon\Carbon        $end_date
+ * @property \Carbon\Carbon|null   $end_date
  * @property \Carbon\Carbon        $created_at
  * @property \Carbon\Carbon        $updated_at
  * @property PollSettings          $settings
@@ -49,17 +49,12 @@ class Poll extends AbstractModel
      * {@inheritdoc}
      */
     public $timestamps = true;
-    /**
-     * @var bool|mixed
-     */
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'end_date',
-    ];
 
     protected $casts = [
         'settings' => AsArrayObject::class,
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'end_date' => 'datetime',
     ];
 
     /**
