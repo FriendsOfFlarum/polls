@@ -124,6 +124,7 @@ class MultipleVotesPollHandler
             return !$myVotes->contains('option_id', $optionId);
         });
 
+        /** @phpstan-ignore-next-line */
         $this->db->transaction(function () use ($myVotes, $options, $newOptionIds, $deletedVotes, $poll, $actor) {
             // Unvote options
             if ($deletedVotes->isNotEmpty()) {
@@ -185,8 +186,6 @@ class MultipleVotesPollHandler
      * Pushes an updated option through websocket.
      *
      * @param \Illuminate\Support\Collection $options
-     *
-     * @throws \Pusher\PusherException
      */
     public function pushUpdatedOptions(Poll $poll, $options)
     {
@@ -205,8 +204,6 @@ class MultipleVotesPollHandler
     }
 
     /**
-     * @throws \Pusher\PusherException
-     *
      * @return bool|\Illuminate\Foundation\Application|mixed|Pusher
      */
     public static function pusher(Container $container, SettingsRepositoryInterface $settings)

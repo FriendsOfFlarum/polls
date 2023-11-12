@@ -34,7 +34,7 @@ class CreatePoll
     /**
      * @var callable
      */
-    public $savePollOns;
+    public $savePollOn;
 
     /**
      * @param User          $actor
