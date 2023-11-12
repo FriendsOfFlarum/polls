@@ -51,10 +51,10 @@ class Poll extends AbstractModel
     public $timestamps = true;
 
     protected $casts = [
-        'settings' => AsArrayObject::class,
+        'settings'   => AsArrayObject::class,
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-        'end_date' => 'datetime',
+        'end_date'   => 'datetime',
     ];
 
     /**
