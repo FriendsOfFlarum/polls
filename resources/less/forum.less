@@ -426,6 +426,10 @@
   border-style: solid;
   border-radius: 4px;
   cursor: pointer;
+
+  &:hover {
+    background: var(--control-bg-light);
+  }
 }
 
 .PollOption-information {
@@ -445,4 +449,5 @@
 
 .PollOption-tmp:has(.PollOption-input:checked) {
   border-color: var(--poll-option-active-color);
+  background: var(--control-bg-shaded);
 }
