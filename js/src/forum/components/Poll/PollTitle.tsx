@@ -1,0 +1,12 @@
+import * as Mithril from 'mithril';
+import Component from 'flarum/common/Component';
+
+export default class PollTitle extends Component {
+  view(): Mithril.Children {
+    return (
+      <>
+        <p>Polls Title</p>
+      </>
+    );
+  }
+}

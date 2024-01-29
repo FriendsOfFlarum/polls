@@ -1,12 +1,16 @@
 import * as Mithril from 'mithril';
 import Component from 'flarum/common/Component';
 
+import PollTitle from './Poll/PollTitle';
+import PollDescription from './Poll/PollDescription';
+import PollOption from './Poll/PollOption';
+import PollSubmitButton from './Poll/PollSubmitButton';
 export default class IndexPolls extends Component {
   view(): Mithril.Children {
     return (
       <div className="Index-poll">
-        <b>Polls</b>
-        <p>Lorem Ipsum Dolor Sit amet Consectetur Adipiscing Elit </p>
+        <PollTitle />
+        <PollDescription />
         <form>
           <fieldset>
             <legend className="sr-only">Privacy setting</legend>
@@ -29,24 +33,7 @@ export default class IndexPolls extends Component {
                   </span>
                 </span>
               </label>
-              <label className="bbb">
-                <input
-                  type="radio"
-                  name="privacy-setting"
-                  value="Private to Project Members"
-                  className="ccc"
-                  aria-labelledby="privacy-setting-1-label"
-                  aria-describedby="privacy-setting-1-description"
-                />
-                <span className="ddd">
-                  <span id="privacy-setting-1-label" className="fff">
-                    Private to Project Members
-                  </span>
-                  <span id="privacy-setting-1-description" className="ggg">
-                    Only members of this project would be able to access
-                  </span>
-                </span>
-              </label>
+              <PollOption />
               <label className="bba bbb">
                 <input
                   type="radio"
@@ -66,6 +53,7 @@ export default class IndexPolls extends Component {
                 </span>
               </label>
             </div>
+            <PollSubmitButton />
           </fieldset>
         </form>
       </div>
