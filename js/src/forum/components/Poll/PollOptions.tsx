@@ -6,7 +6,7 @@ import ItemList from 'flarum/common/utils/ItemList';
 
 export default class PollOptions extends Component {
   view(): Mithril.Children {
-    return <div className="aaa">{this.pollOptions().toArray()}</div>;
+    return <div className="Poll-options grid-layout">{this.pollOptions().toArray()}</div>;
   }
 
   pollOptions(): ItemList<Mithril.Children> {
@@ -15,6 +15,8 @@ export default class PollOptions extends Component {
     items.add('test1', <PollOption />);
     items.add('test2', <PollOption />);
     items.add('test3', <PollOption />);
+    items.add('test4', <PollOption />);
+    items.add('test5', <PollOption />);
 
     return items;
   }

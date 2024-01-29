@@ -5,7 +5,7 @@ export default class PollDescription extends Component {
   view(): Mithril.Children {
     return (
       <>
-        <p>Lorem Ipsum Dolor Sit amet Consectetur Adipiscing Elit Sit</p>
+        <p className="PollOption-description">Lorem Ipsum Dolor Sit amet Consectetur Adipiscing Elit Sit</p>
       </>
     );
   }

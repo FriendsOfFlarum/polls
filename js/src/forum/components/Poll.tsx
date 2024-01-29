@@ -9,11 +9,11 @@ import PollImage from './Poll/PollImage';
 export default class IndexPolls extends Component {
   view(): Mithril.Children {
     return (
-      <div className="Index-poll">
-        <div className="PollImage">
+      <div className="Poll">
+        <div className="Poll-image">
           <PollImage />
         </div>
-        <div className="Poll">
+        <div className="Poll-wrapper">
           <PollTitle />
           <PollDescription />
           <form>
