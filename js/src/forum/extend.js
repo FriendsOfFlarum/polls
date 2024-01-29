@@ -3,6 +3,7 @@ import Post from 'flarum/common/models/Post';
 import Forum from 'flarum/common/models/Forum';
 import Discussion from 'flarum/common/models/Discussion';
 import Poll from './models/Poll';
+import PollsPage from './components/PollsPage';
 import PollOption from './models/PollOption';
 import PollVote from './models/PollVote';
 
@@ -14,4 +15,7 @@ export default [
   new Extend.Model(Forum).attribute('canStartPolls'),
 
   new Extend.Model(Discussion).attribute('hasPoll').attribute('canStartPoll'),
+
+  // new Extend.Routes().add('polls', '/polls', <PollsPage />),
+  // new Extend.Routes().add('polls', '/polls'),
 ];

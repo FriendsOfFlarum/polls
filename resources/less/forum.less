@@ -99,7 +99,8 @@
   }
 
   .Checkbox.disabled {
-    &, [disabled] {
+    &,
+    [disabled] {
       cursor: not-allowed;
     }
 
@@ -121,7 +122,8 @@
     align-items: start;
 
     .PollAnswer when (@fof-polls-options-color-blend = true) {
-      &-checkbox, &-text {
+      &-checkbox,
+      &-text {
         & when (@config-dark-mode =true) {
           mix-blend-mode: difference;
         }
@@ -169,7 +171,7 @@
     }
 
     &-voters {
-      .Button--color-auto('button-primary');
+      .Button--color-auto("button-primary");
     }
 
     .Button {
@@ -184,7 +186,8 @@
 }
 
 .PollOption {
-  &, .PollBar {
+  &,
+  .PollBar {
     border-radius: 4px;
   }
 
@@ -207,7 +210,7 @@
     font-size: 85%;
     font-weight: 600;
     display: inline-block;
-    padding: .1em .5em;
+    padding: 0.1em 0.5em;
     border-radius: 4px;
     background: transparent;
     color: var(--muted-color);
@@ -275,7 +278,7 @@
       );
       background-size: var(--poll-option-width) 100%;
       background-repeat: no-repeat;
-      content: '';
+      content: "";
     }
 
     .PollAnswer {
@@ -393,4 +396,75 @@
   to {
     background-size: var(--poll-option-width) 100%;
   }
+}
+
+.IndexPage-results.sideNavOffset {
+  display: flex;
+  flex-direction: column;
+}
+
+.IndexPage-toolbar {
+  order: 2;
+}
+
+.DiscussionList {
+  order: 3;
+}
+
+.Index-poll {
+  order: 1;
+  margin-bottom: 30px;
+}
+
+.aaa {
+  border-radius: 0.375rem;
+}
+
+.ba {
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+}
+
+.bba {
+  border-bottom-right-radius: 0.375rem;
+  border-bottom-left-radius: 0.375rem;
+}
+.bbb {
+  display: flex;
+  position: relative;
+  padding: 1rem;
+  border-color: #d1d5db;
+  border-width: 1px;
+  border-style: solid;
+  cursor: pointer;
+  margin-top: -1px;
+}
+
+.ccc {
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+  border-color: #d1d5db;
+  width: 1rem;
+  height: 1rem;
+  color: #4f46e5;
+  cursor: pointer;
+}
+
+.ddd {
+  display: flex;
+  margin-left: 0.75rem;
+  flex-direction: column;
+}
+
+.fff {
+  display: block;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+}
+
+.ggg {
+  display: block;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }
