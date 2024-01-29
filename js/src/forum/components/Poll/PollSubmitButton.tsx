@@ -5,9 +5,13 @@ import Button from 'flarum/common/components/Button';
 export default class PollSubmitButton extends Component {
   view(): Mithril.Children {
     return (
-      <Button className="Button" type="submit">
+      <Button className="Button" type="submit" onclick={() => this.submit()}>
         Submit
       </Button>
     );
+  }
+
+  submit() {
+    console.log('submitted');
   }
 }
