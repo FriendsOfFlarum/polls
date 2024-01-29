@@ -16,8 +16,8 @@ export default class PollOption extends Component {
           aria-describedby="privacy-setting-1-description"
         />
         <span className="PollOption-information">
-          <PollOptionLabel />
-          <PollOptionDescription />
+          <PollOptionLabel text="Poll Option Label" />
+          <PollOptionDescription text="Poll Option Description" />
         </span>
       </label>
     );

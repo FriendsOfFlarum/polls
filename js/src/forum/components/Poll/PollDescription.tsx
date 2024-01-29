@@ -1,12 +1,12 @@
 import * as Mithril from 'mithril';
-import Component from 'flarum/common/Component';
+import Component, { ComponentAttrs } from 'flarum/common/Component';
 
-export default class PollDescription extends Component {
+interface PollDescriptionAttrs extends ComponentAttrs {
+  text: String;
+}
+
+export default class PollDescription extends Component<PollDescriptionAttrs> {
   view(): Mithril.Children {
-    return (
-      <>
-        <p className="PollOption-description">Lorem Ipsum Dolor Sit amet Consectetur Adipiscing Elit Sit</p>
-      </>
-    );
+    return <p className="PollOption-description">{this.attrs.text}</p>;
   }
 }

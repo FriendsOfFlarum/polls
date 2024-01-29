@@ -1,11 +1,15 @@
 import * as Mithril from 'mithril';
-import Component from 'flarum/common/Component';
+import Component, { ComponentAttrs } from 'flarum/common/Component';
 
-export default class PollOptionLabel extends Component {
+interface PollOptionLabelAttrs extends ComponentAttrs {
+  text: String;
+}
+
+export default class PollOptionLabel extends Component<PollOptionLabelAttrs> {
   view(): Mithril.Children {
     return (
       <span id="privacy-setting-1-label" className="PollOption-label">
-        Private to Project Members test 23
+        {this.attrs.text}
       </span>
     );
   }

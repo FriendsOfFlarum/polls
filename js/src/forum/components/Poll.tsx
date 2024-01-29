@@ -14,8 +14,8 @@ export default class IndexPolls extends Component {
           <PollImage />
         </div>
         <div className="Poll-wrapper">
-          <PollTitle />
-          <PollDescription />
+          <PollTitle text="Poll Title" />
+          <PollDescription text="Poll Description" />
           <form>
             <fieldset>
               <legend className="sr-only">Privacy setting</legend>
