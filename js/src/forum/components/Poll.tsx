@@ -15,8 +15,8 @@ export default class IndexPolls extends Component {
           <PollImage />
         </div>
         <div className="Poll-wrapper">
-          <PollTitle text="Welche Art von zukünftigen Entscheidungen der SBB würden Sie gerne mehr einbezogen sehen?" />
-          <PollDescription text="Ihre Meinung ist uns wichtig! Welche SBB-Entscheidungen möchten Sie mehr einbezogen sehen? Teilen Sie uns mit, welche Themen für Sie besonders relevant sind. Vielen Dank für Ihre Teilnahme!" />
+          <PollTitle text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy?" />
+          <PollDescription text="At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet!" />
 
           <form>
             <fieldset>

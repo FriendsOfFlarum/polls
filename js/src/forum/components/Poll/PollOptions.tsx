@@ -14,10 +14,11 @@ export default class PollOptions extends Component {
     const items = new ItemList<Mithril.Children>();
 
     items.add('test1', <PollOption />);
-    items.add('test5', <PollResult />);
     items.add('test2', <PollOption />);
     items.add('test3', <PollOption />);
     items.add('test4', <PollOption />);
+
+    items.add('test5', <PollResult />);
 
     return items;
   }
