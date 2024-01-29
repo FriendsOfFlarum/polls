@@ -49,34 +49,17 @@ return [
 
     (new Extend\Event())
         ->listen(PostSaving::class, Listeners\SavePollsToDatabase::class)
-        ->listen(SettingsSaved::class, function (SettingsSaved $event) {
-            foreach ($event->settings as $key => $value) {
-                if ($key === 'fof-polls.optionsColorBlend') {
-                    resolve('fof-user-bio.formatter')->flush();
-
-                    return;
-                }
-            }
-        }),
+        ->listen(SettingsSaved::class, Listeners\ClearFormatterCache::class),
 
     (new Extend\ApiSerializer(DiscussionSerializer::class))
-        ->attribute('hasPoll', function (DiscussionSerializer $serializer, Discussion $discussion): bool {
-            return $discussion->polls()->exists();
-        })
-        ->attribute('canStartPoll', function (DiscussionSerializer $serializer, Discussion $discussion): bool {
-            return $serializer->getActor()->can('polls.start', $discussion);
-        }),
+        ->attributes(Api\AddDiscussionAttributes::class),
 
     (new Extend\ApiSerializer(PostSerializer::class))
         ->hasMany('polls', PollSerializer::class)
-        ->attribute('canStartPoll', function (PostSerializer $serializer, Post $post): bool {
-            return $serializer->getActor()->can('startPoll', $post);
-        }),
+        ->attributes(Api\AddPostAttributes::class),
 
     (new Extend\ApiSerializer(ForumSerializer::class))
-        ->attribute('canStartPolls', function (ForumSerializer $serializer): bool {
-            return $serializer->getActor()->can('discussion.polls.start');
-        }),
+        ->attributes(Api\AddForumAttributes::class),
 
     (new Extend\ApiController(Controller\ListDiscussionsController::class))
         ->addOptionalInclude(['firstPost.polls']),
