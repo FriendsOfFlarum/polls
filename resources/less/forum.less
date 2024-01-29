@@ -1,5 +1,6 @@
 :root {
   --poll-option-color: var(--muted-color);
+  --poll-option-accent-color: var(--primary-color);
   --poll-option-active-color: var(--secondary-color);
 }
 
@@ -406,7 +407,10 @@
 .Poll-options {
   display: grid;
   gap: 10px;
+  padding: 10px;
   margin-bottom: 10px;
+  background: var(--control-bg);
+  border-radius: var(--border-radius);
 
   &.grid-layout {
     grid-template-columns: 1fr 1fr;
@@ -421,9 +425,10 @@
   display: flex;
   position: relative;
   padding: 10px;
-  border-color: var(--poll-option-color);
-  border-width: 1px;
-  border-style: solid;
+  // border-color: var(--poll-option-color);
+  // border-width: 1px;
+  // border-style: solid;
+  background: var(--body-bg);
   border-radius: 4px;
   cursor: pointer;
 
@@ -432,10 +437,44 @@
   }
 }
 
+.PollResult {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  padding: 10px;
+  // border-color: var(--poll-option-color);
+  // border-width: 1px;
+  // border-style: solid;
+  border-radius: 4px;
+}
+
+.PollResult-input,
+.PollOption-input {
+  accent-color: var(--poll-option-accent-color);
+}
+
 .PollOption-information {
   display: flex;
   margin-left: 10px;
   flex-direction: column;
+}
+
+.PollResults-row {
+  display: flex;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+.PollResult-information {
+  display: flex;
+  margin-left: 10px;
+  justify-content: space-between;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.Poll-title,
+.PollResult-number {
+  font-weight: 600;
 }
 
 .PollOption-label {

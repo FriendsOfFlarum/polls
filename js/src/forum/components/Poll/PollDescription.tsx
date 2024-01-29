@@ -7,6 +7,6 @@ interface PollDescriptionAttrs extends ComponentAttrs {
 
 export default class PollDescription extends Component<PollDescriptionAttrs> {
   view(): Mithril.Children {
-    return <p className="PollOption-description">{this.attrs.text}</p>;
+    return <p className="Poll-description">{this.attrs.text}</p>;
   }
 }
