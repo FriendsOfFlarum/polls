@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FoF\Polls\Tests\integration\api;
 
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
@@ -8,7 +17,7 @@ use Flarum\Testing\integration\TestCase;
 class ForumSerializerTest extends TestCase
 {
     use RetrievesAuthorizedUsers;
-    
+
     public function setUp(): void
     {
         parent::setUp();
@@ -18,13 +27,13 @@ class ForumSerializerTest extends TestCase
         $this->prepareDatabase([
             'users' => [
                 $this->normalUser(),
-                ['id' => 3, 'username' => 'pollsuser', 'email' => 'polls@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => 1]
+                ['id' => 3, 'username' => 'pollsuser', 'email' => 'polls@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => 1],
             ],
             'group_user' => [
-                ['user_id' => 3, 'group_id' => 4]
+                ['user_id' => 3, 'group_id' => 4],
             ],
             'group_permission' => [
-                ['permission' => 'discussion.polls.start', 'group_id' => 4]
+                ['permission' => 'discussion.polls.start', 'group_id' => 4],
             ],
         ]);
     }
@@ -52,7 +61,7 @@ class ForumSerializerTest extends TestCase
     {
         $response = $this->send(
             $this->request('GET', '/api', [
-                'authenticatedAs' => 2
+                'authenticatedAs' => 2,
             ])
         );
 
@@ -70,7 +79,7 @@ class ForumSerializerTest extends TestCase
     {
         $response = $this->send(
             $this->request('GET', '/api', [
-                'authenticatedAs' => 3
+                'authenticatedAs' => 3,
             ])
         );
 
