@@ -4,6 +4,7 @@ import addDiscussionBadge from './addDiscussionBadge';
 import addComposerItems from './addComposerItems';
 import addPollsToPost from './addPollsToPost';
 import addPostControls from './addPostControls';
+import addNavItem from './addNavItem';
 
 export * from './components';
 export * from './models';
@@ -13,6 +14,7 @@ app.initializers.add('fof/polls', () => {
   addComposerItems();
   addPollsToPost();
   addPostControls();
+  addNavItem();
 });
 
 export { default as extend } from './extend';

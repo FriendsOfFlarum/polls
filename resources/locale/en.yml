@@ -57,6 +57,9 @@ fof-polls:
       delete_confirm: Are you sure you want to delete this poll?
       edit: Edit Poll
 
+    page:
+      nav: Polls
+
     tooltip:
       badge: Poll
       votes: "{count, plural, one {# vote} other {# votes}}"
