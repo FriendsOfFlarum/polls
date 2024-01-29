@@ -15,10 +15,10 @@ export default class PollOption extends Component {
         />
         <span className="ddd">
           <span id="privacy-setting-1-label" className="fff">
-            Private to Project Members test
+            Private to Project Members test 23
           </span>
           <span id="privacy-setting-1-description" className="ggg">
-            Only members of this project would be able to access
+            Only members of this project would be able to access 3
           </span>
         </span>
       </label>
