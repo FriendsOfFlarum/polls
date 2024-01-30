@@ -7,6 +7,6 @@ interface PollTitleAttrs extends ComponentAttrs {
 
 export default class PollTitle extends Component<PollTitleAttrs> {
   view(): Mithril.Children {
-    return <p className="Poll-title">{this.attrs.text}</p>;
+    return <h2 className="Poll-title">{this.attrs.text}</h2>;
   }
 }
