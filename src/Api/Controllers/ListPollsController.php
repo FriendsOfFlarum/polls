@@ -12,11 +12,11 @@
 namespace FoF\Polls\Api\Controllers;
 
 use Flarum\Api\Controller\AbstractListController;
-use Flarum\Database\Eloquent\Collection;
 use Flarum\Http\RequestUtil;
 use Flarum\Http\UrlGenerator;
 use FoF\Polls\Api\Serializers\PollSerializer;
 use FoF\Polls\Poll;
+use Illuminate\Database\Eloquent\Collection;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
 
