@@ -11,7 +11,7 @@ export default class PollOption extends Model {
     return Model.attribute<string>('imageUrl').call(this);
   }
 
-  vouteCount() {
+  voteCount() {
     return Model.attribute<number>('voteCount').call(this);
   }
 

@@ -60,15 +60,15 @@ export default class Poll extends Model {
   }
 
   options() {
-    return Model.hasMany<PollOption>('options');
+    return Model.hasMany<PollOption>('options').call(this);
   }
 
   votes() {
-    return Model.hasMany<PollVote>('votes');
+    return Model.hasMany<PollVote>('votes').call(this);
   }
 
   myVotes() {
-    return Model.hasMany<PollVote>('myVotes');
+    return Model.hasMany<PollVote>('myVotes').call(this);
   }
 
   apiEndpoint() {

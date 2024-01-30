@@ -5,23 +5,23 @@ import User from 'flarum/common/models/User';
 
 export default class PollVote extends Model {
   poll() {
-    return Model.hasOne<Poll>('poll');
+    return Model.hasOne<Poll>('poll').call(this);
   }
 
   option() {
-    return Model.hasOne<PollOption>('option');
+    return Model.hasOne<PollOption>('option').call(this);
   }
 
   user() {
-    return Model.hasOne<User>('user');
+    return Model.hasOne<User>('user').call(this);
   }
 
   pollId() {
-    return Model.attribute<number>('pollId');
+    return Model.attribute<number>('pollId').call(this);
   }
 
   optionId() {
-    return Model.attribute<number>('optionId');
+    return Model.attribute<number>('optionId').call(this);
   }
 
   apiEndpoint() {
