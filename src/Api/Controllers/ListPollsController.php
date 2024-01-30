@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FoF\Polls\Api\Controllers;
 
 use Flarum\Api\Controller\AbstractListController;
@@ -26,7 +35,7 @@ class ListPollsController extends AbstractListController
      * @var UrlGenerator
      */
     protected $url;
-    
+
     public function __construct(UrlGenerator $url)
     {
         $this->url = $url;
@@ -51,7 +60,7 @@ class ListPollsController extends AbstractListController
             ->orderBy('id')
             ->skip($offset)
             ->take($limit);
-        
+
         $totalItems = $results->count();
         $results = $results->get();
 
