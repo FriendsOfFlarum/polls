@@ -15,7 +15,6 @@ use Flarum\Api\Controller\AbstractListController;
 use Flarum\Http\RequestUtil;
 use Flarum\Http\UrlGenerator;
 use FoF\Polls\Api\Serializers\PollSerializer;
-use FoF\Polls\Poll;
 use FoF\Polls\PollRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Psr\Http\Message\ServerRequestInterface;
