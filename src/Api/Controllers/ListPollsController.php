@@ -16,6 +16,7 @@ use Flarum\Http\RequestUtil;
 use Flarum\Http\UrlGenerator;
 use FoF\Polls\Api\Serializers\PollSerializer;
 use FoF\Polls\Poll;
+use FoF\Polls\PollRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
@@ -32,12 +33,18 @@ class ListPollsController extends AbstractListController
     ];
 
     /**
+     * @var PollRepository
+     */
+    protected $polls;
+
+    /**
      * @var UrlGenerator
      */
     protected $url;
 
-    public function __construct(UrlGenerator $url)
+    public function __construct(PollRepository $polls, UrlGenerator $url)
     {
+        $this->polls = $polls;
         $this->url = $url;
     }
 
@@ -47,17 +54,16 @@ class ListPollsController extends AbstractListController
 
         // Not yet needed, but here if/when we do.
         // $filters = $this->extractFilter($request);
-        // $sort = $this->extractSort($request);
-        // $sortIsDefault = $this->sortIsDefault($request);
+        $sort = $this->extractSort($request);
+        $sortIsDefault = $this->sortIsDefault($request);
 
         $limit = $this->extractLimit($request);
         $offset = $this->extractOffset($request);
         $include = $this->extractInclude($request);
 
-        $results = Poll::query()
+        $results = $this->polls->queryVisibleTo($actor)
             ->select('polls.*')
-            ->whereVisibleTo($actor)
-            ->orderBy('id')
+            ->orderBy($sortIsDefault ? 'id' : $sort, 'desc')
             ->skip($offset)
             ->take($limit);
 
