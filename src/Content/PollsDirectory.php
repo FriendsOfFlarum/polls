@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FoF\Polls\Content;
 
 use Flarum\Api\Client;
@@ -55,7 +64,7 @@ class PollsDirectory
 
         return json_decode($this->api->withQueryParams($params)->withParentRequest($request)->get('/fof/polls')->getBody());
     }
-    
+
     public function __invoke(Document $document, ServerRequestInterface $request): Document
     {
         $queryParams = $request->getQueryParams();
