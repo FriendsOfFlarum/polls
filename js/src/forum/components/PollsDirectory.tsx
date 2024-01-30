@@ -76,7 +76,7 @@ export default class PollsDirectory extends Page {
           icon: 'fas fa-poll',
         },
         app.translator.trans('fof-polls.forum.page.nav')
-      ),
+      )
     );
 
     return items;
