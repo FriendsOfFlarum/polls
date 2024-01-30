@@ -24,6 +24,7 @@ export default class PollOption extends Model {
   }
 
   apiEndpoint() {
+    /** @ts-ignore */
     return `/fof/polls/answers${this.exists ? `/${this.data.id}` : ''}`;
   }
 }

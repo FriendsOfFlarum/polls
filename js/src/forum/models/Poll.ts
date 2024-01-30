@@ -72,6 +72,7 @@ export default class Poll extends Model {
   }
 
   apiEndpoint() {
+    /** @ts-ignore */
     return `/fof/polls${this.exists ? `/${this.data.id}` : ''}`;
   }
 }
