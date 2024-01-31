@@ -62,6 +62,7 @@ class ListPollsController extends AbstractListController
 
         $results = $this->polls->queryVisibleTo($actor)
             ->select('polls.*')
+            //->whereNull('post_id')
             ->orderBy($sortIsDefault ? 'id' : $sort, 'desc')
             ->skip($offset)
             ->take($limit);

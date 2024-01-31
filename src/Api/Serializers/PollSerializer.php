@@ -12,6 +12,7 @@
 namespace FoF\Polls\Api\Serializers;
 
 use Flarum\Api\Serializer\AbstractSerializer;
+use Flarum\Api\Serializer\PostSerializer;
 use FoF\Polls\Poll;
 
 class PollSerializer extends AbstractSerializer
@@ -45,6 +46,7 @@ class PollSerializer extends AbstractSerializer
             'canDelete'          => $this->actor->can('delete', $poll),
             'canSeeVoters'       => $this->actor->can('seeVoters', $poll),
             'canChangeVote'      => $this->actor->can('changeVote', $poll),
+            'isGlobal'           => $poll->isGlobal(),
         ];
 
         if ($this->actor->can('seeVoteCount', $poll)) {
