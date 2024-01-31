@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FoF\Polls\Tests\integration\api;
 
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
@@ -19,7 +28,7 @@ class CreatePollTest extends TestCase
         $this->prepareDatabase([
             'users' => [
                 $this->normalUser(),
-                ['id' => 3, 'username' => 'polluser', 'email' => 'polluser@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => true]
+                ['id' => 3, 'username' => 'polluser', 'email' => 'polluser@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => true],
             ],
             'discussions' => [
                 ['id' => 1, 'title' => 'Discussion 1', 'comment_count' => 1, 'participant_count' => 1, 'created_at' => '2021-01-01 00:00:00'],
@@ -40,7 +49,7 @@ class CreatePollTest extends TestCase
     {
         return [
             [1],
-            [3]
+            [3],
         ];
     }
 
@@ -53,6 +62,7 @@ class CreatePollTest extends TestCase
 
     /**
      * @dataProvider authorizedUserProvider
+     *
      * @test
      */
     public function authorized_user_can_create_poll_in_post(int $userId)
@@ -63,19 +73,19 @@ class CreatePollTest extends TestCase
                 '/api/posts',
                 [
                     'authenticatedAs' => $userId,
-                    'json' => [
+                    'json'            => [
                         'data' => [
                             'attributes' => [
                                 'content' => 'Here is my poll',
-                                'poll' => [
-                                    'question' => 'What is your favourite colour?',
-                                    'publicPoll' => false,
-                                    'hideVotes' => false,
-                                    'allowChangeVote' => true,
+                                'poll'    => [
+                                    'question'           => 'What is your favourite colour?',
+                                    'publicPoll'         => false,
+                                    'hideVotes'          => false,
+                                    'allowChangeVote'    => true,
                                     'allowMultipleVotes' => false,
-                                    'maxVotes' => 0,
-                                    'endDate' => false,
-                                    'options' => [
+                                    'maxVotes'           => 0,
+                                    'endDate'            => false,
+                                    'options'            => [
                                         [
                                             'answer' => 'Red',
                                         ],
@@ -92,11 +102,11 @@ class CreatePollTest extends TestCase
                                 'discussion' => [
                                     'data' => [
                                         'type' => 'discussions',
-                                        'id' => 1,
+                                        'id'   => 1,
                                     ],
                                 ],
-                            ]
-                        ]
+                            ],
+                        ],
                     ],
                 ]
             )
@@ -121,7 +131,7 @@ class CreatePollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'GET',
-                '/api/fof/polls/' . $pollId,
+                '/api/fof/polls/'.$pollId,
                 [
                     'authenticatedAs' => $userId,
                 ]
@@ -137,6 +147,7 @@ class CreatePollTest extends TestCase
 
     /**
      * @dataProvider unauthorizedUserProvider
+     *
      * @test
      */
     public function unauthorized_user_cannot_create_poll_in_post(int $userId)
@@ -147,19 +158,19 @@ class CreatePollTest extends TestCase
                 '/api/posts',
                 [
                     'authenticatedAs' => $userId,
-                    'json' => [
+                    'json'            => [
                         'data' => [
                             'attributes' => [
                                 'content' => 'Here is my poll',
-                                'poll' => [
-                                    'question' => 'What is your favourite colour?',
-                                    'publicPoll' => false,
-                                    'hideVotes' => false,
-                                    'allowChangeVote' => true,
+                                'poll'    => [
+                                    'question'           => 'What is your favourite colour?',
+                                    'publicPoll'         => false,
+                                    'hideVotes'          => false,
+                                    'allowChangeVote'    => true,
                                     'allowMultipleVotes' => false,
-                                    'maxVotes' => 0,
-                                    'endDate' => false,
-                                    'options' => [
+                                    'maxVotes'           => 0,
+                                    'endDate'            => false,
+                                    'options'            => [
                                         [
                                             'answer' => 'Red',
                                         ],
@@ -176,11 +187,11 @@ class CreatePollTest extends TestCase
                                 'discussion' => [
                                     'data' => [
                                         'type' => 'discussions',
-                                        'id' => 1,
+                                        'id'   => 1,
                                     ],
                                 ],
-                            ]
-                        ]
+                            ],
+                        ],
                     ],
                 ]
             )
