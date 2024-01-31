@@ -257,6 +257,13 @@ class CreatePollTest extends TestCase
         $attributes = $data['attributes'];
 
         $this->assertEquals('Add a poll to an existing post', $attributes['question']);
+
+        $pollId = $data['id'];
+        $this->assertNotNull($pollId);
+
+        $poll = Poll::find($pollId);
+        $this->assertNotNull($poll);
+        $this->assertEquals(1, $poll->post_id);
     }
 
     /**
