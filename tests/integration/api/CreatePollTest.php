@@ -435,4 +435,45 @@ class CreatePollTest extends TestCase
 
         $this->assertTrue($json['data']['attributes']['isGlobal']);
     }
+
+    /**
+     * @dataProvider unauthorizedUserProvider
+     *
+     * @test
+     */
+    public function unauthorized_user_cannot_create_global_poll_on_api(int $userId)
+    {
+        $response = $this->send(
+            $this->request(
+                'POST',
+                '/api/fof/polls',
+                [
+                    'authenticatedAs' => $userId,
+                    'json'            => [
+                        'data' => [
+                            'attributes' => [
+                                'question'           => 'Add a global poll',
+                                'publicPoll'         => false,
+                                'hideVotes'          => false,
+                                'allowChangeVote'    => true,
+                                'allowMultipleVotes' => false,
+                                'maxVotes'           => 0,
+                                'endDate'            => false,
+                                'options'            => [
+                                    [
+                                        'answer' => 'Yes',
+                                    ],
+                                    [
+                                        'answer' => 'No',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        $this->assertEquals(403, $response->getStatusCode());
+    }
 }
