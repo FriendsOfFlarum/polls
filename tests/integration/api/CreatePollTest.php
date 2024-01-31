@@ -45,7 +45,7 @@ class CreatePollTest extends TestCase
         ]);
     }
 
-    private function authorizedUserProvider(): array
+    protected function authorizedUserProvider(): array
     {
         return [
             [1],
@@ -53,7 +53,7 @@ class CreatePollTest extends TestCase
         ];
     }
 
-    private function unauthorizedUserProvider(): array
+    protected function unauthorizedUserProvider(): array
     {
         return [
             [2],
