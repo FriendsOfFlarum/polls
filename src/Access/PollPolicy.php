@@ -23,7 +23,7 @@ class PollPolicy extends AbstractPolicy
             return $this->deny();
         }
 
-        if ($poll->myVotes($actor)->count() || $actor->can('polls.viewResultsWithoutVoting', $poll->post->discussion)) {
+        if ($poll->myVotes($actor)->count() || $actor->can('polls.viewResultsWithoutVoting', $poll->post ? $poll->post->discussion : null)) {
             return $this->allow();
         }
     }
@@ -48,7 +48,7 @@ class PollPolicy extends AbstractPolicy
 
     public function vote(User $actor, Poll $poll)
     {
-        if ($actor->can('polls.vote', $poll->post->discussion) && !$poll->hasEnded()) {
+        if ($actor->can('polls.vote', $poll->post ? $poll->post->discussion : null) && !$poll->hasEnded()) {
             return $this->allow();
         }
     }
@@ -62,7 +62,7 @@ class PollPolicy extends AbstractPolicy
 
     public function edit(User $actor, Poll $poll)
     {
-        if ($actor->can('polls.moderate', $poll->post->discussion)) {
+        if ($actor->can('polls.moderate', $poll->post ? $poll->post->discussion : null)) {
             return $this->allow();
         }
 

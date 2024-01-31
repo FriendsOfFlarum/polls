@@ -41,6 +41,7 @@ class CreatePollTest extends TestCase
             ],
             'group_permission' => [
                 ['permission' => 'discussion.polls.start', 'group_id' => 4],
+                ['permission' => 'startGlobalPoll', 'group_id' => 4],
             ],
         ]);
     }
@@ -313,5 +314,125 @@ class CreatePollTest extends TestCase
         );
 
         $this->assertEquals(403, $response->getStatusCode());
+    }
+
+    /**
+     * @dataProvider authorizedUserProvider
+     *
+     * @test
+     */
+    public function authorized_user_cannot_create_post_poll_with_invalid_postId(int $userId)
+    {
+        $response = $this->send(
+            $this->request(
+                'POST',
+                '/api/fof/polls',
+                [
+                    'authenticatedAs' => $userId,
+                    'json'            => [
+                        'data' => [
+                            'attributes' => [
+                                'question'           => 'Add a poll to an existing post',
+                                'publicPoll'         => false,
+                                'hideVotes'          => false,
+                                'allowChangeVote'    => true,
+                                'allowMultipleVotes' => false,
+                                'maxVotes'           => 0,
+                                'endDate'            => false,
+                                'options'            => [
+                                    [
+                                        'answer' => 'Yes',
+                                    ],
+                                    [
+                                        'answer' => 'No',
+                                    ],
+                                ],
+                            ],
+                            'relationships' => [
+                                'post' => [
+                                    'data' => [
+                                        'type' => 'posts',
+                                        'id'   => 299,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        $this->assertEquals(404, $response->getStatusCode());
+    }
+
+    /**
+     * @dataProvider authorizedUserProvider
+     *
+     * @test
+     */
+    public function authorized_user_can_create_global_poll_on_api(int $userId)
+    {
+        $response = $this->send(
+            $this->request(
+                'POST',
+                '/api/fof/polls',
+                [
+                    'authenticatedAs' => $userId,
+                    'json'            => [
+                        'data' => [
+                            'attributes' => [
+                                'question'           => 'Add a global poll',
+                                'publicPoll'         => false,
+                                'hideVotes'          => false,
+                                'allowChangeVote'    => true,
+                                'allowMultipleVotes' => false,
+                                'maxVotes'           => 0,
+                                'endDate'            => false,
+                                'options'            => [
+                                    [
+                                        'answer' => 'Yes',
+                                    ],
+                                    [
+                                        'answer' => 'No',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        $this->assertEquals(201, $response->getStatusCode());
+
+        $json = json_decode($response->getBody()->getContents(), true);
+
+        $data = $json['data'];
+        $attributes = $data['attributes'];
+
+        $this->assertEquals('Add a global poll', $attributes['question']);
+
+        $pollId = $data['id'];
+        $this->assertNotNull($pollId);
+
+        $poll = Poll::find($pollId);
+        $this->assertNotNull($poll);
+        $this->assertNull($poll->post_id);
+
+        $response = $this->send(
+            $this->request(
+                'GET',
+                '/api/fof/polls/'.$pollId,
+                [
+                    'authenticatedAs' => $userId,
+                ]
+            )
+        );
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $json = json_decode($response->getBody()->getContents(), true);
+
+        $this->assertTrue($json['data']['attributes']['isGlobal']);
     }
 }
