@@ -34,7 +34,7 @@ class CreatePollTest extends TestCase
                 ['id' => 1, 'title' => 'Discussion 1', 'comment_count' => 1, 'participant_count' => 1, 'created_at' => '2021-01-01 00:00:00'],
             ],
             'posts' => [
-                ['id' => 1, 'user_id' => 1, 'discussion_id' => 1, 'number' => 1, 'created_at' => '2021-01-01 00:00:00', 'content' => 'Post 1'],
+                ['id' => 1, 'user_id' => 1, 'discussion_id' => 1, 'number' => 1, 'created_at' => '2021-01-01 00:00:00', 'content' => 'Post 1', 'type' => 'comment'],
             ],
             'group_user' => [
                 ['user_id' => 3, 'group_id' => 4],
@@ -202,5 +202,107 @@ class CreatePollTest extends TestCase
 
         $this->assertEquals('validation_error', $errors[0]['code']);
         $this->assertEquals('/data/attributes/poll', $errors[0]['source']['pointer']);
+    }
+
+    /**
+     * @dataProvider authorizedUserProvider
+     * @test
+     */
+    public function authorized_user_can_create_post_poll_on_api(int $userId)
+    {
+        $response = $this->send(
+            $this->request(
+                'POST',
+                '/api/fof/polls',
+                [
+                    'authenticatedAs' => $userId,
+                    'json'            => [
+                        'data' => [
+                            'attributes' => [
+                                'question'           => 'Add a poll to an existing post',
+                                'publicPoll'         => false,
+                                'hideVotes'          => false,
+                                'allowChangeVote'    => true,
+                                'allowMultipleVotes' => false,
+                                'maxVotes'           => 0,
+                                'endDate'            => false,
+                                'options'            => [
+                                    [
+                                        'answer' => 'Yes',
+                                    ],
+                                    [
+                                        'answer' => 'No',
+                                    ],
+                                ],
+                            ],
+                            'relationships' => [
+                                'post' => [
+                                    'data' => [
+                                        'type' => 'posts',
+                                        'id'   => 1,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        $this->assertEquals(201, $response->getStatusCode());
+
+        $json = json_decode($response->getBody()->getContents(), true);
+        $data = $json['data'];
+        $attributes = $data['attributes'];
+
+        $this->assertEquals('Add a poll to an existing post', $attributes['question']);
+    }
+
+    /**
+     * @dataProvider unauthorizedUserProvider
+     * @test
+     */
+    public function unauthorized_user_cannot_create_post_poll_on_api(int $userId)
+    {
+        $response = $this->send(
+            $this->request(
+                'POST',
+                '/api/fof/polls',
+                [
+                    'authenticatedAs' => $userId,
+                    'json'            => [
+                        'data' => [
+                            'attributes' => [
+                                'question'           => 'Add a poll to an existing post',
+                                'publicPoll'         => false,
+                                'hideVotes'          => false,
+                                'allowChangeVote'    => true,
+                                'allowMultipleVotes' => false,
+                                'maxVotes'           => 0,
+                                'endDate'            => false,
+                                'options'            => [
+                                    [
+                                        'answer' => 'Yes',
+                                    ],
+                                    [
+                                        'answer' => 'No',
+                                    ],
+                                ],
+                            ],
+                            'relationships' => [
+                                'post' => [
+                                    'data' => [
+                                        'type' => 'posts',
+                                        'id'   => 1,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        $this->assertEquals(403, $response->getStatusCode());
     }
 }
