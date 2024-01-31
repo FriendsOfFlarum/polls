@@ -206,6 +206,7 @@ class CreatePollTest extends TestCase
 
     /**
      * @dataProvider authorizedUserProvider
+     *
      * @test
      */
     public function authorized_user_can_create_post_poll_on_api(int $userId)
@@ -260,6 +261,7 @@ class CreatePollTest extends TestCase
 
     /**
      * @dataProvider unauthorizedUserProvider
+     *
      * @test
      */
     public function unauthorized_user_cannot_create_post_poll_on_api(int $userId)
