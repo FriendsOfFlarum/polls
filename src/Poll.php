@@ -85,6 +85,11 @@ class Poll extends AbstractModel
         return $poll;
     }
 
+    public function isGlobal(): bool
+    {
+        return $this->post_id === null;
+    }
+
     /**
      * @return bool
      */

@@ -7,7 +7,7 @@ A [Flarum](http://flarum.org) extension. A Flarum extension that adds polls to y
 ### Installation
 
 ```sh
-composer require fof/polls
+composer require fof/polls:"*"
 ```
 
 #### Migrating from ReFlar Polls
@@ -48,5 +48,6 @@ You can only run the command when the extension is enabled in the admin panel.
 
 - [Packagist](https://packagist.org/packages/fof/polls)
 - [GitHub](https://github.com/packages/FriendsOfFlarum/polls)
+- [Discuss](https://discuss.flarum.org/d/20586)
 
 An extension by [FriendsOfFlarum](https://github.com/FriendsOfFlarum).

@@ -39,6 +39,14 @@ app.initializers.add('fof/polls', () => {
     )
     .registerPermission(
       {
+        icon: 'fas fa-signal',
+        label: app.translator.trans('fof-polls.admin.permissions.start_global'),
+        permission: 'startGlobalPoll',
+      },
+      'start'
+    )
+    .registerPermission(
+      {
         icon: 'fas fa-pencil-alt',
         label: app.translator.trans('fof-polls.admin.permissions.self_edit'),
         permission: 'polls.selfEdit',

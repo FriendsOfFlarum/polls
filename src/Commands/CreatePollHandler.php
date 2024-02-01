@@ -61,7 +61,11 @@ class CreatePollHandler
 
     public function handle(CreatePoll $command)
     {
-        $command->actor->assertCan('startPoll', $command->post);
+        if ($command->post) {
+            $command->actor->assertCan('startPoll', $command->post);
+        } else {
+            $command->actor->assertCan('startGlobalPoll');
+        }
 
         $attributes = $command->data;
 
@@ -98,7 +102,7 @@ class CreatePollHandler
 
             $poll = Poll::build(
                 Arr::get($attributes, 'question'),
-                $command->post->id,
+                $command->post ? $command->post->id : null,
                 $command->actor->id,
                 $carbonDate != null ? $carbonDate->utc() : null,
                 Arr::get($attributes, 'publicPoll'),

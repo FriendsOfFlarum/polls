@@ -5,6 +5,7 @@ import addComposerItems from './addComposerItems';
 import addPollsLink from './addPollsLink';
 import addPollsToPost from './addPollsToPost';
 import addPostControls from './addPostControls';
+import addNavItem from './addNavItem';
 
 export * from './components';
 export * from './models';
@@ -17,12 +18,7 @@ app.initializers.add('fof/polls', () => {
   addPollsLink();
   addPollsToPost();
   addPostControls();
-
-  // TMP
-  app.routes.polls = {
-    path: '/polls',
-    component: PollsPage,
-  };
+  addNavItem();
 });
 
 export { default as extend } from './extend';

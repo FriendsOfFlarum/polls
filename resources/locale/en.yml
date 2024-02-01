@@ -8,6 +8,7 @@ fof-polls:
     permissions:
       view_results_without_voting: View results without voting
       start: Start a poll
+      start_global: Start a global poll
       self_edit: Edit created polls (requires post edit permission)
       self_post_edit: Edit *all* polls on own posts (requires post edit permission)
       vote: Vote on polls
@@ -56,6 +57,9 @@ fof-polls:
       delete: Remove Poll
       delete_confirm: Are you sure you want to delete this poll?
       edit: Edit Poll
+
+    page:
+      nav: Polls
 
     tooltip:
       badge: Poll

@@ -25,18 +25,19 @@ use FoF\Polls\Api\Serializers\PollSerializer;
 
 return [
     (new Extend\Frontend('forum'))
-        ->js(__DIR__.'/js/dist/forum.js')
-        ->css(__DIR__.'/resources/less/forum.less')
-        ->route('/polls', 'polls'),
+        ->js(__DIR__ . '/js/dist/forum.js')
+        ->css(__DIR__ . '/resources/less/forum.less')
+        ->route('/polls', 'fof_polls_directory', Content\PollsDirectory::class),
 
     (new Extend\Frontend('admin'))
-        ->js(__DIR__.'/js/dist/admin.js')
-        ->css(__DIR__.'/resources/less/admin.less'),
+        ->js(__DIR__ . '/js/dist/admin.js')
+        ->css(__DIR__ . '/resources/less/admin.less'),
 
-    new Extend\Locales(__DIR__.'/resources/locale'),
+    new Extend\Locales(__DIR__ . '/resources/locale'),
 
     (new Extend\Routes('api'))
         ->post('/fof/polls', 'fof.polls.create', Controllers\CreatePollController::class)
+        ->get('/fof/polls', 'fof.polls.index', Controllers\ListGlobalPollsController::class)
         ->get('/fof/polls/{id}', 'fof.polls.show', Controllers\ShowPollController::class)
         ->patch('/fof/polls/{id}', 'fof.polls.edit', Controllers\EditPollController::class)
         ->delete('/fof/polls/{id}', 'fof.polls.delete', Controllers\DeletePollController::class)
@@ -50,34 +51,17 @@ return [
 
     (new Extend\Event())
         ->listen(PostSaving::class, Listeners\SavePollsToDatabase::class)
-        ->listen(SettingsSaved::class, function (SettingsSaved $event) {
-            foreach ($event->settings as $key => $value) {
-                if ($key === 'fof-polls.optionsColorBlend') {
-                    resolve('fof-user-bio.formatter')->flush();
-
-                    return;
-                }
-            }
-        }),
+        ->listen(SettingsSaved::class, Listeners\ClearFormatterCache::class),
 
     (new Extend\ApiSerializer(DiscussionSerializer::class))
-        ->attribute('hasPoll', function (DiscussionSerializer $serializer, Discussion $discussion): bool {
-            return $discussion->polls()->exists();
-        })
-        ->attribute('canStartPoll', function (DiscussionSerializer $serializer, Discussion $discussion): bool {
-            return $serializer->getActor()->can('polls.start', $discussion);
-        }),
+        ->attributes(Api\AddDiscussionAttributes::class),
 
     (new Extend\ApiSerializer(PostSerializer::class))
         ->hasMany('polls', PollSerializer::class)
-        ->attribute('canStartPoll', function (PostSerializer $serializer, Post $post): bool {
-            return $serializer->getActor()->can('startPoll', $post);
-        }),
+        ->attributes(Api\AddPostAttributes::class),
 
     (new Extend\ApiSerializer(ForumSerializer::class))
-        ->attribute('canStartPolls', function (ForumSerializer $serializer): bool {
-            return $serializer->getActor()->can('discussion.polls.start');
-        }),
+        ->attributes(Api\AddForumAttributes::class),
 
     (new Extend\ApiController(Controller\ListDiscussionsController::class))
         ->addOptionalInclude(['firstPost.polls']),
@@ -112,6 +96,7 @@ return [
     (new Extend\Settings())
         ->default('fof-polls.maxOptions', 10)
         ->default('fof-polls.optionsColorBlend', true)
+        ->default('fof-polls.directory-default-sort', 'default')
         ->serializeToForum('allowPollOptionImage', 'fof-polls.allowOptionImage', 'boolval')
         ->serializeToForum('pollMaxOptions', 'fof-polls.maxOptions', 'intval')
         ->registerLessConfigVar('fof-polls-options-color-blend', 'fof-polls.optionsColorBlend', function ($value) {
@@ -120,4 +105,7 @@ return [
 
     (new Extend\ModelVisibility(Poll::class))
         ->scope(Access\ScopePollVisibility::class),
+
+    (new Extend\View())
+        ->namespace('fof-polls', __DIR__ . '/resources/views'),
 ];

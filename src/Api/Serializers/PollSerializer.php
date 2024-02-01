@@ -45,6 +45,7 @@ class PollSerializer extends AbstractSerializer
             'canDelete'          => $this->actor->can('delete', $poll),
             'canSeeVoters'       => $this->actor->can('seeVoters', $poll),
             'canChangeVote'      => $this->actor->can('changeVote', $poll),
+            'isGlobal'           => $poll->isGlobal(),
         ];
 
         if ($this->actor->can('seeVoteCount', $poll)) {
