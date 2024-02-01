@@ -1,5 +1,6 @@
 :root {
   --poll-option-color: var(--muted-color);
+  --poll-option-accent-color: var(--primary-color);
   --poll-option-active-color: var(--secondary-color);
 }
 
@@ -99,7 +100,8 @@
   }
 
   .Checkbox.disabled {
-    &, [disabled] {
+    &,
+    [disabled] {
       cursor: not-allowed;
     }
 
@@ -121,7 +123,8 @@
     align-items: start;
 
     .PollAnswer when (@fof-polls-options-color-blend = true) {
-      &-checkbox, &-text {
+      &-checkbox,
+      &-text {
         & when (@config-dark-mode =true) {
           mix-blend-mode: difference;
         }
@@ -169,7 +172,7 @@
     }
 
     &-voters {
-      .Button--color-auto('button-primary');
+      .Button--color-auto("button-primary");
     }
 
     .Button {
@@ -184,7 +187,8 @@
 }
 
 .PollOption {
-  &, .PollBar {
+  &,
+  .PollBar {
     border-radius: 4px;
   }
 
@@ -207,7 +211,7 @@
     font-size: 85%;
     font-weight: 600;
     display: inline-block;
-    padding: .1em .5em;
+    padding: 0.1em 0.5em;
     border-radius: 4px;
     background: transparent;
     color: var(--muted-color);
@@ -275,7 +279,7 @@
       );
       background-size: var(--poll-option-width) 100%;
       background-repeat: no-repeat;
-      content: '';
+      content: "";
     }
 
     .PollAnswer {
@@ -393,4 +397,103 @@
   to {
     background-size: var(--poll-option-width) 100%;
   }
+}
+
+.Poll {
+  // display: flex;
+  // gap: 10px;
+}
+
+.Poll-description {
+  color: var(--muted-color);
+}
+
+.Poll-options {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 10px;
+  border-radius: var(--border-radius);
+
+  &.grid-layout {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  &.list-layout {
+    flex-direction: column;
+  }
+}
+
+.PollOption-tmp {
+  display: flex;
+  position: relative;
+  padding: 10px;
+  // border-color: var(--poll-option-color);
+  // border-width: 1px;
+  // border-style: solid;
+  background: var(--body-bg);
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--control-bg-light);
+  }
+}
+
+.PollResult {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  padding: 10px;
+  // border-color: var(--poll-option-color);
+  // border-width: 1px;
+  // border-style: solid;
+  border-radius: 4px;
+}
+
+.PollResult-input,
+.PollOption-input {
+  accent-color: var(--poll-option-accent-color);
+}
+
+.PollResult-input {
+  pointer-events: none;
+}
+
+.PollOption-information {
+  display: flex;
+  margin-left: 10px;
+  flex-direction: column;
+}
+
+.PollResults-row {
+  display: flex;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+.PollResult-information {
+  display: flex;
+  margin-left: 10px;
+  justify-content: space-between;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.Poll-title,
+.PollResult-number {
+  font-weight: 600;
+}
+
+.PollOption-label {
+  display: block;
+  font-weight: 600;
+}
+
+.PollOption-description {
+  display: block;
+  color: var(--muted-color);
+}
+
+.PollOption-tmp:has(.PollOption-input:checked) {
+  border-color: var(--poll-option-active-color);
+  background: var(--control-bg-shaded);
 }
