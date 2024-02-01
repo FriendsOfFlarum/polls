@@ -71,6 +71,10 @@ export default class Poll extends Model {
     return Model.hasMany<PollVote>('myVotes').call(this);
   }
 
+  isGlobal() {
+    return Model.attribute<boolean>('isGlobal').call(this);
+  }
+
   apiEndpoint() {
     /** @ts-ignore */
     return `/fof/polls${this.exists ? `/${this.data.id}` : ''}`;
