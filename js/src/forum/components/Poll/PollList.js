@@ -16,7 +16,7 @@ export default class PollList extends Component {
      */
     const state = this.attrs.state;
 
-    const params = state.getParams();
+    // const params = state.getParams();
     const isLoading = state.isInitialLoading() || state.isLoadingNext();
 
     let loading;
@@ -36,7 +36,7 @@ export default class PollList extends Component {
       {
         /* TODO: IS THIS THE RIGHT KEY? MAYBE WE SHOULD MAKE A NEW ONE? */
       }
-      const text = app.translator.trans('core.forum.discussion_list.empty_text');
+      const text = app.translator.trans('fof-polls.forum.polls_list.empty_text');
       return (
         <div className="PollList">
           <Placeholder text={text} />

@@ -119,7 +119,7 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
     const poll = this.attrs.poll;
 
     return (
-      <Link href={app.route.poll(poll)} className="PollListItem-main">
+      <Link href={app.route('poll', { id: poll.id() })} className="PollListItem-main">
         <h2 className="PollListItem-title">{highlight(poll.title(), this.highlightRegExp)}</h2>
         {/* <ul className="PollListItem-info">{listItems(this.infoItems().toArray())}</ul> */}
       </Link>
