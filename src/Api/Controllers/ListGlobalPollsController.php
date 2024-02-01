@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
 
-class ListPollsController extends AbstractListController
+class ListGlobalPollsController extends AbstractListController
 {
     public $serializer = PollSerializer::class;
 
@@ -62,7 +62,7 @@ class ListPollsController extends AbstractListController
 
         $results = $this->polls->queryVisibleTo($actor)
             ->select('polls.*')
-            //->whereNull('post_id')
+            ->whereNull('post_id')
             ->orderBy($sortIsDefault ? 'id' : $sort, 'desc')
             ->skip($offset)
             ->take($limit);

@@ -37,7 +37,7 @@ return [
 
     (new Extend\Routes('api'))
         ->post('/fof/polls', 'fof.polls.create', Controllers\CreatePollController::class)
-        ->get('/fof/polls', 'fof.polls.index', Controllers\ListPollsController::class)
+        ->get('/fof/polls', 'fof.polls.index', Controllers\ListGlobalPollsController::class)
         ->get('/fof/polls/{id}', 'fof.polls.show', Controllers\ShowPollController::class)
         ->patch('/fof/polls/{id}', 'fof.polls.edit', Controllers\EditPollController::class)
         ->delete('/fof/polls/{id}', 'fof.polls.delete', Controllers\DeletePollController::class)
