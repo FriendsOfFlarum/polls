@@ -25,6 +25,8 @@ fof-polls:
     poll:
       cannot_change_vote: You cannot change your vote after voting.
       submit_button: Vote
+      start_poll_button: Start Global Poll
+      cannot_start_poll_button: Cannot Start Poll
 
     composer_discussion:
       add_poll: => fof-polls.forum.moderation.add
