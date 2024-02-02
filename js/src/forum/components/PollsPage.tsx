@@ -15,7 +15,7 @@ export default class PollsPage extends Page {
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
 
-    this.state = new PollListState({ sort: m.route.param('sort') });
+    this.state = new PollListState({});
     app.setTitle(extractText(app.translator.trans('fof-polls.forum.page.nav')));
   }
 

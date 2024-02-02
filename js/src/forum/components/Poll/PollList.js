@@ -15,8 +15,7 @@ export default class PollList extends Component {
      * @type {import('../../states/PollListState').default}
      */
     const state = this.attrs.state;
-
-    // const params = state.getParams();
+    const params = state.getParams();
     const isLoading = state.isInitialLoading() || state.isLoadingNext();
 
     let loading;
