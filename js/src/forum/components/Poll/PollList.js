@@ -26,16 +26,12 @@ export default class PollList extends Component {
     } else if (state.hasNext()) {
       loading = (
         <Button className="Button" onclick={state.loadNext.bind(state)}>
-          {/* TODO: IS THIS THE RIGHT KEY? MAYBE WE SHOULD MAKE A NEW ONE? */}
-          {app.translator.trans('core.forum.discussion_list.load_more_button')}
+          {app.translator.trans('fof-polls.forum.polls_list.load_more_button')}
         </Button>
       );
     }
 
     if (state.isEmpty()) {
-      {
-        /* TODO: IS THIS THE RIGHT KEY? MAYBE WE SHOULD MAKE A NEW ONE? */
-      }
       const text = app.translator.trans('fof-polls.forum.polls_list.empty_text');
       return (
         <div className="PollList">
