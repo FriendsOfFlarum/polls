@@ -3,7 +3,6 @@ import Modal from 'flarum/common/components/Modal';
 import PollForm from './PollForm';
 
 export default class CreatePollModal extends Modal {
-
   title() {
     return app.translator.trans('fof-polls.forum.modal.add_title');
   }

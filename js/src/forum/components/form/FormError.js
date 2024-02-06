@@ -1,3 +1,1 @@
-export default class FormError extends Error {
-
-}
+export default class FormError extends Error {}

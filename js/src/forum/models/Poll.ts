@@ -1,7 +1,7 @@
 import Model from 'flarum/common/Model';
 import PollOption from './PollOption';
 import PollVote from './PollVote';
-import computed from "flarum/common/utils/computed";
+import computed from 'flarum/common/utils/computed';
 
 export default class Poll extends Model {
   question() {

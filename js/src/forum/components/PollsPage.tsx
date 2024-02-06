@@ -2,18 +2,18 @@ import Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import listItems from 'flarum/common/helpers/listItems';
 import ItemList from 'flarum/common/utils/ItemList';
-import Page, {IPageAttrs} from 'flarum/common/components/Page';
+import Page, { IPageAttrs } from 'flarum/common/components/Page';
 import IndexPage from 'flarum/forum/components/IndexPage';
 import PollList from './Poll/PollList';
-import LogInModal from "flarum/forum/components/LogInModal";
+import LogInModal from 'flarum/forum/components/LogInModal';
 import extractText from 'flarum/common/utils/extractText';
 import PollListState from '../states/PollListState';
 import Button from 'flarum/common/components/Button';
 import SelectDropdown from 'flarum/common/components/SelectDropdown';
-import Acl from "../../common/Acl";
-import LoadingIndicator from "flarum/common/components/LoadingIndicator";
-import Poll from "../models/Poll";
-import IndexPolls from "./Poll";
+import Acl from '../../common/Acl';
+import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
+import Poll from '../models/Poll';
+import IndexPolls from './Poll';
 
 export default class PollsPage extends Page<IPageAttrs, PollListState> {
   loading: boolean = false;
@@ -36,8 +36,7 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
           m.redraw();
         });
       }
-    }
-    else {
+    } else {
       this.initListView();
     }
   }
@@ -62,14 +61,14 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
       return <LoadingIndicator />;
     }
 
-    if(this.poll) {
-        return (
-            <div className='PollsPage'>
-                <div className='container'>
-                    <IndexPolls poll={this.poll} />
-                </div>
-            </div>
-        );
+    if (this.poll) {
+      return (
+        <div className="PollsPage">
+          <div className="container">
+            <IndexPolls poll={this.poll} />
+          </div>
+        </div>
+      );
     }
 
     return (
@@ -154,7 +153,7 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
   /**
    * Change to create new poll page
    */
-  newPollAction():void {
+  newPollAction(): void {
     if (!app.session.user) {
       app.modal.show(LogInModal);
       return;

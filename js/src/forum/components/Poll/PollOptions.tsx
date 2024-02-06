@@ -12,8 +12,8 @@ export default class PollOptions extends Component {
 
   pollOptions(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
-    this.attrs.options.forEach((option:PollOptionModel):void => {
-        items.add('option' + option.id(), <PollOption option={option} />);
+    this.attrs.options.forEach((option: PollOptionModel): void => {
+      items.add('option' + option.id(), <PollOption option={option} />);
     });
 
     items.add('test5', <PollResult />);

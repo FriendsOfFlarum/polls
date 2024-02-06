@@ -8,8 +8,8 @@ import PollImage from './Poll/PollImage';
 
 export default class IndexPolls extends Component {
   view(): Mithril.Children {
-      /* @type Poll */
-      const poll = this.attrs.poll;
+    /* @type Poll */
+    const poll = this.attrs.poll;
 
     return (
       <div className="Poll">
