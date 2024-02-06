@@ -347,6 +347,72 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./src/forum/components/ComposePollHero.tsx":
+/*!**************************************************!*\
+  !*** ./src/forum/components/ComposePollHero.tsx ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ComposePollHero)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/esm/inheritsLoose */ "./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js");
+/* harmony import */ var flarum_forum_app__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! flarum/forum/app */ "flarum/forum/app");
+/* harmony import */ var flarum_forum_app__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(flarum_forum_app__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var flarum_common_Component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! flarum/common/Component */ "flarum/common/Component");
+/* harmony import */ var flarum_common_Component__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(flarum_common_Component__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../common */ "./src/common/index.js");
+/* harmony import */ var flarum_common_components_LinkButton__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! flarum/common/components/LinkButton */ "flarum/common/components/LinkButton");
+/* harmony import */ var flarum_common_components_LinkButton__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(flarum_common_components_LinkButton__WEBPACK_IMPORTED_MODULE_4__);
+
+
+
+
+
+var t = flarum_forum_app__WEBPACK_IMPORTED_MODULE_1___default().translator.trans.bind((flarum_forum_app__WEBPACK_IMPORTED_MODULE_1___default().translator));
+var prfx = _common__WEBPACK_IMPORTED_MODULE_3__.slug + ".forum.compose";
+var ComposePollHero = /*#__PURE__*/function (_Component) {
+  (0,_babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_0__["default"])(ComposePollHero, _Component);
+  function ComposePollHero() {
+    return _Component.apply(this, arguments) || this;
+  }
+  var _proto = ComposePollHero.prototype;
+  _proto.view = function view() {
+    var poll = this.attrs.poll;
+    return m("div", {
+      className: "ComposeGoodieCollectionHero Hero IndexPageHero"
+    }, m("div", {
+      className: "container"
+    }, m("div", {
+      className: "containerNarrow"
+    }, m("h2", {
+      className: "Hero-title"
+    }, t(prfx + "." + (!!poll.id() ? 'edit' : 'add') + "_title")), m("div", {
+      className: "IndexPageHero-controls"
+    }, m((flarum_common_components_LinkButton__WEBPACK_IMPORTED_MODULE_4___default()), {
+      icon: "far fa-edit",
+      className: "Button Button--primary IndexPage-newDiscussion GoodiesManagerLink",
+      itemClassName: "App-primaryControl",
+      href: flarum_forum_app__WEBPACK_IMPORTED_MODULE_1___default().route('fof_polls_directory')
+    }, t(prfx + ".polls_manager")), poll.exists && m((flarum_common_components_LinkButton__WEBPACK_IMPORTED_MODULE_4___default()), {
+      icon: "far fa-arrow-up-right-from-square",
+      className: "Button Button--primary IndexPage-newDiscussion GoodiePreviewLink",
+      itemClassName: "App-primaryControl",
+      href: flarum_forum_app__WEBPACK_IMPORTED_MODULE_1___default().route('goodie-collection', {
+        id: poll.id()
+      }),
+      external: true,
+      target: "_blank"
+    }, t(prfx + ".goodie_preview"))))));
+  };
+  return ComposePollHero;
+}((flarum_common_Component__WEBPACK_IMPORTED_MODULE_2___default()));
+
+
+/***/ }),
+
 /***/ "./src/forum/components/ComposePollPage.tsx":
 /*!**************************************************!*\
   !*** ./src/forum/components/ComposePollPage.tsx ***!
@@ -369,6 +435,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _common_Acl__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../common/Acl */ "./src/common/Acl.tsx");
 /* harmony import */ var _states_PollFormState__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../states/PollFormState */ "./src/forum/states/PollFormState.js");
 /* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../common */ "./src/common/index.js");
+/* harmony import */ var _ComposePollHero__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./ComposePollHero */ "./src/forum/components/ComposePollHero.tsx");
+
 
 
 
@@ -429,7 +497,9 @@ var ComposePollPage = /*#__PURE__*/function (_Page) {
     }
     return m("div", {
       className: "ComposeGoodieCollectionPage"
-    }, m("div", {
+    }, m(_ComposePollHero__WEBPACK_IMPORTED_MODULE_8__["default"], {
+      poll: this.poll
+    }), m("div", {
       className: "container"
     }, m(_PollForm__WEBPACK_IMPORTED_MODULE_4__["default"], {
       poll: this.poll

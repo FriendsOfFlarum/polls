@@ -37,6 +37,10 @@ fof-polls:
       edit_poll: => fof-polls.forum.moderation.edit
       no_permission_alert: You do not have permission to start a poll.
 
+    compose:
+      add_title: Add a Poll
+      polls_manager: Polls Manager
+
     modal:
       add_title: Add a Poll
       add_option_label: Add an Option

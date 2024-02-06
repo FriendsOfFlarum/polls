@@ -7,6 +7,7 @@ import PollForm from "./PollForm";
 import Acl from "../../common/Acl";
 import PollFormState from "../states/PollFormState";
 import {slug} from "../../common";
+import ComposePollHero from "./ComposePollHero";
 
 const t = app.translator.trans.bind(app.translator);
 const prfx = `${slug}.forum.compose`;
@@ -56,6 +57,7 @@ export default class ComposePollPage extends Page {
 
         return (
             <div className='ComposeGoodieCollectionPage'>
+                <ComposePollHero poll={this.poll} />
                 <div className='container'>
                     <PollForm poll={this.poll} />
                 </div>
