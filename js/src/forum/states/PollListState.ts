@@ -21,19 +21,18 @@ export default class PollListState<P extends PollListParams = PollListParams> ex
   }
 
   get type(): string {
-    return 'polls';
+    return 'fof/polls';
   }
 
   requestParams(): PaginatedListRequestParams {
     const params = {
-      include: ['user', 'lastPostedUser'],
+      include: ['options', 'votes'],
       filter: this.params.filter || {},
       sort: this.sortMap()[this.params.sort ?? ''],
     };
 
     if (this.params.q) {
       params.filter.q = this.params.q;
-      params.include.push('mostRelevantPoll', 'mostRelevantPoll.user');
     }
 
     return params;

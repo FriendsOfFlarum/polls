@@ -27,14 +27,14 @@ export default class ComposePollPage extends Page {
         }
 
         // Get the `edit` parameter from the URL
-        const editId = m.route.param('edit');
+        const editId = m.route.param('id');
         if (editId) {
             this.poll = app.store.getById('poll', editId);
 
             if (!this.poll) {
                 this.loading = true;
 
-                app.store.find('poll', editId).then((item) => {
+                app.store.find('fof/polls', editId).then((item) => {
                     this.poll = item;
                     this.loading = false;
                     app.setTitle(t(`${prfx}.${!!this.poll?.id() ? 'edit' : 'add'}_title`));

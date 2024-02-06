@@ -31,10 +31,10 @@ export default class ComposePollHero extends Component {
                                     icon='far fa-arrow-up-right-from-square'
                                     className='Button Button--primary IndexPage-newDiscussion GoodiePreviewLink'
                                     itemClassName='App-primaryControl'
-                                    href={app.route('goodie-collection', { id: poll.id() })}
+                                    href={app.route('fof_polls_directory', { id: poll.id() })}
                                     external={true}
                                     target='_blank'>
-                                    {t(`${prfx}.goodie_preview`)}
+                                    {t(`${prfx}.polls_preview`)}
                                 </LinkButton>
                             )}
                         </div>

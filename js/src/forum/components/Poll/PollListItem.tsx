@@ -119,8 +119,8 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
     const poll = this.attrs.poll;
 
     return (
-      <Link href={app.route('poll', { id: poll.id() })} className="PollListItem-main">
-        <h2 className="PollListItem-title">{highlight(poll.title(), this.highlightRegExp)}</h2>
+      <Link href={app.route('fof_polls_compose', { id: poll.id() })} className="PollListItem-main">
+        <h2 className="PollListItem-title">{highlight(poll.question(), this.highlightRegExp)}</h2>
         {/* <ul className="PollListItem-info">{listItems(this.infoItems().toArray())}</ul> */}
       </Link>
     );
@@ -166,19 +166,6 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
 
   voteCountItem() {
     const poll = this.attrs.poll;
-    const isUnread = poll.isUnread();
-
-    if (isUnread) {
-      return (
-        <button className="Button--ua-reset PollListItem-count" onclick={this.markAsRead.bind(this)}>
-          <span aria-hidden="true">{abbreviateNumber(poll.voteCount())}</span>
-
-          <span className="visually-hidden">
-            {app.translator.trans('core.forum.discussion_list.unread_replies_a11y_label', { count: poll.voteCount() })}
-          </span>
-        </button>
-      );
-    }
 
     return (
       <span className="PollListItem-count">

@@ -1,6 +1,7 @@
 import Model from 'flarum/common/Model';
 import PollOption from './PollOption';
 import PollVote from './PollVote';
+import computed from "flarum/common/utils/computed";
 
 export default class Poll extends Model {
   question() {
@@ -73,6 +74,15 @@ export default class Poll extends Model {
 
   isGlobal() {
     return Model.attribute<boolean>('isGlobal').call(this);
+  }
+
+  isHidden() {
+    return computed<boolean, this>('hiddenAt', (hiddenAt) => !!hiddenAt).call(this);
+  }
+
+  // TODO: These two don't make sense as of now
+  isUnread() {
+    return false;
   }
 
   apiEndpoint() {

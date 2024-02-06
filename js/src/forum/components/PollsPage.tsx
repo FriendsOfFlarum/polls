@@ -4,7 +4,6 @@ import listItems from 'flarum/common/helpers/listItems';
 import ItemList from 'flarum/common/utils/ItemList';
 import Page, {IPageAttrs} from 'flarum/common/components/Page';
 import IndexPage from 'flarum/forum/components/IndexPage';
-import Poll from './Poll';
 import PollList from './Poll/PollList';
 import LogInModal from "flarum/forum/components/LogInModal";
 import extractText from 'flarum/common/utils/extractText';
@@ -17,7 +16,13 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
 
-    this.state = new PollListState({});
+    this.state = new PollListState({
+      sort: m.route.param('sort'),
+      filter: m.route.param('filter'),
+    });
+
+    this.state.refresh();
+
     app.setTitle(extractText(app.translator.trans('fof-polls.forum.page.nav')));
   }
 
@@ -26,6 +31,7 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
   }
 
   view(): Mithril.Children {
+
     return (
       <div className="PollsPage">
         {IndexPage.prototype.hero()}
@@ -50,7 +56,6 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
   sidebarItems() {
     const items = new ItemList<Mithril.Children>();
     const canStartPoll = Acl.canStartPoll();
-    console.info(canStartPoll);
 
     items.add(
       'newGlobalPoll',
@@ -59,8 +64,6 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
         className="Button Button--primary IndexPage-newDiscussion"
         itemClassName="App-primaryControl"
         onclick={() => {
-          // If the user is not logged in, the promise rejects, and a login modal shows up.
-          // Since that's already handled, we dont need to show an error message in the console.
           this.newPollAction();
         }}
         disabled={!canStartPoll}
