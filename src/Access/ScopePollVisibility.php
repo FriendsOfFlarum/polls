@@ -19,7 +19,7 @@ class ScopePollVisibility
 {
     public function __invoke(User $actor, Builder $query)
     {
-        #@todo review condition, check if comparison against user_id is required here if post_id is null
+        //@todo review condition, check if comparison against user_id is required here if post_id is null
         $query->whereExists(function ($query) use ($actor) {
             $query->selectRaw('1')
                  ->from('posts')
