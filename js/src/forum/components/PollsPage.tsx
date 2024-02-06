@@ -1,4 +1,4 @@
-import * as Mithril from 'mithril';
+import Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import listItems from 'flarum/common/helpers/listItems';
 import ItemList from 'flarum/common/utils/ItemList';
@@ -6,10 +6,17 @@ import Page from 'flarum/common/components/Page';
 import IndexPage from 'flarum/forum/components/IndexPage';
 import Poll from './Poll';
 import PollList from './Poll/PollList';
+import extractText from 'flarum/common/utils/extractText';
+import PollListState from '../states/PollListState';
+import Button from 'flarum/common/components/Button';
+import SelectDropdown from 'flarum/common/components/SelectDropdown';
 
 export default class PollsPage extends Page {
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
+
+    this.state = new PollListState({});
+    app.setTitle(extractText(app.translator.trans('fof-polls.forum.page.nav')));
   }
 
   oncreate(vnode: Mithril.Vnode) {
@@ -30,7 +37,7 @@ export default class PollsPage extends Page {
                 <ul className="IndexPage-toolbar-view">{listItems(this.viewItems().toArray())}</ul>
                 {/* <ul className="IndexPage-toolbar-action">{listItems(this.actionItems().toArray())}</ul> */}
               </div>
-              <PollList />
+              <PollList state={this.state} />
             </div>
           </div>
         </div>
@@ -39,7 +46,39 @@ export default class PollsPage extends Page {
   }
 
   sidebarItems() {
-    return IndexPage.prototype.sidebarItems();
+    const items = new ItemList<Mithril.Children>();
+    const canStartPoll = app.forum.attribute('canStartPoll') || !app.session.user;
+    console.info(canStartPoll);
+
+    items.add(
+      'newGlobalPoll',
+      <Button
+        icon="fas fa-edit"
+        className="Button Button--primary IndexPage-newDiscussion"
+        itemClassName="App-primaryControl"
+        onclick={() => {
+          // If the user is not logged in, the promise rejects, and a login modal shows up.
+          // Since that's already handled, we dont need to show an error message in the console.
+          // return this.newPollAction().catch(() => {});
+        }}
+        disabled={!canStartPoll}
+      >
+        {app.translator.trans(`fof-polls.forum.poll.${canStartPoll ? 'start_poll_button' : 'cannot_start_poll_button'}`)}
+      </Button>
+    );
+
+    items.add(
+      'nav',
+      <SelectDropdown
+        buttonClassName="Button"
+        className="App-titleControl"
+        accessibleToggleLabel={app.translator.trans('core.forum.index.toggle_sidenav_dropdown_accessible_label')}
+      >
+        {this.navItems().toArray()}
+      </SelectDropdown>
+    );
+
+    return items;
   }
 
   // actionItems() {

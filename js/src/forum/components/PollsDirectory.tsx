@@ -10,6 +10,8 @@ import Select from 'flarum/common/components/Select';
 import Button from 'flarum/common/components/Button';
 import Mithril from 'mithril';
 
+import PollList from './Poll/PollList';
+
 export default class PollsDirectory extends Page {
   oncreate(vnode: Mithril.Vnode) {
     super.oncreate(vnode);
@@ -32,6 +34,7 @@ export default class PollsDirectory extends Page {
                 <ul className="IndexPage-toolbar-action">{listItems(this.actionItems().toArray())}</ul>
               </div>
               {/* <UserDirectoryList state={this.state} /> */}
+              <PollList />
             </div>
           </div>
         </div>
@@ -82,67 +85,67 @@ export default class PollsDirectory extends Page {
     return items;
   }
 
-  stickyParams() {
-    return {
-      sort: m.route.param('sort'),
-      q: m.route.param('q'),
-    };
-  }
+  // stickyParams() {
+  //   return {
+  //     sort: m.route.param('sort'),
+  //     q: m.route.param('q'),
+  //   };
+  // }
 
-  changeParams(sort: string) {
-    const params = this.params();
+  // changeParams(sort: string) {
+  //   const params = this.params();
 
-    if (sort === app.forum.attribute('pollsDirectoryDefaultSort')) {
-      delete params.sort;
-    } else {
-      params.sort = sort;
-    }
+  //   if (sort === app.forum.attribute('pollsDirectoryDefaultSort')) {
+  //     delete params.sort;
+  //   } else {
+  //     params.sort = sort;
+  //   }
 
-    this.state.refreshParams(params);
+  //   this.state.refreshParams(params);
 
-    const routeParams = { ...params };
-    delete routeParams.qBuilder;
+  //   const routeParams = { ...params };
+  //   delete routeParams.qBuilder;
 
-    m.route.set(app.route('fof_polls_directory', routeParams));
-  }
+  //   m.route.set(app.route('fof_polls_directory', routeParams));
+  // }
 
-  viewItems() {
-    const items = new ItemList();
-    const sortMap = this.state.sortMap();
+  // viewItems() {
+  //   const items = new ItemList();
+  //   const sortMap = this.state.sortMap();
 
-    const sortOptions = {};
-    for (const i in sortMap) {
-      sortOptions[i] = app.translator.trans('fof-polls.lib.sort.' + i);
-    }
+  //   const sortOptions = {};
+  //   for (const i in sortMap) {
+  //     sortOptions[i] = app.translator.trans('fof-polls.lib.sort.' + i);
+  //   }
 
-    items.add(
-      'sort',
-      Select.component({
-        options: sortOptions,
-        value: this.state.getParams().sort || app.forum.attribute('pollsDirectoryDefaultSort'),
-        onchange: this.changeParams.bind(this),
-      }),
-      100
-    );
+  //   items.add(
+  //     'sort',
+  //     Select.component({
+  //       options: sortOptions,
+  //       value: this.state.getParams().sort || app.forum.attribute('pollsDirectoryDefaultSort'),
+  //       onchange: this.changeParams.bind(this),
+  //     }),
+  //     100
+  //   );
 
-    return items;
-  }
+  //   return items;
+  // }
 
-  actionItems(): ItemList<Mithril.Children> {
-    const items = new ItemList<Mithril.Children>();
+  // actionItems(): ItemList<Mithril.Children> {
+  //   const items = new ItemList<Mithril.Children>();
 
-    items.add(
-      'refresh',
-      Button.component({
-        title: app.translator.trans('fof-polls.forum.page.refresh_tooltip'),
-        icon: 'fas fa-sync',
-        className: 'Button Button--icon',
-        onclick: () => {
-          this.state.refresh();
-        },
-      })
-    );
+  //   items.add(
+  //     'refresh',
+  //     Button.component({
+  //       title: app.translator.trans('fof-polls.forum.page.refresh_tooltip'),
+  //       icon: 'fas fa-sync',
+  //       className: 'Button Button--icon',
+  //       onclick: () => {
+  //         this.state.refresh();
+  //       },
+  //     })
+  //   );
 
-    return items;
-  }
+  //   return items;
+  // }
 }

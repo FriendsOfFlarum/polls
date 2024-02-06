@@ -25,6 +25,12 @@ fof-polls:
     poll:
       cannot_change_vote: You cannot change your vote after voting.
       submit_button: Vote
+      start_poll_button: Start Global Poll
+      cannot_start_poll_button: Cannot Start Poll
+
+    polls_list:
+      empty_text: It looks as though there are no community wide polls here.
+      load_more_button: Load More
 
     composer_discussion:
       add_poll: => fof-polls.forum.moderation.add
