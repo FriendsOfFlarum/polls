@@ -11,11 +11,38 @@ import PollListState from '../states/PollListState';
 import Button from 'flarum/common/components/Button';
 import SelectDropdown from 'flarum/common/components/SelectDropdown';
 import Acl from "../../common/Acl";
+import LoadingIndicator from "flarum/common/components/LoadingIndicator";
+import Poll from "../models/Poll";
+import IndexPolls from "./Poll";
 
 export default class PollsPage extends Page<IPageAttrs, PollListState> {
+  loading: boolean = false;
+  poll: Poll | null = null;
+
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
 
+    const editId = m.route.param('id');
+    if (editId) {
+      this.poll = app.store.getById('poll', editId);
+
+      if (!this.poll) {
+        this.loading = true;
+
+        app.store.find('fof/polls', editId).then((item) => {
+          this.poll = item;
+          this.loading = false;
+          app.setTitle(extractText(app.translator.trans('fof-polls.forum.page.poll_detail')));
+          m.redraw();
+        });
+      }
+    }
+    else {
+      this.initListView();
+    }
+  }
+
+  initListView() {
     this.state = new PollListState({
       sort: m.route.param('sort'),
       filter: m.route.param('filter'),
@@ -31,6 +58,19 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
   }
 
   view(): Mithril.Children {
+    if (this.loading) {
+      return <LoadingIndicator />;
+    }
+
+    if(this.poll) {
+        return (
+            <div className='PollsPage'>
+                <div className='container'>
+                    <IndexPolls poll={this.poll} />
+                </div>
+            </div>
+        );
+    }
 
     return (
       <div className="PollsPage">
@@ -43,7 +83,7 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
             <div className="PollsPage-results sideNavOffset">
               <div className="IndexPage-toolbar">
                 <ul className="IndexPage-toolbar-view">{listItems(this.viewItems().toArray())}</ul>
-                {/* <ul className="IndexPage-toolbar-action">{listItems(this.actionItems().toArray())}</ul> */}
+                <ul className="IndexPage-toolbar-action">{listItems(this.actionItems().toArray())}</ul>
               </div>
               <PollList state={this.state} />
             </div>
@@ -86,9 +126,23 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
     return items;
   }
 
-  // actionItems() {
-  //   return IndexPage.prototype.actionItems();
-  // }
+  actionItems(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+
+    items.add(
+      'refresh',
+      Button.component({
+        title: app.translator.trans('fof-polls.forum.page.refresh_tooltip'),
+        icon: 'fas fa-sync',
+        className: 'Button Button--icon',
+        onclick: () => {
+          this.state.refresh();
+        },
+      })
+    );
+
+    return items;
+  }
 
   viewItems() {
     return IndexPage.prototype.viewItems();

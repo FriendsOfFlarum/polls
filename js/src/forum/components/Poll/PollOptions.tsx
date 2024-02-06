@@ -1,8 +1,8 @@
-import * as Mithril from 'mithril';
+import Mithril from 'mithril';
 import Component from 'flarum/common/Component';
 import PollOption from './PollOption';
+import PollOptionModel from '../../models/PollOption';
 import PollResult from './PollResult';
-import listItems from 'flarum/common/helpers/listItems';
 import ItemList from 'flarum/common/utils/ItemList';
 
 export default class PollOptions extends Component {
@@ -12,11 +12,9 @@ export default class PollOptions extends Component {
 
   pollOptions(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
-
-    items.add('test1', <PollOption />);
-    items.add('test2', <PollOption />);
-    items.add('test3', <PollOption />);
-    items.add('test4', <PollOption />);
+    this.attrs.options.forEach((option:PollOptionModel):void => {
+        items.add('option' + option.id(), <PollOption option={option} />);
+    });
 
     items.add('test5', <PollResult />);
 
