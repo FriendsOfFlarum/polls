@@ -1,19 +1,25 @@
 import app from 'flarum/forum/app';
 
 export default class PollFormState {
+
+    static createNewPoll() {
+        const poll = app.store.createRecord('polls');
+        poll.pushAttributes( {
+            question: '',
+            endDate: '',
+            publicPoll: false,
+            allowMultipleVotes: false,
+            hideVotes: false,
+            allowChangeVote: false,
+            maxVotes: 0,
+        });
+        poll.pushData({relationships: {options: []}});
+        return poll;
+    }
+
     constructor(poll) {
         if (!poll) {
-            poll = app.store.createRecord('polls');
-            poll.pushAttributes( {
-                question: '',
-                endDate: '',
-                publicPoll: false,
-                allowMultipleVotes: false,
-                hideVotes: false,
-                allowChangeVote: false,
-                maxVotes: 0,
-            });
-            poll.pushData({relationships: {options: []}});
+            poll = PollFormState.createNewPoll();
         }
 
         this.loading = false;

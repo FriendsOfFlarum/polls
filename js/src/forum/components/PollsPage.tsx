@@ -2,16 +2,18 @@ import Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import listItems from 'flarum/common/helpers/listItems';
 import ItemList from 'flarum/common/utils/ItemList';
-import Page from 'flarum/common/components/Page';
+import Page, {IPageAttrs} from 'flarum/common/components/Page';
 import IndexPage from 'flarum/forum/components/IndexPage';
 import Poll from './Poll';
 import PollList from './Poll/PollList';
+import LogInModal from "flarum/forum/components/LogInModal";
 import extractText from 'flarum/common/utils/extractText';
 import PollListState from '../states/PollListState';
 import Button from 'flarum/common/components/Button';
 import SelectDropdown from 'flarum/common/components/SelectDropdown';
+import Acl from "../../common/Acl";
 
-export default class PollsPage extends Page {
+export default class PollsPage extends Page<IPageAttrs, PollListState> {
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
 
@@ -47,7 +49,7 @@ export default class PollsPage extends Page {
 
   sidebarItems() {
     const items = new ItemList<Mithril.Children>();
-    const canStartPoll = app.forum.attribute('canStartPoll') || !app.session.user;
+    const canStartPoll = Acl.canStartPoll();
     console.info(canStartPoll);
 
     items.add(
@@ -59,7 +61,7 @@ export default class PollsPage extends Page {
         onclick={() => {
           // If the user is not logged in, the promise rejects, and a login modal shows up.
           // Since that's already handled, we dont need to show an error message in the console.
-          // return this.newPollAction().catch(() => {});
+          this.newPollAction();
         }}
         disabled={!canStartPoll}
       >
@@ -90,5 +92,17 @@ export default class PollsPage extends Page {
   }
   navItems() {
     return IndexPage.prototype.navItems();
+  }
+
+  /**
+   * Change to create new poll page
+   */
+  newPollAction():void {
+    if (!app.session.user) {
+      app.modal.show(LogInModal);
+      return;
+    }
+
+    m.route.set(app.route('fof_polls_compose'));
   }
 }
