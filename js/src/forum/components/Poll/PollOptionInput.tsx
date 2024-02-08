@@ -6,6 +6,7 @@ interface PollOptionInputAttrs extends ComponentAttrs {
   name: String; // for example privacy-setting
   value: String; // for example Private to Project Members
   isResult?: Boolean;
+  onchange: (e: Event) => void;
 }
 
 export default class PollOptionInput extends Component<PollOptionInputAttrs> {
@@ -20,6 +21,7 @@ export default class PollOptionInput extends Component<PollOptionInputAttrs> {
         className="PollOption-input"
         aria-labelledby={`${this.attrs.name}-${this.attrs.id}-label`}
         aria-describedby={`${this.attrs.name}-${this.attrs.id}-description`}
+        onchange={this.attrs.onchange}
       />
     );
   }

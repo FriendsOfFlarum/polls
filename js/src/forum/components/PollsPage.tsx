@@ -12,19 +12,19 @@ import Button from 'flarum/common/components/Button';
 import SelectDropdown from 'flarum/common/components/SelectDropdown';
 import Acl from '../../common/Acl';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
-import Poll from '../models/Poll';
-import IndexPolls from './Poll';
+import PollModel from '../models/Poll';
+import Poll from './Poll';
 
 export default class PollsPage extends Page<IPageAttrs, PollListState> {
   loading: boolean = false;
-  poll: Poll | null = null;
+  poll: PollModel | null = null;
 
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
 
     const editId = m.route.param('id');
     if (editId) {
-      this.poll = app.store.getById('poll', editId);
+      this.poll = app.store.getById('poll', editId) as PollModel;
 
       if (!this.poll) {
         this.loading = true;
@@ -65,7 +65,7 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
       return (
         <div className="PollsPage">
           <div className="container">
-            <IndexPolls poll={this.poll} />
+            <Poll poll={this.poll} />
           </div>
         </div>
       );

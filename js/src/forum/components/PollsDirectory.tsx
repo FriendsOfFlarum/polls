@@ -75,7 +75,7 @@ export default class PollsDirectory extends Page {
       'fof-polls-directory',
       LinkButton.component(
         {
-          href: app.route('fof_polls_directory', params),
+          href: app.route('fof_polls_list', params),
           icon: 'fas fa-poll',
         },
         app.translator.trans('fof-polls.forum.page.nav')
@@ -106,7 +106,7 @@ export default class PollsDirectory extends Page {
   //   const routeParams = { ...params };
   //   delete routeParams.qBuilder;
 
-  //   m.route.set(app.route('fof_polls_directory', routeParams));
+  //   m.route.set(app.route('fof_polls_list', routeParams));
   // }
 
   // viewItems() {

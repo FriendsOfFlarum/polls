@@ -1,7 +1,6 @@
-import * as Mithril from 'mithril';
+import Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
-import type Poll from '../../../common/models/Poll';
 import type { PollListParams } from '../../states/PollListState';
 import SubtreeRetainer from 'flarum/common/utils/SubtreeRetainer';
 import classList from 'flarum/common/utils/classList';
@@ -12,6 +11,15 @@ import slidable from 'flarum/forum/utils/slidable';
 import icon from 'flarum/common/helpers/icon';
 import PollPage from './PollPage';
 import abbreviateNumber from 'flarum/common/utils/abbreviateNumber';
+import Poll from '../../models/Poll';
+import PollControls from '../../utils/PollControls';
+import { slug } from '../../../common';
+import ItemList from 'flarum/common/utils/ItemList';
+import listItems from 'flarum/common/helpers/listItems';
+
+// Make translation calls shorter
+const t = app.translator.trans.bind(app.translator);
+const prfx = `${slug}.forum.list`;
 
 export interface IPollListItemAttrs extends ComponentAttrs {
   poll: Poll;
@@ -46,7 +54,7 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
 
   elementAttrs() {
     return {
-      className: classList('PollListItem', {
+      className: classList('PollListItem User', {
         active: this.active(),
         'PollListItem--hidden': this.attrs.poll.isHidden(),
         Slidable: 'ontouchstart' in window,
@@ -57,13 +65,12 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
   view() {
     const poll = this.attrs.poll;
 
-    // TODO IMPLEMENT POLLCONTROLS
-    //const controls = PollControls.controls(poll, this).toArray();
+    const controls = PollControls.controls(poll, this).toArray();
     const attrs = this.elementAttrs();
 
     return (
       <div {...attrs}>
-        {/* {this.controlsView(controls)} */}
+        {this.controlsView(controls)}
         {this.contentView()}
         {this.slidableUnderneathView()}
       </div>
@@ -75,9 +82,10 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
       !!controls.length && (
         <Dropdown
           icon="fas fa-ellipsis-v"
-          className="PollListItem-controls"
+          className="UserCard-controls App-primaryControl PollListItem-controls"
+          menuClassName="Dropdown-menu--right"
           buttonClassName="Button Button--icon Button--flat"
-          accessibleToggleLabel={app.translator.trans('fof-polls.forum.poll_controls.toggle_dropdown_accessible_label')}
+          accessibleToggleLabel={t('fof-polls.forum.poll_controls.toggle_dropdown_accessible_label')}
         >
           {controls}
         </Dropdown>
@@ -107,10 +115,8 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
     return (
       //   <div className={classList('PollListItem-content', 'Slidable-content', { unread: isUnread, read: isRead })}>
       <div className={classList('PollListItem-content')}>
-        {/* {this.authorAvatarView()}
-        {this.badgesView()} */}
         {this.mainView()}
-        {this.voteCountItem()}
+        {this.infoView()}
       </div>
     );
   }
@@ -119,11 +125,14 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
     const poll = this.attrs.poll;
 
     return (
-      <Link href={app.route('fof_polls_compose', { id: poll.id() })} className="PollListItem-main">
+      <Link href={app.route('fof_polls_list', { id: poll.id() })} className="PollListItem-main">
         <h2 className="PollListItem-title">{highlight(poll.question(), this.highlightRegExp)}</h2>
-        {/* <ul className="PollListItem-info">{listItems(this.infoItems().toArray())}</ul> */}
       </Link>
     );
+  }
+
+  infoView() {
+    return <ul className="UserCard-info">{listItems(this.infoItems().toArray())}</ul>;
   }
 
   oncreate(vnode: Mithril.VnodeDOM<CustomAttrs, this>) {
@@ -164,17 +173,34 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
     }
   }
 
-  voteCountItem() {
+  infoItems(): ItemList<Mithril.Children> {
     const poll = this.attrs.poll;
+    const items = new ItemList<Mithril.Children>();
+    const active = !poll.hasEnded();
+    const activeView = poll.endDate()
+      ? [
+          icon('fas fa-clock'),
+          ' ',
+          active ? t('fof-polls.forum.days_remaining', { time: dayjs(poll.endDate()).fromNow() }) : t('fof-polls.forum.poll_ended'),
+        ]
+      : icon('fas fa-om');
 
-    return (
-      <span className="PollListItem-count">
-        <span aria-hidden="true">{abbreviateNumber(poll.voteCount())}</span>
+    items.add('active', <span className={classList('UserCard-lastSeen', { active })}>{activeView}</span>);
 
-        <span className="visually-hidden">
-          {app.translator.trans('fof-polls.forum.poll_list.total_votes_a11y_label', { count: poll.voteCount() })}
-        </span>
-      </span>
+    items.add(
+      'discussion-count',
+      <div className="userStat">
+        {icon('fas fa-poll fa-fw')}
+        {[
+          ' ',
+          t('fof-user-directory.forum.page.usercard.discussion-count', {
+            count: abbreviateNumber(poll.voteCount()),
+          }),
+        ]}
+      </div>,
+      70
     );
+
+    return items;
   }
 }

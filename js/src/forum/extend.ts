@@ -9,9 +9,8 @@ import PollsPage from './components/PollsPage';
 import ComposePollPage from './components/ComposePollPage';
 
 export default [
-  new Extend.Routes() //
-    // .add('fof_polls_directory', '/polls', PollsDirectory),
-    .add('fof_polls_directory', '/polls', PollsPage)
+  new Extend.Routes()
+    .add('fof_polls_list', '/polls', PollsPage)
     .add('fof_polls_compose', '/polls/composer', ComposePollPage),
 
   new Extend.Store() //
