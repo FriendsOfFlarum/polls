@@ -9,19 +9,18 @@
  * file that was distributed with this source code.
  */
 
- use Illuminate\Database\Schema\Blueprint;
- use Illuminate\Database\Schema\Builder;
- 
- return [
-     'up' => function (Builder $schema) {
-         $schema->table('polls', function (Blueprint $table) {
-             $table->text('subtitle')->nullable()->after('question');
-         });
-     },
-     'down' => function (Builder $schema) {
-         $schema->table('polls', function (Blueprint $table) {
-             $table->dropColumn('subtitle');
-         });
-     },
- ];
- 
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Schema\Builder;
+
+return [
+    'up' => function (Builder $schema) {
+        $schema->table('polls', function (Blueprint $table) {
+            $table->text('subtitle')->nullable()->after('question');
+        });
+    },
+    'down' => function (Builder $schema) {
+        $schema->table('polls', function (Blueprint $table) {
+            $table->dropColumn('subtitle');
+        });
+    },
+];

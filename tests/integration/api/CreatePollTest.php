@@ -496,15 +496,15 @@ class CreatePollTest extends TestCase
                     'json'            => [
                         'data' => [
                             'attributes' => [
-                                'question' => 'Add a poll with a subtitle',
-                                'subtitle' => 'This is a subtitle',
-                                'publicPoll' => false,
-                                'hideVotes' => false,
-                                'allowChangeVote' => true,
+                                'question'           => 'Add a poll with a subtitle',
+                                'subtitle'           => 'This is a subtitle',
+                                'publicPoll'         => false,
+                                'hideVotes'          => false,
+                                'allowChangeVote'    => true,
                                 'allowMultipleVotes' => false,
-                                'maxVotes' => 0,
-                                'endDate' => false,
-                                'options' => [
+                                'maxVotes'           => 0,
+                                'endDate'            => false,
+                                'options'            => [
                                     [
                                         'answer' => 'Yes',
                                     ],
@@ -548,15 +548,15 @@ class CreatePollTest extends TestCase
                             'attributes' => [
                                 'content' => 'Here is my poll',
                                 'poll'    => [
-                                    'question' => 'What is your favourite colour?',
-                                    'subtitle' => 'This is a subtitle',
-                                    'publicPoll' => false,
-                                    'hideVotes' => false,
-                                    'allowChangeVote' => true,
+                                    'question'           => 'What is your favourite colour?',
+                                    'subtitle'           => 'This is a subtitle',
+                                    'publicPoll'         => false,
+                                    'hideVotes'          => false,
+                                    'allowChangeVote'    => true,
                                     'allowMultipleVotes' => false,
-                                    'maxVotes' => 0,
-                                    'endDate' => false,
-                                    'options' => [
+                                    'maxVotes'           => 0,
+                                    'endDate'            => false,
+                                    'options'            => [
                                         [
                                             'answer' => 'Red',
                                         ],
@@ -573,7 +573,7 @@ class CreatePollTest extends TestCase
                                 'discussion' => [
                                     'data' => [
                                         'type' => 'discussions',
-                                        'id' => 1,
+                                        'id'   => 1,
                                     ],
                                 ],
                             ],

@@ -20,9 +20,9 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 
 /**
- * @property int                   $id
- * @property string                $question
- * @property string|null           $subtitle
+ * @property int         $id
+ * @property string      $question
+ * @property string|null $subtitle
  * @property-read bool             $public_poll
  * @property-read bool             $allow_multiple_votes
  * @property-read int              $max_votes
