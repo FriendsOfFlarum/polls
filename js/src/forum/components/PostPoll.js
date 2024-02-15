@@ -46,24 +46,29 @@ export default class PostPoll extends Component {
     return (
       <div className="Post-poll" data-id={poll.id()}>
         <div className="PollHeading">
-          <h3 className="PollHeading-title">{poll.question()}</h3>
+          <div className="PollHeading-title-container">
+            <h3 className="PollHeading-title">{poll.question()}</h3>
+            {poll.subtitle() && <p className="helpText PollHeading-subtitle">{poll.subtitle()}</p>}
+          </div>
 
-          {poll.canSeeVoters() && (
-            <Tooltip text={app.translator.trans('fof-polls.forum.public_poll')}>
-              <Button className="Button PollHeading-voters" onclick={this.showVoters.bind(this)} icon="fas fa-poll" />
-            </Tooltip>
-          )}
+          <div className="PollHeading-actions">
+            {poll.canSeeVoters() && (
+              <Tooltip text={app.translator.trans('fof-polls.forum.public_poll')}>
+                <Button className="Button PollHeading-voters" onclick={this.showVoters.bind(this)} icon="fas fa-poll" />
+              </Tooltip>
+            )}
 
-          {poll.canEdit() && (
-            <Tooltip text={app.translator.trans('fof-polls.forum.moderation.edit')}>
-              <Button className="Button PollHeading-edit" onclick={app.modal.show.bind(app.modal, EditPollModal, { poll })} icon="fas fa-pen" />
-            </Tooltip>
-          )}
-          {poll.canDelete() && (
-            <Tooltip text={app.translator.trans('fof-polls.forum.moderation.delete')}>
-              <Button className="Button PollHeading-delete" onclick={this.deletePoll.bind(this)} icon="fas fa-trash" />
-            </Tooltip>
-          )}
+            {poll.canEdit() && (
+              <Tooltip text={app.translator.trans('fof-polls.forum.moderation.edit')}>
+                <Button className="Button PollHeading-edit" onclick={app.modal.show.bind(app.modal, EditPollModal, { poll })} icon="fas fa-pen" />
+              </Tooltip>
+            )}
+            {poll.canDelete() && (
+              <Tooltip text={app.translator.trans('fof-polls.forum.moderation.delete')}>
+                <Button className="Button PollHeading-delete" onclick={this.deletePoll.bind(this)} icon="fas fa-trash" />
+              </Tooltip>
+            )}
+          </div>
         </div>
 
         <div>

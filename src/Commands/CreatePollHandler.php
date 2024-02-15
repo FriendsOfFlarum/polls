@@ -110,6 +110,7 @@ class CreatePollHandler
                 Arr::get($attributes, 'maxVotes'),
                 Arr::get($attributes, 'hideVotes'),
                 Arr::get($attributes, 'allowChangeVote'),
+                Arr::get($attributes, 'subtitle')
             );
 
             $this->events->dispatch(new SavingPollAttributes($command->actor, $poll, $attributes, $attributes));

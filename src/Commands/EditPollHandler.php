@@ -72,6 +72,10 @@ class EditPollHandler
             $poll->question = $attributes['question'];
         }
 
+        if (isset($attributes['subtitle'])) {
+            $poll->subtitle = empty($attributes['subtitle']) ? null : $attributes['subtitle'];
+        }
+
         foreach (['publicPoll', 'allowMultipleVotes', 'hideVotes', 'allowChangeVote'] as $key) {
             if (isset($attributes[$key])) {
                 $poll->settings[Str::snake($key)] = (bool) $attributes[$key];

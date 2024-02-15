@@ -15,6 +15,7 @@ export default class EditPollModal extends CreatePollModal {
     this.optionAnswers = this.options.map((o) => Stream(o.answer()));
     this.optionImageUrls = this.options.map((o) => Stream(o.imageUrl()));
     this.question = Stream(this.poll.question());
+    this.subtitle = Stream(this.poll.subtitle());
     this.endDate = Stream(this.formatDate(this.poll.endDate()));
     this.publicPoll = Stream(this.poll.publicPoll());
     this.allowMultipleVotes = Stream(this.poll.allowMultipleVotes());
@@ -95,6 +96,7 @@ export default class EditPollModal extends CreatePollModal {
 
     return {
       question: this.question(),
+      subtitle: this.subtitle(),
       endDate: this.dateToTimestamp(this.endDate()),
       publicPoll: this.publicPoll(),
       hideVotes: this.hideVotes(),

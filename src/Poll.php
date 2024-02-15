@@ -20,8 +20,9 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 
 /**
- * @property int    $id
- * @property string $question
+ * @property int                   $id
+ * @property string                $question
+ * @property string|null           $subtitle
  * @property-read bool             $public_poll
  * @property-read bool             $allow_multiple_votes
  * @property-read int              $max_votes
@@ -30,7 +31,7 @@ use Illuminate\Support\Arr;
  * @property int                   $vote_count
  * @property Post                  $post
  * @property User                  $user
- * @property int                   $post_id
+ * @property int|null              $post_id
  * @property int                   $user_id
  * @property \Carbon\Carbon|null   $end_date
  * @property \Carbon\Carbon        $created_at
@@ -66,11 +67,12 @@ class Poll extends AbstractModel
      *
      * @return static
      */
-    public static function build($question, $postId, $actorId, $endDate, $publicPoll, $allowMultipleVotes = false, $maxVotes = 0, $hideVotes = false, $allowChangeVote = true)
+    public static function build($question, $postId, $actorId, $endDate, $publicPoll, $allowMultipleVotes = false, $maxVotes = 0, $hideVotes = false, $allowChangeVote = true, $subtitle = null)
     {
         $poll = new static();
 
         $poll->question = $question;
+        $poll->subtitle = $subtitle;
         $poll->post_id = $postId;
         $poll->user_id = $actorId;
         $poll->end_date = $endDate;
