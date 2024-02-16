@@ -12,6 +12,7 @@ import Button from 'flarum/common/components/Button';
 import ItemList from 'flarum/common/utils/ItemList';
 import { slug } from '../../common';
 import PollControls from '../utils/PollControls';
+import Dropdown from 'flarum/common/components/Dropdown';
 
 // Make translation calls shorter
 const t = app.translator.trans.bind(app.translator);
@@ -31,28 +32,14 @@ export default class Poll extends Component<PollAttrs, PollState> {
     const poll = this.attrs.poll;
     const infoItems = this.infoItems(poll.maxVotes());
     const state = this.state;
+    const controls = PollControls.controls(poll, this);
+
+    controls.add('view', (<Button onclick={state.showVoters} icon="fas fa-poll">{t('fof-polls.forum.public_poll')}</Button>));
+
 
     return (
       <div className="Poll" data-id={poll.id()}>
-        <div className="PollHeading">
-          <h3 className="PollHeading-title">{poll.question()}</h3>
-          {poll.canSeeVoters() && (
-            <Tooltip text={t('fof-polls.forum.public_poll')}>
-              <Button className="Button PollHeading-voters" onclick={state.showVoters} icon="fas fa-poll" />
-            </Tooltip>
-          )}
-
-          {poll.canEdit() && (
-            <Tooltip text={t('fof-polls.forum.moderation.edit')}>
-              <Button className="Button PollHeading-edit" onclick={this.editPoll.bind(this)} icon="fas fa-pen" />
-            </Tooltip>
-          )}
-          {poll.canDelete() && (
-            <Tooltip text={t('fof-polls.forum.moderation.delete')}>
-              <Button className="Button PollHeading-delete" onclick={this.deletePoll.bind(this)} icon="fas fa-trash" />
-            </Tooltip>
-          )}
-        </div>
+        {this.controlsView(controls.toArray())}
         <div className="Poll-image">
           <PollImage image={poll.image} />
         </div>
@@ -85,6 +72,22 @@ export default class Poll extends Component<PollAttrs, PollState> {
 
   editPoll(): void {
     PollControls.editAction(this.attrs.poll);
+  }
+
+  controlsView(controls: Mithril.ChildArray): Mithril.Children {
+    return (
+      !!controls.length && (
+        <Dropdown
+          icon="fas fa-ellipsis-v"
+          className="UserCard-controls App-primaryControl PollListItem-controls"
+          menuClassName="Dropdown-menu--right"
+          buttonClassName="Button Button--icon Button--flat"
+          accessibleToggleLabel={t('fof-polls.forum.poll_controls.toggle_dropdown_accessible_label')}
+        >
+          {controls}
+        </Dropdown>
+      )
+    );
   }
 
   infoItems(maxVotes: number) {
