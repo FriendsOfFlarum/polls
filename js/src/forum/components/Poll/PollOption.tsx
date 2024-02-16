@@ -13,7 +13,7 @@ export default class PollOption extends Component<PollOptionAttrs> {
   view(): Mithril.Children {
     const option = this.attrs.option;
     return (
-      <label className="PollOption-tmp">
+      <label className="PollOption">
         <PollOptionInput id={option.id()} isResult={false} name="vote" value="Vote for this option" onchange={this.attrs.onchange} />
         <span className="PollOption-information">
           <PollOptionLabel id={option.id()} text={option.answer()} />
