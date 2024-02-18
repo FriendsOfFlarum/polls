@@ -70,7 +70,7 @@ export default class PollForm extends Component {
           <span>{app.translator.trans('fof-polls.forum.modal.options_label')}</span>
 
           {Button.component({
-            className: 'Button PollModal--button small',
+            className: 'Button PollModal--button Button--icon small',
             icon: 'fas fa-plus',
             onclick: this.addOption.bind(this),
           })}
@@ -96,7 +96,7 @@ export default class PollForm extends Component {
             max={this.formatDate('2038')}
           />
           {Button.component({
-            className: 'Button PollModal--button',
+            className: 'Button PollModal--button Button--icon',
             icon: 'fas fa-times',
             onclick: this.endDate.bind(this, null),
           })}
@@ -219,7 +219,7 @@ export default class PollForm extends Component {
         {i >= 2
           ? Button.component({
               type: 'button',
-              className: 'Button Button--warning PollModal--button',
+              className: 'Button PollModal--button Button--icon',
               icon: 'fas fa-minus',
               onclick: i >= 2 ? this.removeOption.bind(this, i) : '',
             })

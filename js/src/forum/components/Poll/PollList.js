@@ -42,8 +42,8 @@ export default class PollList extends Component {
     const pageSize = state.pageSize;
 
     return (
-      <div className={classList('PollList UserDirectoryList', { 'PollList--searchResults': state.isSearchResults() })}>
-        <ul aria-busy={isLoading} className="PollList-polls UserDirectoryList-users">
+      <div className={classList('PollList', { 'PollList--searchResults': state.isSearchResults() })}>
+        <ul aria-busy={isLoading} className="PollList-polls">
           {state.getPages().map((pg) => {
             return pg.items.map((poll) => (
               <li key={poll.id()} data-id={poll.id()}>
