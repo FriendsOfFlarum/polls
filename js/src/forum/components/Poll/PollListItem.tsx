@@ -183,23 +183,27 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
           ' ',
           active ? t('fof-polls.forum.days_remaining', { time: dayjs(poll.endDate()).fromNow() }) : t('fof-polls.forum.poll_ended'),
         ]
-      : icon('fas fa-om');
+      : [icon('fas fa-om'), ' ', t('fof-polls.forum.poll_never_ends')]
 
     items.add('active', <span className={classList('UserCard-lastSeen', { active })}>{activeView}</span>);
 
-    items.add(
-      'discussion-count',
-      <div className="userStat">
-        {icon('fas fa-poll fa-fw')}
-        {[
-          ' ',
-          t('fof-user-directory.forum.page.usercard.discussion-count', {
-            count: abbreviateNumber(poll.voteCount()),
-          }),
-        ]}
-      </div>,
-      70
-    );
+    const voteCount = poll.voteCount();
+    if(voteCount !== undefined){
+      items.add(
+          'discussion-count',
+          <div className="userStat">
+            {icon('fas fa-poll fa-fw')}
+            {[
+              ' ',
+              t('fof-polls.forum.polls_count', {
+                count: abbreviateNumber(voteCount),
+              }),
+            ]}
+          </div>,
+          70
+      );
+    }
+
 
     return items;
   }

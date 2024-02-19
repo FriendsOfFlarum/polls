@@ -393,12 +393,12 @@ var ComposePollHero = /*#__PURE__*/function (_Component) {
       className: "IndexPageHero-controls"
     }, m((flarum_common_components_LinkButton__WEBPACK_IMPORTED_MODULE_4___default()), {
       icon: "far fa-edit",
-      className: "Button Button--primary IndexPage-newDiscussion GoodiesManagerLink",
+      className: "Button Button--secondary IndexPage-newDiscussion GoodiesManagerLink",
       itemClassName: "App-primaryControl",
       href: flarum_forum_app__WEBPACK_IMPORTED_MODULE_1___default().route('fof_polls_list')
     }, t(prfx + ".polls_manager")), poll.exists && m((flarum_common_components_LinkButton__WEBPACK_IMPORTED_MODULE_4___default()), {
       icon: "far fa-arrow-up-right-from-square",
-      className: "Button Button--primary IndexPage-newDiscussion GoodiePreviewLink",
+      className: "Button Button--secondary IndexPage-newDiscussion GoodiePreviewLink",
       itemClassName: "App-primaryControl",
       href: flarum_forum_app__WEBPACK_IMPORTED_MODULE_1___default().route('fof_polls_list', {
         id: poll.id()
@@ -785,7 +785,7 @@ var Poll = /*#__PURE__*/function (_Component) {
   _proto.controlsView = function controlsView(controls) {
     return !!controls.length && m((flarum_common_components_Dropdown__WEBPACK_IMPORTED_MODULE_12___default()), {
       icon: "fas fa-ellipsis-v",
-      className: "UserCard-controls App-primaryControl PollListItem-controls",
+      className: "PollListItem-controls",
       menuClassName: "Dropdown-menu--right",
       buttonClassName: "Button Button--icon Button--flat",
       accessibleToggleLabel: t('fof-polls.forum.poll_controls.toggle_dropdown_accessible_label')
@@ -945,7 +945,7 @@ var PollForm = /*#__PURE__*/function (_Component) {
     }, m("label", {
       className: "label PollModal--answers-title"
     }, m("span", null, flarum_forum_app__WEBPACK_IMPORTED_MODULE_5___default().translator.trans('fof-polls.forum.modal.options_label')), flarum_common_components_Button__WEBPACK_IMPORTED_MODULE_6___default().component({
-      className: 'Button PollModal--button small',
+      className: 'Button PollModal--button Button--icon small',
       icon: 'fas fa-plus',
       onclick: this.addOption.bind(this)
     })), this.displayOptions()), 80);
@@ -963,7 +963,7 @@ var PollForm = /*#__PURE__*/function (_Component) {
       min: this.datepickerMinDate,
       max: this.formatDate('2038')
     }), flarum_common_components_Button__WEBPACK_IMPORTED_MODULE_6___default().component({
-      className: 'Button PollModal--button',
+      className: 'Button PollModal--button Button--icon',
       icon: 'fas fa-times',
       onclick: this.endDate.bind(this, null)
     })), this.endDate() && m("p", {
@@ -1050,7 +1050,7 @@ var PollForm = /*#__PURE__*/function (_Component) {
         placeholder: flarum_forum_app__WEBPACK_IMPORTED_MODULE_5___default().translator.trans('fof-polls.forum.modal.image_option_placeholder') + ' #' + (i + 1)
       }) : null), i >= 2 ? flarum_common_components_Button__WEBPACK_IMPORTED_MODULE_6___default().component({
         type: 'button',
-        className: 'Button Button--warning PollModal--button',
+        className: 'Button PollModal--button Button--icon',
         icon: 'fas fa-minus',
         onclick: i >= 2 ? _this.removeOption.bind(_this, i) : ''
       }) : '');
@@ -1363,12 +1363,12 @@ var PollList = /*#__PURE__*/function (_Component) {
     }
     var pageSize = state.pageSize;
     return m("div", {
-      className: flarum_common_utils_classList__WEBPACK_IMPORTED_MODULE_7___default()('PollList UserDirectoryList', {
+      className: flarum_common_utils_classList__WEBPACK_IMPORTED_MODULE_7___default()('PollList', {
         'PollList--searchResults': state.isSearchResults()
       })
     }, m("ul", {
       "aria-busy": isLoading,
-      className: "PollList-polls UserDirectoryList-users"
+      className: "PollList-polls"
     }, state.getPages().map(function (pg) {
       return pg.items.map(function (poll) {
         return m("li", {
@@ -1483,7 +1483,7 @@ var PollListItem = /*#__PURE__*/function (_Component) {
   };
   _proto.elementAttrs = function elementAttrs() {
     return {
-      className: flarum_common_utils_classList__WEBPACK_IMPORTED_MODULE_4___default()('PollListItem User', {
+      className: flarum_common_utils_classList__WEBPACK_IMPORTED_MODULE_4___default()('PollListItem', {
         active: this.active(),
         'PollListItem--hidden': this.attrs.poll.isHidden(),
         Slidable: 'ontouchstart' in window
@@ -1499,7 +1499,7 @@ var PollListItem = /*#__PURE__*/function (_Component) {
   _proto.controlsView = function controlsView(controls) {
     return !!controls.length && m((flarum_common_components_Dropdown__WEBPACK_IMPORTED_MODULE_5___default()), {
       icon: "fas fa-ellipsis-v",
-      className: "UserCard-controls App-primaryControl PollListItem-controls",
+      className: "UserCard-controls PollListItem-controls",
       menuClassName: "Dropdown-menu--right",
       buttonClassName: "Button Button--icon Button--flat",
       accessibleToggleLabel: t('fof-polls.forum.poll_controls.toggle_dropdown_accessible_label')
@@ -1588,17 +1588,20 @@ var PollListItem = /*#__PURE__*/function (_Component) {
     var active = !poll.hasEnded();
     var activeView = poll.endDate() ? [flarum_common_helpers_icon__WEBPACK_IMPORTED_MODULE_9___default()('fas fa-clock'), ' ', active ? t('fof-polls.forum.days_remaining', {
       time: dayjs(poll.endDate()).fromNow()
-    }) : t('fof-polls.forum.poll_ended')] : flarum_common_helpers_icon__WEBPACK_IMPORTED_MODULE_9___default()('fas fa-om');
+    }) : t('fof-polls.forum.poll_ended')] : [flarum_common_helpers_icon__WEBPACK_IMPORTED_MODULE_9___default()('fas fa-om'), ' ', t('fof-polls.forum.poll_never_ends')];
     items.add('active', m("span", {
       className: flarum_common_utils_classList__WEBPACK_IMPORTED_MODULE_4___default()('UserCard-lastSeen', {
         active: active
       })
     }, activeView));
-    items.add('discussion-count', m("div", {
-      className: "userStat"
-    }, flarum_common_helpers_icon__WEBPACK_IMPORTED_MODULE_9___default()('fas fa-poll fa-fw'), [' ', t('fof-user-directory.forum.page.usercard.discussion-count', {
-      count: flarum_common_utils_abbreviateNumber__WEBPACK_IMPORTED_MODULE_11___default()(poll.voteCount())
-    })]), 70);
+    var voteCount = poll.voteCount();
+    if (voteCount !== undefined) {
+      items.add('discussion-count', m("div", {
+        className: "userStat"
+      }, flarum_common_helpers_icon__WEBPACK_IMPORTED_MODULE_9___default()('fas fa-poll fa-fw'), [' ', t('fof-polls.forum.polls_count', {
+        count: flarum_common_utils_abbreviateNumber__WEBPACK_IMPORTED_MODULE_11___default()(voteCount)
+      })]), 70);
+    }
     return items;
   };
   return PollListItem;
@@ -1864,18 +1867,17 @@ var PollResults = /*#__PURE__*/function (_Component) {
     }), m("span", {
       className: "PollResult-information"
     }, m("div", {
-      className: "PollResults-row"
+      className: "PollResult-row"
     }, m(_PollOptionLabel__WEBPACK_IMPORTED_MODULE_2__["default"], {
       text: "Poll Option Label"
     }), m(_PollResultNumber__WEBPACK_IMPORTED_MODULE_3__["default"], {
       number: 64
-    })), m("input", {
+    })), m("progress", {
       type: "range",
       min: "0",
       max: "100",
       value: "64",
-      step: "1",
-      className: "PollResult-input"
+      className: "PollResult-bar"
     })));
   };
   return PollResults;
@@ -2083,7 +2085,7 @@ var PollsPage = /*#__PURE__*/function (_Page) {
     var canStartPoll = _common_Acl__WEBPACK_IMPORTED_MODULE_12__["default"].canStartPoll();
     items.add('newGlobalPoll', m((flarum_common_components_Button__WEBPACK_IMPORTED_MODULE_10___default()), {
       icon: "fas fa-edit",
-      className: "Button Button--primary IndexPage-newDiscussion",
+      className: "Button Button--primary App-primaryControl PollsPage-newPoll",
       itemClassName: "App-primaryControl",
       onclick: function onclick() {
         _this3.newPollAction();
@@ -3239,7 +3241,7 @@ var prfx = _common__WEBPACK_IMPORTED_MODULE_1__.slug + ".forum.poll_controls";
     return items;
   },
   /**
-   * Get controls for direkt modifcation actions on polls (e.g. vote, view voters).
+   * Get controls for direct modifcation actions on polls (e.g. vote, view voters).
    */
   pollControls: function pollControls(poll, context) {
     var items = new (flarum_common_utils_ItemList__WEBPACK_IMPORTED_MODULE_4___default())();
