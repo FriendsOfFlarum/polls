@@ -1771,7 +1771,6 @@ var PollOptions = /*#__PURE__*/function (_Component) {
     }, this.pollOptions().toArray());
   };
   _proto.pollOptions = function pollOptions() {
-    var _this = this;
     var items = new (flarum_common_utils_ItemList__WEBPACK_IMPORTED_MODULE_4___default())();
     var state = this.attrs.state;
     if (state.showCheckMarks) {
@@ -1785,7 +1784,7 @@ var PollOptions = /*#__PURE__*/function (_Component) {
       this.attrs.options.forEach(function (option) {
         items.add('result' + option.id(), m(_PollResult__WEBPACK_IMPORTED_MODULE_3__["default"], {
           option: option,
-          state: _this.attrs.state.hasVoted()
+          state: state
         }));
       });
     }
@@ -1845,6 +1844,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _PollOptionLabel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./PollOptionLabel */ "./src/forum/components/Poll/PollOptionLabel.tsx");
 /* harmony import */ var _PollResultNumber__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./PollResultNumber */ "./src/forum/components/Poll/PollResultNumber.tsx");
 /* harmony import */ var _PollOptionInput__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./PollOptionInput */ "./src/forum/components/Poll/PollOptionInput.tsx");
+/* harmony import */ var flarum_common_utils_abbreviateNumber__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! flarum/common/utils/abbreviateNumber */ "flarum/common/utils/abbreviateNumber");
+/* harmony import */ var flarum_common_utils_abbreviateNumber__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(flarum_common_utils_abbreviateNumber__WEBPACK_IMPORTED_MODULE_5__);
+
 
 
 
@@ -1857,26 +1859,34 @@ var PollResults = /*#__PURE__*/function (_Component) {
   }
   var _proto = PollResults.prototype;
   _proto.view = function view() {
+    var option = this.attrs.option;
+    var state = this.attrs.state;
+    var voteCount = option.voteCount();
+    if (!voteCount) {
+      voteCount = 0;
+    } else {
+      voteCount = voteCount * 100 / state.overallVoteCount();
+    }
     return m("label", {
       className: "PollResult"
     }, m(_PollOptionInput__WEBPACK_IMPORTED_MODULE_4__["default"], {
-      id: 1,
-      isResult: true,
-      name: "privacy-setting",
-      value: "Private to Project Members Nice"
+      id: option.id(),
+      isResult: false,
+      name: "vote",
+      value: "Vote for this option"
     }), m("span", {
       className: "PollResult-information"
     }, m("div", {
       className: "PollResult-row"
     }, m(_PollOptionLabel__WEBPACK_IMPORTED_MODULE_2__["default"], {
-      text: "Poll Option Label"
+      text: option.answer()
     }), m(_PollResultNumber__WEBPACK_IMPORTED_MODULE_3__["default"], {
-      number: 64
+      number: flarum_common_utils_abbreviateNumber__WEBPACK_IMPORTED_MODULE_5___default()(voteCount)
     })), m("progress", {
       type: "range",
       min: "0",
-      max: "100",
-      value: "64",
+      max: state.overallVoteCount(),
+      value: voteCount,
       className: "PollResult-bar"
     })));
   };
@@ -3105,6 +3115,12 @@ var PollState = /*#__PURE__*/function () {
   var _proto = PollState.prototype;
   _proto.hasVoted = function hasVoted() {
     return this.poll.myVotes().length > 0;
+  };
+  _proto.overallVoteCount = function overallVoteCount() {
+    var options = this.poll.options();
+    return Math.max(100, (options ? options : []).reduce(function (max, option) {
+      return max + option.voteCount();
+    }, 0));
   };
   _proto.showButton = function showButton() {
     return this.useSubmitUI && this.pendingSubmit;

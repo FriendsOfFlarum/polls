@@ -34,6 +34,9 @@ fof-polls:
       edit_label: Edit
       delete_label: Delete
       view_label: View
+      delete_confirmation: Are you sure you want to delete this poll?
+      delete_success_message: Poll deleted successfully.
+      delete_error_message: There went something wrong while deleting the poll.
 
     poll_form:
       delete: Delete Poll

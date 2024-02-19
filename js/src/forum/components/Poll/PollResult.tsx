@@ -1,21 +1,39 @@
 import * as Mithril from 'mithril';
-import Component from 'flarum/common/Component';
+import Component, {ComponentAttrs} from 'flarum/common/Component';
 import PollOptionLabel from './PollOptionLabel';
 import PollResultsNumber from './PollResultNumber';
 import PollOptionInput from './PollOptionInput';
+import PollOptionModel from "../../models/PollOption";
+import PollState from "../../states/PollState";
+import abbreviateNumber from "flarum/common/utils/abbreviateNumber";
 
-export default class PollResults extends Component {
+interface PollResultsAttrs extends ComponentAttrs {
+    option: PollOptionModel;
+    state: PollState;
+}
+
+export default class PollResults extends Component<PollResultsAttrs> {
   view(): Mithril.Children {
+    const option = this.attrs.option;
+    const state = this.attrs.state;
+    let voteCount = option.voteCount();
+    if(!voteCount){
+        voteCount = 0;
+    }
+    else {
+        voteCount = voteCount * 100 / state.overallVoteCount();
+    }
+
     return (
       <label className="PollResult">
-        <PollOptionInput id={1} isResult={true} name="privacy-setting" value="Private to Project Members Nice" />
+          <PollOptionInput id={option.id()} isResult={false} name="vote" value="Vote for this option" />
         <span className="PollResult-information">
           <div className="PollResult-row">
-            <PollOptionLabel text="Poll Option Label" />
-            <PollResultsNumber number={64} />
+            <PollOptionLabel text={option.answer()} />
+            <PollResultsNumber number={abbreviateNumber(voteCount)} />
           </div>
 
-          <progress type="range" min="0" max="100" value="64" className="PollResult-bar" />
+          <progress type="range" min="0" max={state.overallVoteCount()} value={voteCount} className="PollResult-bar" />
         </span>
       </label>
     );

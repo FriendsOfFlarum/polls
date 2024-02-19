@@ -26,6 +26,11 @@ export default class PollState {
     return this.poll.myVotes().length > 0;
   }
 
+  overallVoteCount() {
+    const options = this.poll.options();
+    return Math.max(100, (options ? options : []).reduce((max, option) => max + option!.voteCount(), 0));
+  }
+
   showButton() {
     return this.useSubmitUI && this.pendingSubmit;
   }

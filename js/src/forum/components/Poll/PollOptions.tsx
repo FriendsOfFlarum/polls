@@ -26,7 +26,7 @@ export default class PollOptions extends Component<PollOptionsAttrs> {
       });
     } else {
       this.attrs.options.forEach((option: PollOptionModel): void => {
-        items.add('result' + option.id(), <PollResult option={option} state={this.attrs.state.hasVoted()} />);
+        items.add('result' + option.id(), <PollResult option={option} state={state} />);
       });
     }
 
