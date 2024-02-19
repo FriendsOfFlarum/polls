@@ -133,7 +133,7 @@ class CreatePollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'GET',
-                '/api/fof/polls/' . $pollId,
+                '/api/fof/polls/'.$pollId,
                 [
                     'authenticatedAs' => $userId,
                 ]
@@ -425,7 +425,7 @@ class CreatePollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'GET',
-                '/api/fof/polls/' . $pollId,
+                '/api/fof/polls/'.$pollId,
                 [
                     'authenticatedAs' => $userId,
                 ]
