@@ -897,6 +897,7 @@ var PollForm = /*#__PURE__*/function (_Component) {
       return flarum_common_utils_Stream__WEBPACK_IMPORTED_MODULE_9___default()(o.imageUrl());
     });
     this.question = flarum_common_utils_Stream__WEBPACK_IMPORTED_MODULE_9___default()(poll.question());
+    this.subtitle = flarum_common_utils_Stream__WEBPACK_IMPORTED_MODULE_9___default()(poll.subtitle());
     this.endDate = flarum_common_utils_Stream__WEBPACK_IMPORTED_MODULE_9___default()(this.formatDate(poll.endDate()));
     this.publicPoll = flarum_common_utils_Stream__WEBPACK_IMPORTED_MODULE_9___default()(poll.publicPoll());
     this.allowMultipleVotes = flarum_common_utils_Stream__WEBPACK_IMPORTED_MODULE_9___default()(poll.allowMultipleVotes());
@@ -929,6 +930,16 @@ var PollForm = /*#__PURE__*/function (_Component) {
       className: "FormControl",
       bidi: this.question
     })), 100);
+    items.add('subtitle', m("div", {
+      className: "Form-group"
+    }, m("label", {
+      className: "label"
+    }, flarum_forum_app__WEBPACK_IMPORTED_MODULE_5___default().translator.trans('fof-polls.forum.modal.subtitle_placeholder')), m("input", {
+      type: "text",
+      name: "subtitle",
+      className: "FormControl",
+      bidi: this.subtitle
+    })), 95);
     items.add('answers', m("div", {
       className: "PollModal--answers Form-group"
     }, m("label", {
@@ -1078,6 +1089,7 @@ var PollForm = /*#__PURE__*/function (_Component) {
     }
     return {
       question: this.question(),
+      subtitle: this.subtitle(),
       endDate: this.dateToTimestamp(this.endDate()),
       publicPoll: this.publicPoll(),
       hideVotes: this.hideVotes(),
@@ -2196,9 +2208,15 @@ var PostPoll = /*#__PURE__*/function (_Component) {
       "data-id": poll.id()
     }, m("div", {
       className: "PollHeading"
+    }, m("div", {
+      className: "PollHeading-title-container"
     }, m("h3", {
       className: "PollHeading-title"
-    }, poll.question()), poll.canSeeVoters() && m((flarum_common_components_Tooltip__WEBPACK_IMPORTED_MODULE_8___default()), {
+    }, poll.question()), poll.subtitle() && m("p", {
+      className: "helpText PollHeading-subtitle"
+    }, poll.subtitle())), m("div", {
+      className: "PollHeading-actions"
+    }, poll.canSeeVoters() && m((flarum_common_components_Tooltip__WEBPACK_IMPORTED_MODULE_8___default()), {
       text: flarum_forum_app__WEBPACK_IMPORTED_MODULE_1___default().translator.trans('fof-polls.forum.public_poll')
     }, m((flarum_common_components_Button__WEBPACK_IMPORTED_MODULE_3___default()), {
       className: "Button PollHeading-voters",
@@ -2218,7 +2236,7 @@ var PostPoll = /*#__PURE__*/function (_Component) {
       className: "Button PollHeading-delete",
       onclick: this.deletePoll.bind(this),
       icon: "fas fa-trash"
-    }))), m("div", null, m("div", {
+    })))), m("div", null, m("div", {
       className: "PollOptions"
     }, options.map(this.viewOption.bind(this))), m("div", {
       className: "Poll-sticky"
@@ -2576,6 +2594,9 @@ var Poll = /*#__PURE__*/function (_Model) {
   var _proto = Poll.prototype;
   _proto.question = function question() {
     return flarum_common_Model__WEBPACK_IMPORTED_MODULE_1___default().attribute('question').call(this);
+  };
+  _proto.subtitle = function subtitle() {
+    return flarum_common_Model__WEBPACK_IMPORTED_MODULE_1___default().attribute('subtitle').call(this);
   };
   _proto.hasEnded = function hasEnded() {
     return flarum_common_Model__WEBPACK_IMPORTED_MODULE_1___default().attribute('hasEnded').call(this);

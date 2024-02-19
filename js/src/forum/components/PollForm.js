@@ -27,6 +27,7 @@ export default class PollForm extends Component {
     this.optionImageUrls = this.options.map((o) => Stream(o.imageUrl()));
 
     this.question = Stream(poll.question());
+    this.subtitle = Stream(poll.subtitle());
     this.endDate = Stream(this.formatDate(poll.endDate()));
     this.publicPoll = Stream(poll.publicPoll());
     this.allowMultipleVotes = Stream(poll.allowMultipleVotes());
@@ -61,6 +62,16 @@ export default class PollForm extends Component {
         <input type="text" name="question" className="FormControl" bidi={this.question} />
       </div>,
       100
+    );
+
+    items.add(
+        'subtitle',
+        <div className="Form-group">
+          <label className="label">{app.translator.trans('fof-polls.forum.modal.subtitle_placeholder')}</label>
+
+          <input type="text" name="subtitle" className="FormControl" bidi={this.subtitle} />
+        </div>,
+        95
     );
 
     items.add(
@@ -266,6 +277,7 @@ export default class PollForm extends Component {
 
     return {
       question: this.question(),
+      subtitle: this.subtitle(),
       endDate: this.dateToTimestamp(this.endDate()),
       publicPoll: this.publicPoll(),
       hideVotes: this.hideVotes(),
