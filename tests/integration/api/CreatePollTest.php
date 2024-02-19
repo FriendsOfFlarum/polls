@@ -128,6 +128,7 @@ class CreatePollTest extends TestCase
         $this->assertNotNull($poll);
 
         $this->assertEquals('What is your favourite colour?', $poll->question);
+        $this->assertNull($poll->subtitle);
 
         $response = $this->send(
             $this->request(
@@ -258,6 +259,7 @@ class CreatePollTest extends TestCase
         $attributes = $data['attributes'];
 
         $this->assertEquals('Add a poll to an existing post', $attributes['question']);
+        $this->assertNull($attributes['subtitle']);
 
         $pollId = $data['id'];
         $this->assertNotNull($pollId);
@@ -411,6 +413,7 @@ class CreatePollTest extends TestCase
         $attributes = $data['attributes'];
 
         $this->assertEquals('Add a global poll', $attributes['question']);
+        $this->assertNull($attributes['subtitle']);
 
         $pollId = $data['id'];
         $this->assertNotNull($pollId);
@@ -475,5 +478,126 @@ class CreatePollTest extends TestCase
         );
 
         $this->assertEquals(403, $response->getStatusCode());
+    }
+
+    /**
+     * @dataProvider authorizedUserProvider
+     *
+     * @test
+     */
+    public function authorized_user_can_create_a_poll_with_a_subtitle_via_api(int $userId)
+    {
+        $response = $this->send(
+            $this->request(
+                'POST',
+                '/api/fof/polls',
+                [
+                    'authenticatedAs' => $userId,
+                    'json'            => [
+                        'data' => [
+                            'attributes' => [
+                                'question'           => 'Add a poll with a subtitle',
+                                'subtitle'           => 'This is a subtitle',
+                                'publicPoll'         => false,
+                                'hideVotes'          => false,
+                                'allowChangeVote'    => true,
+                                'allowMultipleVotes' => false,
+                                'maxVotes'           => 0,
+                                'endDate'            => false,
+                                'options'            => [
+                                    [
+                                        'answer' => 'Yes',
+                                    ],
+                                    [
+                                        'answer' => 'No',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        $this->assertEquals(201, $response->getStatusCode());
+
+        $json = json_decode($response->getBody()->getContents(), true);
+
+        $data = $json['data'];
+        $attributes = $data['attributes'];
+
+        $this->assertEquals('Add a poll with a subtitle', $attributes['question']);
+        $this->assertEquals('This is a subtitle', $attributes['subtitle']);
+    }
+
+    /**
+     * @dataProvider authorizedUserProvider
+     *
+     * @test
+     */
+    public function authorized_user_can_create_a_poll_with_a_subtitle_via_post(int $userId)
+    {
+        $response = $this->send(
+            $this->request(
+                'POST',
+                '/api/posts',
+                [
+                    'authenticatedAs' => $userId,
+                    'json'            => [
+                        'data' => [
+                            'attributes' => [
+                                'content' => 'Here is my poll',
+                                'poll'    => [
+                                    'question'           => 'What is your favourite colour?',
+                                    'subtitle'           => 'This is a subtitle',
+                                    'publicPoll'         => false,
+                                    'hideVotes'          => false,
+                                    'allowChangeVote'    => true,
+                                    'allowMultipleVotes' => false,
+                                    'maxVotes'           => 0,
+                                    'endDate'            => false,
+                                    'options'            => [
+                                        [
+                                            'answer' => 'Red',
+                                        ],
+                                        [
+                                            'answer' => 'Blue',
+                                        ],
+                                        [
+                                            'answer' => 'Yellow',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'relationships' => [
+                                'discussion' => [
+                                    'data' => [
+                                        'type' => 'discussions',
+                                        'id'   => 1,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        $this->assertEquals(201, $response->getStatusCode());
+
+        $json = json_decode($response->getBody()->getContents(), true);
+        $data = $json['data'];
+
+        $this->assertArrayHasKey('polls', $data['relationships']);
+
+        $pollId = $data['relationships']['polls']['data'][0]['id'];
+        $this->assertNotNull($pollId);
+
+        $poll = Poll::find($pollId);
+
+        $this->assertNotNull($poll);
+
+        $this->assertEquals('What is your favourite colour?', $poll->question);
+        $this->assertEquals('This is a subtitle', $poll->subtitle);
     }
 }

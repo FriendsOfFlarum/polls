@@ -34,6 +34,7 @@ class PollSerializer extends AbstractSerializer
 
         $attributes = [
             'question'           => $poll->question,
+            'subtitle'           => $poll->subtitle,
             'hasEnded'           => $poll->hasEnded(),
             'allowMultipleVotes' => $poll->allow_multiple_votes,
             'maxVotes'           => $poll->max_votes,

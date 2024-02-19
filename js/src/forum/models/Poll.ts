@@ -8,6 +8,10 @@ export default class Poll extends Model {
     return Model.attribute<string>('question').call(this);
   }
 
+  subtitle() {
+    return Model.attribute<string | null>('subtitle').call(this);
+  }
+
   hasEnded() {
     return Model.attribute<boolean>('hasEnded').call(this);
   }
