@@ -34,8 +34,12 @@ export default class Poll extends Component<PollAttrs, PollState> {
     const state = this.state;
     const controls = PollControls.controls(poll, this);
 
-    controls.add('view', (<Button onclick={state.showVoters} icon="fas fa-poll">{t('fof-polls.forum.public_poll')}</Button>));
-
+    controls.add(
+      'view',
+      <Button onclick={state.showVoters} icon="fas fa-poll">
+        {t('fof-polls.forum.public_poll')}
+      </Button>
+    );
 
     return (
       <div className="Poll" data-id={poll.id()}>

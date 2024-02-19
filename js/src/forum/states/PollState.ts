@@ -12,14 +12,13 @@ export default class PollState {
   public loadingOptions: boolean;
   public useSubmitUI: boolean;
   public showCheckMarks: boolean;
-  public boundChangeVote: (option: PollOption, evt: Event) => void;
 
   constructor(poll: Poll) {
     this.poll = poll;
     this.pendingSubmit = false;
     this.pendingOptions = null;
     this.loadingOptions = false;
-    this.useSubmitUI = !this.poll?.canChangeVote() && this.poll?.allowMultipleVotes();
+    this.useSubmitUI = !poll?.canChangeVote() && poll?.allowMultipleVotes();
     this.showCheckMarks = !app.session.user || (!poll.hasEnded() && poll.canVote() && (!this.hasVoted() || poll.canChangeVote()));
   }
 
@@ -31,15 +30,17 @@ export default class PollState {
     return this.useSubmitUI && this.pendingSubmit;
   }
 
-  changeVote(option: PollOption, evt) {
+  changeVote(option: PollOption, evt: Event) {
+    const target = evt.target as HTMLInputElement;
+
     if (!app.session.user) {
       app.modal.show(LogInModal);
-      evt.target.checked = false;
+      target.checked = false;
       return;
     }
 
-    const optionIds = this.pendingOptions || new Set(this.poll.myVotes().map?.((v: PollVote) => v.option().id()));
-    const isUnvoting = optionIds.delete(option.id());
+    const optionIds = this.pendingOptions || new Set(this.poll.myVotes().map((v: PollVote) => v.option().id()));
+    const isUnvoting = optionIds.delete(option.id()!);
     const allowsMultiple = this.poll.allowMultipleVotes();
 
     if (!allowsMultiple) {
@@ -56,7 +57,7 @@ export default class PollState {
       return;
     }
 
-    return this.submit(optionIds, null, () => (evt.target.checked = isUnvoting));
+    return this.submit(optionIds, null, () => (target.checked = isUnvoting));
   }
 
   onsubmit() {

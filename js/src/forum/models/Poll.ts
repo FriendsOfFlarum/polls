@@ -68,8 +68,9 @@ export default class Poll extends Model {
     return Model.hasMany<PollVote>('votes').call(this);
   }
 
-  myVotes() {
-    return Model.hasMany<PollVote>('myVotes').call(this);
+  myVotes(): PollVote[] {
+    const myVotes = Model.hasMany<PollVote>('myVotes').call(this);
+    return myVotes ? (myVotes as PollVote[]) : [];
   }
 
   isGlobal() {
