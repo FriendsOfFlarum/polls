@@ -11,9 +11,12 @@
 
 namespace FoF\Polls\Api;
 
+use Flarum\Api\Serializer\PostSerializer;
+use Flarum\Post\Post;
+
 class AddPostAttributes
 {
-    public function __invoke($serializer, $post, $attributes)
+    public function __invoke(PostSerializer $serializer, Post $post, array $attributes): array
     {
         $attributes['canStartPoll'] = $serializer->getActor()->can('startPoll', $post);
 

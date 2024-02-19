@@ -56,6 +56,7 @@ fof-polls:
       hide_votes_label: Hide votes until poll ends
       allow_change_vote_label: Allow users to change their vote
       question_placeholder: Question
+      subtitle_placeholder: Subtitle/Description (Optional)
       submit: Submit
 
     moderation:
