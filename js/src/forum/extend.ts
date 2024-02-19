@@ -5,12 +5,10 @@ import Discussion from 'flarum/common/models/Discussion';
 import Poll from './models/Poll';
 import PollOption from './models/PollOption';
 import PollVote from './models/PollVote';
-import PollsDirectory from './components/PollsDirectory';
 import PollsPage from './components/PollsPage';
 
 export default [
   new Extend.Routes() //
-    // .add('fof_polls_directory', '/polls', PollsDirectory),
     .add('fof_polls_directory', '/polls', PollsPage),
 
   new Extend.Store() //
