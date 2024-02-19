@@ -29,9 +29,8 @@ fof-polls:
       cannot_start_poll_button: Cannot Start Poll
 
     poll_controls:
-      view_label: View Poll
-      edit_label: Edit Poll
-      delete_label: Delete Poll
+      edit_label: Edit
+      delete_label: Delete
 
     poll_form:
       delete: Delete Poll
