@@ -9,8 +9,6 @@ import addNavItem from './addNavItem';
 export * from './components';
 export * from './models';
 
-import PollsPage from './components/PollsPage';
-
 app.initializers.add('fof/polls', () => {
   addDiscussionBadge();
   addComposerItems();

@@ -36,7 +36,7 @@ export default {
   },
 
   /**
-   * Get controls for direkt modifcation actions on polls (e.g. vote, view voters).
+   * Get controls for direct modifcation actions on polls (e.g. vote, view voters).
    */
   pollControls(poll: Poll, context: Component): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();

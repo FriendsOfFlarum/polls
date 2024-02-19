@@ -478,7 +478,7 @@
   flex-direction: column;
 }
 
-.PollResults-row {
+.PollResult-row {
   display: flex;
   flex-grow: 1;
   justify-content: space-between;
@@ -509,4 +509,14 @@
 .PollOption:has(.PollOption-input:checked) {
   border-color: var(--poll-option-active-color);
   background: var(--control-bg-shaded);
+}
+
+.PollList .PollList-polls {
+  list-style: none;
+  padding: 0;
+  clear: both;
+}
+
+.PollListItem-controls {
+  float: right;
 }

@@ -19,7 +19,7 @@ export default class ComposePollHero extends Component {
             <div className="IndexPageHero-controls">
               <LinkButton
                 icon="far fa-edit"
-                className="Button Button--primary IndexPage-newDiscussion GoodiesManagerLink"
+                className="Button Button--secondary IndexPage-newDiscussion GoodiesManagerLink"
                 itemClassName="App-primaryControl"
                 href={app.route('fof_polls_list')}
               >
@@ -28,7 +28,7 @@ export default class ComposePollHero extends Component {
               {poll.exists && (
                 <LinkButton
                   icon="far fa-arrow-up-right-from-square"
-                  className="Button Button--primary IndexPage-newDiscussion GoodiePreviewLink"
+                  className="Button Button--secondary IndexPage-newDiscussion GoodiePreviewLink"
                   itemClassName="App-primaryControl"
                   href={app.route('fof_polls_list', { id: poll.id() })}
                   external={true}

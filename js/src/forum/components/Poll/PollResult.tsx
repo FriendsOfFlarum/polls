@@ -10,12 +10,12 @@ export default class PollResults extends Component {
       <label className="PollResult">
         <PollOptionInput id={1} isResult={true} name="privacy-setting" value="Private to Project Members Nice" />
         <span className="PollResult-information">
-          <div className="PollResults-row">
+          <div className="PollResult-row">
             <PollOptionLabel text="Poll Option Label" />
             <PollResultsNumber number={64} />
           </div>
 
-          <input type="range" min="0" max="100" value="64" step="1" className="PollResult-input" />
+          <progress type="range" min="0" max="100" value="64" className="PollResult-bar" />
         </span>
       </label>
     );

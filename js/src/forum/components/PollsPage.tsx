@@ -100,7 +100,7 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
       'newGlobalPoll',
       <Button
         icon="fas fa-edit"
-        className="Button Button--primary IndexPage-newDiscussion"
+        className="Button Button--primary App-primaryControl PollsPage-newPoll"
         itemClassName="App-primaryControl"
         onclick={() => {
           this.newPollAction();

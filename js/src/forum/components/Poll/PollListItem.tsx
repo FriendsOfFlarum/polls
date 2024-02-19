@@ -54,7 +54,7 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
 
   elementAttrs() {
     return {
-      className: classList('PollListItem User', {
+      className: classList('PollListItem', {
         active: this.active(),
         'PollListItem--hidden': this.attrs.poll.isHidden(),
         Slidable: 'ontouchstart' in window,
@@ -82,7 +82,7 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
       !!controls.length && (
         <Dropdown
           icon="fas fa-ellipsis-v"
-          className="UserCard-controls App-primaryControl PollListItem-controls"
+          className="UserCard-controls PollListItem-controls"
           menuClassName="Dropdown-menu--right"
           buttonClassName="Button Button--icon Button--flat"
           accessibleToggleLabel={t('fof-polls.forum.poll_controls.toggle_dropdown_accessible_label')}

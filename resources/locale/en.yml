@@ -28,6 +28,13 @@ fof-polls:
       start_poll_button: Start Global Poll
       cannot_start_poll_button: Cannot Start Poll
 
+    poll_controls:
+      edit_label: Edit
+      delete_label: Delete
+
+    poll_form:
+      delete: Delete Poll
+
     polls_list:
       empty_text: It looks as though there are no community wide polls here.
       load_more_button: Load More
@@ -39,6 +46,7 @@ fof-polls:
 
     compose:
       add_title: Add a Poll
+      edit_title: Edit Poll
       polls_manager: Polls Manager
       polls_preview: View Poll
 

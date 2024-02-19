@@ -83,7 +83,7 @@ export default class Poll extends Component<PollAttrs, PollState> {
       !!controls.length && (
         <Dropdown
           icon="fas fa-ellipsis-v"
-          className="UserCard-controls App-primaryControl PollListItem-controls"
+          className="PollListItem-controls"
           menuClassName="Dropdown-menu--right"
           buttonClassName="Button Button--icon Button--flat"
           accessibleToggleLabel={t('fof-polls.forum.poll_controls.toggle_dropdown_accessible_label')}
