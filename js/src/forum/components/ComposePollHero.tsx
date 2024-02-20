@@ -1,13 +1,14 @@
 import Mithril from 'mithril';
 import app from 'flarum/forum/app';
-import Component from 'flarum/common/Component';
-import { slug } from '../../common';
+import Component, { ComponentAttrs } from 'flarum/common/Component';
 import LinkButton from 'flarum/common/components/LinkButton';
+import Poll from '../models/Poll';
 
-const t = app.translator.trans.bind(app.translator);
-const prfx = `${slug}.forum.compose`;
+export interface ComposePollHeroAttrs extends ComponentAttrs {
+  poll: Poll;
+}
 
-export default class ComposePollHero extends Component {
+export default class ComposePollHero extends Component<ComposePollHeroAttrs> {
   view(): Mithril.Children {
     const { poll } = this.attrs;
 
@@ -15,7 +16,7 @@ export default class ComposePollHero extends Component {
       <div className="ComposeGoodieCollectionHero Hero IndexPageHero">
         <div className="container">
           <div className="containerNarrow">
-            <h2 className="Hero-title">{t(`${prfx}.${!!poll.id() ? 'edit' : 'add'}_title`)}</h2>
+            <h2 className="Hero-title">{app.translator.trans(`fof-polls.forum.compose.${!!poll.id() ? 'edit' : 'add'}_title`)}</h2>
             <div className="IndexPageHero-controls">
               <LinkButton
                 icon="far fa-edit"
@@ -23,7 +24,7 @@ export default class ComposePollHero extends Component {
                 itemClassName="App-primaryControl"
                 href={app.route('fof_polls_list')}
               >
-                {t(`${prfx}.polls_manager`)}
+                {app.translator.trans('fof-polls.forum.compose.polls_manager')}
               </LinkButton>
               {poll.exists && (
                 <LinkButton
@@ -34,7 +35,7 @@ export default class ComposePollHero extends Component {
                   external={true}
                   target="_blank"
                 >
-                  {t(`${prfx}.polls_preview`)}
+                  {app.translator.trans('fof-polls.forum.compose.polls_preview')}
                 </LinkButton>
               )}
             </div>

@@ -1,8 +1,14 @@
 import app from 'flarum/forum/app';
+import Poll from '../models/Poll';
 
 export default class PollFormState {
+  poll: Poll;
+  loading: boolean;
+  deleting: boolean;
+  expandedGroup: string;
+
   static createNewPoll() {
-    const poll = app.store.createRecord('polls');
+    const poll = app.store.createRecord<Poll>('polls');
     poll.pushAttributes({
       question: '',
       endDate: '',
@@ -16,7 +22,7 @@ export default class PollFormState {
     return poll;
   }
 
-  constructor(poll) {
+  constructor(poll: Poll) {
     if (!poll) {
       poll = PollFormState.createNewPoll();
     }
@@ -27,16 +33,16 @@ export default class PollFormState {
     this.expandedGroup = 'setup';
   }
 
-  isExpanded(groupKey) {
+  isExpanded(groupKey: string) {
     return this.expandedGroup === groupKey;
   }
 
-  expand(groupKey) {
+  expand(groupKey: string) {
     this.expandedGroup = groupKey;
     m.redraw();
   }
 
-  async save(data) {
+  async save(data: any) {
     this.loading = true;
     m.redraw();
 

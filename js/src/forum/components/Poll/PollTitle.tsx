@@ -1,4 +1,4 @@
-import * as Mithril from 'mithril';
+import type Mithril from 'mithril';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
 
 interface PollTitleAttrs extends ComponentAttrs {

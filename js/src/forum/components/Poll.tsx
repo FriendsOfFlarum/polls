@@ -1,4 +1,4 @@
-import Mithril from 'mithril';
+import type Mithril from 'mithril';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
 import app from 'flarum/forum/app';
 import PollTitle from './Poll/PollTitle';
@@ -9,13 +9,8 @@ import PollModel from '../models/Poll';
 import PollState from '../states/PollState';
 import Button from 'flarum/common/components/Button';
 import ItemList from 'flarum/common/utils/ItemList';
-import { slug } from '../../common';
 import PollControls from '../utils/PollControls';
 import Dropdown from 'flarum/common/components/Dropdown';
-
-// Make translation calls shorter
-const t = app.translator.trans.bind(app.translator);
-const prfx = `${slug}.forum.poll`;
 
 interface PollAttrs extends ComponentAttrs {
   poll: PollModel;
@@ -36,7 +31,7 @@ export default class Poll extends Component<PollAttrs, PollState> {
     controls.add(
       'view',
       <Button onclick={state.showVoters} icon="fas fa-poll">
-        {t('fof-polls.forum.public_poll')}
+        {app.translator.trans('fof-polls.forum.public_poll')}
       </Button>
     );
 
@@ -44,7 +39,7 @@ export default class Poll extends Component<PollAttrs, PollState> {
       <div className="Poll" data-id={poll.id()}>
         {this.controlsView(controls.toArray())}
         <div className="Poll-image">
-          <PollImage image={poll.image} />
+          <PollImage image={poll.image()} />
         </div>
         <div className="Poll-wrapper">
           <PollTitle text={poll.question()} />
@@ -59,7 +54,7 @@ export default class Poll extends Component<PollAttrs, PollState> {
 
               {state.showButton() && (
                 <Button className="Button Button--primary Poll-submit" loading={state.loadingOptions} onclick={state.onsubmit.bind(this)}>
-                  {t('fof-polls.forum.poll.submit_button')}
+                  {app.translator.trans('fof-polls.forum.poll.submit_button')}
                 </Button>
               )}
             </div>
@@ -85,7 +80,7 @@ export default class Poll extends Component<PollAttrs, PollState> {
           className="PollListItem-controls"
           menuClassName="Dropdown-menu--right"
           buttonClassName="Button Button--icon Button--flat"
-          accessibleToggleLabel={t('fof-polls.forum.poll_controls.toggle_dropdown_accessible_label')}
+          accessibleToggleLabel={app.translator.trans('fof-polls.forum.poll_controls.toggle_dropdown_accessible_label')}
         >
           {controls}
         </Dropdown>
@@ -102,7 +97,7 @@ export default class Poll extends Component<PollAttrs, PollState> {
         'no-permission',
         <span>
           <i className="icon fas fa-times-circle fa-fw" />
-          {t('fof-polls.forum.no_permission')}
+          {app.translator.trans('fof-polls.forum.no_permission')}
         </span>
       );
     }
@@ -112,7 +107,9 @@ export default class Poll extends Component<PollAttrs, PollState> {
         'end-date',
         <span>
           <i class="icon fas fa-clock fa-fw" />
-          {poll.hasEnded() ? t('fof-polls.forum.poll_ended') : t('fof-polls.forum.days_remaining', { time: dayjs(poll.endDate()).fromNow() })}
+          {poll.hasEnded()
+            ? app.translator.trans('fof-polls.forum.poll_ended')
+            : app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(poll.endDate()).fromNow() })}
         </span>
       );
     }
@@ -122,7 +119,7 @@ export default class Poll extends Component<PollAttrs, PollState> {
         'max-votes',
         <span>
           <i className="icon fas fa-poll fa-fw" />
-          {t('fof-polls.forum.max_votes_allowed', { max: maxVotes })}
+          {app.translator.trans('fof-polls.forum.max_votes_allowed', { max: maxVotes })}
         </span>
       );
 
@@ -131,7 +128,7 @@ export default class Poll extends Component<PollAttrs, PollState> {
           'cannot-change-vote',
           <span>
             <i className={`icon fas fa-${this.state.hasVoted() ? 'times' : 'exclamation'}-circle fa-fw`} />
-            {t('fof-polls.forum.poll.cannot_change_vote')}
+            {app.translator.trans('fof-polls.forum.poll.cannot_change_vote')}
           </span>
         );
       }

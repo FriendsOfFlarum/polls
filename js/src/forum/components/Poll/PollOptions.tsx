@@ -1,4 +1,4 @@
-import Mithril from 'mithril';
+import type Mithril from 'mithril';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
 import PollOption from './PollOption';
 import PollOptionModel from '../../models/PollOption';

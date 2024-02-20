@@ -1,4 +1,4 @@
-import Mithril from 'mithril';
+import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
 import type { PollListParams } from '../../states/PollListState';
@@ -13,13 +13,12 @@ import PollPage from './PollPage';
 import abbreviateNumber from 'flarum/common/utils/abbreviateNumber';
 import Poll from '../../models/Poll';
 import PollControls from '../../utils/PollControls';
-import { slug } from '../../../common';
 import ItemList from 'flarum/common/utils/ItemList';
 import listItems from 'flarum/common/helpers/listItems';
 
 // Make translation calls shorter
-const t = app.translator.trans.bind(app.translator);
-const prfx = `${slug}.forum.list`;
+// const t = app.translator.trans.bind(app.translator);
+// const prfx = `${slug}.forum.list`;
 
 export interface IPollListItemAttrs extends ComponentAttrs {
   poll: Poll;
@@ -85,7 +84,7 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
           className="UserCard-controls PollListItem-controls"
           menuClassName="Dropdown-menu--right"
           buttonClassName="Button Button--icon Button--flat"
-          accessibleToggleLabel={t('fof-polls.forum.poll_controls.toggle_dropdown_accessible_label')}
+          accessibleToggleLabel={app.translator.trans('fof-polls.forum.poll_controls.toggle_dropdown_accessible_label')}
         >
           {controls}
         </Dropdown>
@@ -181,9 +180,11 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
       ? [
           icon('fas fa-clock'),
           ' ',
-          active ? t('fof-polls.forum.days_remaining', { time: dayjs(poll.endDate()).fromNow() }) : t('fof-polls.forum.poll_ended'),
+          active
+            ? app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(poll.endDate()).fromNow() })
+            : app.translator.trans('fof-polls.forum.poll_ended'),
         ]
-      : [icon('fas fa-om'), ' ', t('fof-polls.forum.poll_never_ends')];
+      : [icon('fas fa-om'), ' ', app.translator.trans('fof-polls.forum.poll_never_ends')];
 
     items.add('active', <span className={classList('UserCard-lastSeen', { active })}>{activeView}</span>);
 
@@ -195,7 +196,7 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
           {icon('fas fa-poll fa-fw')}
           {[
             ' ',
-            t('fof-polls.forum.polls_count', {
+            app.translator.trans('fof-polls.forum.polls_count', {
               count: abbreviateNumber(voteCount),
             }),
           ]}

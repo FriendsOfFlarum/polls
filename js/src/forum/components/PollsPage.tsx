@@ -1,4 +1,4 @@
-import Mithril from 'mithril';
+import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import listItems from 'flarum/common/helpers/listItems';
 import ItemList from 'flarum/common/utils/ItemList';
@@ -29,7 +29,7 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
       if (!this.poll) {
         this.loading = true;
 
-        app.store.find('fof/polls', editId).then((item) => {
+        app.store.find<PollModel>('fof/polls', editId).then((item) => {
           this.poll = item;
           this.loading = false;
           app.setTitle(extractText(app.translator.trans('fof-polls.forum.page.poll_detail')));

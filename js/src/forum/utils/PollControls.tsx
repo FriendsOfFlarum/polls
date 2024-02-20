@@ -1,17 +1,13 @@
-import Mithril from 'mithril';
+import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import Poll from '../models/Poll';
 import Component from 'flarum/common/Component';
-import { slug } from '../../common';
 import ComposePollPage from '../components/ComposePollPage';
 import PollsPage from '../components/PollsPage';
 import ItemList from 'flarum/common/utils/ItemList';
 import Separator from 'flarum/common/components/Separator';
 import Button from 'flarum/common/components/Button';
 import Link from 'flarum/common/components/Link';
-
-const t = app.translator.trans.bind(app.translator);
-const prfx = `${slug}.forum.poll_controls`;
 
 /**
  * The `UserControls` utility constructs a list of buttons for a user which
@@ -41,7 +37,10 @@ export default {
   pollControls(poll: Poll, context: Component): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
 
-    items.add('view', <Link href={app.route('fof_polls_list', { id: poll.id() })}>{t(`${prfx}.view_label`)}</Link>);
+    items.add(
+      'view',
+      <Link href={app.route('fof_polls_list', { id: poll.id() })}>{app.translator.trans('fof-polls.forum.poll_controls.view_label')}</Link>
+    );
 
     return items;
   },
@@ -56,7 +55,7 @@ export default {
       items.add(
         'edit',
         <Button icon="fas fa-pen" onclick={this.editAction.bind(this, poll)}>
-          {t(`${prfx}.edit_label`)}
+          {app.translator.trans(`fof-polls.forum.poll_controls.edit_label`)}
         </Button>
       );
     }
@@ -75,7 +74,7 @@ export default {
       items.add(
         'delete',
         <Button icon="fas fa-times" onclick={this.deleteAction.bind(this, poll)}>
-          {t(`${prfx}.delete_label`)}
+          {app.translator.trans(`fof-polls.forum.poll_controls.delete_label`)}
         </Button>
       );
     }
@@ -87,7 +86,7 @@ export default {
    * Delete the user.
    */
   async deleteAction(poll: Poll): Promise<void> {
-    if (!confirm(t(`${prfx}.delete_confirmation`))) {
+    if (!confirm(app.translator.trans(`fof-polls.forum.poll_controls.delete_confirmation`) as string)) {
       return;
     }
 
@@ -109,11 +108,11 @@ export default {
    */
   showDeletionAlert(poll: Poll, type: string): void {
     const message = {
-      success: `${prfx}.delete_success_message`,
-      error: `${prfx}.delete_error_message`,
+      success: `$fof-polls.forum.poll_controls.delete_success_message`,
+      error: `fof-polls.forum.poll_controls.delete_error_message`,
     }[type]!;
 
-    app.alerts.show({ type }, t(message, { poll: poll }));
+    app.alerts.show({ type }, app.translator.trans(message, { poll: poll }));
   },
 
   /**

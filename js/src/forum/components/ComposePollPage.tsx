@@ -1,24 +1,20 @@
-import Mithril from 'mithril';
+import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import Page from 'flarum/common/components/Page';
-import Poll from './Poll';
+import Poll from '../models/Poll';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import PollForm from './PollForm';
 import Acl from '../../common/Acl';
 import PollFormState from '../states/PollFormState';
-import { slug } from '../../common';
 import ComposePollHero from './ComposePollHero';
 import Button from 'flarum/common/components/Button';
 
-const t = app.translator.trans.bind(app.translator);
-const prfx = `${slug}.forum.compose`;
-
 export default class ComposePollPage extends Page {
-  poll: Poll | null = null;
+  poll: Poll | null | undefined = null;
 
   loading: boolean = false;
 
-  oninit(vnode) {
+  oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
 
     // If user not allowed to manage goodie collections, redirect to home
@@ -29,15 +25,15 @@ export default class ComposePollPage extends Page {
     // Get the `edit` parameter from the URL
     const editId = m.route.param('id');
     if (editId) {
-      this.poll = app.store.getById('poll', editId);
+      this.poll = app.store.getById<Poll>('poll', editId);
 
       if (!this.poll) {
         this.loading = true;
 
-        app.store.find('fof/polls', editId).then((item) => {
+        app.store.find<Poll>('fof/polls', editId).then((item) => {
           this.poll = item;
           this.loading = false;
-          app.setTitle(t(`${prfx}.${!!this.poll?.id() ? 'edit' : 'add'}_title`));
+          app.setTitle(app.translator.trans(`fof-polls.forum.compose.${!!this.poll?.id() ? 'edit' : 'add'}_title`) as string);
           m.redraw();
         });
       }
@@ -45,9 +41,9 @@ export default class ComposePollPage extends Page {
       this.poll = PollFormState.createNewPoll();
     }
 
-    app.history.push('compose-poll');
+    app.history.push('compose-poll', app.translator.trans(`fof-polls.forum.compose.${!!this.poll?.id() ? 'edit' : 'add'}_title`) as string);
     this.bodyClass = 'App--compose-poll';
-    app.setTitle(t(`${prfx}.${!!this.poll?.id() ? 'edit' : 'add'}_title`));
+    app.setTitle(app.translator.trans(`fof-polls.forum.compose.${!!this.poll?.id() ? 'edit' : 'add'}_title`) as string);
   }
 
   view(): Mithril.Children {
@@ -56,7 +52,7 @@ export default class ComposePollPage extends Page {
     }
 
     return (
-      <div className="ComposeGoodieCollectionPage">
+      <div className="ComposePollCollectionPage">
         <ComposePollHero poll={this.poll} />
         <div className="container">
           <PollForm poll={this.poll} onsubmit={this.onsubmit.bind(this)} />
@@ -83,7 +79,7 @@ export default class ComposePollPage extends Page {
                 )
               }
             >
-              {t(`${prfx}.continue_editing`)}
+              {app.translator.trans('fof-polls.forum.compose.continue_editing')}
             </Button>,
           ],
         }
@@ -92,7 +88,7 @@ export default class ComposePollPage extends Page {
         };
 
     // Show success alert
-    const alertId = app.alerts.show(alertAttrs, t(`${prfx}.success`));
+    const alertId = app.alerts.show(alertAttrs, app.translator.trans('fof-polls.forum.compose.success'));
 
     // Hide alert after 10 seconds
     setTimeout(() => app.alerts.dismiss(alertId), 10000);

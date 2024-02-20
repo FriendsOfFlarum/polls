@@ -1,4 +1,3 @@
-import { slug } from '../../common';
 import Component from 'flarum/common/Component';
 import app from 'flarum/forum/app';
 import Button from 'flarum/common/components/Button';
@@ -9,10 +8,6 @@ import extractText from 'flarum/common/utils/extractText';
 import FormError from './form/FormError';
 import PollFormState from '../states/PollFormState';
 import PollControls from '../utils/PollControls';
-
-// Make translation calls shorter
-const t = app.translator.trans.bind(app.translator);
-const prfx = `${slug}.forum.poll_form`;
 
 export default class PollForm extends Component {
   /** @type {PollFormState} */
