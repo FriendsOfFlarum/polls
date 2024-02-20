@@ -86,12 +86,12 @@ export default {
   /**
    * Delete the user.
    */
-  deleteAction(poll: Poll): void {
+  async deleteAction(poll: Poll): Promise<void> {
     if (!confirm(t(`${prfx}.delete_confirmation`))) {
       return;
     }
 
-    poll
+    return poll
       .delete()
       .then(() => {
         this.showDeletionAlert(poll, 'success');

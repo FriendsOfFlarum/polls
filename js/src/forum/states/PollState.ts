@@ -28,7 +28,10 @@ export default class PollState {
 
   overallVoteCount() {
     const options = this.poll.options();
-    return Math.max(100, (options ? options : []).reduce((max, option) => max + option!.voteCount(), 0));
+    return Math.max(
+      100,
+      (options ? options : []).reduce((max, option) => max + option!.voteCount(), 0)
+    );
   }
 
   showButton() {

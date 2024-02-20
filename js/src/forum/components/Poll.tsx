@@ -4,10 +4,9 @@ import app from 'flarum/forum/app';
 import PollTitle from './Poll/PollTitle';
 import PollOptions from './Poll/PollOptions';
 import PollImage from './Poll/PollImage';
-import PollDescription from './Poll/PollDescription';
+import PollSubTitle from './Poll/PollSubTitle';
 import PollModel from '../models/Poll';
 import PollState from '../states/PollState';
-import Tooltip from 'flarum/common/components/Tooltip';
 import Button from 'flarum/common/components/Button';
 import ItemList from 'flarum/common/utils/ItemList';
 import { slug } from '../../common';
@@ -49,7 +48,7 @@ export default class Poll extends Component<PollAttrs, PollState> {
         </div>
         <div className="Poll-wrapper">
           <PollTitle text={poll.question()} />
-          <PollDescription text="Ihre Meinung ist uns wichtig! Welche SBB-Entscheidungen möchten Sie mehr einbezogen sehen? Teilen Sie uns mit, welche Themen für Sie besonders relevant sind. Vielen Dank für Ihre Teilnahme!" />
+          <PollSubTitle text={poll.subtitle()} />
           <form>
             <fieldset>
               <legend className="sr-only">Antworten</legend>

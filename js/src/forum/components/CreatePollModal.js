@@ -12,16 +12,15 @@ export default class CreatePollModal extends Modal {
   }
 
   content() {
-    //@todo check if bind is needed for onsubmit
     return [
       <div className="Modal-body">
-        <PollForm modal={this} poll={this.attrs.poll} onsubmit={this.onsubmit.bind(this)}></PollForm>
+        <PollForm poll={this.attrs.poll} onsubmit={this.onsubmit.bind(this)}></PollForm>
       </div>,
     ];
   }
 
-  onsubmit(poll) {
+  onsubmit(data) {
     this.hide();
-    this.attrs.onsubmit(poll);
+    this.attrs.onsubmit(data);
   }
 }

@@ -40,6 +40,7 @@ fof-polls:
 
     poll_form:
       delete: Delete Poll
+      error: There was an error saving the poll, please contact any administrator.
 
     polls_list:
       empty_text: It looks as though there are no community wide polls here.
@@ -55,6 +56,9 @@ fof-polls:
       edit_title: Edit Poll
       polls_manager: Polls Manager
       polls_preview: View Poll
+      continue_editing: Continue Editing
+      success: Poll saved successfully.
+
 
     modal:
       add_title: Add a Poll

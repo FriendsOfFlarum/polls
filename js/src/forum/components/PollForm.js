@@ -8,12 +8,16 @@ import Stream from 'flarum/common/utils/Stream';
 import extractText from 'flarum/common/utils/extractText';
 import FormError from './form/FormError';
 import PollFormState from '../states/PollFormState';
+import PollControls from '../utils/PollControls';
 
 // Make translation calls shorter
 const t = app.translator.trans.bind(app.translator);
 const prfx = `${slug}.forum.poll_form`;
 
 export default class PollForm extends Component {
+  /** @type {PollFormState} */
+  state;
+
   oninit(vnode) {
     super.oninit(vnode);
     this.state = new PollFormState(this.attrs.poll);
@@ -65,13 +69,13 @@ export default class PollForm extends Component {
     );
 
     items.add(
-        'subtitle',
-        <div className="Form-group">
-          <label className="label">{app.translator.trans('fof-polls.forum.modal.subtitle_placeholder')}</label>
+      'subtitle',
+      <div className="Form-group">
+        <label className="label">{app.translator.trans('fof-polls.forum.modal.subtitle_placeholder')}</label>
 
-          <input type="text" name="subtitle" className="FormControl" bidi={this.subtitle} />
-        </div>,
-        95
+        <input type="text" name="subtitle" className="FormControl" bidi={this.subtitle} />
+      </div>,
+      95
     );
 
     items.add(
@@ -288,75 +292,30 @@ export default class PollForm extends Component {
     };
   }
 
-  async onsubmit(e) {
-    e.preventDefault();
+  async onsubmit(event) {
+    event.preventDefault();
 
     try {
-      await this.state.save(this.data());
-
-      // Show success alert
-      const alertId = app.alerts.show(
-        {
-          type: 'success',
-          controls: [
-            <Button
-              className="Button Button--link"
-              onclick={() =>
-                m.route.set(
-                  app.route('compose-poll', {
-                    edit: this.state.collection.id(),
-                  })
-                )
-              }
-            >
-              {t(`${prfx}.continue_editing`)}
-            </Button>,
-          ],
-        },
-        t(`${prfx}.success`)
-      );
-
-      // Hide alert after 10 seconds
-      setTimeout(() => app.alerts.dismiss(alertId), 10000);
-
-      // Check if we need to call a custom onsubmit callback
-      if (this.attrs.onsubmit) {
-        this.attrs.onsubmit(this.state.poll);
+      await this.attrs.onsubmit(this.data(), this.state);
+    } catch (error) {
+      if (error instanceof FormError) {
+        app.alerts.show({ type: 'error' }, error.message);
       } else {
-        // Otherwise redirect to pools list
-        m.route.set(app.route('polls-manager'));
-      }
-    } catch (e) {
-      if (e instanceof FormError) {
-        app.alerts.show({ type: 'error' }, e.message);
-      } else {
+        console.error(error);
         // Show error alert
         app.alerts.show({ type: 'error' }, t(`${prfx}.error`));
       }
-    } finally {
-      this.state.loading = false;
-      m.redraw();
     }
   }
 
   async delete() {
-    if (!confirm(t(`${prfx}.delete_confirm`))) {
-      return;
-    }
-
+    this.state.loading = true;
     try {
-      await this.state.delete();
-      // Show success alert
-      const alertId = app.alerts.show({ type: 'success' }, t(`${prfx}.delete_success`));
-
-      // Hide alert after 10 seconds
-      setTimeout(() => app.alerts.dismiss(alertId), 10000);
-
-      // Redirect to polls list
-      m.route.set(app.route('polls-manager'));
-    } catch (e) {
-      // Show error alert
-      app.alerts.show({ type: 'error' }, t(`${prfx}.delete_error`));
+      await PollControls.deleteAction(this.state.poll);
+      this.state.deleting = true;
+    } finally {
+      this.state.loading = false;
+      m.redraw();
     }
   }
 

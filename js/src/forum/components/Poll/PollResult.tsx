@@ -1,15 +1,15 @@
 import * as Mithril from 'mithril';
-import Component, {ComponentAttrs} from 'flarum/common/Component';
+import Component, { ComponentAttrs } from 'flarum/common/Component';
 import PollOptionLabel from './PollOptionLabel';
 import PollResultsNumber from './PollResultNumber';
 import PollOptionInput from './PollOptionInput';
-import PollOptionModel from "../../models/PollOption";
-import PollState from "../../states/PollState";
-import abbreviateNumber from "flarum/common/utils/abbreviateNumber";
+import PollOptionModel from '../../models/PollOption';
+import PollState from '../../states/PollState';
+import abbreviateNumber from 'flarum/common/utils/abbreviateNumber';
 
 interface PollResultsAttrs extends ComponentAttrs {
-    option: PollOptionModel;
-    state: PollState;
+  option: PollOptionModel;
+  state: PollState;
 }
 
 export default class PollResults extends Component<PollResultsAttrs> {
@@ -17,16 +17,15 @@ export default class PollResults extends Component<PollResultsAttrs> {
     const option = this.attrs.option;
     const state = this.attrs.state;
     let voteCount = option.voteCount();
-    if(!voteCount){
-        voteCount = 0;
-    }
-    else {
-        voteCount = voteCount * 100 / state.overallVoteCount();
+    if (!voteCount) {
+      voteCount = 0;
+    } else {
+      voteCount = (voteCount * 100) / state.overallVoteCount();
     }
 
     return (
       <label className="PollResult">
-          <PollOptionInput id={option.id()} isResult={false} name="vote" value="Vote for this option" />
+        <PollOptionInput id={option.id()} isResult={false} name="vote" value="Vote for this option" />
         <span className="PollResult-information">
           <div className="PollResult-row">
             <PollOptionLabel text={option.answer()} />
