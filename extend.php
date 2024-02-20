@@ -21,7 +21,6 @@ use Flarum\Post\Event\Saving as PostSaving;
 use Flarum\Post\Post;
 use Flarum\Settings\Event\Saved as SettingsSaved;
 use FoF\Polls\Api\Controllers;
-use FoF\Polls\Api\Serializers\PollSerializer;
 
 return [
     (new Extend\Frontend('forum'))
@@ -57,7 +56,7 @@ return [
         ->attributes(Api\AddDiscussionAttributes::class),
 
     (new Extend\ApiSerializer(PostSerializer::class))
-        ->hasMany('polls', PollSerializer::class)
+        ->hasMany('polls', Api\Serializers\PollSerializer::class)
         ->attributes(Api\AddPostAttributes::class),
 
     (new Extend\ApiSerializer(ForumSerializer::class))
