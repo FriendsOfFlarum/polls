@@ -71,7 +71,7 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
     );
   }
 
-  sidebarItems() {
+  sidebarItems(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
     const canStartPoll = app.forum.attribute<boolean>('canStartGlobalPolls');
 

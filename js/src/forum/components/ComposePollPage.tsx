@@ -7,6 +7,10 @@ import PollForm from './PollForm';
 import PollFormState from '../states/PollFormState';
 import ComposePollHero from './ComposePollHero';
 import Button from 'flarum/common/components/Button';
+import listItems from 'flarum/common/helpers/listItems';
+import ItemList from 'flarum/common/utils/ItemList';
+import SelectDropdown from 'flarum/common/components/SelectDropdown';
+import IndexPage from 'flarum/forum/components/IndexPage';
 
 export default class ComposePollPage extends Page {
   poll: Poll | null | undefined = null;
@@ -55,7 +59,14 @@ export default class ComposePollPage extends Page {
       <div className="ComposePollCollectionPage">
         <ComposePollHero poll={this.poll} />
         <div className="container">
-          <PollForm poll={this.poll} onsubmit={this.onsubmit.bind(this)} />
+          <div className="sideNavContainer">
+            <nav className="PollsPage-nav sideNav">
+              <ul>{listItems(this.sidebarItems().toArray())}</ul>
+            </nav>
+            <div className="sideNavOffset">
+              <PollForm poll={this.poll} onsubmit={this.onsubmit.bind(this)} />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -96,5 +107,26 @@ export default class ComposePollPage extends Page {
     if (isNew) {
       m.route.set(app.route('fof.polls.list'));
     }
+  }
+
+  sidebarItems(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+
+    items.add(
+      'nav',
+      <SelectDropdown
+        buttonClassName="Button"
+        className="App-titleControl"
+        accessibleToggleLabel={app.translator.trans('core.forum.index.toggle_sidenav_dropdown_accessible_label')}
+      >
+        {this.navItems().toArray()}
+      </SelectDropdown>
+    );
+
+    return items;
+  }
+
+  navItems() {
+    return IndexPage.prototype.navItems();
   }
 }
