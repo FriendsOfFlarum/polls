@@ -191,11 +191,11 @@ export default class PollForm extends Component {
       'submit',
       <div className="Form-group">
         <Button type="submit" className="Button Button--primary PollModal-SubmitButton" icon="fas fa-save" loading={this.state.loading}>
-          {t('fof-polls.forum.modal.submit')}
+          {app.translator.trans('fof-polls.forum.modal.submit')}
         </Button>
         {this.state.poll.exists && (
           <Button className="Button Button--secondary" icon="fas fa-trash-alt" loading={this.state.deleting} onclick={this.delete.bind(this)}>
-            {t(`${prfx}.delete`)}
+            {app.translator.trans(`${prfx}.delete`)}
           </Button>
         )}
       </div>,
@@ -260,8 +260,8 @@ export default class PollForm extends Component {
     const options = this.options.map((o, i) => {
       if (!o.data.attributes) o.data.attributes = {};
 
-      o.data.attributes.answer = this.optionAnswers[i]();
-      o.data.attributes.imageUrl = this.optionImageUrls[i]();
+      o.data.answer = this.optionAnswers[i]();
+      o.data.imageUrl = this.optionImageUrls[i]();
 
       return o.data;
     });

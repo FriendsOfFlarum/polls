@@ -16,10 +16,6 @@ import PollControls from '../../utils/PollControls';
 import ItemList from 'flarum/common/utils/ItemList';
 import listItems from 'flarum/common/helpers/listItems';
 
-// Make translation calls shorter
-// const t = app.translator.trans.bind(app.translator);
-// const prfx = `${slug}.forum.list`;
-
 export interface IPollListItemAttrs extends ComponentAttrs {
   poll: Poll;
   params: PollListParams;
@@ -35,14 +31,17 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
    * unless new data comes in.
    */
   subtree!: SubtreeRetainer;
+  poll!: Poll;
 
   highlightRegExp?: RegExp;
 
   oninit(vnode: Mithril.Vnode<CustomAttrs, this>) {
     super.oninit(vnode);
 
+    this.poll = this.attrs.poll;
+
     this.subtree = new SubtreeRetainer(
-      () => this.attrs.poll.freshness,
+      () => this.poll.freshness,
       () => {
         const time = app.session.user && app.session.user.markedAllAsReadAt();
         return time && time.getTime();
@@ -55,16 +54,14 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
     return {
       className: classList('PollListItem', {
         active: this.active(),
-        'PollListItem--hidden': this.attrs.poll.isHidden(),
+        'PollListItem--hidden': this.poll.isHidden(),
         Slidable: 'ontouchstart' in window,
       }),
     };
   }
 
   view() {
-    const poll = this.attrs.poll;
-
-    const controls = PollControls.controls(poll, this).toArray();
+    const controls = PollControls.controls(this.poll, this).toArray();
     const attrs = this.elementAttrs();
 
     return (
@@ -93,8 +90,7 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
   }
 
   slidableUnderneathView(): Mithril.Children {
-    const poll = this.attrs.poll;
-    const isUnread = poll.isUnread();
+    const isUnread = this.poll.isUnread();
 
     return (
       <span
@@ -107,9 +103,8 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
   }
 
   contentView(): Mithril.Children {
-    const poll = this.attrs.poll;
-    // const isUnread = poll.isUnread();
-    // const isRead = poll.isRead();
+    // const isUnread = this.poll.isUnread();
+    // const isRead = this.poll.isRead();
 
     return (
       //   <div className={classList('PollListItem-content', 'Slidable-content', { unread: isUnread, read: isRead })}>
@@ -121,17 +116,20 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
   }
 
   mainView(): Mithril.Children {
-    const poll = this.attrs.poll;
-
     return (
-      <Link href={app.route('fof_polls_list', { id: poll.id() })} className="PollListItem-main">
-        <h2 className="PollListItem-title">{highlight(poll.question(), this.highlightRegExp)}</h2>
+      <Link href={app.route('fof_polls_list', { id: this.poll.id() })} className="PollListItem-main">
+        <h2 className="PollListItem-title">{highlight(this.poll.question(), this.highlightRegExp)}</h2>
       </Link>
     );
   }
 
   infoView() {
-    return <ul className="UserCard-info">{listItems(this.infoItems().toArray())}</ul>;
+    return (
+      <div>
+        {this.poll.subtitle() && <p className="PollListItem-subtitle helpText">{this.poll.subtitle()}</p>}
+        <ul className="UserCard-info">{listItems(this.infoItems().toArray())}</ul>
+      </div>
+    );
   }
 
   oncreate(vnode: Mithril.VnodeDOM<CustomAttrs, this>) {
@@ -157,38 +155,35 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
    * Determine whether or not the discussion is currently being viewed.
    */
   active() {
-    return app.current.matches(PollPage, { poll: this.attrs.poll });
+    return app.current.matches(PollPage, { poll: this.poll });
   }
 
   /**
    * Mark the poll as read.
    */
   markAsRead() {
-    const poll = this.attrs.poll;
-
-    if (poll.isUnread()) {
-      poll.save({ lastVotedNumber: poll.voteCount() });
+    if (this.poll.isUnread()) {
+      this.poll.save({ lastVotedNumber: this.poll.voteCount() });
       m.redraw();
     }
   }
 
   infoItems(): ItemList<Mithril.Children> {
-    const poll = this.attrs.poll;
     const items = new ItemList<Mithril.Children>();
-    const active = !poll.hasEnded();
-    const activeView = poll.endDate()
+    const active = !this.poll.hasEnded();
+    const activeView = this.poll.endDate()
       ? [
           icon('fas fa-clock'),
           ' ',
           active
-            ? app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(poll.endDate()).fromNow() })
+            ? app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(this.poll.endDate()).fromNow() })
             : app.translator.trans('fof-polls.forum.poll_ended'),
         ]
       : [icon('fas fa-om'), ' ', app.translator.trans('fof-polls.forum.poll_never_ends')];
 
     items.add('active', <span className={classList('UserCard-lastSeen', { active })}>{activeView}</span>);
 
-    const voteCount = poll.voteCount();
+    const voteCount = this.poll.voteCount();
     if (voteCount !== undefined) {
       items.add(
         'discussion-count',

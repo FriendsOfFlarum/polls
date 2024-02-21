@@ -38,9 +38,9 @@ export default class Poll extends Component<PollAttrs, PollState> {
     return (
       <div className="Poll" data-id={poll.id()}>
         {this.controlsView(controls.toArray())}
-        <div className="Poll-image">
+        {/* <div className="Poll-image">
           <PollImage image={poll.image()} />
-        </div>
+        </div> */}
         <div className="Poll-wrapper">
           <PollTitle text={poll.question()} />
           <PollSubTitle text={poll.subtitle()} />
