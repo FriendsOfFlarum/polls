@@ -78,7 +78,7 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
       !!controls.length && (
         <Dropdown
           icon="fas fa-ellipsis-v"
-          className="UserCard-controls PollListItem-controls"
+          className="PollListItem-controls"
           menuClassName="Dropdown-menu--right"
           buttonClassName="Button Button--icon Button--flat"
           accessibleToggleLabel={app.translator.trans('fof-polls.forum.poll_controls.toggle_dropdown_accessible_label')}
@@ -110,7 +110,6 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
       //   <div className={classList('PollListItem-content', 'Slidable-content', { unread: isUnread, read: isRead })}>
       <div className={classList('PollListItem-content')}>
         {this.mainView()}
-        {this.infoView()}
       </div>
     );
   }
@@ -119,18 +118,20 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
     return (
       <Link href={app.route('fof.polls.view', { id: this.poll.id() })} className="PollListItem-main">
         <h2 className="PollListItem-title">{highlight(this.poll.question(), this.highlightRegExp)}</h2>
+        {this.poll.subtitle() && <p className="PollListItem-subtitle helpText">{this.poll.subtitle()}</p>}
+        <ul className="PollListItem-info">{listItems(this.infoItems().toArray())}</ul>
       </Link>
     );
   }
 
-  infoView() {
-    return (
-      <div>
-        {this.poll.subtitle() && <p className="PollListItem-subtitle helpText">{this.poll.subtitle()}</p>}
-        <ul className="UserCard-info">{listItems(this.infoItems().toArray())}</ul>
-      </div>
-    );
-  }
+  // infoView() {
+  //   return (
+  //     <div>
+  //       {this.poll.subtitle() && <p className="PollListItem-subtitle helpText">{this.poll.subtitle()}</p>}
+  //       <ul className="PollListItem-info">{listItems(this.infoItems().toArray())}</ul>
+  //     </div>
+  //   );
+  // }
 
   oncreate(vnode: Mithril.VnodeDOM<CustomAttrs, this>) {
     super.oncreate(vnode);
@@ -179,15 +180,15 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
             ? app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(this.poll.endDate()).fromNow() })
             : app.translator.trans('fof-polls.forum.poll_ended'),
         ]
-      : [icon('fas fa-om'), ' ', app.translator.trans('fof-polls.forum.poll_never_ends')];
+      : [icon('fas fa-infinity'), ' ', app.translator.trans('fof-polls.forum.poll_never_ends')];
 
-    items.add('active', <span className={classList('UserCard-lastSeen', { active })}>{activeView}</span>);
+    items.add('active', <span className={classList('PollListItem-endStatus', { active })}>{activeView}</span>);
 
     const voteCount = this.poll.voteCount();
     if (voteCount !== undefined) {
       items.add(
-        'discussion-count',
-        <div className="userStat">
+        'voteCount',
+        <span>
           {icon('fas fa-poll fa-fw')}
           {[
             ' ',
@@ -195,7 +196,7 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
               count: abbreviateNumber(voteCount),
             }),
           ]}
-        </div>,
+        </span>,
         70
       );
     }
