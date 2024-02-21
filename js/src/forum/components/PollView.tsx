@@ -38,9 +38,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
         {/* <div className="Poll-image">
           <PollImage image={poll.image()} />
         </div> */}
-        <div className="Poll-wrapper">
-          {this.createMainView().toArray()}
-        </div>
+        <div className="Poll-wrapper">{this.createMainView().toArray()}</div>
       </div>
     );
   }
@@ -48,18 +46,9 @@ export default class PollView extends Component<PollAttrs, PollState> {
   createMainView(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
     const poll = this.attrs.poll;
-    items.add(
-        'title',
-        <h2 className="Poll-title">{poll.question()}</h2>
-    );
-    items.add(
-        'subtitle',
-        <p className="Poll-subtitle">{poll.subtitle()}</p>
-    );
-    items.add(
-        'form',
-        this.createFormView()
-    );
+    items.add('title', <h2 className="Poll-title">{poll.question()}</h2>);
+    items.add('subtitle', <p className="Poll-subtitle">{poll.subtitle()}</p>);
+    items.add('form', this.createFormView());
     return items;
   }
 
@@ -68,18 +57,25 @@ export default class PollView extends Component<PollAttrs, PollState> {
     const poll = this.attrs.poll;
     const infoItems = this.infoItems(poll.maxVotes());
 
-    return (<form>
-      <fieldset>
-        <legend className="sr-only">Antworten</legend>
-        <PollOptions options={poll.options()} state={state}/>
-      </fieldset>
-      <div className="Poll-sticky">
-        {!infoItems.isEmpty() && <div className="helpText PollInfoText">{infoItems.toArray()}</div>}
-        <Button className="Button Button--primary Poll-submit" loading={state.loadingOptions} onclick={state.onsubmit.bind(state)}  disabled={!state.hasSelectedOptions()}>
-          {app.translator.trans('fof-polls.forum.poll.submit_button')}
-        </Button>
-      </div>
-    </form>)
+    return (
+      <form>
+        <fieldset>
+          <legend className="sr-only">Antworten</legend>
+          <PollOptions options={poll.options()} state={state} />
+        </fieldset>
+        <div className="Poll-sticky">
+          {!infoItems.isEmpty() && <div className="helpText PollInfoText">{infoItems.toArray()}</div>}
+          <Button
+            className="Button Button--primary Poll-submit"
+            loading={state.loadingOptions}
+            onclick={state.onsubmit.bind(state)}
+            disabled={!state.hasSelectedOptions()}
+          >
+            {app.translator.trans('fof-polls.forum.poll.submit_button')}
+          </Button>
+        </div>
+      </form>
+    );
   }
 
   deletePoll(): void {
@@ -92,17 +88,17 @@ export default class PollView extends Component<PollAttrs, PollState> {
 
   controlsView(controls: Mithril.ChildArray): Mithril.Children {
     return (
-        !!controls.length && (
-            <Dropdown
-                icon="fas fa-ellipsis-v"
-                className="PollListItem-controls"
-                menuClassName="Dropdown-menu--right"
-                buttonClassName="Button Button--icon Button--flat"
-                accessibleToggleLabel={app.translator.trans('fof-polls.forum.poll_controls.toggle_dropdown_accessible_label')}
-            >
-              {controls}
-            </Dropdown>
-        )
+      !!controls.length && (
+        <Dropdown
+          icon="fas fa-ellipsis-v"
+          className="PollListItem-controls"
+          menuClassName="Dropdown-menu--right"
+          buttonClassName="Button Button--icon Button--flat"
+          accessibleToggleLabel={app.translator.trans('fof-polls.forum.poll_controls.toggle_dropdown_accessible_label')}
+        >
+          {controls}
+        </Dropdown>
+      )
     );
   }
 

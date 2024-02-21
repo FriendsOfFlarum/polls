@@ -8,7 +8,7 @@ import PollOption from './models/PollOption';
 import PollVote from './models/PollVote';
 import PollsPage from './components/PollsPage';
 import ComposePollPage from './components/ComposePollPage';
-import PollViewPage from "./components/PollViewPage";
+import PollViewPage from './components/PollViewPage';
 
 export default [
   new Extend.Routes() //

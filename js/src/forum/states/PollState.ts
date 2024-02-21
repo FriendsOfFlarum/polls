@@ -64,11 +64,11 @@ export default class PollState {
     m.redraw();
   }
 
-  hasSelectedOptions():boolean {
+  hasSelectedOptions(): boolean {
     return this.pendingSubmit;
   }
 
-  onsubmit():Promise<void> {
+  onsubmit(): Promise<void> {
     return this.submit(this.pendingOptions!, () => {
       this.pendingOptions = null;
       this.pendingSubmit = false;
