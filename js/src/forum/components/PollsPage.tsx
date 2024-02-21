@@ -13,7 +13,7 @@ import SelectDropdown from 'flarum/common/components/SelectDropdown';
 import Acl from '../../common/Acl';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import PollModel from '../models/Poll';
-import Poll from './PollView';
+import PollView from './PollView';
 
 export default class PollsPage extends Page<IPageAttrs, PollListState> {
   loading: boolean = false;
@@ -22,26 +22,6 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
 
-    const editId = m.route.param('id');
-    if (editId) {
-      this.poll = app.store.getById('poll', editId) as PollModel;
-
-      if (!this.poll) {
-        this.loading = true;
-
-        app.store.find<PollModel>('fof/polls', editId).then((item) => {
-          this.poll = item;
-          this.loading = false;
-          app.setTitle(extractText(app.translator.trans('fof-polls.forum.page.poll_detail')));
-          m.redraw();
-        });
-      }
-    } else {
-      this.initListView();
-    }
-  }
-
-  initListView() {
     this.state = new PollListState({
       sort: m.route.param('sort'),
       filter: m.route.param('filter'),
@@ -65,7 +45,7 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
       return (
         <div className="PollsPage">
           <div className="container">
-            <Poll poll={this.poll} />
+            <PollView poll={this.poll} />
           </div>
         </div>
       );
