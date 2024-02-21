@@ -42,7 +42,7 @@
             "title": "FoF Polls",
             "category": "discussion",
             "icon": {
-                "name": "fas fa-signal",
+                "name": "fas fa-poll",
                 "backgroundColor": "#e74c3c",
                 "color": "#fff"
             }

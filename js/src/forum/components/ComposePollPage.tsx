@@ -47,6 +47,12 @@ export default class ComposePollPage extends Page {
   }
 
   view(): Mithril.Children {
+    // prevent users from accessing the page if they can't start global polls
+    if (!app.forum.attribute<boolean>('canStartGlobalPolls')) {
+      m.route.set('/');
+      return;
+    }
+
     if (this.loading) {
       return <LoadingIndicator />;
     }

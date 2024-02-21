@@ -10,7 +10,6 @@ import extractText from 'flarum/common/utils/extractText';
 import PollListState from '../states/PollListState';
 import Button from 'flarum/common/components/Button';
 import SelectDropdown from 'flarum/common/components/SelectDropdown';
-import Acl from '../../common/Acl';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import PollModel from '../models/Poll';
 import PollView from './PollView';
@@ -74,7 +73,7 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
 
   sidebarItems() {
     const items = new ItemList<Mithril.Children>();
-    const canStartPoll = Acl.canStartPoll();
+    const canStartPoll = app.forum.attribute<boolean>('canStartGlobalPolls');
 
     items.add(
       'newGlobalPoll',
@@ -126,6 +125,7 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
   viewItems() {
     return IndexPage.prototype.viewItems();
   }
+
   navItems() {
     return IndexPage.prototype.navItems();
   }
