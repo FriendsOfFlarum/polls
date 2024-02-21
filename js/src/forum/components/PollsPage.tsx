@@ -13,7 +13,7 @@ import SelectDropdown from 'flarum/common/components/SelectDropdown';
 import Acl from '../../common/Acl';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import PollModel from '../models/Poll';
-import Poll from './Poll';
+import Poll from './PollView';
 
 export default class PollsPage extends Page<IPageAttrs, PollListState> {
   loading: boolean = false;

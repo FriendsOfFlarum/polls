@@ -117,7 +117,7 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
 
   mainView(): Mithril.Children {
     return (
-      <Link href={app.route('fof_polls_list', { id: this.poll.id() })} className="PollListItem-main">
+      <Link href={app.route('fof.polls.view', { id: this.poll.id() })} className="PollListItem-main">
         <h2 className="PollListItem-title">{highlight(this.poll.question(), this.highlightRegExp)}</h2>
       </Link>
     );

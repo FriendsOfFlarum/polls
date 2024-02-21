@@ -9,7 +9,7 @@ export default function addNavItem() {
       'fof-polls-list',
       LinkButton.component(
         {
-          href: app.route('fof_polls_list'),
+          href: app.route('fof.polls.list'),
           icon: 'fas fa-poll',
         },
         app.translator.trans('fof-polls.forum.page.nav')

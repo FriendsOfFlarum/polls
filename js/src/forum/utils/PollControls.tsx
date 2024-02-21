@@ -39,7 +39,7 @@ export default {
 
     items.add(
       'view',
-      <Link href={app.route('fof_polls_list', { id: poll.id() })}>{app.translator.trans('fof-polls.forum.poll_controls.view_label')}</Link>
+      <Link href={app.route('fof.polls.view', { id: poll.id() })}>{app.translator.trans('fof-polls.forum.poll_controls.view_label')}</Link>
     );
 
     return items;

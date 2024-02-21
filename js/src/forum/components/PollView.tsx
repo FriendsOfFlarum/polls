@@ -16,7 +16,7 @@ interface PollAttrs extends ComponentAttrs {
   poll: PollModel;
 }
 
-export default class Poll extends Component<PollAttrs, PollState> {
+export default class PollView extends Component<PollAttrs, PollState> {
   oninit(vnode: Mithril.Vnode<ComponentAttrs, this>) {
     super.oninit(vnode);
     this.state = new PollState(this.attrs.poll);
