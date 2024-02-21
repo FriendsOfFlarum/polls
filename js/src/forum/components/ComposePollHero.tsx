@@ -31,9 +31,7 @@ export default class ComposePollHero extends Component<ComposePollHeroAttrs> {
                   icon="far fa-arrow-up-right-from-square"
                   className="Button Button--secondary IndexPage-newDiscussion GoodiePreviewLink"
                   itemClassName="App-primaryControl"
-                  href={app.route('fof.polls.list', { id: poll.id() })}
-                  external={true}
-                  target="_blank"
+                  href={app.route('fof.polls.view', { id: poll.id() })}
                 >
                   {app.translator.trans('fof-polls.forum.compose.polls_preview')}
                 </LinkButton>

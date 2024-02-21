@@ -7,7 +7,6 @@ import PollsPage from '../components/PollsPage';
 import ItemList from 'flarum/common/utils/ItemList';
 import Separator from 'flarum/common/components/Separator';
 import Button from 'flarum/common/components/Button';
-import Link from 'flarum/common/components/Link';
 
 /**
  * The `UserControls` utility constructs a list of buttons for a user which
@@ -36,11 +35,6 @@ export default {
    */
   pollControls(poll: Poll, context: Component): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
-
-    items.add(
-      'view',
-      <Link href={app.route('fof.polls.view', { id: poll.id() })}>{app.translator.trans('fof-polls.forum.poll_controls.view_label')}</Link>
-    );
 
     return items;
   },
@@ -119,6 +113,6 @@ export default {
    * Edit the poll.
    */
   editAction(poll: Poll): void {
-    m.route.set(app.route('fof_polls_compose', { id: poll.id() }));
+    m.route.set(app.route('fof.polls.compose', { id: poll.id() }));
   },
 };
