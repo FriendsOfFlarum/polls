@@ -139,6 +139,6 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
       return;
     }
 
-    m.route.set(app.route('fof_polls_compose'));
+    m.route.set(app.route('fof.polls.compose'));
   }
 }

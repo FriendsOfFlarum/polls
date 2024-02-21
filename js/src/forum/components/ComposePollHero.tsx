@@ -22,7 +22,7 @@ export default class ComposePollHero extends Component<ComposePollHeroAttrs> {
                 icon="far fa-edit"
                 className="Button Button--secondary IndexPage-newDiscussion GoodiesManagerLink"
                 itemClassName="App-primaryControl"
-                href={app.route('fof_polls_list')}
+                href={app.route('fof.polls.list')}
               >
                 {app.translator.trans('fof-polls.forum.compose.polls_manager')}
               </LinkButton>
@@ -31,7 +31,7 @@ export default class ComposePollHero extends Component<ComposePollHeroAttrs> {
                   icon="far fa-arrow-up-right-from-square"
                   className="Button Button--secondary IndexPage-newDiscussion GoodiePreviewLink"
                   itemClassName="App-primaryControl"
-                  href={app.route('fof_polls_list', { id: poll.id() })}
+                  href={app.route('fof.polls.list', { id: poll.id() })}
                   external={true}
                   target="_blank"
                 >

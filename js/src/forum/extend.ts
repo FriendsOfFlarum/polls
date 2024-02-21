@@ -3,7 +3,6 @@ import Post from 'flarum/common/models/Post';
 import Forum from 'flarum/common/models/Forum';
 import Discussion from 'flarum/common/models/Discussion';
 import Poll from './models/Poll';
-import PollView from './components/PollView';
 import PollOption from './models/PollOption';
 import PollVote from './models/PollVote';
 import PollsPage from './components/PollsPage';
@@ -13,8 +12,8 @@ import PollViewPage from './components/PollViewPage';
 export default [
   new Extend.Routes() //
     .add('fof.polls.list', '/polls', PollsPage)
-    .add('fof.polls.view', '/polls/:id', PollViewPage)
-    .add('fof_polls_compose', '/polls/composer', ComposePollPage),
+    .add('fof.polls.view', '/polls/view/:id', PollViewPage)
+    .add('fof.polls.compose', '/polls/composer', ComposePollPage),
 
   new Extend.Store() //
     .add('polls', Poll)

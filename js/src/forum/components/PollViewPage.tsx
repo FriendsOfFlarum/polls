@@ -7,14 +7,14 @@ import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import PollView from './PollView';
 
 export default class PollViewPage extends Page {
-  poll: PollModel | null = null;
+  poll: PollModel | null | undefined = null;
   loading: boolean = false;
 
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
 
     const editId = m.route.param('id');
-    this.poll = app.store.getById('poll', editId) as PollModel;
+    this.poll = app.store.getById<PollModel>('poll', editId);
 
     if (!this.poll) {
       this.loading = true;
@@ -33,14 +33,12 @@ export default class PollViewPage extends Page {
       return <LoadingIndicator />;
     }
 
-    if (this.poll) {
-      return (
-        <div className="PollsPage">
-          <div className="container">
-            <PollView poll={this.poll} />
-          </div>
+    return (
+      <div className="PollsPage">
+        <div className="container">
+          <PollView poll={this.poll} />
         </div>
-      );
-    }
+      </div>
+    );
   }
 }
