@@ -6,7 +6,6 @@ import extractText from "flarum/common/utils/extractText";
 import LoadingIndicator from "flarum/common/components/LoadingIndicator";
 import PollView from "./PollView";
 
-
 export default class PollViewPage extends Page {
     poll: PollModel | null = null;
     loading: boolean = false;

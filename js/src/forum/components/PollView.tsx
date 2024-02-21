@@ -1,10 +1,8 @@
 import type Mithril from 'mithril';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
 import app from 'flarum/forum/app';
-import PollTitle from './Poll/PollTitle';
 import PollOptions from './Poll/PollOptions';
 import PollImage from './Poll/PollImage';
-import PollSubTitle from './Poll/PollSubTitle';
 import PollModel from '../models/Poll';
 import PollState from '../states/PollState';
 import Button from 'flarum/common/components/Button';
@@ -24,7 +22,6 @@ export default class PollView extends Component<PollAttrs, PollState> {
 
   view(): Mithril.Children {
     const poll = this.attrs.poll;
-    const infoItems = this.infoItems(poll.maxVotes());
     const state = this.state;
     const controls = PollControls.controls(poll, this);
 
@@ -42,26 +39,47 @@ export default class PollView extends Component<PollAttrs, PollState> {
           <PollImage image={poll.image()} />
         </div> */}
         <div className="Poll-wrapper">
-          <PollTitle text={poll.question()} />
-          <PollSubTitle text={poll.subtitle()} />
-          <form>
-            <fieldset>
-              <legend className="sr-only">Antworten</legend>
-              <PollOptions options={poll.options()} state={state} />
-            </fieldset>
-            <div className="Poll-sticky">
-              {!infoItems.isEmpty() && <div className="helpText PollInfoText">{infoItems.toArray()}</div>}
-
-              {state.showButton() && (
-                <Button className="Button Button--primary Poll-submit" loading={state.loadingOptions} onclick={state.onsubmit.bind(this)}>
-                  {app.translator.trans('fof-polls.forum.poll.submit_button')}
-                </Button>
-              )}
-            </div>
-          </form>
+          {this.createMainView().toArray()}
         </div>
       </div>
     );
+  }
+
+  createMainView(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+    const poll = this.attrs.poll;
+    items.add(
+        'title',
+        <h2 className="Poll-title">{poll.question()}</h2>
+    );
+    items.add(
+        'subtitle',
+        <p className="Poll-subtitle">{poll.subtitle()}</p>
+    );
+    items.add(
+        'form',
+        this.createFormView()
+    );
+    return items;
+  }
+
+  createFormView(): Mithril.Children {
+    const state = this.state;
+    const poll = this.attrs.poll;
+    const infoItems = this.infoItems(poll.maxVotes());
+
+    return (<form>
+      <fieldset>
+        <legend className="sr-only">Antworten</legend>
+        <PollOptions options={poll.options()} state={state}/>
+      </fieldset>
+      <div className="Poll-sticky">
+        {!infoItems.isEmpty() && <div className="helpText PollInfoText">{infoItems.toArray()}</div>}
+        <Button className="Button Button--primary Poll-submit" loading={state.loadingOptions} onclick={state.onsubmit.bind(state)}  disabled={!state.hasSelectedOptions()}>
+          {app.translator.trans('fof-polls.forum.poll.submit_button')}
+        </Button>
+      </div>
+    </form>)
   }
 
   deletePoll(): void {
@@ -74,17 +92,17 @@ export default class PollView extends Component<PollAttrs, PollState> {
 
   controlsView(controls: Mithril.ChildArray): Mithril.Children {
     return (
-      !!controls.length && (
-        <Dropdown
-          icon="fas fa-ellipsis-v"
-          className="PollListItem-controls"
-          menuClassName="Dropdown-menu--right"
-          buttonClassName="Button Button--icon Button--flat"
-          accessibleToggleLabel={app.translator.trans('fof-polls.forum.poll_controls.toggle_dropdown_accessible_label')}
-        >
-          {controls}
-        </Dropdown>
-      )
+        !!controls.length && (
+            <Dropdown
+                icon="fas fa-ellipsis-v"
+                className="PollListItem-controls"
+                menuClassName="Dropdown-menu--right"
+                buttonClassName="Button Button--icon Button--flat"
+                accessibleToggleLabel={app.translator.trans('fof-polls.forum.poll_controls.toggle_dropdown_accessible_label')}
+            >
+              {controls}
+            </Dropdown>
+        )
     );
   }
 

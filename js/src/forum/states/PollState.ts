@@ -59,16 +59,16 @@ export default class PollState {
       optionIds.add(option.id()!);
     }
 
-    if (this.useSubmitUI) {
-      this.pendingOptions = optionIds.size ? optionIds : null;
-      this.pendingSubmit = !!this.pendingOptions;
-      return;
-    }
-
-    return this.submit(optionIds, null, () => (target.checked = isUnvoting));
+    this.pendingOptions = optionIds.size ? optionIds : null;
+    this.pendingSubmit = !!this.pendingOptions;
+    m.redraw();
   }
 
-  onsubmit() {
+  hasSelectedOptions():boolean {
+    return this.pendingSubmit;
+  }
+
+  onsubmit():Promise<void> {
     return this.submit(this.pendingOptions!, () => {
       this.pendingOptions = null;
       this.pendingSubmit = false;
@@ -98,7 +98,7 @@ export default class PollState {
       })
       .finally(() => {
         this.loadingOptions = false;
-
+        this.showCheckMarks = false;
         m.redraw();
       });
   }
