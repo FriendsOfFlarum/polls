@@ -4,7 +4,6 @@ import Page from 'flarum/common/components/Page';
 import Poll from '../models/Poll';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import PollForm from './PollForm';
-import Acl from '../../common/Acl';
 import PollFormState from '../states/PollFormState';
 import ComposePollHero from './ComposePollHero';
 import Button from 'flarum/common/components/Button';
@@ -16,11 +15,6 @@ export default class ComposePollPage extends Page {
 
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
-
-    // If user not allowed to manage goodie collections, redirect to home
-    if (!Acl.canManagePools()) {
-      m.route.set(app.route('home'));
-    }
 
     // Get the `edit` parameter from the URL
     const editId = m.route.param('id');
