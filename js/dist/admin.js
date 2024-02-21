@@ -29,16 +29,16 @@ flarum_admin_app__WEBPACK_IMPORTED_MODULE_0___default().initializers.add('fof/po
     label: flarum_admin_app__WEBPACK_IMPORTED_MODULE_0___default().translator.trans('fof-polls.admin.settings.max_options'),
     min: 2
   }).registerPermission({
-    icon: 'fas fa-signal',
+    icon: 'fas fa-poll',
     label: flarum_admin_app__WEBPACK_IMPORTED_MODULE_0___default().translator.trans('fof-polls.admin.permissions.view_results_without_voting'),
     permission: 'discussion.polls.viewResultsWithoutVoting',
     allowGuest: true
   }, 'view').registerPermission({
-    icon: 'fas fa-signal',
+    icon: 'fas fa-poll',
     label: flarum_admin_app__WEBPACK_IMPORTED_MODULE_0___default().translator.trans('fof-polls.admin.permissions.start'),
     permission: 'discussion.polls.start'
   }, 'start').registerPermission({
-    icon: 'fas fa-signal',
+    icon: 'fas fa-poll',
     label: flarum_admin_app__WEBPACK_IMPORTED_MODULE_0___default().translator.trans('fof-polls.admin.permissions.start_global'),
     permission: 'startGlobalPoll'
   }, 'start').registerPermission({
@@ -50,11 +50,11 @@ flarum_admin_app__WEBPACK_IMPORTED_MODULE_0___default().initializers.add('fof/po
     label: flarum_admin_app__WEBPACK_IMPORTED_MODULE_0___default().translator.trans('fof-polls.admin.permissions.self_post_edit'),
     permission: 'polls.selfPostEdit'
   }, 'start').registerPermission({
-    icon: 'fas fa-signal',
+    icon: 'fas fa-poll',
     label: flarum_admin_app__WEBPACK_IMPORTED_MODULE_0___default().translator.trans('fof-polls.admin.permissions.vote'),
     permission: 'discussion.polls.vote'
   }, 'reply').registerPermission({
-    icon: 'fas fa-signal',
+    icon: 'fas fa-poll',
     label: flarum_admin_app__WEBPACK_IMPORTED_MODULE_0___default().translator.trans('fof-polls.admin.permissions.change_vote'),
     permission: 'polls.changeVote'
   }, 'reply').registerPermission({

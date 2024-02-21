@@ -79,8 +79,8 @@ export default class ComposePollPage extends Page {
               className="Button Button--link"
               onclick={() =>
                 m.route.set(
-                  app.route('compose-poll', {
-                    edit: state.poll.id(),
+                  app.route('fof.polls.compose', {
+                    id: state.poll.id(),
                   })
                 )
               }
@@ -100,7 +100,7 @@ export default class ComposePollPage extends Page {
     setTimeout(() => app.alerts.dismiss(alertId), 10000);
 
     if (isNew) {
-      m.route.set(app.route('fof_polls_list'));
+      m.route.set(app.route('fof.polls.list'));
     }
   }
 }

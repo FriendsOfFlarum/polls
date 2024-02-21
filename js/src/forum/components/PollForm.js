@@ -13,6 +13,9 @@ export default class PollForm extends Component {
   /** @type {PollFormState} */
   state;
 
+  /** @type {PollOption[]} */
+  options;
+
   oninit(vnode) {
     super.oninit(vnode);
     this.state = new PollFormState(this.attrs.poll);
@@ -257,22 +260,23 @@ export default class PollForm extends Component {
   }
 
   data() {
-    const options = this.options.map((o, i) => {
-      if (!o.data.attributes) o.data.attributes = {};
-
-      o.data.answer = this.optionAnswers[i]();
-      o.data.imageUrl = this.optionImageUrls[i]();
-
-      return o.data;
-    });
-
     if (this.question() === '') {
       throw new FormError(app.translator.trans('fof-polls.forum.modal.include_question'));
     }
 
-    if (options.length < 2) {
+    if (this.options.length < 2) {
       throw new FormError(app.translator.trans('fof-polls.forum.modal.min'));
     }
+
+    const pollExists = this.state.poll.exists;
+    const options = this.options.map((option, i) => {
+      option.pushAttributes({
+        answer: this.optionAnswers[i](),
+        imageUrl: this.optionImageUrls[i](),
+      });
+
+      return pollExists ? option.data : option.data.attributes;
+    });
 
     return {
       question: this.question(),
