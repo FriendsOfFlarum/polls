@@ -195,7 +195,7 @@ export default class PollForm extends Component {
         </Button>
         {this.state.poll.exists && (
           <Button className="Button Button--secondary" icon="fas fa-trash-alt" loading={this.state.deleting} onclick={this.delete.bind(this)}>
-            {app.translator.trans(`${prfx}.delete`)}
+            {app.translator.trans('fof-polls.forum.modal.delete')}
           </Button>
         )}
       </div>,
@@ -298,7 +298,7 @@ export default class PollForm extends Component {
       } else {
         console.error(error);
         // Show error alert
-        app.alerts.show({ type: 'error' }, t(`${prfx}.error`));
+        app.alerts.show({ type: 'error' }, app.translator.trans('fof-polls.forum.modal.error'));
       }
     }
   }
