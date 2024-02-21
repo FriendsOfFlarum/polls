@@ -46,36 +46,42 @@ export default class PollView extends Component<PollAttrs, PollState> {
   createMainView(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
     const poll = this.attrs.poll;
+
     items.add('title', <h2 className="Poll-title">{poll.question()}</h2>);
     items.add('subtitle', <p className="Poll-subtitle">{poll.subtitle()}</p>);
-    items.add('form', this.createFormView());
+    items.add('form', <form>{this.createFormItems().toArray()}</form>);
+
     return items;
   }
 
-  createFormView(): Mithril.Children {
+  createFormItems(): ItemList<Mithril.Children> {
     const state = this.state;
+    const items = new ItemList<Mithril.Children>();
     const poll = this.attrs.poll;
     const infoItems = this.infoItems(poll.maxVotes());
 
-    return (
-      <form>
-        <fieldset>
-          <legend className="sr-only">Antworten</legend>
-          <PollOptions options={poll.options()} state={state} />
-        </fieldset>
-        <div className="Poll-sticky">
-          {!infoItems.isEmpty() && <div className="helpText PollInfoText">{infoItems.toArray()}</div>}
-          <Button
-            className="Button Button--primary Poll-submit"
-            loading={state.loadingOptions}
-            onclick={state.onsubmit.bind(state)}
-            disabled={!state.hasSelectedOptions()}
-          >
-            {app.translator.trans('fof-polls.forum.poll.submit_button')}
-          </Button>
-        </div>
-      </form>
+    items.add(
+      'elements',
+      <fieldset>
+        <legend className="sr-only">app.translator.trans('fof-polls.forum.answers')</legend>
+        <PollOptions options={poll.options()} state={state} />
+      </fieldset>
     );
+    items.add(
+      'sticky',
+      <div className="Poll-sticky">
+        {!infoItems.isEmpty() && <div className="helpText PollInfoText">{infoItems.toArray()}</div>}
+        <Button
+          className="Button Button--primary Poll-submit"
+          loading={state.loadingOptions}
+          onclick={state.onsubmit.bind(state)}
+          disabled={!state.hasSelectedOptions()}
+        >
+          {app.translator.trans('fof-polls.forum.poll.submit_button')}
+        </Button>
+      </div>
+    );
+    return items;
   }
 
   deletePoll(): void {

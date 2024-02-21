@@ -23,6 +23,7 @@ fof-polls:
     max_votes_allowed: "Poll allows voting for {max, plural, one {# option} other {# options}}."
     polls_count: "{count, plural, one { {count} vote} other {{count} votes}}"
     poll_never_ends: Poll never ends
+    answers: Answers
 
     poll:
       cannot_change_vote: You cannot change your vote after voting.
