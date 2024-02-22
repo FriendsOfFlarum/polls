@@ -108,9 +108,7 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
 
     return (
       //   <div className={classList('PollListItem-content', 'Slidable-content', { unread: isUnread, read: isRead })}>
-      <div className={classList('PollListItem-content')}>
-        {this.mainView()}
-      </div>
+      <div className={classList('PollListItem-content')}>{this.mainView()}</div>
     );
   }
 
