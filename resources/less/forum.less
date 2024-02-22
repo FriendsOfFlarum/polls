@@ -63,13 +63,13 @@
   .PollModal--button {
     flex-shrink: 1;
     margin-left: 10px;
-    text-align: right;
 
     .Button--color(@muted-color; darken(@control-bg, 5%));
 
     .icon {
       margin-right: 0;
       font-size: 12px;
+      vertical-align: baseline;
     }
 
     &.small {
@@ -93,6 +93,11 @@
 
   .PollModal-SubmitButton {
     margin-top: 10px;
+  }
+
+  .PollModal-deleteButton {
+    margin-top: 10px;
+    margin-left: 10px;
   }
 
   .PollModal-Button {
@@ -489,10 +494,33 @@
 }
 .PollResult-information {
   display: flex;
-  margin-left: 10px;
-  justify-content: space-between;
   flex-direction: column;
   flex-grow: 1;
+  gap: 4px;
+  justify-content: space-between;
+  margin-left: 10px;
+  position: relative;
+}
+.PollResult-bar {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  width: 100%;
+
+  &::-webkit-progress-value {
+    background-color: var(--muted-color-dark);
+  }
+
+  &::-webkit-progress-bar {
+		background-color: var(--muted-color-light);
+	}
+}
+.PollResult-percentagePosition {
+  bottom: -2px;
+  background: var(--muted-color-dark);
+  height: 8px;
+  position: absolute;
+  width: 4px;
 }
 
 .Poll-title,
