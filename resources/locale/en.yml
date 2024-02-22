@@ -82,6 +82,7 @@ fof-polls:
       question_placeholder: Question
       subtitle_placeholder: Subtitle/Description (Optional)
       submit: Submit
+      delete: Delete
 
     moderation:
       add: Add Poll
