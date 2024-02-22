@@ -197,7 +197,12 @@ export default class PollForm extends Component {
           {app.translator.trans('fof-polls.forum.modal.submit')}
         </Button>
         {this.state.poll.exists && (
-          <Button className="Button Button--secondary PollModal-deleteButton" icon="fas fa-trash-alt" loading={this.state.deleting} onclick={this.delete.bind(this)}>
+          <Button
+            className="Button Button--secondary PollModal-deleteButton"
+            icon="fas fa-trash-alt"
+            loading={this.state.deleting}
+            onclick={this.delete.bind(this)}
+          >
             {app.translator.trans('fof-polls.forum.modal.delete')}
           </Button>
         )}
