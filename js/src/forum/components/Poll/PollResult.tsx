@@ -33,6 +33,7 @@ export default class PollResults extends Component<PollResultsAttrs> {
           </div>
 
           <progress type="range" min="0" max={state.overallVoteCount()} value={voteCount} className="PollResult-bar" />
+          <div class="PollResult-percentagePosition" style={{ left: `${voteCount}%` }}></div>
         </span>
       </label>
     );
