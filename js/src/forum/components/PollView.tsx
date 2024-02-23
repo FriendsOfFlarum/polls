@@ -9,6 +9,7 @@ import Button from 'flarum/common/components/Button';
 import ItemList from 'flarum/common/utils/ItemList';
 import PollControls from '../utils/PollControls';
 import Dropdown from 'flarum/common/components/Dropdown';
+import PollSubmitButton from './Poll/PollSubmitButton';
 
 interface PollAttrs extends ComponentAttrs {
   poll: PollModel;
@@ -71,14 +72,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
       'sticky',
       <div className="Poll-sticky">
         {!infoItems.isEmpty() && <div className="helpText PollInfoText">{infoItems.toArray()}</div>}
-        <Button
-          className="Button Button--primary Poll-submit"
-          loading={state.loadingOptions}
-          onclick={state.onsubmit.bind(state)}
-          disabled={!state.hasSelectedOptions()}
-        >
-          {app.translator.trans('fof-polls.forum.poll.submit_button')}
-        </Button>
+        <PollSubmitButton state={state} />
       </div>
     );
     return items;

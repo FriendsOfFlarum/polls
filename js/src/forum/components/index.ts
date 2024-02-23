@@ -8,6 +8,7 @@ import ComposePollPage from './ComposePollPage';
 import PollsPage from './PollsPage';
 import PollView from './PollView';
 import PollViewPage from './PollViewPage';
+import PollSubmitButton from './Poll/PollSubmitButton';
 
 export const components = {
   CreatePollModal,
@@ -20,4 +21,5 @@ export const components = {
   PollsPage,
   PollView,
   PollViewPage,
+  PollSubmitButton,
 };

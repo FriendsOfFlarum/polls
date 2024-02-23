@@ -1,12 +1,20 @@
 import type Mithril from 'mithril';
+import app from 'flarum/forum/app';
 import Component from 'flarum/common/Component';
 import Button from 'flarum/common/components/Button';
+import PollState from '../states/PollState';
 
 export default class PollSubmitButton extends Component {
   view(): Mithril.Children {
+    const state = this.attrs.state as PollState;
     return (
-      <Button className="Button" onclick={() => this.pollButtonSubmit()}>
-        Submit
+      <Button
+        className="Button Button--primary Poll-submit"
+        loading={state.loadingOptions}
+        onclick={() => this.pollButtonSubmit(state)}
+        disabled={!state.hasSelectedOptions()}
+      >
+        {app.translator.trans('fof-polls.forum.poll.submit_button')}
       </Button>
     );
   }
@@ -15,7 +23,7 @@ export default class PollSubmitButton extends Component {
    * Event handler for submit button being clicked
    */
 
-  pollButtonSubmit() {
-    console.log('submitted');
+  pollButtonSubmit(state: PollState) {
+    state.onsubmit(state);
   }
 }
