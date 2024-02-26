@@ -102,7 +102,7 @@ export default {
    */
   showDeletionAlert(poll: Poll, type: string): void {
     const message = {
-      success: `$fof-polls.forum.poll_controls.delete_success_message`,
+      success: `fof-polls.forum.poll_controls.delete_success_message`,
       error: `fof-polls.forum.poll_controls.delete_error_message`,
     }[type]!;
 
