@@ -1,4 +1,5 @@
-import Component from 'flarum/common/Component';
+import Component, { ComponentAttrs } from 'flarum/common/Component';
+import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import Button from 'flarum/common/components/Button';
 import Switch from 'flarum/common/components/Switch';
@@ -8,23 +9,36 @@ import extractText from 'flarum/common/utils/extractText';
 import FormError from './form/FormError';
 import PollFormState from '../states/PollFormState';
 import PollControls from '../utils/PollControls';
+import PollModel from '../models/Poll';
+import PollOption from '../models/PollOption';
 
-export default class PollForm extends Component {
-  /** @type {PollFormState} */
-  state;
+interface PollFormAttrs extends ComponentAttrs {
+  poll: PollModel;
+  onsubmit: (data: object, state: PollFormState) => Promise<void>;
+}
 
-  /** @type {PollOption[]} */
-  options;
+export default class PollForm extends Component<PollFormAttrs, PollFormState> {
+  protected options: PollOption[] = [];
+  protected optionAnswers: Stream<string>[] = [];
+  protected optionImageUrls: Stream<string>[] = [];
+  protected question: Stream<string>;
+  protected subtitle: Stream<string>;
+  protected endDate: Stream<string | null>;
+  protected publicPoll: Stream<boolean>;
+  protected allowMultipleVotes: Stream<boolean>;
+  protected hideVotes: Stream<boolean>;
+  protected allowChangeVote: Stream<boolean>;
+  protected maxVotes: Stream<number>;
+  protected datepickerMinDate: string = '';
 
-  oninit(vnode) {
+  oninit(vnode: Mithril.Vnode): void {
     super.oninit(vnode);
     this.state = new PollFormState(this.attrs.poll);
 
     // state handles poll initialization
     const poll = this.state.poll;
 
-    //@todo way the options are destructured into options (answers) and optionImageUrls
-    this.options = poll.options();
+    this.options = poll.options() as PollOption[];
     this.optionAnswers = this.options.map((o) => Stream(o.answer()));
     this.optionImageUrls = this.options.map((o) => Stream(o.imageUrl()));
 
@@ -37,15 +51,17 @@ export default class PollForm extends Component {
     this.allowChangeVote = Stream(poll.allowChangeVote());
     this.maxVotes = Stream(poll.maxVotes() || 0);
 
-    this.datepickerMinDate = this.formatDate(undefined);
+    // Set minimum date for datepicker to current date
+    this.datepickerMinDate = this.formatDate() as string;
 
     // Replace minimum of 'today' for poll end date only if the poll is not already closed
     if (this.endDate() && dayjs(poll.endDate).isAfter(dayjs())) {
-      this.datepickerMinDate = this.formatDate(poll.endDate);
+      // We know that endDate is set, so we can safely cast the result to string
+      this.datepickerMinDate = this.formatDate(poll.endDate()) as string;
     }
   }
 
-  view() {
+  view(): Mithril.Children {
     return (
       <form onsubmit={this.onsubmit.bind(this)}>
         <div className="PollDiscussionModal-form">{this.fields().toArray()}</div>
@@ -53,8 +69,8 @@ export default class PollForm extends Component {
     );
   }
 
-  fields() {
-    const items = new ItemList();
+  fields(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
 
     items.add(
       'question',
@@ -258,13 +274,13 @@ export default class PollForm extends Component {
     }
   }
 
-  removeOption(i) {
+  removeOption(i:number):void {
     this.options.splice(i, 1);
     this.optionAnswers.splice(i, 1);
     this.optionImageUrls.splice(i, 1);
   }
 
-  data() {
+  data(): object {
     if (this.question() === '') {
       throw new FormError(app.translator.trans('fof-polls.forum.modal.include_question'));
     }
@@ -296,7 +312,7 @@ export default class PollForm extends Component {
     };
   }
 
-  async onsubmit(event) {
+  async onsubmit(event: Event) {
     event.preventDefault();
 
     try {
@@ -312,7 +328,7 @@ export default class PollForm extends Component {
     }
   }
 
-  async delete() {
+  async delete(): Promise<void> {
     this.state.loading = true;
     try {
       await PollControls.deleteAction(this.state.poll);
@@ -323,7 +339,7 @@ export default class PollForm extends Component {
     }
   }
 
-  formatDate(date, def = false) {
+  formatDate(date: Date | string | false | undefined | null = undefined, def: Date | false = false): string | null {
     const dayjsDate = dayjs(date);
 
     if (date === false || !dayjsDate.isValid()) return def !== false ? this.formatDate(def) : null;
@@ -331,10 +347,10 @@ export default class PollForm extends Component {
     return dayjsDate.format('YYYY-MM-DDTHH:mm');
   }
 
-  dateToTimestamp(date) {
+  dateToTimestamp(date: Date | false): string | null {
     const dayjsDate = dayjs(date);
 
-    if (!date || !dayjsDate.isValid()) return false;
+    if (!date || !dayjsDate.isValid()) return null;
 
     return dayjsDate.format();
   }
