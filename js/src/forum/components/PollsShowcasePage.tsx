@@ -1,18 +1,9 @@
 import app from 'flarum/forum/app';
-import Page, { IPageAttrs } from 'flarum/common/components/Page';
-import IndexPage from 'flarum/forum/components/IndexPage';
-import Link from 'flarum/common/components/Link';
-import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
-import listItems from 'flarum/common/helpers/listItems';
+import { IPageAttrs } from 'flarum/common/components/Page';
 import ItemList from 'flarum/common/utils/ItemList';
-import humanTime from 'flarum/common/helpers/humanTime';
-import textContrastClass from 'flarum/common/helpers/textContrastClass';
-import classList from 'flarum/common/utils/classList';
 import Mithril from 'mithril';
-import Poll from '../models/Poll';
 import PollListState from '../states/PollListState';
 import extractText from 'flarum/common/utils/extractText';
-import PollList from './Poll/PollList';
 import Button from 'flarum/common/components/Button';
 import LogInModal from 'flarum/forum/components/LogInModal';
 import { AbstractPollPage } from './AbstractPollPage';
@@ -76,38 +67,4 @@ export default class PollsShowcasePage extends AbstractPollPage {
 
     m.route.set(app.route('fof.polls.compose'));
   }
-
-  //   tagTileListView(pinned) {
-  //     return <ul className="TagTiles">{pinned.map(this.tagTileView.bind(this))}</ul>;
-  //   }
-
-  //   tagTileView(tag) {
-  //     const lastPostedDiscussion = tag.lastPostedDiscussion();
-  //     const children = sortTags(tag.children() || []);
-
-  //     return (
-  //       <li className={classList('TagTile', { colored: tag.color() }, textContrastClass(tag.color()))} style={{ '--tag-bg': tag.color() }}>
-  //         <Link className="TagTile-info" href={app.route.tag(tag)}>
-  //           {tag.icon() && tagIcon(tag, {}, { useColor: false })}
-  //           <h3 className="TagTile-name">{tag.name()}</h3>
-  //           <p className="TagTile-description">{tag.description()}</p>
-  //           {!!children && (
-  //             <div className="TagTile-children">{children.map((child) => [<Link href={app.route.tag(child)}>{child.name()}</Link>, ' '])}</div>
-  //           )}
-  //         </Link>
-  //         {lastPostedDiscussion ? (
-  //           <Link className="TagTile-lastPostedDiscussion" href={app.route.discussion(lastPostedDiscussion, lastPostedDiscussion.lastPostNumber())}>
-  //             <span className="TagTile-lastPostedDiscussion-title">{lastPostedDiscussion.title()}</span>
-  //             {humanTime(lastPostedDiscussion.lastPostedAt())}
-  //           </Link>
-  //         ) : (
-  //           <span className="TagTile-lastPostedDiscussion" />
-  //         )}
-  //       </li>
-  //     );
-  //   }
-
-  //   cloudView(cloud) {
-  //     return <div className="TagCloud">{cloud.map((tag) => [tagLabel(tag, { link: true }), ' '])}</div>;
-  //   }
 }
