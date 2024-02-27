@@ -94,6 +94,10 @@ fof-polls:
       nav: Polls
       nav-all: All Global Polls
 
+    showcase:
+      no-active-polls: There are no active polls at the moment.
+      no-recent-polls: There are no recently ended polls at the moment.
+
     tooltip:
       badge: Poll
       votes: "{count, plural, one {# vote} other {# votes}}"
