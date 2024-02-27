@@ -22,7 +22,7 @@ export default class PollViewPage extends Page {
       app.store.find<PollModel>('fof/polls', editId).then((item) => {
         this.poll = item;
         this.loading = false;
-        app.setTitle(extractText(app.translator.trans('fof-polls.forum.page.poll_detail')));
+        app.setTitle(this.poll.question());
         m.redraw();
       });
     }
