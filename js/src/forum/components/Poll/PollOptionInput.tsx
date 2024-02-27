@@ -2,9 +2,9 @@ import type Mithril from 'mithril';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
 
 interface PollOptionInputAttrs extends ComponentAttrs {
-  id: Number; // for example 1
-  name: String; // for example privacy-setting
-  value: String; // for example Private to Project Members
+  id: Number;
+  name: String;
+  value: String;
   isResult?: Boolean;
   onchange: (e: Event) => void;
 }
