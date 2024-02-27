@@ -10,6 +10,7 @@ import ItemList from 'flarum/common/utils/ItemList';
 import PollControls from '../utils/PollControls';
 import Dropdown from 'flarum/common/components/Dropdown';
 import PollSubmitButton from './Poll/PollSubmitButton';
+import { slug } from 'flarum/common/utils/string';
 
 interface PollAttrs extends ComponentAttrs {
   poll: PollModel;
@@ -60,12 +61,13 @@ export default class PollView extends Component<PollAttrs, PollState> {
     const items = new ItemList<Mithril.Children>();
     const poll = this.attrs.poll;
     const infoItems = this.infoItems(poll.maxVotes());
+    const questionSlug = slug(poll.question());
 
     items.add(
       'elements',
       <fieldset>
         <legend className="sr-only">{poll.question()}</legend>
-        <PollOptions options={poll.options()} state={state} />
+        <PollOptions name={questionSlug} options={poll.options()} state={state} />
       </fieldset>
     );
     items.add(

@@ -2,14 +2,15 @@ import type Mithril from 'mithril';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
 
 interface PollOptionLabelAttrs extends ComponentAttrs {
-  text: String;
   id: Number;
+  name: String;
+  text: String;
 }
 
 export default class PollOptionLabel extends Component<PollOptionLabelAttrs> {
   view(): Mithril.Children {
     return (
-      <span id={`vote_${this.attrs.id}_label`} className="PollOption-label">
+      <span id={`${this.attrs.name}-${this.attrs.id}-label`} className="PollOption-label">
         {this.attrs.text}
       </span>
     );
