@@ -662,3 +662,25 @@
     font-size: 16px;
   }
 }
+
+@media @desktop-up {
+  .PollsPage {
+    .sideNav {
+      .sideNav--horizontal();
+      float: none;
+      width: auto;
+      padding-top: 0;
+
+      &:after {
+        display: none;
+      }
+
+      > ul > li:first-child {
+        width: 190px;
+      }
+    }
+    .sideNavOffset {
+      margin: 15px 0 0;
+    }
+  }
+}

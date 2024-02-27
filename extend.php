@@ -26,7 +26,8 @@ return [
     (new Extend\Frontend('forum'))
         ->js(__DIR__.'/js/dist/forum.js')
         ->css(__DIR__.'/resources/less/forum.less')
-        ->route('/polls', 'fof_polls_directory', Content\PollsDirectory::class)
+        ->route('/polls', 'fof.polls.showcase')
+        ->route('/polls/all', 'fof.polls.list', Content\PollsDirectory::class)
         ->route('/polls/view/{id}', 'fof.poll.view')
         ->route('/polls/composer', 'fof.polls.composer'),
 

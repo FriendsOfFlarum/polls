@@ -8,10 +8,12 @@ import PollVote from './models/PollVote';
 import PollsPage from './components/PollsPage';
 import ComposePollPage from './components/ComposePollPage';
 import PollViewPage from './components/PollViewPage';
+import PollsShowcasePage from './components/PollsShowcasePage';
 
 export default [
   new Extend.Routes() //
-    .add('fof.polls.list', '/polls', PollsPage)
+    .add('fof.polls.showcase', '/polls', PollsShowcasePage)
+    .add('fof.polls.list', '/polls/all', PollsPage)
     .add('fof.polls.view', '/polls/view/:id', PollViewPage)
     .add('fof.polls.compose', '/polls/composer', ComposePollPage),
 

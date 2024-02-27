@@ -92,6 +92,7 @@ fof-polls:
 
     page:
       nav: Polls
+      nav-all: All Global Polls
 
     tooltip:
       badge: Poll

@@ -13,11 +13,9 @@ import SelectDropdown from 'flarum/common/components/SelectDropdown';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import PollModel from '../models/Poll';
 import PollView from './PollView';
+import { AbstractPollPage } from './AbstractPollPage';
 
-export default class PollsPage extends Page<IPageAttrs, PollListState> {
-  loading: boolean = false;
-  poll: PollModel | null = null;
-
+export default class PollsPage extends AbstractPollPage {
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
 
@@ -31,10 +29,6 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
     app.setTitle(extractText(app.translator.trans('fof-polls.forum.page.nav')));
   }
 
-  oncreate(vnode: Mithril.Vnode) {
-    super.oncreate(vnode);
-  }
-
   view(): Mithril.Children {
     if (this.loading) {
       return <LoadingIndicator />;
@@ -42,7 +36,7 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
 
     if (this.poll) {
       return (
-        <div className="PollsPage">
+        <div className="PollsListPage">
           <div className="container">
             <PollView poll={this.poll} />
           </div>
@@ -51,11 +45,11 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
     }
 
     return (
-      <div className="PollsPage">
-        {IndexPage.prototype.hero()}
+      <div className="PollsListPage">
+        {super.hero()}
         <div className="container">
           <div className="sideNavContainer">
-            <nav className="PollsPage-nav sideNav">
+            <nav className="PollsListPage-nav sideNav">
               <ul>{listItems(this.sidebarItems().toArray())}</ul>
             </nav>
             <div className="PollsPage-results sideNavOffset">

@@ -1,19 +1,21 @@
 import app from 'flarum/forum/app';
-import Component from 'flarum/common/Component';
+import Component, { ComponentAttrs } from 'flarum/common/Component';
 import PollListItem from './PollListItem';
 import Button from 'flarum/common/components/Button';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import Placeholder from 'flarum/common/components/Placeholder';
 import classList from 'flarum/common/utils/classList';
+import PollListState from '../../states/PollListState';
+
+export interface PollListAttrs extends ComponentAttrs {
+  state: PollListState;
+}
 
 /**
  * The `PollList` component displays a list of polls.
  */
-export default class PollList extends Component {
+export default class PollList extends Component<PollListAttrs> {
   view() {
-    /**
-     * @type {import('../../states/PollListState').default}
-     */
     const state = this.attrs.state;
     const params = state.getParams();
     const isLoading = state.isInitialLoading() || state.isLoadingNext();
@@ -38,8 +40,6 @@ export default class PollList extends Component {
         </div>
       );
     }
-
-    const pageSize = state.pageSize;
 
     return (
       <div className={classList('PollList', { 'PollList--searchResults': state.isSearchResults() })}>
