@@ -9,6 +9,7 @@ import abbreviateNumber from 'flarum/common/utils/abbreviateNumber';
 
 interface PollResultsAttrs extends ComponentAttrs {
   option: PollOptionModel;
+  name: String;
   state: PollState;
 }
 
@@ -25,10 +26,10 @@ export default class PollResults extends Component<PollResultsAttrs> {
 
     return (
       <label className="PollResult">
-        <PollOptionInput id={option.id()} isResult={false} name="vote" value="Vote for this option" />
+        <PollOptionInput id={option.id()} isResult={false} name={this.attrs.name} value={option.answer()} />
         <span className="PollResult-information">
           <div className="PollResult-row">
-            <PollOptionLabel text={option.answer()} />
+            <PollOptionLabel id={option.id()} name={this.attrs.name} text={option.answer()} />
             <PollResultsNumber number={abbreviateNumber(voteCount)} />
           </div>
 
