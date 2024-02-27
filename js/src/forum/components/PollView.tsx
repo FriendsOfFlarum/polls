@@ -64,7 +64,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
     items.add(
       'elements',
       <fieldset>
-        <legend className="sr-only">app.translator.trans('fof-polls.forum.answers')</legend>
+        <legend className="sr-only">{poll.question()}</legend>
         <PollOptions options={poll.options()} state={state} />
       </fieldset>
     );
