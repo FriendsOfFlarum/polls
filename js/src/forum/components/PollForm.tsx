@@ -274,7 +274,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     }
   }
 
-  removeOption(i:number):void {
+  removeOption(i: number): void {
     this.options.splice(i, 1);
     this.optionAnswers.splice(i, 1);
     this.optionImageUrls.splice(i, 1);

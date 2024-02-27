@@ -7,10 +7,28 @@ import ReplyComposer from 'flarum/forum/components/ReplyComposer';
 
 import CreatePollModal from './components/CreatePollModal';
 
+function toPoll(data) {
+  if (data) {
+    const poll = app.store.createRecord('polls');
+    poll.pushAttributes(data);
+    poll.pushData({
+      relationships: {
+        options: data.options.map((option) => {
+          const pollOption = app.store.createRecord('poll_options');
+          pollOption.pushAttributes(option);
+          return pollOption;
+        }),
+      },
+    });
+    return poll;
+  }
+  return data;
+}
+
 export const addToComposer = (composer) => {
   composer.prototype.addPoll = function () {
     app.modal.show(CreatePollModal, {
-      poll: this.composer.fields.poll,
+      poll: toPoll(this.composer.fields.poll),
       onsubmit: (poll) => (this.composer.fields.poll = poll),
     });
   };
