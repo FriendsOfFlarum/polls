@@ -18,7 +18,7 @@ class AddDiscussionAttributes
 {
     public function __invoke(DiscussionSerializer $serializer, Discussion $discussion, array $attributes): array
     {
-        $attributes['hasPoll'] = $discussion->polls()->exists();
+        $attributes['hasPoll'] = $discussion->is_poll;
         $attributes['canStartPoll'] = $serializer->getActor()->can('polls.start', $discussion);
 
         return $attributes;
