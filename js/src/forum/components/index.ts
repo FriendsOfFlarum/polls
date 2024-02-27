@@ -10,6 +10,8 @@ import PollView from './PollView';
 import PollViewPage from './PollViewPage';
 import PollSubmitButton from './Poll/PollSubmitButton';
 import PollsShowcasePage from './PollsShowcasePage';
+import PollShowcase from './PollShowcase';
+import PollShowcaseItem from './PollShowcaseItem';
 
 export const components = {
   CreatePollModal,
@@ -24,4 +26,6 @@ export const components = {
   PollViewPage,
   PollSubmitButton,
   PollsShowcasePage,
+  PollShowcase,
+  PollShowcaseItem,
 };
