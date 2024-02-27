@@ -6,15 +6,31 @@ import LinkButton from 'flarum/common/components/LinkButton';
 export default function addNavItem() {
   extend(IndexPage.prototype, 'navItems', (items) => {
     items.add(
-      'fof-polls-directory',
+      'fof-polls-showcase',
       LinkButton.component(
         {
-          href: app.route('fof_polls_directory'),
+          href: app.route('fof.polls.showcase'),
           icon: 'fas fa-poll',
         },
         app.translator.trans('fof-polls.forum.page.nav')
       ),
       35
     );
+
+    const showAllGlobalPolls = app.forum.attribute<boolean>('canStartGlobalPolls');
+
+    if (showAllGlobalPolls) {
+      items.add(
+        'fof-polls-list',
+        LinkButton.component(
+          {
+            href: app.route('fof.polls.list'),
+            icon: 'fas fa-list',
+          },
+          app.translator.trans('fof-polls.forum.page.nav-all')
+        ),
+        32
+      );
+    }
   });
 }

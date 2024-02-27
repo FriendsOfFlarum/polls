@@ -21,13 +21,15 @@ use Flarum\Post\Event\Saving as PostSaving;
 use Flarum\Post\Post;
 use Flarum\Settings\Event\Saved as SettingsSaved;
 use FoF\Polls\Api\Controllers;
-use FoF\Polls\Api\Serializers\PollSerializer;
 
 return [
     (new Extend\Frontend('forum'))
         ->js(__DIR__.'/js/dist/forum.js')
         ->css(__DIR__.'/resources/less/forum.less')
-        ->route('/polls', 'fof_polls_directory', Content\PollsDirectory::class),
+        ->route('/polls', 'fof.polls.showcase')
+        ->route('/polls/all', 'fof.polls.list', Content\PollsDirectory::class)
+        ->route('/polls/view/{id}', 'fof.poll.view')
+        ->route('/polls/composer', 'fof.polls.composer'),
 
     (new Extend\Frontend('admin'))
         ->js(__DIR__.'/js/dist/admin.js')
@@ -57,7 +59,7 @@ return [
         ->attributes(Api\AddDiscussionAttributes::class),
 
     (new Extend\ApiSerializer(PostSerializer::class))
-        ->hasMany('polls', PollSerializer::class)
+        ->hasMany('polls', Api\Serializers\PollSerializer::class)
         ->attributes(Api\AddPostAttributes::class),
 
     (new Extend\ApiSerializer(ForumSerializer::class))

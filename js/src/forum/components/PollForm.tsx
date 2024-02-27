@@ -1,78 +1,76 @@
+import Component, { ComponentAttrs } from 'flarum/common/Component';
+import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
-
 import Button from 'flarum/common/components/Button';
-import Modal from 'flarum/common/components/Modal';
 import Switch from 'flarum/common/components/Switch';
 import ItemList from 'flarum/common/utils/ItemList';
 import Stream from 'flarum/common/utils/Stream';
 import extractText from 'flarum/common/utils/extractText';
+import FormError from './form/FormError';
+import PollFormState from '../states/PollFormState';
+import PollControls from '../utils/PollControls';
+import PollModel from '../models/Poll';
+import PollOption from '../models/PollOption';
 
-export default class CreatePollModal extends Modal {
-  oninit(vnode) {
+interface PollFormAttrs extends ComponentAttrs {
+  poll: PollModel;
+  onsubmit: (data: object, state: PollFormState) => Promise<void>;
+}
+
+export default class PollForm extends Component<PollFormAttrs, PollFormState> {
+  protected options: PollOption[] = [];
+  protected optionAnswers: Stream<string>[] = [];
+  protected optionImageUrls: Stream<string>[] = [];
+  protected question: Stream<string>;
+  protected subtitle: Stream<string>;
+  protected endDate: Stream<string | null>;
+  protected publicPoll: Stream<boolean>;
+  protected allowMultipleVotes: Stream<boolean>;
+  protected hideVotes: Stream<boolean>;
+  protected allowChangeVote: Stream<boolean>;
+  protected maxVotes: Stream<number>;
+  protected datepickerMinDate: string = '';
+
+  oninit(vnode: Mithril.Vnode): void {
     super.oninit(vnode);
+    this.state = new PollFormState(this.attrs.poll);
 
-    this.options = [Stream(''), Stream('')];
-    this.optionImageUrls = [Stream(''), Stream('')];
+    // state handles poll initialization
+    const poll = this.state.poll;
 
-    this.question = Stream('');
-    this.subtitle = Stream('');
+    this.options = poll.options() as PollOption[];
+    this.optionAnswers = this.options.map((o) => Stream(o.answer()));
+    this.optionImageUrls = this.options.map((o) => Stream(o.imageUrl()));
 
-    this.endDate = Stream();
+    this.question = Stream(poll.question());
+    this.subtitle = Stream(poll.subtitle());
+    this.endDate = Stream(this.formatDate(poll.endDate()));
+    this.publicPoll = Stream(poll.publicPoll());
+    this.allowMultipleVotes = Stream(poll.allowMultipleVotes());
+    this.hideVotes = Stream(poll.hideVotes());
+    this.allowChangeVote = Stream(poll.allowChangeVote());
+    this.maxVotes = Stream(poll.maxVotes() || 0);
 
-    this.publicPoll = Stream(false);
-    this.hideVotes = Stream(false);
-    this.allowChangeVote = Stream(true);
-    this.allowMultipleVotes = Stream(false);
-    this.maxVotes = Stream(0);
+    // Set minimum date for datepicker to current date
+    this.datepickerMinDate = this.formatDate() as string;
 
-    this.datepickerMinDate = this.formatDate(undefined);
-
-    const { poll } = this.attrs;
-
-    // When re-opening the modal for the same discussion composer where we already set poll attributes
-    if (poll && Array.isArray(poll.options)) {
-      this.options = [];
-      this.optionImageUrls = [];
-      poll.options.forEach((option) => {
-        this.options.push(Stream(option.answer));
-        this.optionImageUrls.push(Stream(option.imageUrl));
-      });
-
-      this.question(poll.question);
-      this.subtitle(poll.subtitle);
-      this.publicPoll(poll.publicPoll);
-      this.hideVotes(poll.hideVotes);
-      this.allowChangeVote(poll.allowChangeVote);
-      this.allowMultipleVotes(poll.allowMultipleVotes);
-      this.maxVotes(poll.maxVotes || 0);
-
-      this.endDate(this.formatDate(poll.endDate));
-
-      // Replace minimum of 'today' for poll end date only if the poll is not already closed
-      if (this.endDate() && dayjs(poll.endDate).isAfter(dayjs())) {
-        this.datepickerMinDate = this.formatDate(poll.endDate);
-      }
+    // Replace minimum of 'today' for poll end date only if the poll is not already closed
+    if (this.endDate() && dayjs(poll.endDate).isAfter(dayjs())) {
+      // We know that endDate is set, so we can safely cast the result to string
+      this.datepickerMinDate = this.formatDate(poll.endDate()) as string;
     }
   }
 
-  title() {
-    return app.translator.trans('fof-polls.forum.modal.add_title');
-  }
-
-  className() {
-    return 'PollDiscussionModal Modal--medium';
-  }
-
-  content() {
-    return [
-      <div className="Modal-body">
+  view(): Mithril.Children {
+    return (
+      <form onsubmit={this.onsubmit.bind(this)}>
         <div className="PollDiscussionModal-form">{this.fields().toArray()}</div>
-      </div>,
-    ];
+      </form>
+    );
   }
 
-  fields() {
-    const items = new ItemList();
+  fields(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
 
     items.add(
       'question',
@@ -101,7 +99,7 @@ export default class CreatePollModal extends Modal {
           <span>{app.translator.trans('fof-polls.forum.modal.options_label')}</span>
 
           {Button.component({
-            className: 'Button PollModal--button small',
+            className: 'Button PollModal--button Button--icon small',
             icon: 'fas fa-plus',
             onclick: this.addOption.bind(this),
           })}
@@ -127,7 +125,7 @@ export default class CreatePollModal extends Modal {
             max={this.formatDate('2038')}
           />
           {Button.component({
-            className: 'Button PollModal--button',
+            className: 'Button PollModal--button Button--icon',
             icon: 'fas fa-times',
             onclick: this.endDate.bind(this, null),
           })}
@@ -211,13 +209,18 @@ export default class CreatePollModal extends Modal {
     items.add(
       'submit',
       <div className="Form-group">
-        {Button.component(
-          {
-            type: 'submit',
-            className: 'Button Button--primary PollModal-SubmitButton',
-            loading: this.loading,
-          },
-          app.translator.trans('fof-polls.forum.modal.submit')
+        <Button type="submit" className="Button Button--primary PollModal-SubmitButton" icon="fas fa-save" loading={this.state.loading}>
+          {app.translator.trans('fof-polls.forum.modal.submit')}
+        </Button>
+        {this.state.poll.exists && (
+          <Button
+            className="Button Button--secondary PollModal-deleteButton"
+            icon="fas fa-trash-alt"
+            loading={this.state.deleting}
+            onclick={this.delete.bind(this)}
+          >
+            {app.translator.trans('fof-polls.forum.modal.delete')}
+          </Button>
         )}
       </div>,
       -10
@@ -227,14 +230,14 @@ export default class CreatePollModal extends Modal {
   }
 
   displayOptions() {
-    return Object.keys(this.options).map((el, i) => (
+    return Object.keys(this.options).map((option, i) => (
       <div className="Form-group">
         <fieldset className="Poll-answer-input">
           <input
             className="FormControl"
             type="text"
             name={'answer' + (i + 1)}
-            bidi={this.options[i]}
+            bidi={this.optionAnswers[i]}
             placeholder={app.translator.trans('fof-polls.forum.modal.option_placeholder') + ' #' + (i + 1)}
           />
           {app.forum.attribute('allowPollOptionImage') ? (
@@ -250,7 +253,7 @@ export default class CreatePollModal extends Modal {
         {i >= 2
           ? Button.component({
               type: 'button',
-              className: 'Button Button--warning PollModal--button',
+              className: 'Button PollModal--button Button--icon',
               icon: 'fas fa-minus',
               onclick: i >= 2 ? this.removeOption.bind(this, i) : '',
             })
@@ -263,20 +266,40 @@ export default class CreatePollModal extends Modal {
     const max = Math.max(app.forum.attribute('pollMaxOptions'), 2);
 
     if (this.options.length < max) {
-      this.options.push(Stream(''));
+      this.options.push(app.store.createRecord('poll_options'));
+      this.optionAnswers.push(Stream(''));
       this.optionImageUrls.push(Stream(''));
     } else {
       alert(extractText(app.translator.trans('fof-polls.forum.modal.max', { max })));
     }
   }
 
-  removeOption(option) {
-    this.options.splice(option, 1);
-    this.optionImageUrls.splice(option, 1);
+  removeOption(i: number): void {
+    this.options.splice(i, 1);
+    this.optionAnswers.splice(i, 1);
+    this.optionImageUrls.splice(i, 1);
   }
 
-  data() {
-    const poll = {
+  data(): object {
+    if (this.question() === '') {
+      throw new FormError(app.translator.trans('fof-polls.forum.modal.include_question'));
+    }
+
+    if (this.options.length < 2) {
+      throw new FormError(app.translator.trans('fof-polls.forum.modal.min'));
+    }
+
+    const pollExists = this.state.poll.exists;
+    const options = this.options.map((option, i) => {
+      option.pushAttributes({
+        answer: this.optionAnswers[i](),
+        imageUrl: this.optionImageUrls[i](),
+      });
+
+      return pollExists ? option.data : option.data.attributes;
+    });
+
+    return {
       question: this.question(),
       subtitle: this.subtitle(),
       endDate: this.dateToTimestamp(this.endDate()),
@@ -285,58 +308,38 @@ export default class CreatePollModal extends Modal {
       allowChangeVote: this.allowChangeVote(),
       allowMultipleVotes: this.allowMultipleVotes(),
       maxVotes: this.maxVotes(),
-      options: [],
+      options,
     };
+  }
 
-    this.options.forEach((answer, index) => {
-      if (answer()) {
-        poll.options.push({
-          answer: answer(),
-          imageUrl: this.optionImageUrls[index](),
-        });
+  async onsubmit(event: Event) {
+    event.preventDefault();
+
+    try {
+      await this.attrs.onsubmit(this.data(), this.state);
+    } catch (error) {
+      if (error instanceof FormError) {
+        app.alerts.show({ type: 'error' }, error.message);
+      } else {
+        console.error(error);
+        // Show error alert
+        app.alerts.show({ type: 'error' }, app.translator.trans('fof-polls.forum.modal.error'));
       }
-    });
-
-    if (this.question() === '') {
-      alert(app.translator.trans('fof-polls.forum.modal.include_question'));
-
-      return null;
-    }
-
-    if (poll.options.length < 2) {
-      alert(app.translator.trans('fof-polls.forum.modal.min'));
-
-      return null;
-    }
-
-    return poll;
-  }
-
-  onsubmit(e) {
-    e.preventDefault();
-
-    const data = this.data();
-
-    if (data === null) {
-      return;
-    }
-
-    const promise = this.attrs.onsubmit(data);
-
-    if (promise instanceof Promise) {
-      this.loading = true;
-
-      promise.then(this.hide.bind(this), (err) => {
-        console.error(err);
-        this.onerror(err);
-        this.loaded();
-      });
-    } else {
-      app.modal.close();
     }
   }
 
-  formatDate(date, def = false) {
+  async delete(): Promise<void> {
+    this.state.loading = true;
+    try {
+      await PollControls.deleteAction(this.state.poll);
+      this.state.deleting = true;
+    } finally {
+      this.state.loading = false;
+      m.redraw();
+    }
+  }
+
+  formatDate(date: Date | string | false | undefined | null = undefined, def: Date | false = false): string | null {
     const dayjsDate = dayjs(date);
 
     if (date === false || !dayjsDate.isValid()) return def !== false ? this.formatDate(def) : null;
@@ -344,10 +347,10 @@ export default class CreatePollModal extends Modal {
     return dayjsDate.format('YYYY-MM-DDTHH:mm');
   }
 
-  dateToTimestamp(date) {
+  dateToTimestamp(date: Date | false): string | null {
     const dayjsDate = dayjs(date);
 
-    if (!date || !dayjsDate.isValid()) return false;
+    if (!date || !dayjsDate.isValid()) return null;
 
     return dayjsDate.format();
   }

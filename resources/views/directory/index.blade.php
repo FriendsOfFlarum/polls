@@ -12,5 +12,5 @@ $url = resolve('Flarum\Http\UrlGenerator');
         @endforeach
     </ul>
 
-    <a href="{{ $url->to('forum')->route('fof_polls_directory') }}?page={{ $page + 1 }}">{{ $translator->trans('core.views.index.next_page_button') }} &raquo;</a>
+    <a href="{{ $url->to('forum')->route('fof.polls.list') }}?page={{ $page + 1 }}">{{ $translator->trans('core.views.index.next_page_button') }} &raquo;</a>
 </div>

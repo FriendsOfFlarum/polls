@@ -79,7 +79,7 @@ class CreatePollHandler
             foreach ($rawOptionsData as $rawOptionData) {
                 $optionsData[] = [
                     'answer'   => Arr::get($rawOptionData, 'answer'),
-                    'imageUrl' => Arr::get($rawOptionData, 'imageUrl') ?: null,
+                    'imageUrl' => Arr::get($rawOptionData, 'imageUrl'),
                 ];
             }
         }

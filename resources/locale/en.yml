@@ -21,15 +21,45 @@ fof-polls:
     poll_ended: This poll has ended.
     public_poll: View voters
     max_votes_allowed: "Poll allows voting for {max, plural, one {# option} other {# options}}."
+    polls_count: "{count, plural, one { {count} vote} other {{count} votes}}"
+    poll_never_ends: Poll never ends
+    answers: Answers
 
     poll:
       cannot_change_vote: You cannot change your vote after voting.
       submit_button: Vote
+      start_poll_button: Start Global Poll
+      cannot_start_poll_button: Cannot Start Poll
+
+    poll_controls:
+      edit_label: Edit
+      delete_label: Delete
+      view_label: View
+      delete_confirmation: Are you sure you want to delete this poll?
+      delete_success_message: Poll deleted successfully.
+      delete_error_message: There went something wrong while deleting the poll.
+
+    poll_form:
+      delete: Delete Poll
+      error: There was an error saving the poll, please contact any administrator.
+
+    polls_list:
+      empty_text: It looks as though there are no community wide polls here.
+      load_more_button: Load More
 
     composer_discussion:
       add_poll: => fof-polls.forum.moderation.add
       edit_poll: => fof-polls.forum.moderation.edit
       no_permission_alert: You do not have permission to start a poll.
+
+    compose:
+      add_title: Add a Poll
+      edit_title: Edit Poll
+      polls_manager: Polls Manager
+      polls_preview: View Poll
+      continue_editing: Continue Editing
+      success: Poll saved successfully.
+
 
     modal:
       add_title: Add a Poll
@@ -52,6 +82,7 @@ fof-polls:
       question_placeholder: Question
       subtitle_placeholder: Subtitle/Description (Optional)
       submit: Submit
+      delete: Delete
 
     moderation:
       add: Add Poll
@@ -61,6 +92,7 @@ fof-polls:
 
     page:
       nav: Polls
+      nav-all: All Global Polls
 
     tooltip:
       badge: Poll
