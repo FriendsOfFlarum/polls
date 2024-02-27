@@ -10,5 +10,5 @@
 use Flarum\Database\Migration;
 
 return Migration::addColumns('discussions', [
-    'is_polls' => ['boolean', 'default' => 0]
+    'is_poll' => ['boolean', 'default' => 0]
 ]);
