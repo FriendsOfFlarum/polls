@@ -12,7 +12,7 @@ app.initializers.add('fof/polls', () => {
   addDiscussionBadge();
   addComposerItems();
   addPollsToPost();
-  //addPostControls();
+  addPostControls();
 });
 
 export { default as extend } from './extend';
