@@ -48,7 +48,7 @@ export default {
     if (poll.canEdit()) {
       items.add(
         'edit',
-        <Button icon="fas fa-pen" onclick={this.editAction.bind(this, poll)}>
+        <Button icon="fas fa-pencil-alt" onclick={this.editAction.bind(this, poll)}>
           {app.translator.trans(`fof-polls.forum.poll_controls.edit_label`)}
         </Button>
       );
@@ -67,7 +67,7 @@ export default {
     if (poll.canDelete()) {
       items.add(
         'delete',
-        <Button icon="fas fa-times" onclick={this.deleteAction.bind(this, poll)}>
+        <Button icon="far fa-trash-alt" onclick={this.deleteAction.bind(this, poll)}>
           {app.translator.trans(`fof-polls.forum.poll_controls.delete_label`)}
         </Button>
       );
