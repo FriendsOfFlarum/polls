@@ -16,6 +16,7 @@ use Flarum\Api\Serializer\DiscussionSerializer;
 use Flarum\Api\Serializer\ForumSerializer;
 use Flarum\Api\Serializer\PostSerializer;
 use Flarum\Discussion\Discussion;
+use Flarum\Discussion\Event\Saving;
 use Flarum\Extend;
 use Flarum\Post\Event\Saving as PostSaving;
 use Flarum\Post\Post;
@@ -48,6 +49,12 @@ return [
         ->hasMany('polls', Poll::class, 'post_id', 'first_post_id'),
 
     (new Extend\Event())
+        ->listen(Saving::class, function (Saving $event) {
+            $discussion = $event->discussion;
+            if (isset($event->data['attributes']['poll'])) {
+                $discussion->is_poll = true;
+            }
+        })
         ->listen(PostSaving::class, Listeners\SavePollsToDatabase::class)
         ->listen(SettingsSaved::class, Listeners\ClearFormatterCache::class),
 
