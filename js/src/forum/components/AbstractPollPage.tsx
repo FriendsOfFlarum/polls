@@ -9,7 +9,7 @@ import listItems from 'flarum/common/helpers/listItems';
 
 export abstract class AbstractPollPage extends Page<IPageAttrs, PollListState> {
   loading: boolean = false;
-  poll: Poll | null = null;
+  poll: Poll | null | undefined = null;
   polls: Poll[] = [];
 
   view(): Mithril.Children {

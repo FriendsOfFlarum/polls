@@ -1,18 +1,12 @@
 import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
-import Page from 'flarum/common/components/Page';
 import PollModel from '../models/Poll';
-import extractText from 'flarum/common/utils/extractText';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import PollView from './PollView';
-import IndexPage from 'flarum/forum/components/IndexPage';
 import listItems from 'flarum/common/helpers/listItems';
-import ItemList from 'flarum/common/utils/ItemList';
+import { AbstractPollPage } from './AbstractPollPage';
 
-export default class PollViewPage extends Page {
-  poll: PollModel | null | undefined = null;
-  loading: boolean = false;
-
+export default class PollViewPage extends AbstractPollPage {
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
 
@@ -38,7 +32,7 @@ export default class PollViewPage extends Page {
 
     return (
       <div className="PollsPage">
-        {IndexPage.prototype.hero()}
+        {this.hero()}
         <div className="container">
           <div className="sideNavContainer">
             <nav className="PollsPage-nav sideNav">
@@ -52,11 +46,5 @@ export default class PollViewPage extends Page {
         </div>
       </div>
     );
-  }
-
-  sidebarItems(): ItemList<Mithril.Children> {
-    const items = new ItemList<Mithril.Children>();
-
-    return items;
   }
 }
