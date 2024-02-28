@@ -110,4 +110,7 @@ return [
 
     (new Extend\View())
         ->namespace('fof-polls', __DIR__.'/resources/views'),
+
+    (new Extend\Filesystem())
+        ->disk('fof-polls', PollImageDisk::class),
 ];
