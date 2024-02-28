@@ -10,16 +10,14 @@ import CreatePollModal from './components/CreatePollModal';
 function toPoll(data) {
   if (data) {
     const poll = app.store.createRecord('polls');
-    poll.pushAttributes(data);
-    poll.pushData({
-      relationships: {
-        options: data.options.map((option) => {
-          const pollOption = app.store.createRecord('poll_options');
-          pollOption.pushAttributes(option);
-          return pollOption;
-        }),
-      },
+
+    poll.tempOptions = data.options.map((option) => {
+      const pollOption = app.store.createRecord('poll_options');
+      pollOption.pushAttributes(option);
+      return pollOption;
     });
+    poll.pushAttributes(data);
+
     return poll;
   }
   return data;

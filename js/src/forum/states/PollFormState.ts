@@ -1,5 +1,6 @@
 import app from 'flarum/forum/app';
 import Poll from '../models/Poll';
+import PollOption from '../models/PollOption';
 
 export default class PollFormState {
   poll: Poll;
@@ -9,6 +10,7 @@ export default class PollFormState {
 
   static createNewPoll() {
     const poll = app.store.createRecord<Poll>('polls');
+
     poll.pushAttributes({
       question: '',
       endDate: '',
@@ -18,7 +20,9 @@ export default class PollFormState {
       allowChangeVote: false,
       maxVotes: 0,
     });
-    poll.pushData({ relationships: { options: [] } });
+
+    poll.tempOptions = [app.store.createRecord<PollOption>('poll_options'), app.store.createRecord<PollOption>('poll_options')];
+
     return poll;
   }
 
@@ -48,6 +52,12 @@ export default class PollFormState {
 
     try {
       this.poll = await this.poll.save(data);
+      /**
+       * Cleanup attributes:
+       * For the saving process, we add the options directly to the attributes.
+       * As we currently cannot add new PollOptions as relationships.
+       */
+      delete this.poll!.data!.attributes!.options;
     } finally {
       this.loading = false;
       m.redraw();

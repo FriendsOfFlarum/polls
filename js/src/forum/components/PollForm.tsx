@@ -38,7 +38,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     // state handles poll initialization
     const poll = this.state.poll;
 
-    this.options = poll.options() as PollOption[];
+    this.options = (poll.tempOptions ?? poll.options()) as PollOption[];
     this.optionAnswers = this.options.map((o) => Stream(o.answer()));
     this.optionImageUrls = this.options.map((o) => Stream(o.imageUrl()));
 

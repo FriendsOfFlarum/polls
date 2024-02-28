@@ -4,6 +4,8 @@ import PollVote from './PollVote';
 import computed from 'flarum/common/utils/computed';
 
 export default class Poll extends Model {
+  public tempOptions: PollOption[] | undefined;
+
   question() {
     return Model.attribute<string>('question').call(this);
   }
