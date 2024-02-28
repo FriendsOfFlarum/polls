@@ -1,6 +1,5 @@
 import app from 'flarum/forum/app';
-
-import Component from 'flarum/common/Component';
+import Component, { ComponentAttrs } from 'flarum/common/Component';
 import Button from 'flarum/common/components/Button';
 import LogInModal from 'flarum/forum/components/LogInModal';
 import ListVotersModal from './ListVotersModal';
@@ -9,26 +8,38 @@ import ItemList from 'flarum/common/utils/ItemList';
 import Tooltip from 'flarum/common/components/Tooltip';
 import icon from 'flarum/common/helpers/icon';
 import EditPollModal from './EditPollModal';
+import Poll from '../models/Poll';
+import type Mithril from 'mithril';
+import PollOption from '../models/PollOption';
+import Post from 'flarum/common/models/Post';
+import extractText from 'flarum/common/utils/extractText';
 
-export default class PostPoll extends Component {
-  oninit(vnode) {
+export interface PostPollAttrs extends ComponentAttrs {
+  poll: Poll;
+  post?: Post;
+}
+
+export default class PostPoll extends Component<PostPollAttrs> {
+  loadingOptions: boolean = false;
+  useSubmitUI!: boolean;
+  pendingSubmit: boolean = false;
+  pendingOptions: any;
+
+  oninit(vnode: Mithril.Vnode<PostPollAttrs, this>) {
     super.oninit(vnode);
 
-    this.loadingOptions = false;
-
     this.useSubmitUI = !this.attrs.poll?.canChangeVote() && this.attrs.poll?.allowMultipleVotes();
-    this.pendingSubmit = false;
     this.pendingOptions = null;
   }
 
-  oncreate(vnode) {
+  oncreate(vnode: Mithril.Vnode<PostPollAttrs, this>) {
     super.oncreate(vnode);
 
     this.preventClose = this.preventClose.bind(this);
     window.addEventListener('beforeunload', this.preventClose);
   }
 
-  onremove(vnode) {
+  onremove(vnode: Mithril.Vnode<PostPollAttrs, this>) {
     super.onremove(vnode);
 
     window.removeEventListener('beforeunload', this.preventClose);
@@ -88,7 +99,7 @@ export default class PostPoll extends Component {
     );
   }
 
-  infoItems(maxVotes) {
+  infoItems(maxVotes: number) {
     const items = new ItemList();
     const poll = this.attrs.poll;
     const hasVoted = poll.myVotes()?.length > 0;
@@ -138,7 +149,7 @@ export default class PostPoll extends Component {
     return items;
   }
 
-  viewOption(opt) {
+  viewOption(opt: PollOption) {
     const poll = this.attrs.poll;
     const hasVoted = poll.myVotes()?.length > 0;
     const totalVotes = poll.voteCount();
@@ -189,7 +200,7 @@ export default class PostPoll extends Component {
     );
   }
 
-  changeVote(option, evt) {
+  changeVote(option: PollOption, evt: Event) {
     if (!app.session.user) {
       app.modal.show(LogInModal);
       evt.target.checked = false;
@@ -261,7 +272,7 @@ export default class PostPoll extends Component {
   }
 
   deletePoll() {
-    if (confirm(app.translator.trans('fof-polls.forum.moderation.delete_confirm'))) {
+    if (confirm(extractText(app.translator.trans('fof-polls.forum.moderation.delete_confirm')))) {
       this.attrs.poll.delete().then(() => {
         m.redraw.sync();
       });
@@ -273,7 +284,7 @@ export default class PostPoll extends Component {
    * caused the tooltip to break on click. This is a workaround to hide the tooltip when no vote count is available,
    * called on 'onremove' of the Tooltip component. It doesn't always work as intended either, but it does the job.
    */
-  hideOptionTooltip(vnode) {
+  hideOptionTooltip(vnode: Mithril.Vnode<PostPollAttrs, this>) {
     vnode.attrs.tooltipVisible = false;
     vnode.state.updateVisibility();
   }
