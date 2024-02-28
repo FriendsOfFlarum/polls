@@ -5,6 +5,7 @@ import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import PollView from './PollView';
 import listItems from 'flarum/common/helpers/listItems';
 import { AbstractPollPage } from './AbstractPollPage';
+import ItemList from 'flarum/common/utils/ItemList';
 
 export default class PollViewPage extends AbstractPollPage {
   oninit(vnode: Mithril.Vnode) {
@@ -25,26 +26,13 @@ export default class PollViewPage extends AbstractPollPage {
     }
   }
 
-  view(): Mithril.Children {
-    if (this.loading) {
-      return <LoadingIndicator />;
+  contentItems(): ItemList<Mithril.Children> {
+    const items = super.contentItems();
+
+    if (!this.loading) {
+      items.add('poll', <PollView poll={this.poll} />);
     }
 
-    return (
-      <div className="PollsPage">
-        {this.hero()}
-        <div className="container">
-          <div className="sideNavContainer">
-            <nav className="PollsPage-nav sideNav">
-              <ul>{listItems(this.sidebarItems().toArray())}</ul>
-            </nav>
-            <div className="PollsPage-results sideNavOffset">
-              <div className="IndexPage-toolbar"></div>
-              <PollView poll={this.poll} />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return items;
   }
 }
