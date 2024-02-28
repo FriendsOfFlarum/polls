@@ -9,7 +9,8 @@ export default class PollVote extends Model {
   }
 
   option() {
-    return Model.hasOne<PollOption>('option').call(this);
+    const result = Model.hasOne<PollOption>('option').call(this);
+    return result === false ? null : result;
   }
 
   user() {
