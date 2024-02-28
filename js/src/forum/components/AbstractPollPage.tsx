@@ -6,6 +6,8 @@ import type Mithril from 'mithril';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import IndexPage from 'flarum/forum/components/IndexPage';
 import listItems from 'flarum/common/helpers/listItems';
+import app from 'flarum/forum/app';
+import SelectDropdown from 'flarum/common/components/SelectDropdown';
 
 export abstract class AbstractPollPage extends Page<IPageAttrs, PollListState> {
   loading: boolean = false;
@@ -62,6 +64,36 @@ export abstract class AbstractPollPage extends Page<IPageAttrs, PollListState> {
 
   sidebarItems(): ItemList<Mithril.Children> {
     const items = IndexPage.prototype.sidebarItems();
+
+    items.setContent(
+      'nav',
+      <SelectDropdown
+        buttonClassName="Button"
+        className="App-titleControl"
+        accessibleToggleLabel={app.translator.trans('core.forum.index.toggle_sidenav_dropdown_accessible_label')}
+      >
+        {this.navItems().toArray()}
+      </SelectDropdown>
+    );
+
+    return items;
+  }
+
+  navItems(): ItemList<Mithril.Children> {
+    const items = IndexPage.prototype.navItems();
+
+    if (app.initializers.has('flarum-tags')) {
+      // remove the tags from the nav items
+      items.remove('separator');
+      items.remove('moreTags');
+
+      // each tag is added using the key "tag{id}". We need to remove all of them
+      for (const key in items.toObject()) {
+        if (key.startsWith('tag') && key !== 'tags') {
+          items.remove(key);
+        }
+      }
+    }
 
     return items;
   }

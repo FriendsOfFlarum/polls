@@ -1,9 +1,7 @@
 import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import PollModel from '../models/Poll';
-import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import PollView from './PollView';
-import listItems from 'flarum/common/helpers/listItems';
 import { AbstractPollPage } from './AbstractPollPage';
 import ItemList from 'flarum/common/utils/ItemList';
 
