@@ -4,13 +4,16 @@ import { extend } from 'flarum/common/extend';
 import Badge from 'flarum/common/components/Badge';
 import DiscussionList from 'flarum/forum/components/DiscussionList';
 import Discussion from 'flarum/common/models/Discussion';
+import { PaginatedListRequestParams } from 'flarum/common/states/PaginatedListState';
 
 export default () => {
-  extend(DiscussionList.prototype, 'requestParams', (params) => {
-    params.include.push('poll');
+  // @ts-ignore
+  extend(DiscussionList.prototype, 'requestParams', (params: PaginatedListRequestParams) => {
+    (params.include as string[]).push('poll');
   });
 
   extend(Discussion.prototype, 'badges', function (badges) {
+    // @ts-ignore
     if (this.hasPoll()) {
       badges.add(
         'poll',

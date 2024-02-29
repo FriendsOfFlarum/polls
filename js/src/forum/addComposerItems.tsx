@@ -4,15 +4,18 @@ import { extend } from 'flarum/common/extend';
 import classList from 'flarum/common/utils/classList';
 import DiscussionComposer from 'flarum/forum/components/DiscussionComposer';
 import ReplyComposer from 'flarum/forum/components/ReplyComposer';
-
 import CreatePollModal from './components/CreatePollModal';
+import Poll from './models/Poll';
+import PollOption from './models/PollOption';
+import { ModelAttributes } from 'flarum/common/Model';
+import PollModelAttributes from "./models/PollModelAttributes";
 
-function toPoll(data) {
+function toPoll(data: PollModelAttributes) {
   if (data) {
-    const poll = app.store.createRecord('polls');
+    const poll = app.store.createRecord<Poll>('polls');
 
-    poll.tempOptions = data.options.map((option) => {
-      const pollOption = app.store.createRecord('poll_options');
+    poll.tempOptions = data.options.map((option: ModelAttributes) => {
+      const pollOption = app.store.createRecord<PollOption>('poll_options');
       pollOption.pushAttributes(option);
       return pollOption;
     });
@@ -23,17 +26,20 @@ function toPoll(data) {
   return data;
 }
 
-export const addToComposer = (composer) => {
+export const addToComposer = (composer: ComponentClass) => {
+  // @ts-ignore
   composer.prototype.addPoll = function () {
     app.modal.show(CreatePollModal, {
       poll: toPoll(this.composer.fields.poll),
-      onsubmit: (poll) => (this.composer.fields.poll = poll),
+      onsubmit: (poll: PollModelAttributes) => (this.composer.fields.poll = poll),
     });
   };
 
   // Add button to DiscussionComposer header
   extend(composer.prototype, 'headerItems', function (items) {
     const discussion = this.composer.body?.attrs?.discussion;
+
+    // @ts-ignore
     const canStartPoll = discussion?.canStartPoll() ?? app.forum.canStartPolls();
 
     if (canStartPoll) {

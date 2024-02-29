@@ -4,10 +4,23 @@ import { extend } from 'flarum/common/extend';
 import CommentPost from 'flarum/forum/components/CommentPost';
 import PostPoll from './components/PostPoll';
 import DiscussionPage from 'flarum/forum/components/DiscussionPage';
+import Poll from './models/Poll';
+import Post from 'flarum/common/models/Post';
+import PollOption from './models/PollOption';
+
+interface PollPost extends Post {
+  polls: () => Poll[];
+}
+
+interface PusherPollDto {
+  pollId: string;
+  pollVoteCount: number;
+  options: { [key: string]: number };
+}
 
 export default () => {
   extend(CommentPost.prototype, 'content', function (content) {
-    const post = this.attrs.post;
+    const post = this.attrs.post as PollPost;
 
     if ((!post.isHidden() || this.revealContent) && post.polls()) {
       for (const poll of post.polls()) {
@@ -20,7 +33,7 @@ export default () => {
 
   extend(CommentPost.prototype, 'oninit', function () {
     this.subtree.check(() => {
-      const polls = this.attrs.post.polls();
+      const polls = (this.attrs.post as PollPost).polls();
 
       const checks = polls?.map?.(
         (poll) =>
@@ -36,12 +49,14 @@ export default () => {
   });
 
   extend(DiscussionPage.prototype, 'oncreate', function () {
+    // @ts-ignore
     if (app.pusher) {
+      // @ts-ignore
       app.pusher.then((binding) => {
         // We will listen for updates to all polls and options
         // Even if that model is not in the current discussion, it doesn't really matter
-        binding.channels.main.bind('updatedPollOptions', (data) => {
-          const poll = app.store.getById('polls', data['pollId']);
+        binding.channels.main.bind('updatedPollOptions', (data: PusherPollDto) => {
+          const poll = app.store.getById<Poll>('polls', data['pollId']);
 
           if (poll) {
             poll.pushAttributes({
@@ -54,7 +69,7 @@ export default () => {
           const changedOptions = data['options'];
 
           for (const optionId in changedOptions) {
-            const option = app.store.getById('poll_options', optionId);
+            const option = app.store.getById<PollOption>('poll_options', optionId);
 
             if (option && option.voteCount() !== undefined) {
               option.pushAttributes({
@@ -70,7 +85,9 @@ export default () => {
   });
 
   extend(DiscussionPage.prototype, 'onremove', function () {
+    // @ts-ignore
     if (app.pusher) {
+      // @ts-ignore
       app.pusher.then((binding) => {
         binding.channels.main.unbind('updatedPollOptions');
       });
