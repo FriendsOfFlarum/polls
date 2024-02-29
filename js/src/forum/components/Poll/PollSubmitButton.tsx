@@ -1,12 +1,16 @@
 import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
-import Component from 'flarum/common/Component';
+import Component, { ComponentAttrs } from 'flarum/common/Component';
 import Button from 'flarum/common/components/Button';
-import PollState from '../states/PollState';
+import PollState from '../../states/PollState';
 
-export default class PollSubmitButton extends Component {
+interface PollSubmitButtonAttrs extends ComponentAttrs {
+  state: PollState;
+}
+
+export default class PollSubmitButton extends Component<PollSubmitButtonAttrs> {
   view(): Mithril.Children {
-    const state = this.attrs.state as PollState;
+    const state = this.attrs.state;
     return (
       <Button
         className="Button Button--primary Poll-submit"
@@ -23,7 +27,7 @@ export default class PollSubmitButton extends Component {
    * Event handler for submit button being clicked
    */
 
-  pollButtonSubmit(state: PollState) {
-    state.onsubmit(state);
+  pollButtonSubmit(state: PollState): void {
+    state.onsubmit();
   }
 }

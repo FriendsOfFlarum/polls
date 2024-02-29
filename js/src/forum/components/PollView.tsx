@@ -24,6 +24,19 @@ export default class PollView extends Component<PollAttrs, PollState> {
     this.state = new PollState(this.attrs.poll);
   }
 
+  oncreate(vnode: Mithril.Vnode<PollAttrs, this>) {
+    super.oncreate(vnode);
+
+    this.preventClose = this.preventClose.bind(this);
+    window.addEventListener('beforeunload', this.preventClose);
+  }
+
+  onremove(vnode: Mithril.Vnode<PollAttrs, this>) {
+    super.onremove(vnode);
+
+    window.removeEventListener('beforeunload', this.preventClose);
+  }
+
   view(): Mithril.Children {
     const poll = this.attrs.poll;
     const state = this.state;
@@ -154,4 +167,14 @@ export default class PollView extends Component<PollAttrs, PollState> {
 
     return items;
   }
+
+  /**
+   * Alert before navigating away using browser's 'beforeunload' event
+   */
+  preventClose = (e: Event): boolean | void => {
+    if (this.state.hasSelectedOptions()) {
+      e.preventDefault();
+      return true;
+    }
+  };
 }
