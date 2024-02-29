@@ -71,7 +71,8 @@ export default class Poll extends Model {
   }
 
   options() {
-    return Model.hasMany<PollOption>('options').call(this);
+    const options = Model.hasMany<PollOption>('options').call(this);
+    return options ? (options as PollOption[]) : [];
   }
 
   votes() {

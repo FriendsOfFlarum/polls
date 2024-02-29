@@ -4,6 +4,7 @@ import LogInModal from 'flarum/forum/components/LogInModal';
 import PollOption from '../models/PollOption';
 import PollVote from '../models/PollVote';
 import ListVotersModal from '../components/ListVotersModal';
+import { ApiPayloadSingle } from 'flarum/common/Store';
 
 export default class PollState {
   protected poll: Poll;
@@ -27,10 +28,9 @@ export default class PollState {
   }
 
   overallVoteCount() {
-    const options = this.poll.options();
     return Math.max(
-      100,
-      (options ? options : []).reduce((max, option) => max + option!.voteCount(), 0)
+        1,
+        this.poll.options().reduce((sum, option) => sum + option!.voteCount(), 0)
     );
   }
 
@@ -47,7 +47,7 @@ export default class PollState {
       return;
     }
 
-    const optionIds = this.pendingOptions || new Set(this.poll.myVotes().map((v: PollVote) => v.option().id()));
+    const optionIds = this.pendingOptions || new Set(this.poll.myVotes().map((v: PollVote) => v.option()!.id()!));
     const isUnvoting = optionIds.delete(option.id()!);
     const allowsMultiple = this.poll.allowMultipleVotes();
 
@@ -80,7 +80,7 @@ export default class PollState {
     m.redraw();
 
     return app
-      .request({
+      .request<ApiPayloadSingle>({
         method: 'PATCH',
         url: `${app.forum.attribute('apiUrl')}/fof/polls/${this.poll.id()}/votes`,
         body: {
@@ -89,7 +89,7 @@ export default class PollState {
           },
         },
       })
-      .then((res) => {
+      .then((res: ApiPayloadSingle) => {
         app.store.pushPayload(res);
         cb?.();
       })
@@ -108,25 +108,5 @@ export default class PollState {
     app.modal.show(ListVotersModal, {
       poll: this.poll,
     });
-  };
-
-  /**
-   * Attempting to use the `tooltipVisible` attr on the Tooltip component set to 'false' when no vote count
-   * caused the tooltip to break on click. This is a workaround to hide the tooltip when no vote count is available,
-   * called on 'onremove' of the Tooltip component. It doesn't always work as intended either, but it does the job.
-   */
-  hideOptionTooltip(vnode) {
-    vnode.attrs.tooltipVisible = false;
-    vnode.state.updateVisibility();
-  }
-
-  /**
-   * Alert before navigating away using browser's 'beforeunload' event
-   */
-  preventClose = (e: Event): boolean | void => {
-    if (this.pendingOptions) {
-      e.preventDefault();
-      return true;
-    }
   };
 }
