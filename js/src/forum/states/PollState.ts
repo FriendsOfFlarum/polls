@@ -29,8 +29,8 @@ export default class PollState {
 
   overallVoteCount() {
     return Math.max(
-        1,
-        this.poll.options().reduce((sum, option) => sum + option!.voteCount(), 0)
+      1,
+      this.poll.options().reduce((sum, option) => sum + option!.voteCount(), 0)
     );
   }
 

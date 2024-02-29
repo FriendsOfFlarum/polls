@@ -8,7 +8,7 @@ import CreatePollModal from './components/CreatePollModal';
 import Poll from './models/Poll';
 import PollOption from './models/PollOption';
 import { ModelAttributes } from 'flarum/common/Model';
-import PollModelAttributes from "./models/PollModelAttributes";
+import PollModelAttributes from './models/PollModelAttributes';
 
 function toPoll(data: PollModelAttributes) {
   if (data) {
