@@ -83,6 +83,9 @@ fof-polls:
       subtitle_placeholder: Subtitle/Description (Optional)
       submit: Submit
       delete: Delete
+      poll_image:
+        label: Poll Image
+        help: Upload an image to be displayed alongside the poll (optional).
 
     moderation:
       add: Add Poll
@@ -104,3 +107,7 @@ fof-polls:
 
     votes_modal:
       title: Voters
+
+    upload_image:
+      remove_button: Remove Image
+      upload_button: Select Image

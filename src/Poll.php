@@ -39,6 +39,7 @@ use Illuminate\Support\Arr;
  * @property PollSettings          $settings
  * @property PollVote[]|Collection $votes
  * @property PollVote[]|Collection $myVotes
+ * @property string|null           $image_url
  *
  *  @phpstan-type PollSettings     array{'public_poll': bool, 'allow_multiple_votes': bool, 'max_votes': int}
  */
@@ -67,12 +68,13 @@ class Poll extends AbstractModel
      *
      * @return static
      */
-    public static function build($question, $postId, $actorId, $endDate, $publicPoll, $allowMultipleVotes = false, $maxVotes = 0, $hideVotes = false, $allowChangeVote = true, $subtitle = null)
+    public static function build($question, $postId, $actorId, $endDate, $publicPoll, $allowMultipleVotes = false, $maxVotes = 0, $hideVotes = false, $allowChangeVote = true, $subtitle = null, $imageUrl = null)
     {
         $poll = new static();
 
         $poll->question = $question;
         $poll->subtitle = $subtitle;
+        $poll->image_url = $imageUrl;
         $poll->post_id = $postId;
         $poll->user_id = $actorId;
         $poll->end_date = $endDate;

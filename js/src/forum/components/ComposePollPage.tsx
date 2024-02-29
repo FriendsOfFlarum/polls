@@ -56,7 +56,7 @@ export default class ComposePollPage extends Page {
     }
 
     return (
-      <div className="ComposePollCollectionPage">
+      <div className="ComposePollPage">
         <ComposePollHero poll={this.poll} />
         <div className="container">
           <div className="sideNavContainer">

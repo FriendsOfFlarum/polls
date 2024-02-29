@@ -47,6 +47,7 @@ class PollSerializer extends AbstractSerializer
             'canSeeVoters'       => $this->actor->can('seeVoters', $poll),
             'canChangeVote'      => $this->actor->can('changeVote', $poll),
             'isGlobal'           => $poll->isGlobal(),
+            'imageUrl'           => $poll->image_url,
         ];
 
         if ($this->actor->can('seeVoteCount', $poll)) {

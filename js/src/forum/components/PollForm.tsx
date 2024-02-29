@@ -11,6 +11,7 @@ import PollFormState from '../states/PollFormState';
 import PollControls from '../utils/PollControls';
 import PollModel from '../models/Poll';
 import PollOption from '../models/PollOption';
+import UploadPollImageButton from './UploadPollImageButton';
 
 interface PollFormAttrs extends ComponentAttrs {
   poll: PollModel;
@@ -90,6 +91,16 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
         <input type="text" name="subtitle" className="FormControl" bidi={this.subtitle} />
       </div>,
       95
+    );
+
+    items.add(
+      'poll-image',
+      <div className="Form-group">
+        <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_image.label')}</label>
+        <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_image.help')}</p>
+        <UploadPollImageButton name="pollImage" />
+      </div>,
+      90
     );
 
     items.add(

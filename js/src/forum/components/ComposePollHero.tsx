@@ -20,7 +20,7 @@ export default class ComposePollHero extends Component<ComposePollHeroAttrs> {
 
   view(): Mithril.Children {
     return (
-      <div className="ComposeGoodieCollectionHero Hero IndexPageHero">
+      <div className="ComposePollHero Hero IndexPageHero">
         <div className="container">
           <div className="containerNarrow">
             <h2 className="Hero-title">{app.translator.trans(`fof-polls.forum.compose.${!!this.poll.id() ? 'edit' : 'add'}_title`)}</h2>
@@ -38,7 +38,7 @@ export default class ComposePollHero extends Component<ComposePollHeroAttrs> {
       'edit',
       <LinkButton
         icon="far fa-edit"
-        className="Button Button--secondary IndexPage-newDiscussion GoodiesManagerLink"
+        className="Button Button--secondary IndexPage-newDiscussion GlobalPollListLink"
         itemClassName="App-primaryControl"
         href={app.route('fof.polls.list')}
       >
@@ -51,7 +51,7 @@ export default class ComposePollHero extends Component<ComposePollHeroAttrs> {
         'view',
         <LinkButton
           icon="far fa-arrow-up-right-from-square"
-          className="Button Button--secondary IndexPage-newDiscussion GoodiePreviewLink"
+          className="Button Button--secondary IndexPage-newDiscussion PollPreviewLink"
           itemClassName="App-primaryControl"
           href={app.route('fof.polls.view', { id: this.poll.id() })}
         >
