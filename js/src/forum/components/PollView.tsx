@@ -11,9 +11,11 @@ import PollControls from '../utils/PollControls';
 import Dropdown from 'flarum/common/components/Dropdown';
 import PollSubmitButton from './Poll/PollSubmitButton';
 import { slug } from 'flarum/common/utils/string';
+import classList from 'flarum/common/utils/classList';
 
 interface PollAttrs extends ComponentAttrs {
   poll: PollModel;
+  isCompactView: boolean;
 }
 
 export default class PollView extends Component<PollAttrs, PollState> {
@@ -21,7 +23,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
 
   oninit(vnode: Mithril.Vnode<PollAttrs, this>) {
     super.oninit(vnode);
-    this.state = new PollState(this.attrs.poll);
+    this.state = new PollState(this.attrs.poll, this.attrs.isCompactView ?? false);
   }
 
   oncreate(vnode: Mithril.Vnode<PollAttrs, this>) {
@@ -50,7 +52,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
     );
 
     return (
-      <div className="Poll" data-id={poll.id()}>
+      <div className={classList('Poll', this.state.isCompactView && 'isCompactView')} data-id={poll.id()}>
         {this.controlsView(controls.toArray())}
         {/* <div className="Poll-image">
           <PollImage image={poll.image()} />
@@ -75,7 +77,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
     const state = this.state;
     const items = new ItemList<Mithril.Children>();
     const poll = this.attrs.poll;
-    const infoItems = this.infoItems(poll.maxVotes());
+    const infoItems = this.infoItems(state.getMaxVotes());
     const questionSlug = slug(poll.question());
 
     items.add(
@@ -85,6 +87,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
         <PollOptions name={questionSlug} options={poll.options()} state={state} />
       </fieldset>
     );
+
     items.add(
       'sticky',
       <div className="Poll-sticky">
@@ -93,14 +96,6 @@ export default class PollView extends Component<PollAttrs, PollState> {
       </div>
     );
     return items;
-  }
-
-  deletePoll(): void {
-    PollControls.deleteAction(this.attrs.poll);
-  }
-
-  editPoll(): void {
-    PollControls.editAction(this.attrs.poll);
   }
 
   controlsView(controls: Mithril.ChildArray): Mithril.Children {

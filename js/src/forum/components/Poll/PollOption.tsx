@@ -1,25 +1,54 @@
 import type Mithril from 'mithril';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
-import PollOptionLabel from './PollOptionLabel';
-import PollOptionInput from './PollOptionInput';
 import PollOptionModel from '../../models/PollOption';
+import PollState from '../../states/PollState';
 
 interface PollOptionAttrs extends ComponentAttrs {
   option: PollOptionModel;
   name: String;
-  onchange: (e: Event) => void;
+  state: PollState;
 }
 
 export default class PollOption extends Component<PollOptionAttrs> {
   view(): Mithril.Children {
-    const option = this.attrs.option;
     return (
       <label className="PollOption">
-        <PollOptionInput id={option.id()} isResult={false} name={this.attrs.name} value={option.answer()} onchange={this.attrs.onchange} />
-        <span className="PollOption-information">
-          <PollOptionLabel id={option.id()} name={this.attrs.name} text={option.answer()} />
-        </span>
+        {this.createInputView(false)}
+        <span className="PollOption-information">{this.createLabelView()}</span>
       </label>
+    );
+  }
+
+  createInputView(isResult: boolean): Mithril.Children {
+    const option = this.attrs.option;
+    const name = this.attrs.name;
+    const id = option.id();
+    const state = this.attrs.state;
+
+    return (
+      <input
+        type="radio"
+        name={name}
+        value={option.answer()}
+        style={{ opacity: isResult ? 0 : 1 }}
+        className="PollOption-input"
+        aria-labelledby={`${name}-${id}-label`}
+        aria-describedby={`${name}-${id}-description`}
+        onchange={state.changeVote.bind(state, option)}
+        id={`${name}-${id}`}
+      />
+    );
+  }
+
+  createLabelView(): Mithril.Children {
+    const option = this.attrs.option;
+    const name = this.attrs.name;
+    const id = option.id();
+
+    return (
+      <span id={`${name}-${id}-label`} className="PollOption-label">
+        {option.answer()}
+      </span>
     );
   }
 }

@@ -21,13 +21,13 @@ export default class PollOptions extends Component<PollOptionsAttrs> {
     const items = new ItemList<Mithril.Children>();
     const state = this.attrs.state;
 
-    if (state.showCheckMarks) {
+    if (state.isShowResults() || state.isCompactView) {
       this.attrs.options.forEach((option: PollOptionModel): void => {
-        items.add('option' + option.id(), <PollOption name={this.attrs.name} option={option} onchange={state.changeVote.bind(state, option)} />);
+        items.add('result' + option.id(), <PollResult name={this.attrs.name} option={option} state={state} />);
       });
     } else {
       this.attrs.options.forEach((option: PollOptionModel): void => {
-        items.add('result' + option.id(), <PollResult name={this.attrs.name} option={option} state={state} />);
+        items.add('option' + option.id(), <PollOption name={this.attrs.name} option={option} state={state} />);
       });
     }
 

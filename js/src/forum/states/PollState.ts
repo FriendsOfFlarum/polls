@@ -13,32 +13,48 @@ export default class PollState {
   public loadingOptions: boolean;
   public useSubmitUI: boolean;
   public showCheckMarks: boolean;
+  public canSeeVoteCount: boolean;
+  public isCompactView: boolean = false;
 
-  constructor(poll: Poll) {
+  constructor(poll: Poll, isCompactView: boolean = false) {
+    this.isCompactView = isCompactView;
     this.poll = poll;
     this.pendingSubmit = false;
     this.pendingOptions = null;
     this.loadingOptions = false;
     this.useSubmitUI = !poll?.canChangeVote() && poll?.allowMultipleVotes();
     this.showCheckMarks = !app.session.user || (!poll.hasEnded() && poll.canVote() && (!this.hasVoted() || poll.canChangeVote()));
+    this.canSeeVoteCount = typeof poll.voteCount() === 'number';
   }
 
-  hasVoted() {
+  isShowResults(): boolean {
+    return this.canSeeVoteCount && this.hasVoted();
+  }
+
+  hasVoted(): boolean {
     return this.poll.myVotes().length > 0;
   }
 
-  overallVoteCount() {
-    return Math.max(
-      1,
-      this.poll.options().reduce((sum, option) => sum + option!.voteCount(), 0)
-    );
+  overallVoteCount(): number {
+    return this.poll.voteCount();
   }
 
-  showButton() {
+  hasVotedFor(option: PollOption): boolean {
+    return this.pendingOptions ? this.pendingOptions.has(option.id()!) : this.poll.myVotes().some((vote: PollVote) => vote.option() === option);
+  }
+
+  getMaxVotes(): number {
+    const poll = this.poll;
+    let maxVotes = poll.allowMultipleVotes() ? poll.maxVotes() : 1;
+    if (maxVotes === 0) maxVotes = poll.options().length;
+    return maxVotes;
+  }
+
+  showButton(): boolean {
     return this.useSubmitUI && this.pendingSubmit;
   }
 
-  changeVote(option: PollOption, evt: Event) {
+  changeVote(option: PollOption, evt: Event): void {
     const target = evt.target as HTMLInputElement;
 
     if (!app.session.user) {
@@ -98,7 +114,6 @@ export default class PollState {
       })
       .finally(() => {
         this.loadingOptions = false;
-        this.showCheckMarks = false;
         m.redraw();
       });
   }

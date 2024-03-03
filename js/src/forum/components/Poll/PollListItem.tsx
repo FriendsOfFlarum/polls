@@ -9,12 +9,12 @@ import Link from 'flarum/common/components/Link';
 import highlight from 'flarum/common/helpers/highlight';
 import slidable from 'flarum/forum/utils/slidable';
 import icon from 'flarum/common/helpers/icon';
-import PollPage from './PollPage';
 import abbreviateNumber from 'flarum/common/utils/abbreviateNumber';
 import Poll from '../../models/Poll';
 import PollControls from '../../utils/PollControls';
 import ItemList from 'flarum/common/utils/ItemList';
 import listItems from 'flarum/common/helpers/listItems';
+import PollViewPage from '../PollViewPage';
 
 export interface IPollListItemAttrs extends ComponentAttrs {
   poll: Poll;
@@ -154,7 +154,7 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
    * Determine whether or not the discussion is currently being viewed.
    */
   active() {
-    return app.current.matches(PollPage, { poll: this.poll });
+    return app.current.matches(PollViewPage, { poll: this.poll });
   }
 
   /**
