@@ -20,7 +20,7 @@ export default {
     const items = new ItemList<Mithril.Children>();
 
     ['poll', 'moderation', 'destructive'].forEach((section) => {
-      const controls: Mithril.Children[] = this[section + 'Controls'](poll, context).toArray();
+      const controls = (this[section + 'Controls'](poll, context) as ItemList<Mithril.Children>).toArray();
       if (controls.length) {
         controls.forEach((item) => items.add(item.itemName, item));
         items.add(section + 'Separator', <Separator />);
@@ -34,9 +34,7 @@ export default {
    * Get controls for direct modifcation actions on polls (e.g. vote, view voters).
    */
   pollControls(poll: Poll, context: Component): ItemList<Mithril.Children> {
-    const items = new ItemList<Mithril.Children>();
-
-    return items;
+    return new ItemList<Mithril.Children>();
   },
 
   /**
