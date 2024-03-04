@@ -164,7 +164,7 @@ class CreatePollHandler
 
         $encodedImage = $this->imageManager->make($file->getStream()->getMetaData('uri'))->encode('png');
 
-        $uploadName = 'poll_'.$poll->id.'-' . Str::lower(Str::random(8)).$fileExtension;
+        $uploadName = 'poll_'.$poll->id.'-'.Str::lower(Str::random(8)).$fileExtension;
 
         $this->pollsUploadDir->put($uploadName, $encodedImage);
 
