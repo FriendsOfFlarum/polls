@@ -3,6 +3,7 @@ import Button, { IButtonAttrs } from 'flarum/common/components/Button';
 import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
 import Poll from '../models/Poll';
+import Stream from 'flarum/common/utils/Stream';
 
 export interface UploadPollImageButtonAttrs extends IButtonAttrs {
   className?: string;
@@ -10,6 +11,7 @@ export interface UploadPollImageButtonAttrs extends IButtonAttrs {
   name: string;
   onclick: () => void;
   poll?: Poll;
+  stream: Stream<null>;
 }
 
 export default class UploadPollImageButton extends Button<UploadPollImageButtonAttrs> {
