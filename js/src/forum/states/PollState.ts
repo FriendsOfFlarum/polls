@@ -14,7 +14,6 @@ export default class PollState {
   public useSubmitUI: boolean;
   public showCheckMarks: boolean;
   public canSeeVoteCount: boolean;
-  public isCompactView: boolean = false;
 
   constructor(poll: Poll) {
     this.poll = poll;

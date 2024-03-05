@@ -48,7 +48,10 @@ class PollPolicy extends AbstractPolicy
 
     public function vote(User $actor, Poll $poll)
     {
-        if ($actor->can('polls.vote', $poll->post !== null ? $poll->post->discussion : null) && !$poll->hasEnded()) {
+        $discussion = $poll->post !== null ? $poll->post->discussion : null;
+        $can = $discussion ? $actor->can('polls.vote', $discussion) : $actor->can('discussion.polls.vote', $discussion);
+
+        if ($can && !$poll->hasEnded()) {
             return $this->allow();
         }
     }
