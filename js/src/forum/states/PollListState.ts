@@ -26,7 +26,7 @@ export default class PollListState<P extends PollListParams = PollListParams> ex
 
   requestParams(): PaginatedListRequestParams {
     const params = {
-      include: ['options', 'votes'],
+      include: this.params.include || ['options', 'votes'],
       filter: this.params.filter || {},
       sort: this.sortMap()[this.params.sort ?? ''],
     };
