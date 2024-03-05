@@ -187,7 +187,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var flarum_common_extend__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(flarum_common_extend__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var flarum_forum_components_CommentPost__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! flarum/forum/components/CommentPost */ "flarum/forum/components/CommentPost");
 /* harmony import */ var flarum_forum_components_CommentPost__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(flarum_forum_components_CommentPost__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _components_PostPoll__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/PostPoll */ "./src/forum/components/PostPoll.tsx");
+/* harmony import */ var _components_PollView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/PollView */ "./src/forum/components/PollView.tsx");
 /* harmony import */ var flarum_forum_components_DiscussionPage__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! flarum/forum/components/DiscussionPage */ "flarum/forum/components/DiscussionPage");
 /* harmony import */ var flarum_forum_components_DiscussionPage__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(flarum_forum_components_DiscussionPage__WEBPACK_IMPORTED_MODULE_4__);
 function _createForOfIteratorHelperLoose(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (it) return (it = it.call(o)).next.bind(it); if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; return function () { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -205,8 +205,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       for (var _iterator = _createForOfIteratorHelperLoose(post.polls()), _step; !(_step = _iterator()).done;) {
         var poll = _step.value;
         if (poll) {
-          content.push(m(_components_PostPoll__WEBPACK_IMPORTED_MODULE_3__["default"], {
-            post: post,
+          content.push(m(_components_PollView__WEBPACK_IMPORTED_MODULE_3__["default"], {
             poll: poll
           }));
         }
@@ -1992,9 +1991,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Poll_PollSubmitButton__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./Poll/PollSubmitButton */ "./src/forum/components/Poll/PollSubmitButton.tsx");
 /* harmony import */ var flarum_common_utils_string__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! flarum/common/utils/string */ "flarum/common/utils/string");
 /* harmony import */ var flarum_common_utils_string__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(flarum_common_utils_string__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var flarum_common_utils_classList__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! flarum/common/utils/classList */ "flarum/common/utils/classList");
-/* harmony import */ var flarum_common_utils_classList__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(flarum_common_utils_classList__WEBPACK_IMPORTED_MODULE_11__);
-
 
 
 
@@ -2049,7 +2045,7 @@ var PollView = /*#__PURE__*/function (_Component) {
       icon: "fas fa-poll"
     }, flarum_forum_app__WEBPACK_IMPORTED_MODULE_2___default().translator.trans('fof-polls.forum.public_poll')));
     return m("div", {
-      className: flarum_common_utils_classList__WEBPACK_IMPORTED_MODULE_11___default()('Poll', this.state.isCompactView && 'isCompactView'),
+      className: "Poll",
       "data-id": poll.id()
     }, this.controlsView(controls.toArray()), m("div", {
       className: "Poll-wrapper"
@@ -2382,7 +2378,8 @@ var PollsShowcasePage = /*#__PURE__*/function (_AbstractPollPage) {
     _AbstractPollPage.prototype.oninit.call(this, vnode);
     this.state = new _states_PollListState__WEBPACK_IMPORTED_MODULE_2__["default"]({
       sort: m.route.param('sort'),
-      filter: m.route.param('filter')
+      filter: m.route.param('filter'),
+      include: ['options', 'votes', 'myVotes']
     });
     this.state.refresh();
     flarum_forum_app__WEBPACK_IMPORTED_MODULE_1___default().setTitle(flarum_common_utils_extractText__WEBPACK_IMPORTED_MODULE_3___default()(flarum_forum_app__WEBPACK_IMPORTED_MODULE_1___default().translator.trans('fof-polls.forum.page.nav')));
@@ -3435,7 +3432,7 @@ var PollListState = /*#__PURE__*/function (_PaginatedListState) {
   _proto.requestParams = function requestParams() {
     var _this$params$sort;
     var params = {
-      include: ['options', 'votes'],
+      include: this.params.include || ['options', 'votes'],
       filter: this.params.filter || {},
       sort: this.sortMap()[(_this$params$sort = this.params.sort) != null ? _this$params$sort : '']
     };
@@ -3561,7 +3558,6 @@ var PollState = /*#__PURE__*/function () {
     this.useSubmitUI = void 0;
     this.showCheckMarks = void 0;
     this.canSeeVoteCount = void 0;
-    this.isCompactView = false;
     this.showVoters = function () {
       // Load all the votes only when opening the votes list
       flarum_forum_app__WEBPACK_IMPORTED_MODULE_0___default().modal.show(_components_ListVotersModal__WEBPACK_IMPORTED_MODULE_2__["default"], {
@@ -3577,8 +3573,8 @@ var PollState = /*#__PURE__*/function () {
     this.canSeeVoteCount = typeof poll.voteCount() === 'number';
   }
   var _proto = PollState.prototype;
-  _proto.isShowResults = function isShowResults() {
-    return this.canSeeVoteCount && this.hasVoted();
+  _proto.isShowResult = function isShowResult() {
+    return this.poll.hasEnded() || this.canSeeVoteCount && this.hasVoted();
   };
   _proto.hasVoted = function hasVoted() {
     return this.poll.myVotes().length > 0;
@@ -3654,6 +3650,7 @@ var PollState = /*#__PURE__*/function () {
       onerror == null || onerror(err);
     })["finally"](function () {
       _this3.loadingOptions = false;
+      _this3.canSeeVoteCount = typeof _this3.poll.voteCount() === 'number';
       m.redraw();
     });
   };

@@ -25,8 +25,8 @@ export default class PollState {
     this.canSeeVoteCount = typeof poll.voteCount() === 'number';
   }
 
-  isShowResults(): boolean {
-    return this.canSeeVoteCount && this.hasVoted();
+  isShowResult(): boolean {
+    return this.poll.hasEnded() || (this.canSeeVoteCount && this.hasVoted());
   }
 
   hasVoted(): boolean {
@@ -112,6 +112,7 @@ export default class PollState {
       })
       .finally(() => {
         this.loadingOptions = false;
+        this.canSeeVoteCount = typeof this.poll.voteCount() === 'number';
         m.redraw();
       });
   }
