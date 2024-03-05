@@ -51,7 +51,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
     );
 
     return (
-      <div className={classList('Poll', this.state.isCompactView && 'isCompactView')} data-id={poll.id()}>
+      <div className="Poll" data-id={poll.id()}>
         {this.controlsView(controls.toArray())}
         {/* <div className="Poll-image">
           <PollImage image={poll.image()} />
