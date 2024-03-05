@@ -16,8 +16,7 @@ export default class PollState {
   public canSeeVoteCount: boolean;
   public isCompactView: boolean = false;
 
-  constructor(poll: Poll, isCompactView: boolean = false) {
-    this.isCompactView = isCompactView;
+  constructor(poll: Poll) {
     this.poll = poll;
     this.pendingSubmit = false;
     this.pendingOptions = null;

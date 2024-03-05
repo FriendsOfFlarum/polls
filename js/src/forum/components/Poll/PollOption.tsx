@@ -1,7 +1,11 @@
+import app from 'flarum/forum/app';
 import type Mithril from 'mithril';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
 import PollOptionModel from '../../models/PollOption';
 import PollState from '../../states/PollState';
+import Tooltip, { TooltipAttrs } from 'flarum/common/components/Tooltip';
+import icon from 'flarum/common/helpers/icon';
+import classList from 'flarum/common/utils/classList';
 
 interface PollOptionAttrs extends ComponentAttrs {
   option: PollOptionModel;
@@ -11,44 +15,63 @@ interface PollOptionAttrs extends ComponentAttrs {
 
 export default class PollOption extends Component<PollOptionAttrs> {
   view(): Mithril.Children {
-    return (
-      <label className="PollOption">
-        {this.createInputView(false)}
-        <span className="PollOption-information">{this.createLabelView()}</span>
-      </label>
-    );
-  }
-
-  createInputView(isResult: boolean): Mithril.Children {
     const option = this.attrs.option;
-    const name = this.attrs.name;
-    const id = option.id();
     const state = this.attrs.state;
+    const hasVoted = state.hasVoted();
+    const totalVotes = state.overallVoteCount();
+    const votes = option.voteCount();
+    const voted = state.hasVotedFor(option);
+    const percent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
+
+    // @ts-ignore
+    const poll = state.poll;
+
+    // isNaN(null) is false, so we have to check type directly now that API always returns the field
+    const canSeeVoteCount = typeof votes === 'number';
+    const isDisabled = state.loadingOptions || (hasVoted && !poll.canChangeVote());
+    const width = canSeeVoteCount ? percent : (Number(voted) / (poll.myVotes()?.length || 1)) * 100;
+
+    const bar = (
+      <div className="PollBar" data-selected={!!voted} style={`--poll-option-width: ${width}%`}>
+        {state.showCheckMarks && (
+          <label className="PollAnswer-checkbox checkbox">
+            <input onchange={state.changeVote.bind(state, option)} type="checkbox" checked={voted} disabled={isDisabled} />
+            <span className="checkmark" />
+          </label>
+        )}
+
+        <div className="PollAnswer-text">
+          <span className="PollAnswer-text-answer">{option.answer()}</span>
+          {voted && !state.showCheckMarks && icon('fas fa-check-circle', { className: 'PollAnswer-check' })}
+          {canSeeVoteCount && <span className={classList('PollPercent', percent !== 100 && 'PollPercent--option')}>{percent}%</span>}
+        </div>
+
+        {option.imageUrl() ? <img className="PollAnswer-image" src={option.imageUrl()} alt={option.answer()} /> : null}
+      </div>
+    );
 
     return (
-      <input
-        type="radio"
-        name={name}
-        value={option.answer()}
-        style={{ opacity: isResult ? 0 : 1 }}
-        className="PollOption-input"
-        aria-labelledby={`${name}-${id}-label`}
-        aria-describedby={`${name}-${id}-description`}
-        onchange={state.changeVote.bind(state, option)}
-        id={`${name}-${id}`}
-      />
+      <div className={classList('PollOption', hasVoted && 'PollVoted', option.imageUrl() && 'PollOption-hasImage')} data-id={option.id()}>
+        {canSeeVoteCount ? (
+          <Tooltip text={app.translator.trans('fof-polls.forum.tooltip.votes', { count: votes })} onremove={this.hideOptionTooltip}>
+            {bar}
+          </Tooltip>
+        ) : (
+          bar
+        )}
+      </div>
     );
   }
 
-  createLabelView(): Mithril.Children {
-    const option = this.attrs.option;
-    const name = this.attrs.name;
-    const id = option.id();
+  /**
+   * Attempting to use the `tooltipVisible` attr on the Tooltip component set to 'false' when no vote count
+   * caused the tooltip to break on click. This is a workaround to hide the tooltip when no vote count is available,
+   * called on 'onremove' of the Tooltip component. It doesn't always work as intended either, but it does the job.
+   */
+  hideOptionTooltip(vnode: Mithril.Vnode<TooltipAttrs, Tooltip>) {
+    vnode.attrs.tooltipVisible = false;
 
-    return (
-      <span id={`${name}-${id}-label`} className="PollOption-label">
-        {option.answer()}
-      </span>
-    );
+    // @ts-ignore
+    vnode.state.updateVisibility();
   }
 }

@@ -15,7 +15,6 @@ import classList from 'flarum/common/utils/classList';
 
 interface PollAttrs extends ComponentAttrs {
   poll: PollModel;
-  isCompactView: boolean;
 }
 
 export default class PollView extends Component<PollAttrs, PollState> {
@@ -23,7 +22,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
 
   oninit(vnode: Mithril.Vnode<PollAttrs, this>) {
     super.oninit(vnode);
-    this.state = new PollState(this.attrs.poll, this.attrs.isCompactView ?? false);
+    this.state = new PollState(this.attrs.poll);
   }
 
   oncreate(vnode: Mithril.Vnode<PollAttrs, this>) {

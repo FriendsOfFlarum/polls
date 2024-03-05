@@ -18,6 +18,6 @@ export default class PollShowcaseItem extends Component<PollShowcaseItemAttrs> {
   }
 
   view() {
-    return <PollView poll={this.poll} isCompactView={true} />;
+    return <PollView poll={this.poll} />;
   }
 }
