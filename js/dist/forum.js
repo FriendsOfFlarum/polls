@@ -1573,7 +1573,7 @@ var PollView = /*#__PURE__*/function (_Component) {
     if (poll.imageUrl()) {
       items.add('image', m(_Poll_PollImage__WEBPACK_IMPORTED_MODULE_4__["default"], {
         imageUrl: poll.imageUrl(),
-        alt: poll.imageAlt
+        alt: poll.imageAlt()
       }));
     }
     items.add('form', m("form", null, this.createFormItems().toArray()));

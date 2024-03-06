@@ -108,23 +108,23 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
       90
     );
 
-    if(this.pollImage()) {
+    if (this.pollImage()) {
       items.add(
-          'poll_image_alt',
-          <div className="Form-group">
-            <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_image.alt_label')}</label>
+        'poll_image_alt',
+        <div className="Form-group">
+          <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_image.alt_label')}</label>
 
-            <input type="text" required name="imageAlt" className="FormControl" bidi={this.imageAlt}/>
+          <input type="text" required name="imageAlt" className="FormControl" bidi={this.imageAlt} />
 
-            <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_image.alt_help_text')}</p>
-          </div>,
-          90
+          <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_image.alt_help_text')}</p>
+        </div>,
+        90
       );
     }
 
     items.add(
-        'answers',
-        <div className="PollModal--answers Form-group">
+      'answers',
+      <div className="PollModal--answers Form-group">
         <label className="label PollModal--answers-title">
           <span>{app.translator.trans('fof-polls.forum.modal.options_label')}</span>
 
