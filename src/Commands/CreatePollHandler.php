@@ -111,7 +111,8 @@ class CreatePollHandler
                 Arr::get($attributes, 'hideVotes'),
                 Arr::get($attributes, 'allowChangeVote'),
                 Arr::get($attributes, 'subtitle'),
-                Arr::get($attributes, 'pollImage')
+                Arr::get($attributes, 'pollImage'),
+                Arr::get($attributes, 'imageAlt')
             );
 
             $this->events->dispatch(new SavingPollAttributes($command->actor, $poll, $attributes, $attributes));

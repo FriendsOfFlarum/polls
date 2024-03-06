@@ -36,7 +36,7 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
           <p>
             <img src={imageUrl} alt="" />
           </p>
-          <p>{super.view({ ...vnode, children: app.translator.trans('fof-polls.upload_image.remove_button') })}</p>
+          <p>{super.view({ ...vnode, children: app.translator.trans('fof-polls.forum..upload_image.remove_button') })}</p>
         </div>
       );
     } else {

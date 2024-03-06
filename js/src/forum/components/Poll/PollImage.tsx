@@ -1,14 +1,17 @@
 import type Mithril from 'mithril';
-import Component, { ComponentAttrs } from 'flarum/common/Component';
+import Component, {ComponentAttrs} from 'flarum/common/Component';
 
-export interface PollImageAttrs extends ComponentAttrs {
-  imageUrl: string;
+interface PollImageAttrs extends ComponentAttrs {
+    imageUrl: string;
+    alt: string;
 }
 
 export default class PollImage extends Component<PollImageAttrs> {
-  view(): Mithril.Children {
-    const imageUrl = this.attrs.imageUrl;
-
-    return <img src={imageUrl} alt="" />;
-  }
+    view(): Mithril.Children {
+        return (
+            <div className="PollImage">
+                <img src={this.attrs.imageUrl} alt={this.attrs.alt} className="PollImage-image"/>
+            </div>
+        )
+    }
 }

@@ -63,7 +63,7 @@ class EditPollHandler
 
         $command->actor->assertCan('edit', $poll);
 
-        $attributes = (array) Arr::get($command->data, 'attributes');
+        $attributes = (array)Arr::get($command->data, 'attributes');
         $options = collect(Arr::get($attributes, 'options', []));
 
         $this->validator->assertValid($attributes);
@@ -76,14 +76,18 @@ class EditPollHandler
             $poll->subtitle = empty($attributes['subtitle']) ? null : $attributes['subtitle'];
         }
 
+        if (isset($attributes['imageAlt'])) {
+            $poll->image_alt = empty($attributes['imageAlt']) ? null : $attributes['imageAlt'];
+        }
+
         foreach (['publicPoll', 'allowMultipleVotes', 'hideVotes', 'allowChangeVote'] as $key) {
             if (isset($attributes[$key])) {
-                $poll->settings[Str::snake($key)] = (bool) $attributes[$key];
+                $poll->settings[Str::snake($key)] = (bool)$attributes[$key];
             }
         }
 
         if (isset($attributes['maxVotes'])) {
-            $maxVotes = (int) $attributes['maxVotes'];
+            $maxVotes = (int)$attributes['maxVotes'];
             $poll->settings['max_votes'] = min(max($maxVotes, 0), $options->count());
         }
 
@@ -117,7 +121,7 @@ class EditPollHandler
             $id = Arr::get($opt, 'id');
 
             $optionAttributes = [
-                'answer'   => Arr::get($opt, 'attributes.answer'),
+                'answer' => Arr::get($opt, 'attributes.answer'),
                 'imageUrl' => Arr::get($opt, 'attributes.imageUrl') ?: null,
             ];
 
@@ -130,7 +134,7 @@ class EditPollHandler
             $poll->options()->updateOrCreate([
                 'id' => $id,
             ], [
-                'answer'    => Arr::get($optionAttributes, 'answer'),
+                'answer' => Arr::get($optionAttributes, 'answer'),
                 'image_url' => Arr::get($optionAttributes, 'imageUrl'),
             ]);
         }

@@ -63,10 +63,10 @@ export default class PollView extends Component<PollAttrs, PollState> {
     const poll = this.attrs.poll;
 
     items.add('title', <h2 className="Poll-title">{poll.question()}</h2>);
-    items.add('subtitle', <p className="Poll-subtitle">{poll.subtitle()}</p>);
+    if (poll.subtitle()) items.add('subtitle', <p className="Poll-subtitle">{poll.subtitle()}</p>);
 
     if (poll.imageUrl()) {
-      items.add('image', <PollImage imageUrl={poll.imageUrl()} />);
+      items.add('image', <PollImage imageUrl={poll.imageUrl()} alt={poll.imageAlt} />);
     }
 
     items.add('form', <form>{this.createFormItems().toArray()}</form>);

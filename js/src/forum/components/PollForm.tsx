@@ -25,6 +25,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
   protected question: Stream<string>;
   protected subtitle: Stream<string>;
   protected pollImage: Stream<string | null>;
+  protected imageAlt: Stream<string | null>;
   protected endDate: Stream<string | null>;
   protected publicPoll: Stream<boolean>;
   protected allowMultipleVotes: Stream<boolean>;
@@ -47,6 +48,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     this.question = Stream(poll.question());
     this.subtitle = Stream(poll.subtitle());
     this.pollImage = Stream(poll.imageUrl());
+    this.imageAlt = Stream(poll.imageAlt());
     this.endDate = Stream(this.formatDate(poll.endDate()));
     this.publicPoll = Stream(poll.publicPoll());
     this.allowMultipleVotes = Stream(poll.allowMultipleVotes());
@@ -96,7 +98,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     );
 
     items.add(
-      'poll-image',
+      'poll_image',
       <div className="Form-group">
         <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_image.label')}</label>
         <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_image.help')}</p>
@@ -106,9 +108,23 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
       90
     );
 
+    if(this.pollImage()) {
+      items.add(
+          'poll_image_alt',
+          <div className="Form-group">
+            <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_image.alt_label')}</label>
+
+            <input type="text" required name="imageAlt" className="FormControl" bidi={this.imageAlt}/>
+
+            <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_image.alt_help_text')}</p>
+          </div>,
+          90
+      );
+    }
+
     items.add(
-      'answers',
-      <div className="PollModal--answers Form-group">
+        'answers',
+        <div className="PollModal--answers Form-group">
         <label className="label PollModal--answers-title">
           <span>{app.translator.trans('fof-polls.forum.modal.options_label')}</span>
 
@@ -317,6 +333,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
       question: this.question(),
       subtitle: this.subtitle(),
       pollImage: this.pollImage(),
+      imageAlt: this.imageAlt(),
       endDate: this.dateToTimestamp(this.endDate()) ?? false,
       publicPoll: this.publicPoll(),
       hideVotes: this.hideVotes(),
