@@ -51,7 +51,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
     );
 
     return (
-      <div className="Poll" data-id={poll.id()}>
+      <div className={classList('Poll', poll.imageUrl() && 'Poll--image')} data-id={poll.id()}>
         {this.controlsView(controls.toArray())}
         <div className="Poll-wrapper">{this.createMainView().toArray()}</div>
       </div>
@@ -62,14 +62,14 @@ export default class PollView extends Component<PollAttrs, PollState> {
     const items = new ItemList<Mithril.Children>();
     const poll = this.attrs.poll;
 
-    items.add('title', <h2 className="Poll-title">{poll.question()}</h2>);
-    if (poll.subtitle()) items.add('subtitle', <p className="Poll-subtitle">{poll.subtitle()}</p>);
-
     if (poll.imageUrl()) {
       items.add('image', <PollImage imageUrl={poll.imageUrl()} alt={poll.imageAlt()} />);
     }
 
-    items.add('form', <form>{this.createFormItems().toArray()}</form>);
+    items.add('title', <h2 className="Poll-title">{poll.question()}</h2>);
+    if (poll.subtitle()) items.add('subtitle', <p className="Poll-subtitle">{poll.subtitle()}</p>);
+
+    items.add('form', <form className="Poll-form">{this.createFormItems().toArray()}</form>);
 
     return items;
   }
