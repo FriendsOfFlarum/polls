@@ -76,6 +76,10 @@ class EditPollHandler
             $poll->subtitle = empty($attributes['subtitle']) ? null : $attributes['subtitle'];
         }
 
+        if (isset($attributes['imageAlt'])) {
+            $poll->image_alt = empty($attributes['imageAlt']) ? null : $attributes['imageAlt'];
+        }
+
         foreach (['publicPoll', 'allowMultipleVotes', 'hideVotes', 'allowChangeVote'] as $key) {
             if (isset($attributes[$key])) {
                 $poll->settings[Str::snake($key)] = (bool) $attributes[$key];

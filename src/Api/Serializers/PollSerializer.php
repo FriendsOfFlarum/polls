@@ -13,6 +13,8 @@ namespace FoF\Polls\Api\Serializers;
 
 use Flarum\Api\Serializer\AbstractSerializer;
 use FoF\Polls\Poll;
+use Illuminate\Contracts\Filesystem\Cloud;
+use Illuminate\Contracts\Filesystem\Factory;
 
 class PollSerializer extends AbstractSerializer
 {
@@ -47,7 +49,8 @@ class PollSerializer extends AbstractSerializer
             'canSeeVoters'       => $this->actor->can('seeVoters', $poll),
             'canChangeVote'      => $this->actor->can('changeVote', $poll),
             'isGlobal'           => $poll->isGlobal(),
-            'imageUrl'           => $poll->image_url,
+            'imageUrl'           => $this->getImageUrl($poll),
+            'imageAlt'           => $poll->image_alt,
         ];
 
         if ($this->actor->can('seeVoteCount', $poll)) {
@@ -94,5 +97,22 @@ class PollSerializer extends AbstractSerializer
             $model,
             PollVoteSerializer::class
         );
+    }
+
+    protected function getImageUrl(Poll $poll): ?string
+    {
+        // early return if no image
+        if ($poll->image === null) {
+            return null;
+        }
+
+        /** @var Cloud */
+        $fileSystem = resolve(Factory::class)->disk('fof-polls');
+
+        if ($fileSystem->exists($poll->image)) {
+            return $fileSystem->url($poll->image);
+        }
+
+        return null;
     }
 }

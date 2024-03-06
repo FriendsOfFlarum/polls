@@ -18,6 +18,10 @@ export default class Poll extends Model {
     return Model.attribute<string | null>('imageUrl').call(this);
   }
 
+  imageAlt() {
+    return Model.attribute<string | null>('imageAlt').call(this);
+  }
+
   hasEnded() {
     return Model.attribute<boolean>('hasEnded').call(this);
   }
