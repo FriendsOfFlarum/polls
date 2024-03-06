@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FoF\Polls\Api\Controllers;
 
 use Flarum\Http\RequestUtil;
@@ -26,12 +35,12 @@ class UploadPollImageController implements RequestHandlerInterface
      * @var Cloud
      */
     protected $uploadDir;
-    
+
     /**
      * @var ImageManager
      */
     protected $imageManager;
-    
+
     public function __construct(
         Factory $filesystemFactory,
         ImageManager $imageManager
@@ -45,8 +54,7 @@ class UploadPollImageController implements RequestHandlerInterface
         $actor = RequestUtil::getActor($request);
         $pollId = Arr::get($request->getQueryParams(), 'pollId');
 
-        if ($actor->cannot('startPoll') || $actor->cannot('startGlobalPoll'))
-        {
+        if ($actor->cannot('startPoll') || $actor->cannot('startGlobalPoll')) {
             throw new PermissionDeniedException('You do not have permission to upload poll images');
         }
 
@@ -64,7 +72,7 @@ class UploadPollImageController implements RequestHandlerInterface
         }
 
         return new JsonResponse([
-            'fileUrl' => $this->uploadDir->url($uploadName),
+            'fileUrl'  => $this->uploadDir->url($uploadName),
             'fileName' => $uploadName,
         ]);
     }

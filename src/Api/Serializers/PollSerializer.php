@@ -104,7 +104,7 @@ class PollSerializer extends AbstractSerializer
         if ($poll->image === null) {
             return null;
         }
-        
+
         /** @var Cloud */
         $fileSystem = resolve(Factory::class)->disk('fof-polls');
 
