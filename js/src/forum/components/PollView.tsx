@@ -66,7 +66,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
     if (poll.subtitle()) items.add('subtitle', <p className="Poll-subtitle">{poll.subtitle()}</p>);
 
     if (poll.imageUrl()) {
-      items.add('image', <PollImage imageUrl={poll.imageUrl()} alt={poll.imageAlt} />);
+      items.add('image', <PollImage imageUrl={poll.imageUrl()} alt={poll.imageAlt()} />);
     }
 
     items.add('form', <form>{this.createFormItems().toArray()}</form>);
