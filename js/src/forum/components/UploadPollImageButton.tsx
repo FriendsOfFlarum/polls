@@ -3,7 +3,6 @@ import Button, { IButtonAttrs } from 'flarum/common/components/Button';
 import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
 import Poll from '../models/Poll';
-import isObject from "flarum/common/utils/isObject";
 
 export interface UploadPollImageButtonAttrs extends IButtonAttrs {
   className?: string;
@@ -93,11 +92,10 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
   }
 
   resourceUrl() {
-    let url =  app.forum.attribute('apiUrl') + '/fof/polls/' + this.attrs.name;
+    let url = app.forum.attribute('apiUrl') + '/fof/polls/' + this.attrs.name;
     const poll = this.attrs.poll;
 
-    if(poll?.exists)
-      url += '/' + poll?.id();
+    if (poll?.exists) url += '/' + poll?.id();
 
     return url;
   }
