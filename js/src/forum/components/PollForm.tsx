@@ -315,7 +315,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
       question: this.question(),
       subtitle: this.subtitle(),
       pollImage: this.pollImage(),
-      endDate: this.dateToTimestamp(this.endDate()),
+      endDate: this.dateToTimestamp(this.endDate()) ?? false,
       publicPoll: this.publicPoll(),
       hideVotes: this.hideVotes(),
       allowChangeVote: this.allowChangeVote(),
@@ -352,10 +352,10 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     }
   }
 
-  formatDate(date: Date | string | false | undefined | null = undefined, def: Date | false = false): string | null {
+  formatDate(date: Date | string | false | undefined | null = undefined, def: Date | false = false): string | false {
     const dayjsDate = dayjs(date);
 
-    if (date === false || !dayjsDate.isValid()) return def !== false ? this.formatDate(def) : null;
+    if (date === false || !dayjsDate.isValid()) return def !== false ? this.formatDate(def) : false;
 
     return dayjsDate.format('YYYY-MM-DDTHH:mm');
   }
