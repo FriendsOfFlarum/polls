@@ -15,7 +15,7 @@ export default class PollSubmitButton extends Component<PollSubmitButtonAttrs> {
       <Button
         className="Button Button--primary Poll-submit"
         loading={state.loadingOptions}
-        onclick={() => this.pollButtonSubmit(state)}
+        onclick={(event: Event) => this.pollButtonSubmit(state, event)}
         disabled={!state.hasSelectedOptions()}
       >
         {app.translator.trans('fof-polls.forum.poll.submit_button')}
@@ -27,7 +27,7 @@ export default class PollSubmitButton extends Component<PollSubmitButtonAttrs> {
    * Event handler for submit button being clicked
    */
 
-  pollButtonSubmit(state: PollState): void {
+  pollButtonSubmit(state: PollState, event: Event): void {
     state.onsubmit();
   }
 }

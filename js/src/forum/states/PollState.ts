@@ -8,27 +8,28 @@ import { ApiPayloadSingle } from 'flarum/common/Store';
 
 export default class PollState {
   protected poll: Poll;
-  protected pendingSubmit: boolean;
-  protected pendingOptions: Set<string> | null;
-  public loadingOptions: boolean;
+  protected pendingSubmit: boolean = false;
+  protected pendingOptions: Set<string> | null = null;
+  public loadingOptions: boolean = false;
   public useSubmitUI: boolean;
   public showCheckMarks: boolean;
   public canSeeVoteCount: boolean;
-  public isCompactView: boolean = false;
 
-  constructor(poll: Poll, isCompactView: boolean = false) {
-    this.isCompactView = isCompactView;
+  constructor(poll: Poll) {
     this.poll = poll;
-    this.pendingSubmit = false;
-    this.pendingOptions = null;
-    this.loadingOptions = false;
     this.useSubmitUI = !poll?.canChangeVote() && poll?.allowMultipleVotes();
     this.showCheckMarks = !app.session.user || (!poll.hasEnded() && poll.canVote() && (!this.hasVoted() || poll.canChangeVote()));
     this.canSeeVoteCount = typeof poll.voteCount() === 'number';
+    this.init();
   }
 
-  isShowResults(): boolean {
-    return this.canSeeVoteCount && this.hasVoted();
+  /**
+   * used as en extendable entry point for init customizations
+   */
+  init(): void {}
+
+  isShowResult(): boolean {
+    return this.poll.hasEnded() || (this.canSeeVoteCount && this.hasVoted());
   }
 
   hasVoted(): boolean {
@@ -77,7 +78,15 @@ export default class PollState {
 
     this.pendingOptions = optionIds.size ? optionIds : null;
     this.pendingSubmit = !!this.pendingOptions;
-    m.redraw();
+
+    if (this.useSubmitUI) {
+      this.pendingOptions = optionIds.size ? optionIds : null;
+      this.pendingSubmit = !!this.pendingOptions;
+      m.redraw();
+      return;
+    }
+
+    this.submit(optionIds, null, () => (target.checked = isUnvoting));
   }
 
   hasSelectedOptions(): boolean {
@@ -114,6 +123,7 @@ export default class PollState {
       })
       .finally(() => {
         this.loadingOptions = false;
+        this.canSeeVoteCount = typeof this.poll.voteCount() === 'number';
         m.redraw();
       });
   }

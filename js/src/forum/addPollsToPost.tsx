@@ -2,7 +2,7 @@ import app from 'flarum/forum/app';
 
 import { extend } from 'flarum/common/extend';
 import CommentPost from 'flarum/forum/components/CommentPost';
-import PostPoll from './components/PostPoll';
+import PollView from './components/PollView';
 import DiscussionPage from 'flarum/forum/components/DiscussionPage';
 import Poll from './models/Poll';
 import Post from 'flarum/common/models/Post';
@@ -25,7 +25,7 @@ export default () => {
     if ((!post.isHidden() || this.revealContent) && post.polls()) {
       for (const poll of post.polls()) {
         if (poll) {
-          content.push(<PostPoll post={post} poll={poll} />);
+          content.push(<PollView poll={poll} />);
         }
       }
     }

@@ -15,7 +15,6 @@ import classList from 'flarum/common/utils/classList';
 
 interface PollAttrs extends ComponentAttrs {
   poll: PollModel;
-  isCompactView: boolean;
 }
 
 export default class PollView extends Component<PollAttrs, PollState> {
@@ -23,7 +22,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
 
   oninit(vnode: Mithril.Vnode<PollAttrs, this>) {
     super.oninit(vnode);
-    this.state = new PollState(this.attrs.poll, this.attrs.isCompactView ?? false);
+    this.state = new PollState(this.attrs.poll);
   }
 
   oncreate(vnode: Mithril.Vnode<PollAttrs, this>) {
@@ -52,7 +51,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
     );
 
     return (
-      <div className={classList('Poll', this.state.isCompactView && 'isCompactView')} data-id={poll.id()}>
+      <div className="Poll" data-id={poll.id()}>
         {this.controlsView(controls.toArray())}
         {/* <div className="Poll-image">
           <PollImage image={poll.image()} />
@@ -92,7 +91,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
       'sticky',
       <div className="Poll-sticky">
         {!infoItems.isEmpty() && <div className="helpText PollInfoText">{infoItems.toArray()}</div>}
-        <PollSubmitButton state={state} />
+        {state.showButton() && <PollSubmitButton state={state} />}
       </div>
     );
     return items;

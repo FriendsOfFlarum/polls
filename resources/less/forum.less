@@ -195,6 +195,15 @@
   }
 }
 
+.ComposePollHero {
+  &-controls {
+    margin-left:2em;display: flex;
+    justify-content: space-around;
+
+    .Button {margin-right: 1em;}
+  }
+}
+
 .PollOption {
   &,
   .PollBar {
@@ -421,47 +430,25 @@
   position: relative;
   // display: flex;
   // gap: 10px;
-  &.isCompactView {
-    .Poll-options {
-      display: grid;
-      grid: auto-flow / repeat(auto-fit, minmax(~"min(250px, 100%)", 1fr));
-      column-gap: 30px;
-      row-gap: 15px;
-      margin-left: 15px;
-      align-items: start;
+  .Poll-sticky {
+    position: sticky;
+    bottom: 0;
+    padding: 10px 0;
+    margin-left: 15px;
+    margin-top: 10px;
+    display: flex;
+    align-items: flex-start;
+    column-gap: 15px;
+    background-color: var(--body-bg);
+    .box-shadow(inset 0px 2px 0px 0px var(--muted-more-bg));
+
+    &:empty {
+      display: none;
     }
-    .PollAnswer when (@fof-polls-options-color-blend = true) {
-      &-checkbox,
-      &-text {
-        & when (@config-dark-mode =true) {
-          mix-blend-mode: difference;
-        }
 
-        & when (@config-dark-mode =false) {
-          mix-blend-mode: darken;
-        }
-      }
-    }
-    .Poll-sticky {
-      position: sticky;
-      bottom: 0;
-      padding: 10px 0;
-      margin-left: 15px;
-      margin-top: 10px;
-      display: flex;
-      align-items: flex-start;
-      column-gap: 15px;
-      background-color: var(--body-bg);
-      .box-shadow(inset 0px 2px 0px 0px var(--muted-more-bg));
-
-      &:empty {
-        display: none;
-      }
-
-      .PollInfoText {
-        flex-grow: 1;
-        margin-bottom: 0;
-      }
+    .PollInfoText {
+      flex-grow: 1;
+      margin-bottom: 0;
     }
   }
 }
