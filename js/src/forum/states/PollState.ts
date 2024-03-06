@@ -26,9 +26,7 @@ export default class PollState {
   /**
    * used as en extendable entry point for init customizations
    */
-  init():void {
-
-  }
+  init(): void {}
 
   isShowResult(): boolean {
     return this.poll.hasEnded() || (this.canSeeVoteCount && this.hasVoted());
@@ -80,7 +78,6 @@ export default class PollState {
 
     this.pendingOptions = optionIds.size ? optionIds : null;
     this.pendingSubmit = !!this.pendingOptions;
-
 
     if (this.useSubmitUI) {
       this.pendingOptions = optionIds.size ? optionIds : null;

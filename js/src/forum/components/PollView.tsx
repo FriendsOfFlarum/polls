@@ -91,7 +91,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
       'sticky',
       <div className="Poll-sticky">
         {!infoItems.isEmpty() && <div className="helpText PollInfoText">{infoItems.toArray()}</div>}
-        {state.showButton() && (<PollSubmitButton state={state} />)}
+        {state.showButton() && <PollSubmitButton state={state} />}
       </div>
     );
     return items;
