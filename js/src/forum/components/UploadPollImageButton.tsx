@@ -3,31 +3,38 @@ import Button, { IButtonAttrs } from 'flarum/common/components/Button';
 import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
 import Poll from '../models/Poll';
-import Stream from 'flarum/common/utils/Stream';
 
 export interface UploadPollImageButtonAttrs extends IButtonAttrs {
   className?: string;
   loading?: boolean;
   name: string;
   onclick: () => void;
-  poll?: Poll;
-  stream: Stream<null>;
+  poll?: Poll | null;
+  onUpload: (fileName: string) => void;
+}
+
+export interface PollUploadObject {
+  fileUrl: string;
+  fileName: string;
 }
 
 export default class UploadPollImageButton extends Button<UploadPollImageButtonAttrs> {
   loading: boolean = false;
+  uploadedImageUrl: string | undefined = undefined;
+  fileName: string | undefined = undefined;
 
   view(vnode: Mithril.Vnode<UploadPollImageButtonAttrs>) {
     this.attrs.loading = this.loading;
     this.attrs.className = classList(this.attrs.className, 'Button');
 
-    if (this.attrs.poll?.imageUrl()) {
+    if (this.attrs.poll?.imageUrl() || this.uploadedImageUrl) {
+      const imageUrl = this.uploadedImageUrl || this.attrs.poll?.imageUrl();
       this.attrs.onclick = this.remove.bind(this);
 
       return (
         <div>
           <p>
-            <img src={app.forum.attribute(this.attrs.name + 'Url')} alt="" />
+            <img src={imageUrl} alt="" />
           </p>
           <p>{super.view({ ...vnode, children: app.translator.trans('fof-polls.upload_image.remove_button') })}</p>
         </div>
@@ -85,17 +92,22 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
   }
 
   resourceUrl() {
-    return app.forum.attribute('apiUrl') + '/' + this.attrs.name;
+    return app.forum.attribute('apiUrl') + '/fof/polls/' + this.attrs.name;
   }
 
   /**
-   * After a successful upload/removal, reload the page.
+   * After a successful upload/removal, redraw the page.
    *
-   * @param {object} response
+   * @param {PollUploadObject} response
    * @protected
    */
-  success(response) {
-    window.location.reload();
+  success(response: PollUploadObject) {
+    this.loading = false;
+    this.uploadedImageUrl = response.fileUrl;
+    this.fileName = response.fileName;
+
+    this.attrs.onUpload?.(response.fileName);
+    m.redraw();
   }
 
   /**
@@ -104,7 +116,7 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
    * @param {object} response
    * @protected
    */
-  failure(response) {
+  failure(response: object) {
     this.loading = false;
     m.redraw();
   }

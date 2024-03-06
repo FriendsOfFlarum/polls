@@ -21,12 +21,7 @@ use FoF\Polls\PollOption;
 use FoF\Polls\Validators\PollOptionValidator;
 use FoF\Polls\Validators\PollValidator;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Filesystem\Cloud;
-use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Intervention\Image\ImageManager;
-use Psr\Http\Message\UploadedFileInterface;
 
 class CreatePollHandler
 {
@@ -55,25 +50,13 @@ class CreatePollHandler
      */
     protected $posts;
 
-    /**
-     * @var Cloud
-     */
-    protected $pollsUploadDir;
-
-    /**
-     * @var ImageManager
-     */
-    protected $imageManager;
-
-    public function __construct(PostRepository $posts, PollValidator $validator, PollOptionValidator $optionValidator, Dispatcher $events, SettingsRepositoryInterface $settings, Factory $filesystemFactory, ImageManager $imageManager)
+    public function __construct(PostRepository $posts, PollValidator $validator, PollOptionValidator $optionValidator, Dispatcher $events, SettingsRepositoryInterface $settings)
     {
         $this->validator = $validator;
         $this->optionValidator = $optionValidator;
         $this->events = $events;
         $this->settings = $settings;
         $this->posts = $posts;
-        $this->pollsUploadDir = $filesystemFactory->disk('fof-polls');
-        $this->imageManager = $imageManager;
     }
 
     public function handle(CreatePoll $command)
@@ -117,8 +100,6 @@ class CreatePollHandler
                 $carbonDate = null;
             }
 
-            $imageStream = Arr::get($attributes, 'pollImage');
-
             $poll = Poll::build(
                 Arr::get($attributes, 'question'),
                 $command->post ? $command->post->id : null,
@@ -129,12 +110,9 @@ class CreatePollHandler
                 Arr::get($attributes, 'maxVotes'),
                 Arr::get($attributes, 'hideVotes'),
                 Arr::get($attributes, 'allowChangeVote'),
-                Arr::get($attributes, 'subtitle')
+                Arr::get($attributes, 'subtitle'),
+                Arr::get($attributes, 'pollImage')
             );
-
-            if ($imageStream) {
-                $this->storeImage($imageStream, $poll);
-            }
 
             $this->events->dispatch(new SavingPollAttributes($command->actor, $poll, $attributes, $attributes));
 
@@ -156,23 +134,5 @@ class CreatePollHandler
 
             return $poll;
         });
-    }
-
-    protected function storeImage(UploadedFileInterface $file, Poll &$poll): ?string
-    {
-        $fileExtension = pathinfo($file->getClientFilename(), PATHINFO_EXTENSION);
-
-        $encodedImage = $this->imageManager->make($file->getStream()->getMetaData('uri'))->encode('png');
-
-        $uploadName = 'poll_'.$poll->id.'-'.Str::lower(Str::random(8)).$fileExtension;
-
-        $this->pollsUploadDir->put($uploadName, $encodedImage);
-
-        $poll->image_url = $uploadName;
-        if ($poll->isDirty('image_url')) {
-            $poll->save();
-        }
-
-        return $uploadName;
     }
 }

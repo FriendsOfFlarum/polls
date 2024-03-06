@@ -3,6 +3,8 @@ import Component from 'flarum/common/Component';
 
 export default class PollImage extends Component {
   view(): Mithril.Children {
-    return;
+    const imageUrl = this.attrs.imageUrl;
+
+    return <img src={imageUrl} alt="" />;
   }
 }

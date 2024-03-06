@@ -24,6 +24,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
   protected optionImageUrls: Stream<string>[] = [];
   protected question: Stream<string>;
   protected subtitle: Stream<string>;
+  protected pollImage: Stream<string | null>;
   protected endDate: Stream<string | null>;
   protected publicPoll: Stream<boolean>;
   protected allowMultipleVotes: Stream<boolean>;
@@ -31,7 +32,6 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
   protected allowChangeVote: Stream<boolean>;
   protected maxVotes: Stream<number>;
   protected datepickerMinDate: string = '';
-  protected pollImage: Stream<FormData | null> = Stream(null); // Stream to store uploaded image data
 
   oninit(vnode: Mithril.Vnode): void {
     super.oninit(vnode);
@@ -46,6 +46,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     this.question = Stream(poll.question());
     this.subtitle = Stream(poll.subtitle());
+    this.pollImage = Stream(poll.imageUrl());
     this.endDate = Stream(this.formatDate(poll.endDate()));
     this.publicPoll = Stream(poll.publicPoll());
     this.allowMultipleVotes = Stream(poll.allowMultipleVotes());
@@ -99,7 +100,8 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
       <div className="Form-group">
         <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_image.label')}</label>
         <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_image.help')}</p>
-        <UploadPollImageButton name="pollImage" stream={this.pollImage} />
+        <UploadPollImageButton name="pollImage" poll={this.state.poll} onUpload={this.pollImageUploadSuccess.bind(this)} />
+        <input type="hidden" name="pollImage" value={this.pollImage()} />
       </div>,
       90
     );
@@ -366,5 +368,9 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     if (!date || !dayjsDate.isValid()) return null;
 
     return dayjsDate.format();
+  }
+
+  pollImageUploadSuccess(fileName: string): void {
+    this.pollImage(fileName);
   }
 }

@@ -53,9 +53,6 @@ export default class PollView extends Component<PollAttrs, PollState> {
     return (
       <div className="Poll" data-id={poll.id()}>
         {this.controlsView(controls.toArray())}
-        {/* <div className="Poll-image">
-          <PollImage image={poll.image()} />
-        </div> */}
         <div className="Poll-wrapper">{this.createMainView().toArray()}</div>
       </div>
     );
@@ -67,6 +64,11 @@ export default class PollView extends Component<PollAttrs, PollState> {
 
     items.add('title', <h2 className="Poll-title">{poll.question()}</h2>);
     items.add('subtitle', <p className="Poll-subtitle">{poll.subtitle()}</p>);
+
+    if (poll.imageUrl()) {
+      items.add('image', <PollImage imageUrl={poll.imageUrl()} />);
+    }
+
     items.add('form', <form>{this.createFormItems().toArray()}</form>);
 
     return items;
