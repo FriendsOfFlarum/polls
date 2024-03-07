@@ -46,10 +46,7 @@ return [
         ->patch('/fof/polls/{id}/votes', 'fof.polls.votes', Controllers\MultipleVotesPollController::class)
         ->post('/fof/polls/pollImage', 'fof.polls.upload-image', Controllers\UploadPollImageController::class)
         ->post('/fof/polls/pollImage/{pollId}', 'fof.polls.upload-image-poll', Controllers\UploadPollImageController::class)
-        ->delete('/fof/polls/pollImage/{pollId}', 'fof.polls.delete-image-poll', Controllers\DeletePollImageController::class)
-        ->post('/fof/polls/pollOptionImage/{pollId}', 'fof.polls.upload-option-image', Controllers\UploadPollOptionImageController::class)
-        ->post('/fof/polls/pollOptionImage/{pollId}/{optionId}', 'fof.polls.upload-option-image-edit', Controllers\UploadPollOptionImageController::class)
-        ->delete('/fof/polls/pollOptionImage/{optionId}', 'fof.polls.delete-option-image', Controllers\DeletePollOptionImageController::class),
+        ->delete('/fof/polls/pollImage/{pollId}', 'fof.polls.delete-image-poll', Controllers\DeletePollImageController::class),
 
     (new Extend\Model(Post::class))
         ->hasMany('polls', Poll::class, 'post_id', 'id'),

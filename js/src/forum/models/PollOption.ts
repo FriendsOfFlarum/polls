@@ -7,16 +7,8 @@ export default class PollOption extends Model {
     return Model.attribute<string>('answer').call(this);
   }
 
-  image() {
-    return Model.attribute<string | null>('image').call(this);
-  }
-
   imageUrl() {
     return Model.attribute<string>('imageUrl').call(this);
-  }
-
-  imageAlt() {
-    return Model.attribute<string | null>('imageAlt').call(this);
   }
 
   voteCount() {

@@ -35,11 +35,10 @@ class DeletePollImageController implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $pollId = Arr::get($request->getQueryParams(), 'pollId');
-        $poll = Poll::find($pollId);
-
         $actor = RequestUtil::getActor($request);
-        $actor->assertCan('edit', $poll);
+        $pollId = Arr::get($request->getQueryParams(), 'pollId');
+
+        $poll = Poll::find($pollId);
 
         $this->uploadDir->delete($poll->image);
 

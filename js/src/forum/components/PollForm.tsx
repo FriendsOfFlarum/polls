@@ -12,7 +12,6 @@ import PollControls from '../utils/PollControls';
 import PollModel from '../models/Poll';
 import PollOption from '../models/PollOption';
 import UploadPollImageButton from './UploadPollImageButton';
-import UploadPollOptionImageButton from './UploadPollOptionImageButton';
 import Poll from '../models/Poll';
 import Tooltip from 'flarum/common/components/Tooltip';
 
@@ -24,11 +23,10 @@ interface PollFormAttrs extends ComponentAttrs {
 export default class PollForm extends Component<PollFormAttrs, PollFormState> {
   protected options: PollOption[] = [];
   protected optionAnswers: Stream<string>[] = [];
-  protected optionImage: Stream<string>[] = [];
-  protected optionImageAlt: Stream<string>[] = [];
+  protected optionImageUrls: Stream<string>[] = [];
   protected question: Stream<string>;
   protected subtitle: Stream<string>;
-  protected image: Stream<string | null>;
+  protected pollImage: Stream<string | null>;
   protected imageAlt: Stream<string | null>;
   protected endDate: Stream<string | null>;
   protected publicPoll: Stream<boolean>;
@@ -47,12 +45,11 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     this.options = (poll.tempOptions ?? poll.options()) as PollOption[];
     this.optionAnswers = this.options.map((o) => Stream(o.answer()));
-    this.optionImage = this.options.map((o) => Stream(o.image()));
-    this.optionImageAlt = this.options.map((o) => Stream(o.imageAlt()));
+    this.optionImageUrls = this.options.map((o) => Stream(o.imageUrl()));
 
     this.question = Stream(poll.question());
     this.subtitle = Stream(poll.subtitle());
-    this.image = Stream(poll.image());
+    this.pollImage = Stream(poll.imageUrl());
     this.imageAlt = Stream(poll.imageAlt());
     this.endDate = Stream(this.formatDate(poll.endDate()));
     this.publicPoll = Stream(poll.publicPoll());
@@ -108,12 +105,12 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
         <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_image.label')}</label>
         <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_image.help')}</p>
         <UploadPollImageButton name="pollImage" poll={this.state.poll} onUpload={this.pollImageUploadSuccess.bind(this)} />
-        <input type="hidden" name="pollImage" value={this.image()} />
+        <input type="hidden" name="pollImage" value={this.pollImage()} />
       </div>,
       90
     );
 
-    if (this.image()) {
+    if (this.pollImage()) {
       items.add(
         'poll_image_alt',
         <div className="Form-group">
@@ -263,9 +260,26 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
   }
 
   displayOptions() {
-    return this.options.map((option, i) => (
+    return Object.keys(this.options).map((option, i) => (
       <div className="Form-group">
-        <fieldset className="Poll-answer-input">{this.createOptionFields(option, i).toArray()}</fieldset>
+        <fieldset className="Poll-answer-input">
+          <input
+            className="FormControl"
+            type="text"
+            name={'answer' + (i + 1)}
+            bidi={this.optionAnswers[i]}
+            placeholder={app.translator.trans('fof-polls.forum.modal.option_placeholder') + ' #' + (i + 1)}
+          />
+          {app.forum.attribute('allowPollOptionImage') ? (
+            <input
+              className="FormControl"
+              type="text"
+              name={'answerImage' + (i + 1)}
+              bidi={this.optionImageUrls[i]}
+              placeholder={app.translator.trans('fof-polls.forum.modal.image_option_placeholder') + ' #' + (i + 1)}
+            />
+          ) : null}
+        </fieldset>
         {i >= 2
           ? Button.component({
               type: 'button',
@@ -278,61 +292,13 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     ));
   }
 
-  createOptionFields(option: PollOption, i: number): ItemList<Mithril.Children> {
-    const items = new ItemList<Mithril.Children>();
-    const number = i + 1;
-
-    items.add(
-      'answer',
-      <input
-        className="FormControl"
-        type="text"
-        name={'answer' + (i + 1)}
-        bidi={this.optionAnswers[i]}
-        placeholder={app.translator.trans('fof-polls.forum.modal.option_placeholder') + ' #' + number}
-      />
-    );
-
-    if (app.forum.attribute('allowPollOptionImage')) {
-      items.add(
-        'image',
-        <div className="Form-group">
-          <label className="label">{app.translator.trans('fof-polls.forum.modal.option_image.label') + ' #' + number}</label>
-          <UploadPollOptionImageButton
-            name={'pollOptionImage'}
-            poll={this.state.poll}
-            option={this.options[i]}
-            onUpload={this.pollImageUploadSuccess.bind(this)}
-          />
-          <input type="hidden" name={'optionImage' + number} value={this.optionImage[i]} />
-        </div>
-      );
-
-      if (this.optionImage[i]()) {
-        items.add(
-          'image_alt',
-          <div className="Form-group">
-            <label className="label">{app.translator.trans('fof-polls.forum.modal.option_image.alt_label') + ' #' + number}</label>
-
-            <input type="text" required name={'optionImageAlt' + number} className="FormControl" bidi={this.optionImageAlt[i]} />
-
-            <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_image.alt_help_text')}</p>
-          </div>
-        );
-      }
-    }
-
-    return items;
-  }
-
   addOption() {
     const max = Math.max(app.forum.attribute('pollMaxOptions'), 2);
 
     if (this.options.length < max) {
       this.options.push(app.store.createRecord('poll_options'));
       this.optionAnswers.push(Stream(''));
-      this.optionImage.push(Stream(''));
-      this.optionImageAlt.push(Stream(''));
+      this.optionImageUrls.push(Stream(''));
     } else {
       alert(extractText(app.translator.trans('fof-polls.forum.modal.max', { max })));
     }
@@ -341,8 +307,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
   removeOption(i: number): void {
     this.options.splice(i, 1);
     this.optionAnswers.splice(i, 1);
-    this.optionImage.splice(i, 1);
-    this.optionImageAlt.splice(i, 1);
+    this.optionImageUrls.splice(i, 1);
   }
 
   data(): object {
@@ -358,8 +323,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     const options = this.options.map((option, i) => {
       option.pushAttributes({
         answer: this.optionAnswers[i](),
-        image: this.optionImage[i](),
-        imageAlt: this.optionImageAlt[i](),
+        imageUrl: this.optionImageUrls[i](),
       });
 
       return pollExists ? option.data : option.data.attributes;
@@ -368,7 +332,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     return {
       question: this.question(),
       subtitle: this.subtitle(),
-      pollImage: this.image(),
+      pollImage: this.pollImage(),
       imageAlt: this.imageAlt(),
       endDate: this.dateToTimestamp(this.endDate()) ?? false,
       publicPoll: this.publicPoll(),
@@ -424,6 +388,6 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
   }
 
   pollImageUploadSuccess(fileName: string | null | undefined): void {
-    this.image(fileName);
+    this.pollImage(fileName);
   }
 }
