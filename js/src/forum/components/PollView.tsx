@@ -62,12 +62,29 @@ export default class PollView extends Component<PollAttrs, PollState> {
     const items = new ItemList<Mithril.Children>();
     const poll = this.attrs.poll;
 
-    if (poll.imageUrl()) {
-      items.add('image', <PollImage imageUrl={poll.imageUrl()} alt={poll.imageAlt()} />);
-    }
+    items.add('header', <div className="Poll-header">{this.createPollHeader().toArray()}</div>);
+    items.add('content', <div className="Poll-content">{this.createPollContent().toArray()}</div>);
+
+    return items;
+  }
+
+  createPollHeader(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+    const poll = this.attrs.poll;
 
     items.add('title', <h2 className="Poll-title">{poll.question()}</h2>);
     if (poll.subtitle()) items.add('subtitle', <p className="Poll-subtitle">{poll.subtitle()}</p>);
+
+    return items;
+  }
+
+  createPollContent(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+    const poll = this.attrs.poll;
+
+    if (poll.imageUrl()) {
+      items.add('image', <PollImage imageUrl={poll.imageUrl()} alt={poll.imageAlt()} />);
+    }
 
     items.add('form', <form className="Poll-form">{this.createFormItems().toArray()}</form>);
 
