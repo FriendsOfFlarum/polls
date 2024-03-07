@@ -17,12 +17,20 @@ export default class UploadPollOptionImageButton extends UploadPollImageButton<U
     return <p className="UploadPollOptionImageButton-info">{app.translator.trans('fof-polls.forum.modal.option_image.requires_saved_poll')}</p>;
   }
 
-  resourceUrl() {
+  getImageUrl() {
+    if (typeof this.uploadedImageUrl !== 'undefined') {
+      return this.uploadedImageUrl;
+    }
+
+    return this.attrs.option?.imageUrl();
+  }
+
+  resourceUrl(context: string) {
     let url = app.forum.attribute('apiUrl') + '/fof/polls/pollOptionImage';
     const poll = this.attrs.poll;
     const option = this.attrs.option;
 
-    if (poll?.exists) url += '/' + poll?.id();
+    if (poll?.exists && context === 'save') url += '/' + poll?.id();
     if (option?.exists) url += '/' + option?.id();
 
     return url;

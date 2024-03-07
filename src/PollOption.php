@@ -17,7 +17,6 @@ use Flarum\Database\AbstractModel;
  * @property int            $id
  * @property string         $answer
  * @property string         $image
- * @property string         $image_alt
  * @property Poll           $poll
  * @property int            $poll_id
  * @property int            $vote_count
@@ -36,7 +35,7 @@ class PollOption extends AbstractModel
         'updated_at',
     ];
 
-    protected $fillable = ['answer', 'image', 'image_alt'];
+    protected $fillable = ['answer', 'image'];
 
     /**
      * @param $answer

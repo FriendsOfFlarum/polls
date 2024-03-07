@@ -1523,6 +1523,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_PollControls__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../utils/PollControls */ "./src/forum/utils/PollControls.tsx");
 /* harmony import */ var _UploadPollImageButton__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./UploadPollImageButton */ "./src/forum/components/UploadPollImageButton.tsx");
 /* harmony import */ var _UploadPollOptionImageButton__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./UploadPollOptionImageButton */ "./src/forum/components/UploadPollOptionImageButton.tsx");
+/* harmony import */ var flarum_common_components_Tooltip__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! flarum/common/components/Tooltip */ "flarum/common/components/Tooltip");
+/* harmony import */ var flarum_common_components_Tooltip__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(flarum_common_components_Tooltip__WEBPACK_IMPORTED_MODULE_15__);
+
 
 
 
@@ -1636,10 +1639,6 @@ var PollForm = /*#__PURE__*/function (_Component) {
       name: "pollImage",
       poll: this.state.poll,
       onUpload: this.pollImageUploadSuccess.bind(this)
-    }), m("input", {
-      type: "hidden",
-      name: "pollImage",
-      value: this.image()
     })), 90);
     if (this.image()) {
       items.add('poll_image_alt', m("div", {
@@ -1660,11 +1659,13 @@ var PollForm = /*#__PURE__*/function (_Component) {
       className: "PollModal--answers Form-group"
     }, m("label", {
       className: "label PollModal--answers-title"
-    }, m("span", null, flarum_forum_app__WEBPACK_IMPORTED_MODULE_4___default().translator.trans('fof-polls.forum.modal.options_label')), flarum_common_components_Button__WEBPACK_IMPORTED_MODULE_5___default().component({
-      className: 'Button PollModal--button Button--icon small',
-      icon: 'fas fa-plus',
+    }, m("span", null, flarum_forum_app__WEBPACK_IMPORTED_MODULE_4___default().translator.trans('fof-polls.forum.modal.options_label'))), this.displayOptions(), m((flarum_common_components_Tooltip__WEBPACK_IMPORTED_MODULE_15___default()), {
+      text: flarum_forum_app__WEBPACK_IMPORTED_MODULE_4___default().translator.trans('fof-polls.forum.modal.tooltip.options.add-button')
+    }, m((flarum_common_components_Button__WEBPACK_IMPORTED_MODULE_5___default()), {
+      className: "Button PollModal--button Button--icon PollModal--add-button",
+      icon: "fas fa-plus",
       onclick: this.addOption.bind(this)
-    })), this.displayOptions()), 80);
+    }))), 80);
     items.add('date', m("div", {
       className: "Form-group"
     }, m("label", {
@@ -1779,14 +1780,10 @@ var PollForm = /*#__PURE__*/function (_Component) {
       }, flarum_forum_app__WEBPACK_IMPORTED_MODULE_4___default().translator.trans('fof-polls.forum.modal.option_image.label') + ' #' + number), m(_UploadPollOptionImageButton__WEBPACK_IMPORTED_MODULE_14__["default"], {
         name: 'optionImage' + number,
         poll: this.state.poll,
-        option: this.options[i],
+        option: option,
         onUpload: function onUpload(fileName) {
           return _this3.optionImage[i](fileName);
         }
-      }), m("input", {
-        type: "hidden",
-        name: 'optionImage' + number,
-        value: this.optionImage[i]
       })));
     }
     return items;
@@ -1807,7 +1804,6 @@ var PollForm = /*#__PURE__*/function (_Component) {
     this.options.splice(i, 1);
     this.optionAnswers.splice(i, 1);
     this.optionImage.splice(i, 1);
-    this.optionImageAlt.splice(i, 1);
   };
   _proto.data = function data() {
     var _this4 = this,
@@ -2905,18 +2901,17 @@ var UploadPollImageButton = /*#__PURE__*/function (_Button) {
     }
     _this = _Button.call.apply(_Button, [this].concat(args)) || this;
     _this.loading = false;
-    _this.uploadedImageUrl = undefined;
-    _this.fileName = undefined;
+    _this.uploadedImageUrl = void 0;
+    _this.fileName = void 0;
+    _this.$input = void 0;
     return _this;
   }
   var _proto = UploadPollImageButton.prototype;
   _proto.view = function view(vnode) {
-    var _this$attrs$poll;
     this.attrs.loading = this.loading;
     this.attrs.className = flarum_common_utils_classList__WEBPACK_IMPORTED_MODULE_4___default()(this.attrs.className, 'Button');
-    if ((_this$attrs$poll = this.attrs.poll) != null && _this$attrs$poll.imageUrl() || this.uploadedImageUrl) {
-      var _this$attrs$poll2;
-      var imageUrl = this.uploadedImageUrl || ((_this$attrs$poll2 = this.attrs.poll) == null ? void 0 : _this$attrs$poll2.imageUrl());
+    var imageUrl = this.getImageUrl();
+    if (imageUrl) {
       this.attrs.onclick = this.remove.bind(this);
       return m("div", null, m("p", null, m("img", {
         src: imageUrl,
@@ -2938,15 +2933,15 @@ var UploadPollImageButton = /*#__PURE__*/function (_Button) {
   _proto.upload = function upload() {
     var _this2 = this;
     if (this.loading) return;
-    var $input = $('<input type="file">');
-    $input.appendTo('body').hide().trigger('click').on('change', function (e) {
+    this.$input = $('<input type="file">');
+    this.$input.appendTo('body').hide().trigger('click').on('change', function (e) {
       var body = new FormData();
-      body.append('image', $(e.target)[0].files[0]);
+      body.append('image', e.target.files[0]);
       _this2.loading = true;
       m.redraw();
       flarum_forum_app__WEBPACK_IMPORTED_MODULE_2___default().request({
         method: 'POST',
-        url: _this2.resourceUrl(),
+        url: _this2.resourceUrl('save'),
         serialize: function serialize(raw) {
           return raw;
         },
@@ -2963,14 +2958,21 @@ var UploadPollImageButton = /*#__PURE__*/function (_Button) {
     m.redraw();
     flarum_forum_app__WEBPACK_IMPORTED_MODULE_2___default().request({
       method: 'DELETE',
-      url: this.resourceUrl()
+      url: this.resourceUrl('delete')
     }).then(this.success.bind(this), this.failure.bind(this));
   };
-  _proto.resourceUrl = function resourceUrl() {
+  _proto.resourceUrl = function resourceUrl(context) {
     var url = flarum_forum_app__WEBPACK_IMPORTED_MODULE_2___default().forum.attribute('apiUrl') + '/fof/polls/' + this.attrs.name;
     var poll = this.attrs.poll;
     if (poll != null && poll.exists) url += '/' + (poll == null ? void 0 : poll.id());
     return url;
+  };
+  _proto.getImageUrl = function getImageUrl() {
+    var _this$attrs$poll;
+    if (typeof this.uploadedImageUrl !== 'undefined') {
+      return this.uploadedImageUrl;
+    }
+    return (_this$attrs$poll = this.attrs.poll) == null ? void 0 : _this$attrs$poll.imageUrl();
   }
 
   /**
@@ -2980,12 +2982,13 @@ var UploadPollImageButton = /*#__PURE__*/function (_Button) {
    * @protected
    */;
   _proto.success = function success(response) {
-    var _this$attrs$onUpload, _this$attrs;
+    var _response$fileUrl, _this$attrs$onUpload, _this$attrs, _this$$input;
     this.loading = false;
-    this.uploadedImageUrl = response == null ? void 0 : response.fileUrl;
+    this.uploadedImageUrl = (_response$fileUrl = response == null ? void 0 : response.fileUrl) != null ? _response$fileUrl : null;
     this.fileName = response == null ? void 0 : response.fileName;
     (_this$attrs$onUpload = (_this$attrs = this.attrs).onUpload) == null || _this$attrs$onUpload.call(_this$attrs, response == null ? void 0 : response.fileName);
     m.redraw();
+    (_this$$input = this.$input) == null || _this$$input.remove();
   }
 
   /**
@@ -2995,8 +2998,10 @@ var UploadPollImageButton = /*#__PURE__*/function (_Button) {
    * @protected
    */;
   _proto.failure = function failure(response) {
+    var _this$$input2;
     this.loading = false;
     m.redraw();
+    (_this$$input2 = this.$input) == null || _this$$input2.remove();
   };
   return UploadPollImageButton;
 }((flarum_common_components_Button__WEBPACK_IMPORTED_MODULE_3___default()));
@@ -3037,11 +3042,18 @@ var UploadPollOptionImageButton = /*#__PURE__*/function (_UploadPollImageButto) 
       className: "UploadPollOptionImageButton-info"
     }, flarum_forum_app__WEBPACK_IMPORTED_MODULE_1___default().translator.trans('fof-polls.forum.modal.option_image.requires_saved_poll'));
   };
-  _proto.resourceUrl = function resourceUrl() {
+  _proto.getImageUrl = function getImageUrl() {
+    var _this$attrs$option;
+    if (typeof this.uploadedImageUrl !== 'undefined') {
+      return this.uploadedImageUrl;
+    }
+    return (_this$attrs$option = this.attrs.option) == null ? void 0 : _this$attrs$option.imageUrl();
+  };
+  _proto.resourceUrl = function resourceUrl(context) {
     var url = flarum_forum_app__WEBPACK_IMPORTED_MODULE_1___default().forum.attribute('apiUrl') + '/fof/polls/pollOptionImage';
     var poll = this.attrs.poll;
     var option = this.attrs.option;
-    if (poll != null && poll.exists) url += '/' + (poll == null ? void 0 : poll.id());
+    if (poll != null && poll.exists && context === 'save') url += '/' + (poll == null ? void 0 : poll.id());
     if (option != null && option.exists) url += '/' + (option == null ? void 0 : option.id());
     return url;
   };

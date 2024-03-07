@@ -105,7 +105,6 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
         <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_image.label')}</label>
         <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_image.help')}</p>
         <UploadPollImageButton name="pollImage" poll={this.state.poll} onUpload={this.pollImageUploadSuccess.bind(this)} />
-        <input type="hidden" name="pollImage" value={this.image()} />
       </div>,
       90
     );
@@ -298,10 +297,9 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
           <UploadPollOptionImageButton
             name={'optionImage' + number}
             poll={this.state.poll}
-            option={this.options[i]}
-            onUpload={(fileName:string)=>this.optionImage[i](fileName)}
+            option={option}
+            onUpload={(fileName: string | null) => this.optionImage[i](fileName)}
           />
-          <input type="hidden" name={'optionImage' + number} value={this.optionImage[i]} />
         </div>
       );
     }
@@ -325,7 +323,6 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     this.options.splice(i, 1);
     this.optionAnswers.splice(i, 1);
     this.optionImage.splice(i, 1);
-    this.optionImageAlt.splice(i, 1);
   }
 
   data(): object {

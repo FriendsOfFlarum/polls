@@ -35,8 +35,8 @@ class DeletePollOptionImageController implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $pollOptionId = Arr::get($request->getQueryParams(), 'id');
-        $pollOption = PollOption::find($pollOptionId);
+        $pollOptionId = Arr::get($request->getQueryParams(), 'optionId');
+        $pollOption = PollOption::findOrFail($pollOptionId);
 
         $actor = RequestUtil::getActor($request);
         $actor->assertCan('edit', $pollOption->poll);

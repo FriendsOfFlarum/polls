@@ -20,15 +20,16 @@ export interface PollUploadObject {
 
 export default class UploadPollImageButton<CustomAttrs extends UploadPollImageButtonAttrs = UploadPollImageButtonAttrs> extends Button<CustomAttrs> {
   loading: boolean = false;
-  uploadedImageUrl: string | undefined = undefined;
-  fileName: string | undefined = undefined;
+  uploadedImageUrl: string | null | undefined;
+  fileName: string | undefined;
+  $input: JQuery<HTMLElement> | undefined;
 
   view(vnode: Mithril.Vnode<UploadPollImageButtonAttrs>) {
     this.attrs.loading = this.loading;
     this.attrs.className = classList(this.attrs.className, 'Button');
+    const imageUrl = this.getImageUrl();
 
-    if (this.attrs.poll?.imageUrl() || this.uploadedImageUrl) {
-      const imageUrl = this.uploadedImageUrl || this.attrs.poll?.imageUrl();
+    if (imageUrl) {
       this.attrs.onclick = this.remove.bind(this);
 
       return (
@@ -51,16 +52,15 @@ export default class UploadPollImageButton<CustomAttrs extends UploadPollImageBu
    */
   upload() {
     if (this.loading) return;
+    this.$input = $<HTMLInputElement>('<input type="file">');
 
-    const $input = $('<input type="file">');
-
-    $input
+    this.$input
       .appendTo('body')
       .hide()
       .trigger('click')
       .on('change', (e) => {
         const body = new FormData();
-        body.append('image', $(e.target)[0].files[0]);
+        body.append('image', e.target.files[0]);
 
         this.loading = true;
         m.redraw();
@@ -68,7 +68,7 @@ export default class UploadPollImageButton<CustomAttrs extends UploadPollImageBu
         app
           .request<PollUploadObject>({
             method: 'POST',
-            url: this.resourceUrl(),
+            url: this.resourceUrl('save'),
             serialize: (raw) => raw,
             body,
           })
@@ -86,18 +86,26 @@ export default class UploadPollImageButton<CustomAttrs extends UploadPollImageBu
     app
       .request<PollUploadObject>({
         method: 'DELETE',
-        url: this.resourceUrl(),
+        url: this.resourceUrl('delete'),
       })
       .then(this.success.bind(this), this.failure.bind(this));
   }
 
-  resourceUrl() {
+  resourceUrl(context: string) {
     let url = app.forum.attribute('apiUrl') + '/fof/polls/' + this.attrs.name;
     const poll = this.attrs.poll;
 
     if (poll?.exists) url += '/' + poll?.id();
 
     return url;
+  }
+
+  getImageUrl() {
+    if (typeof this.uploadedImageUrl !== 'undefined') {
+      return this.uploadedImageUrl;
+    }
+
+    return this.attrs.poll?.imageUrl();
   }
 
   /**
@@ -108,11 +116,12 @@ export default class UploadPollImageButton<CustomAttrs extends UploadPollImageBu
    */
   success(response: PollUploadObject | null) {
     this.loading = false;
-    this.uploadedImageUrl = response?.fileUrl;
+    this.uploadedImageUrl = response?.fileUrl ?? null;
     this.fileName = response?.fileName;
 
     this.attrs.onUpload?.(response?.fileName);
     m.redraw();
+    this.$input?.remove();
   }
 
   /**
@@ -124,5 +133,6 @@ export default class UploadPollImageButton<CustomAttrs extends UploadPollImageBu
   failure(response: object) {
     this.loading = false;
     m.redraw();
+    this.$input?.remove();
   }
 }
