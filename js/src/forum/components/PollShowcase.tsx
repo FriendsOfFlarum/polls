@@ -21,10 +21,12 @@ export default class PollShowcase extends Component<PollListAttrs, PollListState
     return (
       <div className="PollShowcase">
         <div className="PollShowcase-featured">
+          <h3>{app.translator.trans('fof-polls.forum.showcase.active-polls')}</h3>
           {this.showcaseItems().toArray()}
           {this.showcaseItems().toArray().length === 0 && <Placeholder text={app.translator.trans('fof-polls.forum.showcase.no-active-polls')} />}
         </div>
         <div className="PollShowcase-ended">
+          <h3>{app.translator.trans('fof-polls.forum.showcase.ended-polls')}</h3>
           {this.endedItems().toArray()}
           {this.endedItems().toArray().length === 0 && <Placeholder text={app.translator.trans('fof-polls.forum.showcase.no-recent-polls')} />}
         </div>

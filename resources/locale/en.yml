@@ -100,6 +100,8 @@ fof-polls:
       nav-all: All Global Polls
 
     showcase:
+      active-polls: Active Polls
+      ended-polls: Concluded Polls
       no-active-polls: There are no active polls at the moment.
       no-recent-polls: There are no recently ended polls at the moment.
 
