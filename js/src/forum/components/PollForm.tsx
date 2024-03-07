@@ -387,7 +387,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     return dayjsDate.format();
   }
 
-  pollImageUploadSuccess(fileName: string): void {
+  pollImageUploadSuccess(fileName: string | null | undefined): void {
     this.pollImage(fileName);
   }
 }

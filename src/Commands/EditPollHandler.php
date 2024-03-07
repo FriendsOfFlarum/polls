@@ -76,6 +76,10 @@ class EditPollHandler
             $poll->subtitle = empty($attributes['subtitle']) ? null : $attributes['subtitle'];
         }
 
+        if (isset($attributes['pollImage'])) {
+            $poll->image = empty($attributes['pollImage']) ? null : $attributes['pollImage'];
+        }
+
         if (isset($attributes['imageAlt'])) {
             $poll->image_alt = empty($attributes['imageAlt']) ? null : $attributes['imageAlt'];
         }
