@@ -17,6 +17,10 @@ export default class PollShowcaseItem extends Component<PollShowcaseItemAttrs> {
   }
 
   view() {
-    return <PollView poll={this.poll} />;
+    return (
+      <div className="PollShowcase--item">
+        <PollView poll={this.poll} />
+      </div>
+    );
   }
 }
