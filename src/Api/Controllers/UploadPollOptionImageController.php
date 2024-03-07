@@ -22,13 +22,14 @@ class UploadPollOptionImageController extends UploadPollImageController
 
     protected function createLocalPath(string $filename, ?string $pollId): string
     {
-        if(!$pollId) {
+        if (!$pollId) {
             throw new \InvalidArgumentException('Poll ID is required');
         }
+
         return "pollOptions/{$pollId}/{$filename}";
     }
 
-    protected function linkToRecord(int $pollId, string $uploadName):void
+    protected function linkToRecord(int $pollId, string $uploadName): void
     {
         if ($pollId && $pollOption = PollOption::find($pollId)) {
             $pollOption->image = $uploadName;

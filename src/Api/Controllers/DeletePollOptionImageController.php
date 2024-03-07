@@ -12,7 +12,6 @@
 namespace FoF\Polls\Api\Controllers;
 
 use Flarum\Http\RequestUtil;
-use FoF\Polls\Poll;
 use FoF\Polls\PollOption;
 use Illuminate\Contracts\Filesystem\Cloud;
 use Illuminate\Contracts\Filesystem\Factory;

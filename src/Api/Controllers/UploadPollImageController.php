@@ -79,7 +79,7 @@ class UploadPollImageController implements RequestHandlerInterface
         return $filename;
     }
 
-    protected function linkToRecord(int $pollId, string $uploadName):void
+    protected function linkToRecord(int $pollId, string $uploadName): void
     {
         if ($pollId && $poll = Poll::find($pollId)) {
             $poll->image = $uploadName;

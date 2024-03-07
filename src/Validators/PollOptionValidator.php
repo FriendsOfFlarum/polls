@@ -19,7 +19,7 @@ class PollOptionValidator extends AbstractValidator
     {
         return [
             'answer'   => ['required', 'string', 'max:255'],
-            'image' => ['nullable', 'string', 'max:255'],
+            'image'    => ['nullable', 'string', 'max:255'],
             'imageAlt' => ['nullable', 'string', 'max:255'],
         ];
     }
