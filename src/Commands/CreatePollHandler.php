@@ -68,7 +68,7 @@ class CreatePollHandler
             if (!$this->settings->get('fof-polls.enableGlobalPolls')) {
                 throw new PermissionDeniedException('Global polls are not enabled');
             }
-            
+
             $command->actor->assertCan('startGlobalPoll');
         }
 
