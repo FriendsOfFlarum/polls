@@ -29,7 +29,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class UploadPollImageController implements RequestHandlerInterface
 {
-    protected $filenamePrefix = 'pollImage';
+    protected $filenamePrefix = 'image';
 
     /**
      * @var Cloud

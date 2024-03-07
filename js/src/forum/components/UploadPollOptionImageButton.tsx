@@ -1,4 +1,5 @@
 import app from 'flarum/forum/app';
+import type Mithril from 'mithril';
 import UploadPollImageButton, { UploadPollImageButtonAttrs } from './UploadPollImageButton';
 import PollOption from '../models/PollOption';
 

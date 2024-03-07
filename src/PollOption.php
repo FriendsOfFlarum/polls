@@ -43,13 +43,12 @@ class PollOption extends AbstractModel
      *
      * @return static
      */
-    public static function build($answer, $imageFilename = null, $imageAlt = null)
+    public static function build($answer, $imageFilename = null)
     {
         $option = new static();
 
         $option->answer = $answer;
         $option->image = $imageFilename;
-        $option->image_alt = $imageAlt;
 
         return $option;
     }

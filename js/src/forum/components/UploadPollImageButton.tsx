@@ -60,7 +60,7 @@ export default class UploadPollImageButton<CustomAttrs extends UploadPollImageBu
       .trigger('click')
       .on('change', (e) => {
         const body = new FormData();
-        body.append(this.attrs.name, $(e.target)[0].files[0]);
+        body.append('image', $(e.target)[0].files[0]);
 
         this.loading = true;
         m.redraw();

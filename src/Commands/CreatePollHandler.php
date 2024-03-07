@@ -85,7 +85,6 @@ class CreatePollHandler
                 $optionsData[] = [
                     'answer'   => Arr::get($rawOptionData, 'answer'),
                     'image'    => Arr::get($rawOptionData, 'image'),
-                    'imageAlt' => Arr::get($rawOptionData, 'imageAlt'),
                 ];
             }
         }
@@ -129,14 +128,12 @@ class CreatePollHandler
 
             foreach ($optionsData as $optionData) {
                 $image = Arr::get($optionData, 'image');
-                $imageAlt = Arr::get($optionData, 'imageAlt');
 
                 if (!$this->settings->get('fof-polls.allowOptionImage')) {
                     $image = null;
-                    $imageAlt = null;
                 }
 
-                $option = PollOption::build(Arr::get($optionData, 'answer'), $image, $imageAlt);
+                $option = PollOption::build(Arr::get($optionData, 'answer'), $image);
 
                 $poll->options()->save($option);
             }

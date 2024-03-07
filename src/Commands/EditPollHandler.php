@@ -127,12 +127,10 @@ class EditPollHandler
             $optionAttributes = [
                 'answer'   => Arr::get($opt, 'attributes.answer'),
                 'image'    => Arr::get($opt, 'attributes.image') ?: null,
-                'imageAlt' => Arr::get($opt, 'attributes.imageAlt') ?: null,
             ];
 
             if (!$this->settings->get('fof-polls.allowOptionImage')) {
                 unset($optionAttributes['image']);
-                unset($optionAttributes['imageAlt']);
             }
 
             $this->optionValidator->assertValid($optionAttributes);
@@ -142,7 +140,6 @@ class EditPollHandler
             ], [
                 'answer'    => Arr::get($optionAttributes, 'answer'),
                 'image'     => Arr::get($optionAttributes, 'image'),
-                'image_alt' => Arr::get($optionAttributes, 'imageAlt'),
             ]);
         }
 
