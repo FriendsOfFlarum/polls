@@ -20,6 +20,12 @@ app.initializers.add('fof/polls', () => {
       label: app.translator.trans('fof-polls.admin.settings.max_options'),
       min: 2,
     })
+    .registerSetting({
+      setting: 'fof-polls.enableGlobalPolls',
+      type: 'boolean',
+      label: app.translator.trans('fof-polls.admin.settings.enable_global_polls'),
+      help: app.translator.trans('fof-polls.admin.settings.enable_global_polls_help'),
+    })
     .registerPermission(
       {
         icon: 'fas fa-poll',

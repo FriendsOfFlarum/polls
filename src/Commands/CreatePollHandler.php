@@ -14,6 +14,7 @@ namespace FoF\Polls\Commands;
 use Carbon\Carbon;
 use Flarum\Post\PostRepository;
 use Flarum\Settings\SettingsRepositoryInterface;
+use Flarum\User\Exception\PermissionDeniedException;
 use FoF\Polls\Events\PollWasCreated;
 use FoF\Polls\Events\SavingPollAttributes;
 use FoF\Polls\Poll;
@@ -64,6 +65,10 @@ class CreatePollHandler
         if ($command->post) {
             $command->actor->assertCan('startPoll', $command->post);
         } else {
+            if (!$this->settings->get('fof-polls.enableGlobalPolls')) {
+                throw new PermissionDeniedException('Global polls are not enabled');
+            }
+            
             $command->actor->assertCan('startGlobalPoll');
         }
 

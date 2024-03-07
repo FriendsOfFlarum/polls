@@ -9,6 +9,11 @@ export default class PollViewPage extends AbstractPollPage {
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
 
+    if (!app.forum.attribute<boolean>('globalPollsEnabled')) {
+      m.route.set('/');
+      return;
+    }
+
     const editId = m.route.param('id');
     this.poll = app.store.getById<PollModel>('poll', editId);
 

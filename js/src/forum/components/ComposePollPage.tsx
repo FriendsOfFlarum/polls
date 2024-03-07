@@ -20,6 +20,11 @@ export default class ComposePollPage extends Page {
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
 
+    if (!app.forum.attribute<boolean>('globalPollsEnabled')) {
+      m.route.set('/');
+      return;
+    }
+
     // Get the `edit` parameter from the URL
     const editId = m.route.param('id');
     if (editId) {

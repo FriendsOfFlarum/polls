@@ -5,6 +5,10 @@ import LinkButton from 'flarum/common/components/LinkButton';
 
 export default function addNavItem() {
   extend(IndexPage.prototype, 'navItems', (items) => {
+    if (!app.forum.attribute<boolean>('globalPollsEnabled')) {
+      return;
+    }
+
     items.add(
       'fof-polls-showcase',
       LinkButton.component(

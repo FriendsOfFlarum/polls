@@ -102,6 +102,8 @@ return [
         ->default('fof-polls.maxOptions', 10)
         ->default('fof-polls.optionsColorBlend', true)
         ->default('fof-polls.directory-default-sort', 'default')
+        ->default('fof-polls.enableGlobalPolls', false)
+        ->serializeToForum('globalPollsEnabled', 'fof-polls.enableGlobalPolls', 'boolval')
         ->serializeToForum('allowPollOptionImage', 'fof-polls.allowOptionImage', 'boolval')
         ->serializeToForum('pollMaxOptions', 'fof-polls.maxOptions', 'intval')
         ->registerLessConfigVar('fof-polls-options-color-blend', 'fof-polls.optionsColorBlend', function ($value) {

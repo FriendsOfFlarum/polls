@@ -2,6 +2,8 @@ fof-polls:
   admin:
     settings:
       allow_option_image: Allow an image URL to be provided for each poll option
+      enable_global_polls: Enable global polls
+      enable_global_polls_help: Global polls are not tied to a specific post, and may be accessed from a dedicated polls page.
       max_options: Maximum number of options per poll
       options_color_blend: Color blend text in poll options
       options_color_blend_help: Use this to use color mixing to make the poll options more readable. Disable if this feature causes issues with your forum's appearance, reducing readability.

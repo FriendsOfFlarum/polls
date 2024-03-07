@@ -13,6 +13,11 @@ export default class PollsShowcasePage extends AbstractPollPage {
   oninit(vnode: Mithril.Vnode<IPageAttrs, PollListState>) {
     super.oninit(vnode);
 
+    if (!app.forum.attribute<boolean>('globalPollsEnabled')) {
+      m.route.set('/');
+      return;
+    }
+
     this.state = new PollListState({
       sort: m.route.param('sort'),
       filter: m.route.param('filter'),
