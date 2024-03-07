@@ -14,6 +14,10 @@ export default class Poll extends Model {
     return Model.attribute<string | null>('subtitle').call(this);
   }
 
+  image() {
+    return Model.attribute<string | null>('image').call(this);
+  }
+
   imageUrl() {
     return Model.attribute<string | null>('imageUrl').call(this);
   }

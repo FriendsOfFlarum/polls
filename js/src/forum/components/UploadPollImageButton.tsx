@@ -18,7 +18,7 @@ export interface PollUploadObject {
   fileName: string;
 }
 
-export default class UploadPollImageButton extends Button<UploadPollImageButtonAttrs> {
+export default class UploadPollImageButton<CustomAttrs extends UploadPollImageButtonAttrs = UploadPollImageButtonAttrs> extends Button<CustomAttrs> {
   loading: boolean = false;
   uploadedImageUrl: string | undefined = undefined;
   fileName: string | undefined = undefined;
@@ -66,7 +66,7 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
         m.redraw();
 
         app
-          .request({
+          .request<PollUploadObject>({
             method: 'POST',
             url: this.resourceUrl(),
             serialize: (raw) => raw,
@@ -84,7 +84,7 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
     m.redraw();
 
     app
-      .request({
+      .request<PollUploadObject>({
         method: 'DELETE',
         url: this.resourceUrl(),
       })

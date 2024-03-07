@@ -13,6 +13,7 @@ namespace FoF\Polls\Api\Controllers;
 
 use Flarum\Http\RequestUtil;
 use FoF\Polls\Poll;
+use FoF\Polls\PollOption;
 use Illuminate\Contracts\Filesystem\Cloud;
 use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Support\Arr;
@@ -21,7 +22,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class DeletePollImageController implements RequestHandlerInterface
+class DeletePollOptionImageController implements RequestHandlerInterface
 {
     /**
      * @var Cloud
@@ -35,16 +36,16 @@ class DeletePollImageController implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $pollId = Arr::get($request->getQueryParams(), 'pollId');
-        $poll = Poll::find($pollId);
+        $pollOptionId = Arr::get($request->getQueryParams(), 'id');
+        $pollOption = PollOption::find($pollOptionId);
 
         $actor = RequestUtil::getActor($request);
-        $actor->assertCan('edit', $poll);
+        $actor->assertCan('edit', $pollOption->poll);
 
-        $this->uploadDir->delete($poll->image);
+        $this->uploadDir->delete($pollOption->image);
 
-        $poll->image = null;
-        $poll->save();
+        $pollOption->image = null;
+        $pollOption->save();
 
         return new EmptyResponse(204);
     }

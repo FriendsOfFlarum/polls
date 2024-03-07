@@ -64,17 +64,27 @@ class UploadPollImageController implements RequestHandlerInterface
 
         $uploadName = $this->filenamePrefix.'-'.Str::lower(Str::random(8)).'.png';
 
-        $this->uploadDir->put($uploadName, $encodedImage);
+        $this->uploadDir->put($this->createLocalPath($uploadName, $pollId), $encodedImage);
 
-        if ($pollId && $poll = Poll::find($pollId)) {
-            $poll->image = $uploadName;
-            $poll->save();
-        }
+        $this->linkToRecord($pollId, $uploadName);
 
         return new JsonResponse([
             'fileUrl'  => $this->uploadDir->url($uploadName),
             'fileName' => $uploadName,
         ]);
+    }
+
+    protected function createLocalPath(string $filename, ?string $pollId): string
+    {
+        return $filename;
+    }
+
+    protected function linkToRecord(int $pollId, string $uploadName):void
+    {
+        if ($pollId && $poll = Poll::find($pollId)) {
+            $poll->image = $uploadName;
+            $poll->save();
+        }
     }
 
     protected function makeImage(UploadedFileInterface $file): Image
