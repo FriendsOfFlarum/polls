@@ -16,7 +16,7 @@ export default class PollsShowcasePage extends AbstractPollPage {
     this.state = new PollListState({
       sort: m.route.param('sort'),
       filter: m.route.param('filter'),
-      include: ['options', 'votes', 'myVotes'],
+      include: ['options', 'votes', 'myVotes', 'myVotes.option'],
     });
 
     this.state.refresh();

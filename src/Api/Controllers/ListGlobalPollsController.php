@@ -49,8 +49,6 @@ class ListGlobalPollsController extends AbstractListController
 
     public function data(ServerRequestInterface $request, Document $document): Collection
     {
-        $actor = RequestUtil::getActor($request);
-
         // Not yet needed, but here if/when we do.
         // $filters = $this->extractFilter($request);
         $sort = $this->extractSort($request);
@@ -60,7 +58,7 @@ class ListGlobalPollsController extends AbstractListController
         $offset = $this->extractOffset($request);
         $include = $this->extractInclude($request);
 
-        $results = $this->polls->queryVisibleTo($actor)
+        $results = $this->polls->queryVisibleTo(RequestUtil::getActor($request))
             ->select('polls.*')
             ->whereNull('post_id')
             ->orderBy($sortIsDefault ? 'id' : $sort, 'desc')
