@@ -1,4 +1,4 @@
-import type Mithril from 'mithril';
+import Mithril from 'mithril';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
 import app from 'flarum/forum/app';
 import PollOptions from './Poll/PollOptions';
@@ -64,6 +64,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
 
     items.add('header', <div className="Poll-header">{this.createPollHeader().toArray()}</div>);
     items.add('content', <div className="Poll-content">{this.createPollContent().toArray()}</div>);
+    items.add('footer', <div className="Poll-footer">{this.createPollFooter().toArray()}</div>);
 
     return items;
   }
@@ -91,11 +92,27 @@ export default class PollView extends Component<PollAttrs, PollState> {
     return items;
   }
 
-  createFormItems(): ItemList<Mithril.Children> {
+  createPollFooter(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
     const state = this.state;
+
+    const infoItems = this.infoItems(state.getMaxVotes());
+
+    items.add(
+      'sticky',
+      <div className="Poll-sticky">
+        {!infoItems.isEmpty() && <div className="helpText PollInfoText">{infoItems.toArray()}</div>}
+        {state.showButton() && <PollSubmitButton state={state} />}
+      </div>
+    );
+
+    return items;
+  }
+
+  createFormItems(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
     const poll = this.attrs.poll;
-    const infoItems = this.infoItems(state.getMaxVotes());
+    const state = this.state;
     const questionSlug = slug(poll.question());
 
     items.add(
@@ -106,13 +123,6 @@ export default class PollView extends Component<PollAttrs, PollState> {
       </fieldset>
     );
 
-    items.add(
-      'sticky',
-      <div className="Poll-sticky">
-        {!infoItems.isEmpty() && <div className="helpText PollInfoText">{infoItems.toArray()}</div>}
-        {state.showButton() && <PollSubmitButton state={state} />}
-      </div>
-    );
     return items;
   }
 
