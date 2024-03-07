@@ -25,6 +25,8 @@ class CreatePollTest extends TestCase
 
         $this->extension('fof-polls');
 
+        $this->setting('fof-polls.enableGlobalPolls', true);
+
         $this->prepareDatabase([
             'users' => [
                 $this->normalUser(),
