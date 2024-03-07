@@ -14,6 +14,7 @@ import PollOption from '../models/PollOption';
 import UploadPollImageButton from './UploadPollImageButton';
 import UploadPollOptionImageButton from './UploadPollOptionImageButton';
 import Poll from '../models/Poll';
+import Tooltip from 'flarum/common/components/Tooltip';
 
 interface PollFormAttrs extends ComponentAttrs {
   poll: PollModel;
@@ -131,15 +132,13 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
       <div className="PollModal--answers Form-group">
         <label className="label PollModal--answers-title">
           <span>{app.translator.trans('fof-polls.forum.modal.options_label')}</span>
-
-          {Button.component({
-            className: 'Button PollModal--button Button--icon small',
-            icon: 'fas fa-plus',
-            onclick: this.addOption.bind(this),
-          })}
         </label>
 
         {this.displayOptions()}
+
+        <Tooltip text={app.translator.trans('fof-polls.forum.modal.tooltip.options.add-button')}>
+          <Button className="Button PollModal--button Button--icon PollModal--add-button" icon="fas fa-plus" onclick={this.addOption.bind(this)} />
+        </Tooltip>
       </div>,
       80
     );

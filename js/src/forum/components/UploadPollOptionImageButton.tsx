@@ -9,12 +9,11 @@ export interface UploadPollOptionImageButtonAttrs extends UploadPollImageButtonA
 export default class UploadPollOptionImageButton extends UploadPollImageButton<UploadPollOptionImageButtonAttrs> {
   view(vnode: Mithril.Vnode<UploadPollOptionImageButtonAttrs>) {
     const poll = this.attrs.poll;
-    if(poll?.exists) {
-
+    if (poll?.exists) {
       return super.view(vnode);
     }
 
-    return <p className="UploadPollOptionImageButton-info">{app.translator.trans('fof-polls.forum.modal.option_image.requires_saved_poll')}</p>
+    return <p className="UploadPollOptionImageButton-info">{app.translator.trans('fof-polls.forum.modal.option_image.requires_saved_poll')}</p>;
   }
 
   resourceUrl() {
