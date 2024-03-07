@@ -3,7 +3,7 @@ import Component, { ComponentAttrs } from 'flarum/common/Component';
 
 interface PollImageAttrs extends ComponentAttrs {
   imageUrl: string;
-  alt: string;
+  alt: string | null;
 }
 
 export default class PollImage extends Component<PollImageAttrs> {
