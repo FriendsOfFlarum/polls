@@ -93,6 +93,9 @@ fof-polls:
       option_image:
         label: Option Image
         requires_saved_poll: You must save the poll before adding image to the option.
+      tooltip:
+        options:
+          add-button: Add Answer
 
     moderation:
       add: Add Poll
