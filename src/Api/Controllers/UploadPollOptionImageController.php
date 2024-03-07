@@ -18,7 +18,6 @@ use Psr\Http\Message\UploadedFileInterface;
 
 class UploadPollOptionImageController extends UploadPollImageController
 {
-
     protected function createLocalPath(string $filename, ?string $pollId): string
     {
         if (!$pollId) {
