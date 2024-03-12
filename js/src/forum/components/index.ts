@@ -14,6 +14,8 @@ import PollsShowcasePage from './PollsShowcasePage';
 import PollShowcase from './PollShowcase';
 import PollShowcaseItem from './PollShowcaseItem';
 import { AbstractPollPage } from './AbstractPollPage';
+import PollTitle from './Poll/PollTitle';
+import PollSubtitle from './Poll/PollSubtitle';
 
 export const components = {
   CreatePollModal,
@@ -32,4 +34,6 @@ export const components = {
   PollShowcase,
   PollShowcaseItem,
   AbstractPollPage,
+  PollTitle,
+  PollSubtitle,
 };

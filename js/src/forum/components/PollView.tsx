@@ -12,6 +12,8 @@ import Dropdown from 'flarum/common/components/Dropdown';
 import PollSubmitButton from './Poll/PollSubmitButton';
 import { slug } from 'flarum/common/utils/string';
 import classList from 'flarum/common/utils/classList';
+import PollTitle from './Poll/PollTitle';
+import PollSubtitle from './Poll/PollSubtitle';
 
 interface PollAttrs extends ComponentAttrs {
   poll: PollModel;
@@ -73,8 +75,8 @@ export default class PollView extends Component<PollAttrs, PollState> {
     const items = new ItemList<Mithril.Children>();
     const poll = this.attrs.poll;
 
-    items.add('title', <h2 className="Poll-title">{poll.question()}</h2>);
-    if (poll.subtitle()) items.add('subtitle', <p className="Poll-subtitle">{poll.subtitle()}</p>);
+    items.add('title', <PollTitle poll={poll} />);
+    if (poll.subtitle()) items.add('subtitle', <PollSubtitle poll={poll} />);
 
     return items;
   }
@@ -84,7 +86,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
     const poll = this.attrs.poll;
 
     if (poll.imageUrl()) {
-      items.add('image', <PollImage imageUrl={poll.imageUrl()} alt={poll.imageAlt()} />);
+      items.add('image', <PollImage poll={poll} />);
     }
 
     items.add('form', <form className="Poll-form">{this.createFormItems().toArray()}</form>);
