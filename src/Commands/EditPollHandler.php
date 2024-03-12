@@ -13,7 +13,9 @@ namespace FoF\Polls\Commands;
 
 use Carbon\Carbon;
 use Flarum\Settings\SettingsRepositoryInterface;
+use FoF\Polls\Events\PollOptionUpdated;
 use FoF\Polls\Events\SavingPollAttributes;
+use FoF\Polls\PollOption;
 use FoF\Polls\PollRepository;
 use FoF\Polls\Validators\PollOptionValidator;
 use FoF\Polls\Validators\PollValidator;
@@ -141,6 +143,11 @@ class EditPollHandler
                 'answer'    => Arr::get($optionAttributes, 'answer'),
                 'image_url' => Arr::get($optionAttributes, 'imageUrl'),
             ]);
+
+            /** @var PollOption $option */
+            $option = $poll->options()->where('id', $id)->first();
+
+            $this->events->dispatch(new PollOptionUpdated($option, $command->actor));
         }
 
         return $poll;

@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Flarum\Post\PostRepository;
 use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\User\Exception\PermissionDeniedException;
+use FoF\Polls\Events\PollOptionCreated;
 use FoF\Polls\Events\PollWasCreated;
 use FoF\Polls\Events\SavingPollAttributes;
 use FoF\Polls\Poll;
@@ -136,6 +137,8 @@ class CreatePollHandler
                 $option = PollOption::build(Arr::get($optionData, 'answer'), $imageUrl);
 
                 $poll->options()->save($option);
+
+                $this->events->dispatch(new PollOptionCreated($option, $command->actor));
             }
 
             return $poll;
