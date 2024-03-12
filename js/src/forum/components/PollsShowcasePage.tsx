@@ -21,12 +21,16 @@ export default class PollsShowcasePage extends AbstractPollPage {
     this.state = new PollListState({
       sort: m.route.param('sort'),
       filter: m.route.param('filter'),
-      include: ['options', 'votes', 'myVotes', 'myVotes.option'],
+      include: this.includeParams(),
     });
 
     this.state.refresh();
 
     app.setTitle(extractText(app.translator.trans('fof-polls.forum.page.nav')));
+  }
+
+  includeParams(): string[] {
+    return ['options', 'votes', 'myVotes', 'myVotes.option'];
   }
 
   contentItems(): ItemList<Mithril.Children> {
