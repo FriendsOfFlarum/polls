@@ -16,6 +16,7 @@ import PollShowcaseItem from './PollShowcaseItem';
 import { AbstractPollPage } from './AbstractPollPage';
 import PollTitle from './Poll/PollTitle';
 import PollSubtitle from './Poll/PollSubtitle';
+import PollImage from './Poll/PollImage';
 
 export const components = {
   CreatePollModal,
@@ -36,4 +37,5 @@ export const components = {
   AbstractPollPage,
   PollTitle,
   PollSubtitle,
+  PollImage,
 };
