@@ -9,13 +9,13 @@
  * file that was distributed with this source code.
  */
 
- namespace FoF\Polls\Events;
+namespace FoF\Polls\Events;
 
 use Flarum\User\User;
 use FoF\Polls\PollOption;
 
- class PollOptionCreated
- {
+class PollOptionCreated
+{
     /**
      * @var PollOption
      */
@@ -25,10 +25,10 @@ use FoF\Polls\PollOption;
      * @var User
      */
     public $actor;
-    
+
     public function __construct(PollOption $option, User $actor)
     {
         $this->option = $option;
         $this->actor = $actor;
     }
- }
+}
