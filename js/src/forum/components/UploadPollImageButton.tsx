@@ -10,7 +10,7 @@ export interface UploadPollImageButtonAttrs extends IButtonAttrs {
   name: string;
   onclick: () => void;
   poll?: Poll | null;
-  onUpload: (fileName: string | null | undefined) => void;
+  onUpload: (fileName: string) => void;
 }
 
 export interface PollUploadObject {
@@ -106,7 +106,7 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
    * @param {PollUploadObject} response
    * @protected
    */
-  success(response: PollUploadObject | null) {
+  success(response: PollUploadObject) {
     this.loading = false;
     this.uploadedImageUrl = response?.fileUrl;
     this.fileName = response?.fileName;
