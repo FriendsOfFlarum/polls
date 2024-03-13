@@ -41,9 +41,7 @@ export default class PollOption extends Component<PollOptionAttrs> {
           </label>
         )}
 
-        <div className="PollAnswer-text">
-          {this.optionDisplayItems().toArray()}
-        </div>
+        <div className="PollAnswer-text">{this.optionDisplayItems().toArray()}</div>
 
         {option.imageUrl() ? <img className="PollAnswer-image" src={option.imageUrl()} alt={option.answer()} /> : null}
       </div>
