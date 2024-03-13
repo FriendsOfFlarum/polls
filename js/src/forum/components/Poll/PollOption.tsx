@@ -1,11 +1,12 @@
 import app from 'flarum/forum/app';
-import type Mithril from 'mithril';
+import Mithril from 'mithril';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
 import PollOptionModel from '../../models/PollOption';
 import PollState from '../../states/PollState';
 import Tooltip, { TooltipAttrs } from 'flarum/common/components/Tooltip';
 import icon from 'flarum/common/helpers/icon';
 import classList from 'flarum/common/utils/classList';
+import ItemList from 'flarum/common/utils/ItemList';
 
 interface PollOptionAttrs extends ComponentAttrs {
   option: PollOptionModel;
@@ -41,9 +42,7 @@ export default class PollOption extends Component<PollOptionAttrs> {
         )}
 
         <div className="PollAnswer-text">
-          <span className="PollAnswer-text-answer">{option.answer()}</span>
-          {voted && !state.showCheckMarks && icon('fas fa-check-circle', { className: 'PollAnswer-check' })}
-          {canSeeVoteCount && <span className={classList('PollPercent', percent !== 100 && 'PollPercent--option')}>{percent}%</span>}
+          {this.optionDisplayItems().toArray()}
         </div>
 
         {option.imageUrl() ? <img className="PollAnswer-image" src={option.imageUrl()} alt={option.answer()} /> : null}
@@ -73,5 +72,24 @@ export default class PollOption extends Component<PollOptionAttrs> {
 
     // @ts-ignore
     vnode.state.updateVisibility();
+  }
+
+  optionDisplayItems(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+    const option = this.attrs.option;
+    const state = this.attrs.state;
+    const voted = state.hasVotedFor(option);
+    const votes = option.voteCount();
+    const totalVotes = state.overallVoteCount();
+    const canSeeVoteCount = typeof votes === 'number';
+    const percent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
+
+    items.add('answer', <span className="PollAnswer-text-answer">{option.answer()}</span>);
+
+    voted && !state.showCheckMarks && items.add('check', icon('fas fa-check-circle', { className: 'PollAnswer-check' }));
+
+    canSeeVoteCount && items.add('percent', <span className={classList('PollPercent', percent !== 100 && 'PollPercent--option')}>{percent}%</span>);
+
+    return items;
   }
 }

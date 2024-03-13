@@ -9,6 +9,7 @@ import PollsPage from './PollsPage';
 import PollView from './PollView';
 import PollViewPage from './PollViewPage';
 import PollSubmitButton from './Poll/PollSubmitButton';
+import PollOption from './Poll/PollOption';
 import PollOptions from './Poll/PollOptions';
 import PollsShowcasePage from './PollsShowcasePage';
 import PollShowcase from './PollShowcase';
@@ -30,6 +31,7 @@ export const components = {
   PollView,
   PollViewPage,
   PollSubmitButton,
+  PollOption,
   PollOptions,
   PollsShowcasePage,
   PollShowcase,

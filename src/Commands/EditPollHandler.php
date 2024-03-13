@@ -137,15 +137,12 @@ class EditPollHandler
 
             $this->optionValidator->assertValid($optionAttributes);
 
-            $poll->options()->updateOrCreate([
+            $option = $poll->options()->updateOrCreate([
                 'id' => $id,
             ], [
                 'answer'    => Arr::get($optionAttributes, 'answer'),
                 'image_url' => Arr::get($optionAttributes, 'imageUrl'),
             ]);
-
-            /** @var PollOption $option */
-            $option = $poll->options()->where('id', $id)->first();
 
             $this->events->dispatch(new PollOptionUpdated($option, $command->actor));
         }

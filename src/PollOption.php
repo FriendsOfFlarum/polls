@@ -12,6 +12,8 @@
 namespace FoF\Polls;
 
 use Flarum\Database\AbstractModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int            $id
@@ -52,12 +54,12 @@ class PollOption extends AbstractModel
         return $option;
     }
 
-    public function poll()
+    public function poll(): BelongsTo
     {
         return $this->belongsTo(Poll::class);
     }
 
-    public function votes()
+    public function votes(): HasMany
     {
         return $this->hasMany(PollVote::class, 'option_id');
     }
