@@ -15,7 +15,6 @@ use Carbon\Carbon;
 use Flarum\Settings\SettingsRepositoryInterface;
 use FoF\Polls\Events\PollOptionUpdated;
 use FoF\Polls\Events\SavingPollAttributes;
-use FoF\Polls\PollOption;
 use FoF\Polls\PollRepository;
 use FoF\Polls\Validators\PollOptionValidator;
 use FoF\Polls\Validators\PollValidator;
