@@ -51,6 +51,7 @@ class PollSerializer extends AbstractSerializer
             'isGlobal'           => $poll->isGlobal(),
             'imageUrl'           => $this->getImageUrl($poll),
             'imageAlt'           => $poll->image_alt,
+            'publicPoll'         => $poll->public_poll
         ];
 
         if ($this->actor->can('seeVoteCount', $poll)) {
@@ -58,7 +59,7 @@ class PollSerializer extends AbstractSerializer
         }
 
         if ($canEdit) {
-            $attributes['publicPoll'] = $poll->public_poll;
+            
             $attributes['hideVotes'] = $poll->hide_votes;
             $attributes['allowChangeVote'] = $poll->allow_change_vote;
         }

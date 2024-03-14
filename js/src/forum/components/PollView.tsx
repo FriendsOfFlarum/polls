@@ -45,12 +45,13 @@ export default class PollView extends Component<PollAttrs, PollState> {
     const state = this.state;
     const controls = PollControls.controls(poll, this);
 
-    controls.add(
-      'view',
-      <Button onclick={state.showVoters} icon="fas fa-poll">
-        {app.translator.trans('fof-polls.forum.public_poll')}
-      </Button>
-    );
+    poll.publicPoll() &&
+      controls.add(
+        'view',
+        <Button onclick={state.showVoters} icon="fas fa-poll">
+          {app.translator.trans('fof-polls.forum.public_poll')}
+        </Button>
+      );
 
     return (
       <div className={classList('Poll', poll.imageUrl() && 'Poll--image')} data-id={poll.id()}>
