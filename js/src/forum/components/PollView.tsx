@@ -45,7 +45,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
     const state = this.state;
     const controls = PollControls.controls(poll, this);
 
-    poll.publicPoll() &&
+    (poll.publicPoll() || poll.canEdit()) &&
       controls.add(
         'view',
         <Button onclick={state.showVoters} icon="fas fa-poll">
