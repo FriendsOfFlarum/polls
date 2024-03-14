@@ -75,7 +75,7 @@ export default {
   },
 
   /**
-   * Delete the user.
+   * Delete the poll.
    */
   async deleteAction(poll: Poll): Promise<void> {
     if (!confirm(app.translator.trans(`fof-polls.forum.poll_controls.delete_confirmation`) as string)) {

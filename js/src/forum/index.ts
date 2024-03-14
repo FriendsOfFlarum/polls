@@ -9,6 +9,7 @@ import addNavItem from './addNavItem';
 export * from './components';
 export * from './models';
 export * from './states';
+export * from './utils';
 
 app.initializers.add('fof/polls', () => {
   addDiscussionBadge();
