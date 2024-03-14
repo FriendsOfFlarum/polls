@@ -7,7 +7,7 @@ import ListVotersModal from '../components/ListVotersModal';
 import { ApiPayloadSingle } from 'flarum/common/Store';
 
 export default class PollState {
-  protected poll: Poll;
+  public poll: Poll;
   protected pendingSubmit: boolean = false;
   protected pendingOptions: Set<string> | null = null;
   public loadingOptions: boolean = false;
@@ -29,7 +29,7 @@ export default class PollState {
   init(): void {}
 
   isShowResult(): boolean {
-    return this.poll.hasEnded() || (this.canSeeVoteCount && this.hasVoted());
+    return this.poll.hasEnded() || (this.canSeeVoteCount && !!app.session.user && this.hasVoted());
   }
 
   hasVoted(): boolean {
