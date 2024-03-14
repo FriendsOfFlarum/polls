@@ -23,7 +23,7 @@ class PollPolicy extends AbstractPolicy
             return $this->deny();
         }
 
-        if ($poll->myVotes($actor)->count() || $actor->can('polls.viewResultsWithoutVoting', $poll->post !== null ? $poll->post->discussion : null)) {
+        if ($poll->myVotes($actor)->count() || $actor->can('polls.viewResultsWithoutVoting', $poll->post !== null ? $poll->post->discussion : null) || $poll->isGlobal()) {
             return $this->allow();
         }
     }
@@ -41,7 +41,7 @@ class PollPolicy extends AbstractPolicy
 
     public function view(User $actor, Poll $poll)
     {
-        if ($actor->can('view', $poll->post)) {
+        if ($actor->can('view', $poll->post) || $poll->isGlobal()) {
             return $this->allow();
         }
     }
@@ -51,7 +51,7 @@ class PollPolicy extends AbstractPolicy
         $discussion = $poll->post !== null ? $poll->post->discussion : null;
         $can = $discussion ? $actor->can('polls.vote', $discussion) : $actor->can('discussion.polls.vote', $discussion);
 
-        if ($can && !$poll->hasEnded()) {
+        if (($can || $poll->isGlobal()) && !$poll->hasEnded()) {
             return $this->allow();
         }
     }
