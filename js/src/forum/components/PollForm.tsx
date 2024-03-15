@@ -26,7 +26,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
   protected optionImageUrls: Stream<string>[] = [];
   protected question: Stream<string>;
   protected subtitle: Stream<string>;
-  protected pollImage: Stream<string | null>;
+  protected image: Stream<string | null>;
   protected imageAlt: Stream<string | null>;
   protected endDate: Stream<string | null>;
   protected publicPoll: Stream<boolean>;
@@ -49,7 +49,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     this.question = Stream(poll.question());
     this.subtitle = Stream(poll.subtitle());
-    this.pollImage = Stream(poll.imageUrl());
+    this.image = Stream(poll.image());
     this.imageAlt = Stream(poll.imageAlt());
     this.endDate = Stream(this.formatDate(poll.endDate()));
     this.publicPoll = Stream(poll.publicPoll());
@@ -105,12 +105,12 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
         <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_image.label')}</label>
         <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_image.help')}</p>
         <UploadPollImageButton name="pollImage" poll={this.state.poll} onUpload={this.pollImageUploadSuccess.bind(this)} />
-        <input type="hidden" name="pollImage" value={this.pollImage()} />
+        <input type="hidden" name="pollImage" value={this.image()} />
       </div>,
       90
     );
 
-    if (this.pollImage()) {
+    if (this.image()) {
       items.add(
         'poll_image_alt',
         <div className="Form-group">
@@ -332,7 +332,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     return {
       question: this.question(),
       subtitle: this.subtitle(),
-      pollImage: this.pollImage(),
+      pollImage: this.image(),
       imageAlt: this.imageAlt(),
       endDate: this.dateToTimestamp(this.endDate()) ?? false,
       publicPoll: this.publicPoll(),
@@ -388,6 +388,6 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
   }
 
   pollImageUploadSuccess(fileName: string | null | undefined): void {
-    this.pollImage(fileName);
+    this.image(fileName);
   }
 }
