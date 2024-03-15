@@ -63,7 +63,6 @@ export default class PollView extends Component<PollAttrs, PollState> {
 
   createMainView(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
-    const poll = this.attrs.poll;
 
     items.add('header', <div className="Poll-header">{this.createPollHeader().toArray()}</div>);
     items.add('content', <div className="Poll-content">{this.createPollContent().toArray()}</div>);

@@ -12,7 +12,6 @@ import PollControls from '../utils/PollControls';
 import PollModel from '../models/Poll';
 import PollOption from '../models/PollOption';
 import UploadPollImageButton from './UploadPollImageButton';
-import Poll from '../models/Poll';
 import Tooltip from 'flarum/common/components/Tooltip';
 
 interface PollFormAttrs extends ComponentAttrs {
