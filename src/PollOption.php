@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @property int            $id
  * @property string         $answer
- * @property string         $image_url
+ * @property string|null    $image_url
  * @property Poll           $poll
  * @property int            $poll_id
  * @property int            $vote_count
