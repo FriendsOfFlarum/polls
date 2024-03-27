@@ -7,6 +7,8 @@ fof-polls:
       max_options: Maximum number of options per poll
       options_color_blend: Color blend text in poll options
       options_color_blend_help: Use this to use color mixing to make the poll options more readable. Disable if this feature causes issues with your forum's appearance, reducing readability.
+      image_height: Resize image height
+      image_width: Resize image width
     permissions:
       view_results_without_voting: View results without voting
       start: Start a poll

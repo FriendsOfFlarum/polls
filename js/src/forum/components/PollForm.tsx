@@ -1,5 +1,5 @@
 import Component, { ComponentAttrs } from 'flarum/common/Component';
-import type Mithril from 'mithril';
+import Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import Button from 'flarum/common/components/Button';
 import Switch from 'flarum/common/components/Switch';
@@ -131,7 +131,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
           <span>{app.translator.trans('fof-polls.forum.modal.options_label')}</span>
         </label>
 
-        {this.displayOptions()}
+        {this.displayOptions().toArray()}
 
         <Tooltip text={app.translator.trans('fof-polls.forum.modal.tooltip.options.add-button')}>
           <Button className="Button PollModal--button Button--icon PollModal--add-button" icon="fas fa-plus" onclick={this.addOption.bind(this)} />
@@ -259,37 +259,50 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     return items;
   }
 
-  displayOptions() {
-    return Object.keys(this.options).map((option, i) => (
-      <div className="Form-group">
-        <fieldset className="Poll-answer-input">
-          <input
-            className="FormControl"
-            type="text"
-            name={'answer' + (i + 1)}
-            bidi={this.optionAnswers[i]}
-            placeholder={app.translator.trans('fof-polls.forum.modal.option_placeholder') + ' #' + (i + 1)}
-          />
-          {app.forum.attribute('allowPollOptionImage') ? (
+  displayOptions(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+
+    this.options.forEach((option, i) => {
+      items.add(
+        'option-' + i,
+        <div className="Form-group">
+          <fieldset className="Poll-answer-input">
             <input
+              className="FormControl"
+              type="text"
+              name={'answer' + (i + 1)}
+              bidi={this.optionAnswers[i]}
+              placeholder={app.translator.trans('fof-polls.forum.modal.option_placeholder') + ' #' + (i + 1)}
+            />
+            {app.forum.attribute<boolean>('allowPollOptionImage') && (
+              <div className="Poll-answer-image">
+                {/* <input
               className="FormControl"
               type="text"
               name={'answerImage' + (i + 1)}
               bidi={this.optionImageUrls[i]}
               placeholder={app.translator.trans('fof-polls.forum.modal.image_option_placeholder') + ' #' + (i + 1)}
-            />
-          ) : null}
-        </fieldset>
-        {i >= 2
-          ? Button.component({
-              type: 'button',
-              className: 'Button PollModal--button Button--icon',
-              icon: 'fas fa-minus',
-              onclick: i >= 2 ? this.removeOption.bind(this, i) : '',
-            })
-          : ''}
-      </div>
-    ));
+            /> */}
+                <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_option_image.label')}</label>
+                <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_option_image.help')}</p>
+                <UploadPollImageButton name="pollOptionImage" option={option} onUpload={this.pollOptionImageUploadSuccess.bind(this, i)} />
+                <input type="hidden" name={'answerImage' + (i + 1)} value={this.optionImageUrls[i]()} />
+              </div>
+            )}
+          </fieldset>
+          {i >= 2
+            ? Button.component({
+                type: 'button',
+                className: 'Button PollModal--button Button--icon',
+                icon: 'fas fa-minus',
+                onclick: i >= 2 ? this.removeOption.bind(this, i) : '',
+              })
+            : ''}
+        </div>
+      );
+    });
+
+    return items;
   }
 
   addOption() {
@@ -389,5 +402,9 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
   pollImageUploadSuccess(fileName: string | null | undefined): void {
     this.image(fileName);
+  }
+
+  pollOptionImageUploadSuccess(index: number, fileName: string | null | undefined): void {
+    this.optionImageUrls[index] = Stream(fileName);
   }
 }

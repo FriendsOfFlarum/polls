@@ -26,6 +26,16 @@ app.initializers.add('fof/polls', () => {
       label: app.translator.trans('fof-polls.admin.settings.enable_global_polls'),
       help: app.translator.trans('fof-polls.admin.settings.enable_global_polls_help'),
     })
+    .registerSetting({
+      setting: 'fof-polls.image_height',
+      type: 'number',
+      label: app.translator.trans('fof-polls.admin.settings.image_height'),
+    })
+    .registerSetting({
+      setting: 'fof-polls.image_width',
+      type: 'number',
+      label: app.translator.trans('fof-polls.admin.settings.image_width'),
+    })
     .registerPermission(
       {
         icon: 'fas fa-poll',

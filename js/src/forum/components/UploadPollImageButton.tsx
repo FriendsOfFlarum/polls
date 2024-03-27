@@ -3,6 +3,7 @@ import Button, { IButtonAttrs } from 'flarum/common/components/Button';
 import classList from 'flarum/common/utils/classList';
 import type Mithril from 'mithril';
 import Poll from '../models/Poll';
+import PollOption from '../models/PollOption';
 
 export interface UploadPollImageButtonAttrs extends IButtonAttrs {
   className?: string;
@@ -10,6 +11,7 @@ export interface UploadPollImageButtonAttrs extends IButtonAttrs {
   name: string;
   onclick: () => void;
   poll?: Poll | null;
+  option?: PollOption | null;
   onUpload: (fileName: string | null | undefined) => void;
 }
 
@@ -27,8 +29,8 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
     this.attrs.loading = this.loading;
     this.attrs.className = classList(this.attrs.className, 'Button');
 
-    if (this.attrs.poll?.imageUrl() || this.uploadedImageUrl) {
-      const imageUrl = this.uploadedImageUrl || this.attrs.poll?.imageUrl();
+    if (this.attrs.poll?.imageUrl() || this.attrs.option?.imageUrl() || this.uploadedImageUrl) {
+      const imageUrl = this.uploadedImageUrl || this.attrs.poll?.imageUrl() || this.attrs.option?.imageUrl() || '';
       this.attrs.onclick = this.remove.bind(this);
 
       return (
@@ -94,8 +96,10 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
   resourceUrl() {
     let url = app.forum.attribute('apiUrl') + '/fof/polls/' + this.attrs.name;
     const poll = this.attrs.poll;
+    const option = this.attrs.option;
 
     if (poll?.exists) url += '/' + poll?.id();
+    if (option?.exists) url += '/' + option?.id();
 
     return url;
   }

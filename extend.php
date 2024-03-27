@@ -46,7 +46,10 @@ return [
         ->patch('/fof/polls/{id}/votes', 'fof.polls.votes', Controllers\MultipleVotesPollController::class)
         ->post('/fof/polls/pollImage', 'fof.polls.upload-image', Controllers\UploadPollImageController::class)
         ->post('/fof/polls/pollImage/{pollId}', 'fof.polls.upload-image-poll', Controllers\UploadPollImageController::class)
-        ->delete('/fof/polls/pollImage/{pollId}', 'fof.polls.delete-image-poll', Controllers\DeletePollImageController::class),
+        ->delete('/fof/polls/pollImage/{pollId}', 'fof.polls.delete-image-poll', Controllers\DeletePollImageController::class)
+        ->post('/fof/polls/pollOptionImage', 'fof.polls.upload-option-image-option', Controllers\UploadPollOptionImageController::class)
+        ->post('/fof/polls/pollOptionImage/{optionId}', 'fof.polls.upload-option-image', Controllers\UploadPollOptionImageController::class)
+        ->delete('/fof/polls/pollOptionImage/{optionId}', 'fof.polls.delete-option-image', Controllers\DeletePollOptionImageController::class),
 
     (new Extend\Model(Post::class))
         ->hasMany('polls', Poll::class, 'post_id', 'id'),
@@ -103,6 +106,8 @@ return [
         ->default('fof-polls.optionsColorBlend', true)
         ->default('fof-polls.directory-default-sort', 'default')
         ->default('fof-polls.enableGlobalPolls', false)
+        ->default('fof-polls.image_height', 250)
+        ->default('fof-polls.image_width', 250)
         ->serializeToForum('globalPollsEnabled', 'fof-polls.enableGlobalPolls', 'boolval')
         ->serializeToForum('allowPollOptionImage', 'fof-polls.allowOptionImage', 'boolval')
         ->serializeToForum('pollMaxOptions', 'fof-polls.maxOptions', 'intval')

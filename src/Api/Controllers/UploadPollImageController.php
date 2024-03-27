@@ -12,8 +12,11 @@
 namespace FoF\Polls\Api\Controllers;
 
 use Flarum\Http\RequestUtil;
+use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\User\Exception\PermissionDeniedException;
+use FoF\Polls\Events\PollImageWillBeResized;
 use FoF\Polls\Poll;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Filesystem\Cloud;
 use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Support\Arr;
@@ -41,12 +44,26 @@ class UploadPollImageController implements RequestHandlerInterface
      */
     protected $imageManager;
 
+    /**
+     * @var Dispatcher
+     */
+    protected $events;
+
+    /**
+     * @var SettingsRepositoryInterface
+     */
+    protected $settings;
+
     public function __construct(
         Factory $filesystemFactory,
-        ImageManager $imageManager
+        ImageManager $imageManager,
+        Dispatcher $events,
+        SettingsRepositoryInterface $settings
     ) {
         $this->imageManager = $imageManager;
         $this->uploadDir = $filesystemFactory->disk('fof-polls');
+        $this->events = $events;
+        $this->settings = $settings;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -62,7 +79,7 @@ class UploadPollImageController implements RequestHandlerInterface
 
         $encodedImage = $this->makeImage($file);
 
-        $uploadName = $this->filenamePrefix.'-'.Str::lower(Str::random(8)).'.png';
+        $uploadName = $this->uploadName();
 
         $this->uploadDir->put($uploadName, $encodedImage);
 
@@ -71,19 +88,41 @@ class UploadPollImageController implements RequestHandlerInterface
             $poll->save();
         }
 
-        return new JsonResponse([
-            'fileUrl'  => $this->uploadDir->url($uploadName),
-            'fileName' => $uploadName,
-        ]);
+        return $this->jsonResponse($uploadName);
     }
 
     protected function makeImage(UploadedFileInterface $file): Image
     {
-        $encodedImage = $this->imageManager->make($file->getStream()->getMetadata('uri'))->resize(250, 250, function (Constraint $constraint) {
-            $constraint->aspectRatio();
-            $constraint->upsize();
-        })->encode('png');
+        $image = $this->imageManager->make($file->getStream()->getMetadata('uri'));
+
+        $height = $this->settings->get('fof-polls.image_height');
+        $width = $this->settings->get('fof-polls.image_width');
+
+        $this->events->dispatch(new PollImageWillBeResized($image, $height, $width));
+        
+        $encodedImage = $this->resizeImage($image, $height, $width);
 
         return $encodedImage;
+    }
+
+    protected function resizeImage(Image $image, int $height = 250, int $width = 250, string $encoding = 'png'): Image
+    {
+        return $image->resize($height, $width, function (Constraint $constraint) {
+            $constraint->aspectRatio();
+            $constraint->upsize();
+        })->encode($encoding);
+    }
+
+    protected function uploadName(): string
+    {
+        return $this->filenamePrefix.'-'.Str::lower(Str::random(8)).'.png';
+    }
+
+    protected function jsonResponse(string $uploadName): JsonResponse
+    {
+        return new JsonResponse([
+            'fileUrl'  => $this->uploadDir->url($uploadName),
+            'fileName' => $uploadName,
+        ]);
     }
 }
