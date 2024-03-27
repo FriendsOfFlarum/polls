@@ -99,7 +99,7 @@ class UploadPollImageController implements RequestHandlerInterface
         $width = $this->settings->get('fof-polls.image_width');
 
         $this->events->dispatch(new PollImageWillBeResized($image, $height, $width));
-        
+
         $encodedImage = $this->resizeImage($image, $height, $width);
 
         return $encodedImage;
