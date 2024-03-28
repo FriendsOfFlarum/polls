@@ -276,13 +276,6 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
             />
             {app.forum.attribute<boolean>('allowPollOptionImage') && (
               <div className="Poll-answer-image">
-                {/* <input
-              className="FormControl"
-              type="text"
-              name={'answerImage' + (i + 1)}
-              bidi={this.optionImageUrls[i]}
-              placeholder={app.translator.trans('fof-polls.forum.modal.image_option_placeholder') + ' #' + (i + 1)}
-            /> */}
                 <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_option_image.label')}</label>
                 <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_option_image.help')}</p>
                 <UploadPollImageButton name="pollOptionImage" option={option} onUpload={this.pollOptionImageUploadSuccess.bind(this, i)} />

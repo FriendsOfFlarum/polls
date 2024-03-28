@@ -92,6 +92,9 @@ fof-polls:
         help: Upload an image to be displayed alongside the poll (optional).
         alt_label: Image Alt Text
         alt_help_text: This text is required when an image is set, it will be displayed if the image fails to load.
+      poll_option_image:
+        label: Poll Answer Image
+        help: Upload an image to be displayed alongside the poll answer (optional).
       tooltip:
         options:
           add-button: Add Answer
