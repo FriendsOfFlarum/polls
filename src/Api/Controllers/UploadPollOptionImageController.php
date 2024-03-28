@@ -32,7 +32,7 @@ class UploadPollOptionImageController extends UploadPollImageController
         }
 
         $file = Arr::get($request->getUploadedFiles(), $this->filenamePrefix);
-        
+
         $uploadName = $uploadName = $this->uploadName();
 
         $encodedImage = $this->makeImage($file, $uploadName);

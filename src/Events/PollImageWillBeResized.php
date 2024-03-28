@@ -24,7 +24,7 @@ class PollImageWillBeResized
      * @var string
      */
     public $fileName;
-    
+
     /**
      * @var int
      */
