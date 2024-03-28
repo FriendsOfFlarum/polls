@@ -53,7 +53,7 @@ class DeletePollOptionImageController implements RequestHandlerInterface
         if (filter_var($option->image_url, FILTER_VALIDATE_URL)) {
         } else {
             $this->events->dispatch(
-                new PollImageDeleting($option->image, $actor)
+                new PollImageDeleting($option->image_url, $actor)
             );
 
             // otherwise we check and delete it from the filesystem
