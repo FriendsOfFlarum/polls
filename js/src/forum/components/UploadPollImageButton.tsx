@@ -125,7 +125,7 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
    * @param {object} response
    * @protected
    */
-  failure(response: object) {
+  failure() {
     this.loading = false;
     m.redraw();
   }

@@ -33,7 +33,7 @@ export default {
   /**
    * Get controls for direct modifcation actions on polls (e.g. vote, view voters).
    */
-  pollControls(poll: Poll, context: Component): ItemList<Mithril.Children> {
+  pollControls(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
 
     return items;
@@ -42,7 +42,7 @@ export default {
   /**
    * Get controls for a user pertaining to moderation (e.g. suspend, edit).
    */
-  moderationControls(poll: Poll, context: Component): ItemList<Mithril.Children> {
+  moderationControls(poll: Poll): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
 
     if (poll.canEdit()) {
@@ -61,7 +61,7 @@ export default {
    * Get controls for a user which are destructive (e.g. delete).
    * @protected
    */
-  destructiveControls(poll: Poll, context: Component): ItemList<Mithril.Children> {
+  destructiveControls(poll: Poll): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
 
     if (poll.canDelete()) {

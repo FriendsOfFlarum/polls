@@ -3,7 +3,6 @@ import app from 'flarum/forum/app';
 import Modal, { IInternalModalAttrs } from 'flarum/common/components/Modal';
 import PollForm from './PollForm';
 import PollModel from '../models/Poll';
-import PollFormState from '../states/PollFormState';
 
 interface CreatePollModalAttrs extends IInternalModalAttrs {
   poll: PollModel;
@@ -27,7 +26,7 @@ export default class CreatePollModal extends Modal<CreatePollModalAttrs> {
     ];
   }
 
-  async onFormSubmit(data: object, state: PollFormState): Promise<void> {
+  async onFormSubmit(data: object): Promise<void> {
     this.hide();
     await this.attrs.onsubmit(data);
   }
