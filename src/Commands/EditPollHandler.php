@@ -13,6 +13,7 @@ namespace FoF\Polls\Commands;
 
 use Carbon\Carbon;
 use Flarum\Settings\SettingsRepositoryInterface;
+use FoF\Polls\Events\PollOptionUpdated;
 use FoF\Polls\Events\SavingPollAttributes;
 use FoF\Polls\PollRepository;
 use FoF\Polls\Validators\PollOptionValidator;
@@ -72,6 +73,18 @@ class EditPollHandler
             $poll->question = $attributes['question'];
         }
 
+        if (isset($attributes['subtitle'])) {
+            $poll->subtitle = empty($attributes['subtitle']) ? null : $attributes['subtitle'];
+        }
+
+        if (isset($attributes['pollImage'])) {
+            $poll->image = empty($attributes['pollImage']) ? null : $attributes['pollImage'];
+        }
+
+        if (isset($attributes['imageAlt'])) {
+            $poll->image_alt = empty($attributes['imageAlt']) ? null : $attributes['imageAlt'];
+        }
+
         foreach (['publicPoll', 'allowMultipleVotes', 'hideVotes', 'allowChangeVote'] as $key) {
             if (isset($attributes[$key])) {
                 $poll->settings[Str::snake($key)] = (bool) $attributes[$key];
@@ -114,7 +127,7 @@ class EditPollHandler
 
             $optionAttributes = [
                 'answer'   => Arr::get($opt, 'attributes.answer'),
-                'imageUrl' => Arr::get($opt, 'attributes.imageUrl') ?: null,
+                'imageUrl' => Arr::get($opt, 'attributes.imageUrl'),
             ];
 
             if (!$this->settings->get('fof-polls.allowOptionImage')) {
@@ -123,12 +136,14 @@ class EditPollHandler
 
             $this->optionValidator->assertValid($optionAttributes);
 
-            $poll->options()->updateOrCreate([
+            $option = $poll->options()->updateOrCreate([
                 'id' => $id,
             ], [
                 'answer'    => Arr::get($optionAttributes, 'answer'),
                 'image_url' => Arr::get($optionAttributes, 'imageUrl'),
             ]);
+
+            $this->events->dispatch(new PollOptionUpdated($option, $command->actor));
         }
 
         return $poll;

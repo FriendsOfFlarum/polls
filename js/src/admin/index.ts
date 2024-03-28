@@ -20,9 +20,25 @@ app.initializers.add('fof/polls', () => {
       label: app.translator.trans('fof-polls.admin.settings.max_options'),
       min: 2,
     })
+    .registerSetting({
+      setting: 'fof-polls.enableGlobalPolls',
+      type: 'boolean',
+      label: app.translator.trans('fof-polls.admin.settings.enable_global_polls'),
+      help: app.translator.trans('fof-polls.admin.settings.enable_global_polls_help'),
+    })
+    .registerSetting({
+      setting: 'fof-polls.image_height',
+      type: 'number',
+      label: app.translator.trans('fof-polls.admin.settings.image_height'),
+    })
+    .registerSetting({
+      setting: 'fof-polls.image_width',
+      type: 'number',
+      label: app.translator.trans('fof-polls.admin.settings.image_width'),
+    })
     .registerPermission(
       {
-        icon: 'fas fa-signal',
+        icon: 'fas fa-poll',
         label: app.translator.trans('fof-polls.admin.permissions.view_results_without_voting'),
         permission: 'discussion.polls.viewResultsWithoutVoting',
         allowGuest: true,
@@ -31,9 +47,17 @@ app.initializers.add('fof/polls', () => {
     )
     .registerPermission(
       {
-        icon: 'fas fa-signal',
+        icon: 'fas fa-poll',
         label: app.translator.trans('fof-polls.admin.permissions.start'),
         permission: 'discussion.polls.start',
+      },
+      'start'
+    )
+    .registerPermission(
+      {
+        icon: 'fas fa-poll',
+        label: app.translator.trans('fof-polls.admin.permissions.start_global'),
+        permission: 'startGlobalPoll',
       },
       'start'
     )
@@ -55,7 +79,7 @@ app.initializers.add('fof/polls', () => {
     )
     .registerPermission(
       {
-        icon: 'fas fa-signal',
+        icon: 'fas fa-poll',
         label: app.translator.trans('fof-polls.admin.permissions.vote'),
         permission: 'discussion.polls.vote',
       },
@@ -63,7 +87,7 @@ app.initializers.add('fof/polls', () => {
     )
     .registerPermission(
       {
-        icon: 'fas fa-signal',
+        icon: 'fas fa-poll',
         label: app.translator.trans('fof-polls.admin.permissions.change_vote'),
         permission: 'polls.changeVote',
       },

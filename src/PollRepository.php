@@ -47,4 +47,9 @@ class PollRepository
     {
         return $this->queryVisibleTo($actor)->findOrFail($id);
     }
+
+    public function find($id, User $actor = null): ?Poll
+    {
+        return $this->queryVisibleTo($actor)->find($id);
+    }
 }

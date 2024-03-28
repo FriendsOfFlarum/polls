@@ -12,11 +12,13 @@
 namespace FoF\Polls;
 
 use Flarum\Database\AbstractModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int            $id
  * @property string         $answer
- * @property string         $image_url
+ * @property string|null    $image_url
  * @property Poll           $poll
  * @property int            $poll_id
  * @property int            $vote_count
@@ -52,12 +54,12 @@ class PollOption extends AbstractModel
         return $option;
     }
 
-    public function poll()
+    public function poll(): BelongsTo
     {
         return $this->belongsTo(Poll::class);
     }
 
-    public function votes()
+    public function votes(): HasMany
     {
         return $this->hasMany(PollVote::class, 'option_id');
     }

@@ -24,6 +24,6 @@ class ScopePollVisibility
                  ->from('posts')
                  ->whereColumn('posts.id', 'polls.post_id');
             Post::query()->setQuery($query)->whereVisibleTo($actor);
-        });
+        })->orWhere('polls.post_id', null);
     }
 }

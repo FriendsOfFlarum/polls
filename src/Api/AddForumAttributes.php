@@ -18,6 +18,7 @@ class AddForumAttributes
     public function __invoke(ForumSerializer $serializer, array $model, array $attributes): array
     {
         $attributes['canStartPolls'] = $serializer->getActor()->can('discussion.polls.start');
+        $attributes['canStartGlobalPolls'] = $serializer->getActor()->can('startGlobalPoll');
 
         return $attributes;
     }

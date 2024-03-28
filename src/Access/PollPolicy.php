@@ -23,7 +23,7 @@ class PollPolicy extends AbstractPolicy
             return $this->deny();
         }
 
-        if ($poll->myVotes($actor)->count() || $actor->can('polls.viewResultsWithoutVoting', $poll->post->discussion)) {
+        if ($poll->myVotes($actor)->count() || $actor->can('polls.viewResultsWithoutVoting', $poll->post !== null ? $poll->post->discussion : null) || $poll->isGlobal()) {
             return $this->allow();
         }
     }
@@ -41,14 +41,17 @@ class PollPolicy extends AbstractPolicy
 
     public function view(User $actor, Poll $poll)
     {
-        if ($actor->can('view', $poll->post)) {
+        if ($actor->can('view', $poll->post) || $poll->isGlobal()) {
             return $this->allow();
         }
     }
 
     public function vote(User $actor, Poll $poll)
     {
-        if ($actor->can('polls.vote', $poll->post->discussion) && !$poll->hasEnded()) {
+        $discussion = $poll->post !== null ? $poll->post->discussion : null;
+        $can = $discussion ? $actor->can('polls.vote', $discussion) : $actor->can('discussion.polls.vote', $discussion);
+
+        if (($can || $poll->isGlobal()) && !$poll->hasEnded()) {
             return $this->allow();
         }
     }
@@ -62,14 +65,15 @@ class PollPolicy extends AbstractPolicy
 
     public function edit(User $actor, Poll $poll)
     {
-        if ($actor->can('polls.moderate', $poll->post->discussion)) {
+        if ($actor->can('polls.moderate', $poll->post !== null ? $poll->post->discussion : null)) {
             return $this->allow();
         }
 
         if (!$poll->hasEnded() && $actor->can('edit', $poll->post)) {
             // User either created poll & can edit own poll or can edit all polls in post
             if (($actor->id === $poll->user_id && $actor->hasPermission('polls.selfEdit'))
-                || ($actor->id == $poll->post->user_id && $actor->hasPermission('polls.selfPostEdit'))) {
+                || ($actor->id == $poll->post->user_id && $actor->hasPermission('polls.selfPostEdit'))
+            ) {
                 return $this->allow();
             }
         }
