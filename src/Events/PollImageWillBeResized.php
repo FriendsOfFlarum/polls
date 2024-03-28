@@ -21,6 +21,11 @@ class PollImageWillBeResized
     public $image;
 
     /**
+     * @var string
+     */
+    public $fileName;
+    
+    /**
      * @var int
      */
     public $height;
@@ -30,9 +35,10 @@ class PollImageWillBeResized
      */
     public $width;
 
-    public function __construct(Image $image, int $height, int $width)
+    public function __construct(Image $image, string $fileName, int $height, int $width)
     {
         $this->image = $image;
+        $this->fileName = $fileName;
         $this->height = $height;
         $this->width = $width;
     }

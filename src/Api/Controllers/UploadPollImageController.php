@@ -77,9 +77,9 @@ class UploadPollImageController implements RequestHandlerInterface
 
         $file = Arr::get($request->getUploadedFiles(), $this->filenamePrefix);
 
-        $encodedImage = $this->makeImage($file);
-
         $uploadName = $this->uploadName();
+
+        $encodedImage = $this->makeImage($file, $uploadName);
 
         $this->uploadDir->put($uploadName, $encodedImage);
 
@@ -91,14 +91,14 @@ class UploadPollImageController implements RequestHandlerInterface
         return $this->jsonResponse($uploadName);
     }
 
-    protected function makeImage(UploadedFileInterface $file): Image
+    protected function makeImage(UploadedFileInterface $file, string $uploadName): Image
     {
         $image = $this->imageManager->make($file->getStream()->getMetadata('uri'));
 
         $height = $this->settings->get('fof-polls.image_height');
         $width = $this->settings->get('fof-polls.image_width');
 
-        $this->events->dispatch(new PollImageWillBeResized($image, $height, $width));
+        $this->events->dispatch(new PollImageWillBeResized($image, $uploadName, $height, $width));
 
         $encodedImage = $this->resizeImage($image, $height, $width);
 
