@@ -22,15 +22,17 @@ export interface PollUploadObject {
 
 export default class UploadPollImageButton extends Button<UploadPollImageButtonAttrs> {
   loading: boolean = false;
-  uploadedImageUrl: string | undefined = undefined;
+  uploadedImageUrl: string | undefined | false = false;
   fileName: string | undefined = undefined;
+  $input: JQuery<HTMLElement> | undefined;
 
   view(vnode: Mithril.Vnode<UploadPollImageButtonAttrs>) {
     this.attrs.loading = this.loading;
     this.attrs.className = classList(this.attrs.className, 'Button');
 
-    if (this.attrs.poll?.imageUrl() || this.attrs.option?.imageUrl() || this.uploadedImageUrl) {
-      const imageUrl = this.uploadedImageUrl || this.attrs.poll?.imageUrl() || this.attrs.option?.imageUrl() || '';
+    const imageUrl = this.getImageUrl();
+
+    if (imageUrl) {
       this.attrs.onclick = this.remove.bind(this);
 
       return (
@@ -54,9 +56,9 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
   upload() {
     if (this.loading) return;
 
-    const $input = $('<input type="file">');
+    this.$input = $('<input type="file">');
 
-    $input
+    this.$input
       .appendTo('body')
       .hide()
       .trigger('click')
@@ -86,7 +88,7 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
     m.redraw();
 
     app
-      .request({
+      .request<PollUploadObject>({
         method: 'DELETE',
         url: this.resourceUrl(),
       })
@@ -104,6 +106,14 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
     return url;
   }
 
+  getImageUrl() {
+    if (this.uploadedImageUrl !== false) {
+      return this.uploadedImageUrl;
+    }
+
+    return this.attrs.poll?.imageUrl() || this.attrs.option?.imageUrl();
+  }
+
   /**
    * After a successful upload/removal, redraw the page.
    *
@@ -117,6 +127,7 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
 
     this.attrs.onUpload?.(response?.fileName);
     m.redraw();
+    this.$input?.remove();
   }
 
   /**
@@ -128,5 +139,6 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
   failure(response: object) {
     this.loading = false;
     m.redraw();
+    this.$input?.remove();
   }
 }
