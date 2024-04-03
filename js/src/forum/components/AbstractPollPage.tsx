@@ -8,6 +8,7 @@ import IndexPage from 'flarum/forum/components/IndexPage';
 import listItems from 'flarum/common/helpers/listItems';
 import app from 'flarum/forum/app';
 import SelectDropdown from 'flarum/common/components/SelectDropdown';
+import IndexPageHero from './PollPageHero';
 
 export abstract class AbstractPollPage extends Page<IPageAttrs, PollListState> {
   loading: boolean = false;
@@ -51,7 +52,7 @@ export abstract class AbstractPollPage extends Page<IPageAttrs, PollListState> {
   }
 
   hero(): Mithril.Children {
-    return IndexPage.prototype.hero();
+    return <IndexPageHero />;
   }
 
   sidebar(): Mithril.Children {

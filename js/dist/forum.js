@@ -365,6 +365,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var flarum_forum_app__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(flarum_forum_app__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var flarum_common_components_SelectDropdown__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! flarum/common/components/SelectDropdown */ "flarum/common/components/SelectDropdown");
 /* harmony import */ var flarum_common_components_SelectDropdown__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(flarum_common_components_SelectDropdown__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _PollPageHero__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./PollPageHero */ "./src/forum/components/PollPageHero.tsx");
+
 
 
 
@@ -419,7 +421,7 @@ var AbstractPollPage = /*#__PURE__*/function (_Page) {
     return items;
   };
   _proto.hero = function hero() {
-    return flarum_forum_components_IndexPage__WEBPACK_IMPORTED_MODULE_4___default().prototype.hero();
+    return m(_PollPageHero__WEBPACK_IMPORTED_MODULE_8__["default"], null);
   };
   _proto.sidebar = function sidebar() {
     return m("nav", {
@@ -2064,6 +2066,98 @@ var PollForm = /*#__PURE__*/function (_Component) {
     this.optionImageUrls[index] = flarum_common_utils_Stream__WEBPACK_IMPORTED_MODULE_8___default()(fileName);
   };
   return PollForm;
+}((flarum_common_Component__WEBPACK_IMPORTED_MODULE_3___default()));
+
+
+/***/ }),
+
+/***/ "./src/forum/components/PollPageHero.tsx":
+/*!***********************************************!*\
+  !*** ./src/forum/components/PollPageHero.tsx ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ IndexPageHero)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/esm/createClass */ "./node_modules/@babel/runtime/helpers/esm/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/esm/inheritsLoose */ "./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js");
+/* harmony import */ var flarum_forum_app__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! flarum/forum/app */ "flarum/forum/app");
+/* harmony import */ var flarum_forum_app__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(flarum_forum_app__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var flarum_common_Component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! flarum/common/Component */ "flarum/common/Component");
+/* harmony import */ var flarum_common_Component__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(flarum_common_Component__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var flarum_common_utils_classList__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! flarum/common/utils/classList */ "flarum/common/utils/classList");
+/* harmony import */ var flarum_common_utils_classList__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(flarum_common_utils_classList__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var flarum_common_helpers_icon__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! flarum/common/helpers/icon */ "flarum/common/helpers/icon");
+/* harmony import */ var flarum_common_helpers_icon__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(flarum_common_helpers_icon__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var flarum_common_utils_ItemList__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! flarum/common/utils/ItemList */ "flarum/common/utils/ItemList");
+/* harmony import */ var flarum_common_utils_ItemList__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(flarum_common_utils_ItemList__WEBPACK_IMPORTED_MODULE_6__);
+
+
+
+
+
+
+
+var IndexPageHero = /*#__PURE__*/function (_Component) {
+  (0,_babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_1__["default"])(IndexPageHero, _Component);
+  function IndexPageHero() {
+    return _Component.apply(this, arguments) || this;
+  }
+  var _proto = IndexPageHero.prototype;
+  _proto.oninit = function oninit(vnode) {
+    _Component.prototype.oninit.call(this, vnode);
+  };
+  _proto.oncreate = function oncreate(vnode) {
+    _Component.prototype.oncreate.call(this, vnode);
+  };
+  _proto.view = function view() {
+    return m("div", {
+      className: this.wrapperClasses
+    }, m("header", {
+      className: this.classNames
+    }, m("div", {
+      className: "container"
+    }, m("div", {
+      className: "containerNarrow"
+    }, this.items().toArray()))));
+  };
+  _proto.items = function items() {
+    var items = new (flarum_common_utils_ItemList__WEBPACK_IMPORTED_MODULE_6___default())();
+    items.add('title', m("h2", {
+      className: "Hero-title"
+    }, [flarum_common_helpers_icon__WEBPACK_IMPORTED_MODULE_5___default()(this.icon), ' ', this.title]), 50);
+    return items;
+  };
+  (0,_babel_runtime_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_0__["default"])(IndexPageHero, [{
+    key: "classNames",
+    get: function get() {
+      return flarum_common_utils_classList__WEBPACK_IMPORTED_MODULE_4___default()({
+        PollPageHero: true,
+        Hero: true
+      });
+    }
+  }, {
+    key: "wrapperClasses",
+    get: function get() {
+      return flarum_common_utils_classList__WEBPACK_IMPORTED_MODULE_4___default()({
+        'PollPageHero--wrapper': true
+      });
+    }
+  }, {
+    key: "title",
+    get: function get() {
+      return this.attrs.title || flarum_forum_app__WEBPACK_IMPORTED_MODULE_2___default().translator.trans('fof-polls.forum.polls_page.title');
+    }
+  }, {
+    key: "icon",
+    get: function get() {
+      return this.attrs.icon || 'fas fa-poll';
+    }
+  }]);
+  return IndexPageHero;
 }((flarum_common_Component__WEBPACK_IMPORTED_MODULE_3___default()));
 
 

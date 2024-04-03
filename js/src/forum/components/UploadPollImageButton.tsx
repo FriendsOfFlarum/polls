@@ -70,7 +70,7 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
         m.redraw();
 
         app
-          .request({
+          .request<PollUploadObject>({
             method: 'POST',
             url: this.resourceUrl(),
             serialize: (raw) => raw,
