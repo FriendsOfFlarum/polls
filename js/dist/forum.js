@@ -2080,7 +2080,7 @@ var PollForm = /*#__PURE__*/function (_Component) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ IndexPageHero)
+/* harmony export */   "default": () => (/* binding */ PollPageHero)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/esm/createClass */ "./node_modules/@babel/runtime/helpers/esm/createClass.js");
 /* harmony import */ var _babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/esm/inheritsLoose */ "./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js");
@@ -2101,12 +2101,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var IndexPageHero = /*#__PURE__*/function (_Component) {
-  (0,_babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_1__["default"])(IndexPageHero, _Component);
-  function IndexPageHero() {
+var PollPageHero = /*#__PURE__*/function (_Component) {
+  (0,_babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_1__["default"])(PollPageHero, _Component);
+  function PollPageHero() {
     return _Component.apply(this, arguments) || this;
   }
-  var _proto = IndexPageHero.prototype;
+  var _proto = PollPageHero.prototype;
   _proto.oninit = function oninit(vnode) {
     _Component.prototype.oninit.call(this, vnode);
   };
@@ -2131,7 +2131,7 @@ var IndexPageHero = /*#__PURE__*/function (_Component) {
     }, [flarum_common_helpers_icon__WEBPACK_IMPORTED_MODULE_5___default()(this.icon), ' ', this.title]), 50);
     return items;
   };
-  (0,_babel_runtime_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_0__["default"])(IndexPageHero, [{
+  (0,_babel_runtime_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_0__["default"])(PollPageHero, [{
     key: "classNames",
     get: function get() {
       return flarum_common_utils_classList__WEBPACK_IMPORTED_MODULE_4___default()({
@@ -2157,7 +2157,7 @@ var IndexPageHero = /*#__PURE__*/function (_Component) {
       return this.attrs.icon || 'fas fa-poll';
     }
   }]);
-  return IndexPageHero;
+  return PollPageHero;
 }((flarum_common_Component__WEBPACK_IMPORTED_MODULE_3___default()));
 
 

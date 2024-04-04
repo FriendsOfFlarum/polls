@@ -10,7 +10,7 @@ interface PollPageHeroAttrs extends ComponentAttrs {
   title?: string;
 }
 
-export default class IndexPageHero extends Component<PollPageHeroAttrs> {
+export default class PollPageHero extends Component<PollPageHeroAttrs> {
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
   }

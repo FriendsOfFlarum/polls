@@ -47,6 +47,9 @@ fof-polls:
       delete: Delete Poll
       error: There was an error saving the poll, please contact any administrator.
 
+    polls_page:
+      title: Polls
+
     polls_list:
       empty_text: It looks as though there are no community wide polls here.
       load_more_button: Load More
