@@ -1624,7 +1624,7 @@ var PollTitle = /*#__PURE__*/function (_Component) {
   };
   _proto.pollTitleItems = function pollTitleItems() {
     var items = new (flarum_common_utils_ItemList__WEBPACK_IMPORTED_MODULE_2___default())();
-    items.add('title', m("h2", {
+    items.add('title', m("h3", {
       className: "Poll-title"
     }, this.attrs.poll.question()));
     return items;
@@ -2204,12 +2204,16 @@ var PollShowcase = /*#__PURE__*/function (_Component) {
     return m("div", {
       className: "PollShowcase"
     }, m("div", {
-      className: "PollShowcase-featured"
-    }, m("h3", null, flarum_forum_app__WEBPACK_IMPORTED_MODULE_5___default().translator.trans('fof-polls.forum.showcase.active-polls')), this.showcaseItems().toArray(), this.showcaseItems().toArray().length === 0 && m((flarum_common_components_Placeholder__WEBPACK_IMPORTED_MODULE_4___default()), {
+      className: "PollShowcase--active"
+    }, m("h2", {
+      className: "PollShowcase-title PollShowcase-title--active"
+    }, flarum_forum_app__WEBPACK_IMPORTED_MODULE_5___default().translator.trans('fof-polls.forum.showcase.active-polls')), this.showcaseItems().toArray(), this.showcaseItems().toArray().length === 0 && m((flarum_common_components_Placeholder__WEBPACK_IMPORTED_MODULE_4___default()), {
       text: flarum_forum_app__WEBPACK_IMPORTED_MODULE_5___default().translator.trans('fof-polls.forum.showcase.no-active-polls')
     })), m("div", {
-      className: "PollShowcase-ended"
-    }, m("h3", null, flarum_forum_app__WEBPACK_IMPORTED_MODULE_5___default().translator.trans('fof-polls.forum.showcase.ended-polls')), this.endedItems().toArray(), this.endedItems().toArray().length === 0 && m((flarum_common_components_Placeholder__WEBPACK_IMPORTED_MODULE_4___default()), {
+      className: "PollShowcase--ended"
+    }, m("h2", {
+      className: "PollShowcase-title PollShowcase-title--ended"
+    }, flarum_forum_app__WEBPACK_IMPORTED_MODULE_5___default().translator.trans('fof-polls.forum.showcase.ended-polls')), this.endedItems().toArray(), this.endedItems().toArray().length === 0 && m((flarum_common_components_Placeholder__WEBPACK_IMPORTED_MODULE_4___default()), {
       text: flarum_forum_app__WEBPACK_IMPORTED_MODULE_5___default().translator.trans('fof-polls.forum.showcase.no-recent-polls')
     })));
   };
