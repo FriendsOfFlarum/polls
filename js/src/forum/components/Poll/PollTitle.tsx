@@ -15,7 +15,7 @@ export default class PollTitle extends Component<PollTitleAttrs> {
   pollTitleItems(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
 
-    items.add('title', <h2 className="Poll-title">{this.attrs.poll.question()}</h2>);
+    items.add('title', <h3 className="Poll-title">{this.attrs.poll.question()}</h3>);
 
     return items;
   }
