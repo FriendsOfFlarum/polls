@@ -67,7 +67,6 @@ export default class PollOption extends Component<PollOptionAttrs, PollState> {
               checked={this.voted}
               disabled={isDisabled}
               aria-labelledby={`${this.name}-${this.option.id()}-label`}
-              aria-describedby={`${this.name}-${this.option.id()}-description`}
               onchange={this.state.changeVote.bind(this.state, this.option)}
             />
             <span className="checkmark" />
