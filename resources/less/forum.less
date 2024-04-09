@@ -259,6 +259,14 @@
     gap: 10px;
     align-items: flex-start;
 
+    &:hover {
+      cursor: pointer;
+    }
+
+    .PollAnswer-input[disabled] {
+      cursor: not-allowed;
+    }
+
     .PollAnswer-checkbox {
       grid-column: 1;
       grid-row: 1;
@@ -325,14 +333,11 @@
       &:checked ~ .checkmark:after {
         display: block;
       }
-
-      &[disabled] ~ .checkmark {
-        cursor: not-allowed;
-      }
     }
 
     .checkmark {
-      position: absolute;
+      position: relative;
+      display: block;
       top: 0;
       left: 0;
       height: 20px;
@@ -488,12 +493,10 @@
 }
 
 .PollOption {
-  display: flex;
   position: relative;
   padding: 10px;
   background: var(--body-bg);
   border-radius: 4px;
-  cursor: pointer;
 
   &:hover {
     background: var(--control-bg-light);

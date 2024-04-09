@@ -54,18 +54,29 @@ export default class PollOption extends Component<PollOptionAttrs, PollState> {
     const width = this.canSeeVoteCount ? this.percent() : (Number(this.voted) / (this.poll.myVotes()?.length || 1)) * 100;
 
     const bar = (
-      <div className="PollBar" data-selected={!!this.voted} style={`--poll-option-width: ${width}%`}>
+      <label className="PollBar" data-selected={!!this.voted} style={`--poll-option-width: ${width}%`}>
         {this.state.showCheckMarks && (
-          <label className="PollAnswer-checkbox checkbox">
-            <input onchange={this.state.changeVote.bind(this.state, this.option)} type="checkbox" checked={this.voted} disabled={isDisabled} />
+          <div className="PollAnswer-checkbox">
+            <input
+              className="PollAnswer-input sr-only"
+              type="checkbox"
+              id={this.option.id()}
+              name={this.name}
+              value={this.answer}
+              checked={this.voted}
+              disabled={isDisabled}
+              aria-labelledby={`${this.name}-${this.option.id()}-label`}
+              aria-describedby={`${this.name}-${this.option.id()}-description`}
+              onchange={this.state.changeVote.bind(this.state, this.option)}
+            />
             <span className="checkmark" />
-          </label>
+          </div>
         )}
 
         <div className="PollAnswer-text">{this.optionDisplayItems().toArray()}</div>
 
         {this.option.imageUrl() ? <img className="PollAnswer-image" src={this.option.imageUrl()} alt={this.option.answer()} /> : null}
-      </div>
+      </label>
     );
 
     return (
