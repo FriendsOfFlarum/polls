@@ -87,21 +87,31 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
     this.loading = true;
     m.redraw();
 
+    let fileName = undefined;
+
+    if (!this.attrs.poll?.exists && !this.attrs.option?.exists) {
+      fileName = this.fileName;
+    }
+
     app
       .request<PollUploadObject>({
         method: 'DELETE',
-        url: this.resourceUrl(),
+        url: this.resourceUrl(fileName),
       })
       .then(this.success.bind(this), this.failure.bind(this));
   }
 
-  resourceUrl() {
+  resourceUrl(fileName: string | undefined = undefined) {
     let url = app.forum.attribute('apiUrl') + '/fof/polls/' + this.attrs.name;
     const poll = this.attrs.poll;
     const option = this.attrs.option;
 
-    if (poll?.exists) url += '/' + poll?.id();
-    if (option?.exists) url += '/' + option?.id();
+    if (fileName) {
+      url += '/name/' + fileName;
+    } else {
+      if (poll?.exists) url += '/' + poll?.id();
+      if (option?.exists) url += '/' + option?.id();
+    }
 
     return url;
   }
