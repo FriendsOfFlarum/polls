@@ -89,6 +89,7 @@ fof-polls:
       subtitle_placeholder: Subtitle/Description (Optional)
       submit: Submit
       delete: Delete
+      error: Oops! Something went wrong. Please reload the page and try again.
       poll_image:
         label: Poll Image
         help: Upload an image to be displayed alongside the poll (optional).
