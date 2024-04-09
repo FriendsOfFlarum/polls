@@ -67,7 +67,6 @@ fof-polls:
       continue_editing: Continue Editing
       success: Poll saved successfully.
 
-
     modal:
       add_title: Add a Poll
       add_option_label: Add an Option
@@ -128,5 +127,3 @@ fof-polls:
     upload_image:
       remove_button: Remove Image
       upload_button: Select Image
-
-
