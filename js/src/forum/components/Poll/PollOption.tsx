@@ -50,6 +50,8 @@ export default class PollOption extends Component<PollOptionAttrs, PollState> {
   }
 
   view(): Mithril.Children {
+    this.voted = this.state.hasVotedFor(this.option);
+
     const isDisabled = this.state.loadingOptions || (this.hasVoted && !this.poll.canChangeVote());
     const width = this.canSeeVoteCount ? this.percent() : (Number(this.voted) / (this.poll.myVotes()?.length || 1)) * 100;
 

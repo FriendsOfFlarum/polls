@@ -2,7 +2,6 @@ import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import listItems from 'flarum/common/helpers/listItems';
 import ItemList from 'flarum/common/utils/ItemList';
-import Page, { IPageAttrs } from 'flarum/common/components/Page';
 import IndexPage from 'flarum/forum/components/IndexPage';
 import PollList from './Poll/PollList';
 import LogInModal from 'flarum/forum/components/LogInModal';
@@ -11,7 +10,6 @@ import PollListState from '../states/PollListState';
 import Button from 'flarum/common/components/Button';
 import SelectDropdown from 'flarum/common/components/SelectDropdown';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
-import PollModel from '../models/Poll';
 import PollView from './PollView';
 import { AbstractPollPage } from './AbstractPollPage';
 
