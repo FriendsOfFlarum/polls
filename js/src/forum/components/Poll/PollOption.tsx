@@ -110,7 +110,12 @@ export default class PollOption extends Component<PollOptionAttrs, PollState> {
   optionDisplayItems(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
 
-    items.add('answer', <span className="PollAnswer-text-answer">{this.answer}</span>);
+    items.add(
+      'answer',
+      <span className="PollAnswer-text-answer" id={`${this.name}-${this.option.id()}-label`}>
+        {this.answer}
+      </span>
+    );
 
     this.voted && !this.state.showCheckMarks && items.add('check', icon('fas fa-check-circle', { className: 'PollAnswer-check' }));
 
