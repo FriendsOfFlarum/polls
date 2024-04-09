@@ -14,6 +14,7 @@ import PollOption from '../models/PollOption';
 import UploadPollImageButton from './UploadPollImageButton';
 import Poll from '../models/Poll';
 import Tooltip from 'flarum/common/components/Tooltip';
+import RequestError from 'flarum/common/utils/RequestError';
 
 interface PollFormAttrs extends ComponentAttrs {
   poll: PollModel;
@@ -358,9 +359,8 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     } catch (error) {
       if (error instanceof FormError) {
         app.alerts.show({ type: 'error' }, error.message);
-      } else {
+      } else if (error instanceof RequestError) {
         console.error(error);
-        // Show error alert
         app.alerts.show({ type: 'error' }, app.translator.trans('fof-polls.forum.modal.error'));
       }
     }
