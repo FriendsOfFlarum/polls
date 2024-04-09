@@ -36,9 +36,9 @@ fof-polls:
       cannot_start_poll_button: Cannot Start Poll
 
     poll_controls:
-      edit_label: Edit
-      delete_label: Delete
-      view_label: View
+      edit_label: => core.ref.edit
+      delete_label: => core.ref.delete
+      view_label: => core.ref.view
       delete_confirmation: Are you sure you want to delete this poll?
       delete_success_message: Poll deleted successfully.
       delete_error_message: There went something wrong while deleting the poll.
@@ -52,7 +52,7 @@ fof-polls:
 
     polls_list:
       empty_text: It looks as though there are no community wide polls here.
-      load_more_button: Load More
+      load_more_button: => core.ref.load_more
 
     composer_discussion:
       add_poll: => fof-polls.forum.moderation.add
@@ -66,7 +66,6 @@ fof-polls:
       polls_preview: View Poll
       continue_editing: Continue Editing
       success: Poll saved successfully.
-
 
     modal:
       add_title: Add a Poll
@@ -89,7 +88,8 @@ fof-polls:
       question_placeholder: Question
       subtitle_placeholder: Subtitle/Description (Optional)
       submit: Submit
-      delete: Delete
+      delete: => core.ref.delete
+      error: => core.lib.error.generic_message
       poll_image:
         label: Poll Image
         help: Upload an image to be displayed alongside the poll (optional).
@@ -128,5 +128,3 @@ fof-polls:
     upload_image:
       remove_button: Remove Image
       upload_button: Select Image
-
-

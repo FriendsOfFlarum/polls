@@ -47,7 +47,7 @@ export default class ListVotersModal extends Modal<ListVotersModalAttrs> {
 
     return (
       <div className="VotesModal-option">
-        <h2>{opt.answer()! + ':'}</h2>
+        <h3>{this.optionAnswer(opt)! + ':'}</h3>
 
         {votes.length ? (
           <div className="VotesModal-list">{votes.map(this.voteContent.bind(this))}</div>
@@ -56,6 +56,10 @@ export default class ListVotersModal extends Modal<ListVotersModalAttrs> {
         )}
       </div>
     );
+  }
+
+  optionAnswer(opt: PollOption): string {
+    return opt.answer();
   }
 
   voteContent(vote: PollVote): Mithril.Children {
