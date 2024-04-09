@@ -527,26 +527,12 @@
   pointer-events: none;
 }
 
-.PollOption-information {
-  display: flex;
-  margin-left: 10px;
-  flex-direction: column;
-}
-
 .PollResult-row {
   display: flex;
   flex-grow: 1;
   justify-content: space-between;
 }
-.PollResult-information {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  gap: 4px;
-  justify-content: space-between;
-  margin-left: 10px;
-  position: relative;
-}
+
 .PollResult-bar {
   -webkit-appearance: none;
   appearance: none;
@@ -560,13 +546,6 @@
   &::-webkit-progress-bar {
     background-color: var(--muted-color-light);
   }
-}
-.PollResult-percentagePosition {
-  bottom: -2px;
-  background: var(--muted-color-dark);
-  height: 8px;
-  position: absolute;
-  width: 4px;
 }
 
 .Poll-title,
