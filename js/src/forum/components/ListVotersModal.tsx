@@ -47,7 +47,7 @@ export default class ListVotersModal extends Modal<ListVotersModalAttrs> {
 
     return (
       <div className="VotesModal-option">
-        <h2>{this.optionAnswer(opt)! + ':'}</h2>
+        <h3>{this.optionAnswer(opt)! + ':'}</h3>
 
         {votes.length ? (
           <div className="VotesModal-list">{votes.map(this.voteContent.bind(this))}</div>
