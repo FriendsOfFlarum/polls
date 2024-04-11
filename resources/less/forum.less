@@ -184,10 +184,6 @@
       .Button--color-auto("button-primary");
     }
 
-    &-actions {
-      
-    }
-
     .Button {
       flex-shrink: 1;
       padding: 6px 10px;
@@ -201,10 +197,13 @@
 
 .ComposePollHero {
   &-controls {
-    margin-left:2em;display: flex;
+    margin-left: 2em;
+    display: flex;
     justify-content: space-around;
 
-    .Button {margin-right: 1em;}
+    .Button {
+      margin-right: 1em;
+    }
   }
 }
 
@@ -259,6 +258,14 @@
     grid-auto-flow: row;
     gap: 10px;
     align-items: flex-start;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    .PollAnswer-input[disabled] {
+      cursor: not-allowed;
+    }
 
     .PollAnswer-checkbox {
       grid-column: 1;
@@ -326,14 +333,11 @@
       &:checked ~ .checkmark:after {
         display: block;
       }
-
-      &[disabled] ~ .checkmark {
-        cursor: not-allowed;
-      }
     }
 
     .checkmark {
-      position: absolute;
+      position: relative;
+      display: block;
       top: 0;
       left: 0;
       height: 20px;
@@ -480,7 +484,7 @@
 }
 
 .PollImage {
-  width:100%;
+  width: 100%;
 
   &-image {
     max-width: 100%;
@@ -489,15 +493,10 @@
 }
 
 .PollOption {
-  display: flex;
   position: relative;
   padding: 10px;
-  // border-color: var(--poll-option-color);
-  // border-width: 1px;
-  // border-style: solid;
   background: var(--body-bg);
   border-radius: 4px;
-  cursor: pointer;
 
   &:hover {
     background: var(--control-bg-light);
@@ -509,9 +508,6 @@
   flex-direction: row;
   position: relative;
   padding: 10px;
-  // border-color: var(--poll-option-color);
-  // border-width: 1px;
-  // border-style: solid;
   border-radius: 4px;
 
   progress {
@@ -528,26 +524,12 @@
   pointer-events: none;
 }
 
-.PollOption-information {
-  display: flex;
-  margin-left: 10px;
-  flex-direction: column;
-}
-
 .PollResult-row {
   display: flex;
   flex-grow: 1;
   justify-content: space-between;
 }
-.PollResult-information {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  gap: 4px;
-  justify-content: space-between;
-  margin-left: 10px;
-  position: relative;
-}
+
 .PollResult-bar {
   -webkit-appearance: none;
   appearance: none;
@@ -559,15 +541,8 @@
   }
 
   &::-webkit-progress-bar {
-		background-color: var(--muted-color-light);
-	}
-}
-.PollResult-percentagePosition {
-  bottom: -2px;
-  background: var(--muted-color-dark);
-  height: 8px;
-  position: absolute;
-  width: 4px;
+    background-color: var(--muted-color-light);
+  }
 }
 
 .Poll-title,

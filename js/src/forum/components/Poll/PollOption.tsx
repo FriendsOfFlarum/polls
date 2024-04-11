@@ -29,14 +29,9 @@ export default class PollOption extends Component<PollOptionAttrs, PollState> {
 
   oninit(vnode: Mithril.Vnode<PollOptionAttrs, PollState>) {
     super.oninit(vnode);
-
     this.option = this.attrs.option;
     this.name = this.attrs.name;
     this.state = this.attrs.state;
-    this.hasVoted = this.state.hasVoted();
-    this.totalVotes = this.state.overallVoteCount();
-    this.votes = this.option.voteCount();
-    this.voted = this.state.hasVotedFor(this.option);
     this.poll = this.state.poll;
 
     // isNaN(null) is false, so we have to check type directly now that API always returns the field
@@ -50,24 +45,38 @@ export default class PollOption extends Component<PollOptionAttrs, PollState> {
   }
 
   view(): Mithril.Children {
+    // following values can be changed by ui interactions, so we need to update them on every render
+    this.hasVoted = this.state.hasVoted();
+    this.totalVotes = this.state.overallVoteCount();
+    this.votes = this.option.voteCount();
     this.voted = this.state.hasVotedFor(this.option);
 
     const isDisabled = this.state.loadingOptions || (this.hasVoted && !this.poll.canChangeVote());
     const width = this.canSeeVoteCount ? this.percent() : (Number(this.voted) / (this.poll.myVotes()?.length || 1)) * 100;
 
     const bar = (
-      <div className="PollBar" data-selected={!!this.voted} style={`--poll-option-width: ${width}%`}>
+      <label className="PollBar" data-selected={!!this.voted} style={`--poll-option-width: ${width}%`}>
         {this.state.showCheckMarks && (
-          <label className="PollAnswer-checkbox checkbox">
-            <input onchange={this.state.changeVote.bind(this.state, this.option)} type="checkbox" checked={this.voted} disabled={isDisabled} />
+          <div className="PollAnswer-checkbox">
+            <input
+              className="PollAnswer-input sr-only"
+              type="checkbox"
+              id={this.option.id()}
+              name={this.name}
+              value={this.answer}
+              checked={this.voted}
+              disabled={isDisabled}
+              aria-labelledby={`${this.name}-${this.option.id()}-label`}
+              onchange={this.state.changeVote.bind(this.state, this.option)}
+            />
             <span className="checkmark" />
-          </label>
+          </div>
         )}
 
         <div className="PollAnswer-text">{this.optionDisplayItems().toArray()}</div>
 
         {this.option.imageUrl() ? <img className="PollAnswer-image" src={this.option.imageUrl()} alt={this.option.answer()} /> : null}
-      </div>
+      </label>
     );
 
     return (
@@ -101,7 +110,12 @@ export default class PollOption extends Component<PollOptionAttrs, PollState> {
   optionDisplayItems(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
 
-    items.add('answer', <span className="PollAnswer-text-answer">{this.answer}</span>);
+    items.add(
+      'answer',
+      <span className="PollAnswer-text-answer" id={`${this.name}-${this.option.id()}-label`}>
+        {this.answer}
+      </span>
+    );
 
     this.voted && !this.state.showCheckMarks && items.add('check', icon('fas fa-check-circle', { className: 'PollAnswer-check' }));
 
