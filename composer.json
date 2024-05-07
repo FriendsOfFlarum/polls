@@ -42,7 +42,7 @@
             "title": "FoF Polls",
             "category": "discussion",
             "icon": {
-                "name": "fas fa-signal",
+                "name": "fas fa-poll",
                 "backgroundColor": "#e74c3c",
                 "color": "#fff"
             }
@@ -59,7 +59,8 @@
     },
     "require-dev": {
         "flarum/phpstan": "*",
-        "flarum/testing": "^1.0.0"
+        "flarum/testing": "^1.0.0",
+        "fof/upload": "*"
     },
     "scripts": {
         "analyse:phpstan": "phpstan analyse",

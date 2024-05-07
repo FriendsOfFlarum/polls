@@ -15,13 +15,17 @@ use Flarum\Database\AbstractModel;
 use Flarum\Database\ScopeVisibilityTrait;
 use Flarum\Post\Post;
 use Flarum\User\User;
+use Illuminate\Contracts\Filesystem\Cloud;
+use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
+use LogicException;
 
 /**
- * @property int    $id
- * @property string $question
+ * @property int         $id
+ * @property string      $question
+ * @property string|null $subtitle
  * @property-read bool             $public_poll
  * @property-read bool             $allow_multiple_votes
  * @property-read int              $max_votes
@@ -30,7 +34,7 @@ use Illuminate\Support\Arr;
  * @property int                   $vote_count
  * @property Post                  $post
  * @property User                  $user
- * @property int                   $post_id
+ * @property int|null              $post_id
  * @property int                   $user_id
  * @property \Carbon\Carbon|null   $end_date
  * @property \Carbon\Carbon        $created_at
@@ -38,6 +42,8 @@ use Illuminate\Support\Arr;
  * @property PollSettings          $settings
  * @property PollVote[]|Collection $votes
  * @property PollVote[]|Collection $myVotes
+ * @property string|null           $image
+ * @property string|null           $image_alt
  *
  *  @phpstan-type PollSettings     array{'public_poll': bool, 'allow_multiple_votes': bool, 'max_votes': int}
  */
@@ -66,11 +72,14 @@ class Poll extends AbstractModel
      *
      * @return static
      */
-    public static function build($question, $postId, $actorId, $endDate, $publicPoll, $allowMultipleVotes = false, $maxVotes = 0, $hideVotes = false, $allowChangeVote = true)
+    public static function build($question, $postId, $actorId, $endDate, $publicPoll, $allowMultipleVotes = false, $maxVotes = 0, $hideVotes = false, $allowChangeVote = true, $subtitle = null, $imageFilename = null, $imageAlt = null)
     {
         $poll = new static();
 
         $poll->question = $question;
+        $poll->subtitle = $subtitle;
+        $poll->image = $imageFilename;
+        $poll->image_alt = $imageAlt;
         $poll->post_id = $postId;
         $poll->user_id = $actorId;
         $poll->end_date = $endDate;
@@ -83,6 +92,11 @@ class Poll extends AbstractModel
         ];
 
         return $poll;
+    }
+
+    public function isGlobal(): bool
+    {
+        return $this->post_id === null;
     }
 
     /**
@@ -169,5 +183,20 @@ class Poll extends AbstractModel
     protected function getAllowChangeVoteAttribute(): bool
     {
         return (bool) Arr::get($this->settings, 'allow_change_vote', true);
+    }
+
+    public function delete()
+    {
+        if ($this->image) {
+            /** @var Cloud $pollUploadDir */
+            $pollUploadDir = resolve(Factory::class)->disk('fof-polls');
+            if ($pollUploadDir->exists($this->image)) {
+                $pollUploadDir->delete($this->image);
+            } else {
+                throw new LogicException('Poll image file not found: '.$this->image);
+            }
+        }
+
+        return parent::delete();
     }
 }

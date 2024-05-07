@@ -21,12 +21,15 @@ use Flarum\Post\Event\Saving as PostSaving;
 use Flarum\Post\Post;
 use Flarum\Settings\Event\Saved as SettingsSaved;
 use FoF\Polls\Api\Controllers;
-use FoF\Polls\Api\Serializers\PollSerializer;
 
 return [
     (new Extend\Frontend('forum'))
         ->js(__DIR__.'/js/dist/forum.js')
-        ->css(__DIR__.'/resources/less/forum.less'),
+        ->css(__DIR__.'/resources/less/forum.less')
+        ->route('/polls', 'fof.polls.showcase')
+        ->route('/polls/all', 'fof.polls.list', Content\PollsDirectory::class)
+        ->route('/polls/view/{id}', 'fof.poll.view')
+        ->route('/polls/composer', 'fof.polls.composer'),
 
     (new Extend\Frontend('admin'))
         ->js(__DIR__.'/js/dist/admin.js')
@@ -36,10 +39,19 @@ return [
 
     (new Extend\Routes('api'))
         ->post('/fof/polls', 'fof.polls.create', Controllers\CreatePollController::class)
-        ->get('/fof/polls/{id}', 'fof.polls.show', Controllers\ShowPollController::class)
-        ->patch('/fof/polls/{id}', 'fof.polls.edit', Controllers\EditPollController::class)
-        ->delete('/fof/polls/{id}', 'fof.polls.delete', Controllers\DeletePollController::class)
-        ->patch('/fof/polls/{id}/votes', 'fof.polls.votes', Controllers\MultipleVotesPollController::class),
+        ->get('/fof/polls', 'fof.polls.index', Controllers\ListGlobalPollsController::class)
+        ->get('/fof/polls/{id:\d+}', 'fof.polls.show', Controllers\ShowPollController::class)
+        ->patch('/fof/polls/{id:\d+}', 'fof.polls.edit', Controllers\EditPollController::class)
+        ->delete('/fof/polls/{id:\d+}', 'fof.polls.delete', Controllers\DeletePollController::class)
+        ->patch('/fof/polls/{id:\d+}/votes', 'fof.polls.votes', Controllers\MultipleVotesPollController::class)
+        ->post('/fof/polls/pollImage', 'fof.polls.upload-image', Controllers\UploadPollImageController::class)
+        ->delete('/fof/polls/pollImage/name/{fileName}', 'fof.polls.delete-image-name', Controllers\DeletePollImageByNameController::class)
+        ->post('/fof/polls/pollImage/{pollId:\d+}', 'fof.polls.upload-image-poll', Controllers\UploadPollImageController::class)
+        ->delete('/fof/polls/pollImage/{pollId:\d+}', 'fof.polls.delete-image-poll', Controllers\DeletePollImageController::class)
+        ->post('/fof/polls/pollOptionImage', 'fof.polls.upload-option-image-option', Controllers\UploadPollOptionImageController::class)
+        ->delete('/fof/polls/pollOptionImage/name/{fileName}', 'fof.polls.delete-option-image-name', Controllers\DeletePollImageByNameController::class)
+        ->post('/fof/polls/pollOptionImage/{optionId:\d+}', 'fof.polls.upload-option-image', Controllers\UploadPollOptionImageController::class)
+        ->delete('/fof/polls/pollOptionImage/{optionId:\d+}', 'fof.polls.delete-option-image', Controllers\DeletePollOptionImageController::class),
 
     (new Extend\Model(Post::class))
         ->hasMany('polls', Poll::class, 'post_id', 'id'),
@@ -55,7 +67,7 @@ return [
         ->attributes(Api\AddDiscussionAttributes::class),
 
     (new Extend\ApiSerializer(PostSerializer::class))
-        ->hasMany('polls', PollSerializer::class)
+        ->hasMany('polls', Api\Serializers\PollSerializer::class)
         ->attributes(Api\AddPostAttributes::class),
 
     (new Extend\ApiSerializer(ForumSerializer::class))
@@ -94,6 +106,11 @@ return [
     (new Extend\Settings())
         ->default('fof-polls.maxOptions', 10)
         ->default('fof-polls.optionsColorBlend', true)
+        ->default('fof-polls.directory-default-sort', 'default')
+        ->default('fof-polls.enableGlobalPolls', false)
+        ->default('fof-polls.image_height', 250)
+        ->default('fof-polls.image_width', 250)
+        ->serializeToForum('globalPollsEnabled', 'fof-polls.enableGlobalPolls', 'boolval')
         ->serializeToForum('allowPollOptionImage', 'fof-polls.allowOptionImage', 'boolval')
         ->serializeToForum('pollMaxOptions', 'fof-polls.maxOptions', 'intval')
         ->registerLessConfigVar('fof-polls-options-color-blend', 'fof-polls.optionsColorBlend', function ($value) {
@@ -102,4 +119,10 @@ return [
 
     (new Extend\ModelVisibility(Poll::class))
         ->scope(Access\ScopePollVisibility::class),
+
+    (new Extend\View())
+        ->namespace('fof-polls', __DIR__.'/resources/views'),
+
+    (new Extend\Filesystem())
+        ->disk('fof-polls', PollImageDisk::class),
 ];

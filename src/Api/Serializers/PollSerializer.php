@@ -13,6 +13,8 @@ namespace FoF\Polls\Api\Serializers;
 
 use Flarum\Api\Serializer\AbstractSerializer;
 use FoF\Polls\Poll;
+use Illuminate\Contracts\Filesystem\Cloud;
+use Illuminate\Contracts\Filesystem\Factory;
 
 class PollSerializer extends AbstractSerializer
 {
@@ -34,6 +36,7 @@ class PollSerializer extends AbstractSerializer
 
         $attributes = [
             'question'           => $poll->question,
+            'subtitle'           => $poll->subtitle,
             'hasEnded'           => $poll->hasEnded(),
             'allowMultipleVotes' => $poll->allow_multiple_votes,
             'maxVotes'           => $poll->max_votes,
@@ -45,6 +48,11 @@ class PollSerializer extends AbstractSerializer
             'canDelete'          => $this->actor->can('delete', $poll),
             'canSeeVoters'       => $this->actor->can('seeVoters', $poll),
             'canChangeVote'      => $this->actor->can('changeVote', $poll),
+            'isGlobal'           => $poll->isGlobal(),
+            'image'              => $poll->image,
+            'imageUrl'           => $this->getImageUrl($poll),
+            'imageAlt'           => $poll->image_alt,
+            'publicPoll'         => $poll->public_poll,
         ];
 
         if ($this->actor->can('seeVoteCount', $poll)) {
@@ -52,7 +60,6 @@ class PollSerializer extends AbstractSerializer
         }
 
         if ($canEdit) {
-            $attributes['publicPoll'] = $poll->public_poll;
             $attributes['hideVotes'] = $poll->hide_votes;
             $attributes['allowChangeVote'] = $poll->allow_change_vote;
         }
@@ -91,5 +98,22 @@ class PollSerializer extends AbstractSerializer
             $model,
             PollVoteSerializer::class
         );
+    }
+
+    protected function getImageUrl(Poll $poll): ?string
+    {
+        // early return if no image
+        if ($poll->image === null) {
+            return null;
+        }
+
+        /** @var Cloud */
+        $fileSystem = resolve(Factory::class)->disk('fof-polls');
+
+        if ($fileSystem->exists($poll->image)) {
+            return $fileSystem->url($poll->image);
+        }
+
+        return null;
     }
 }

@@ -14,6 +14,8 @@ namespace FoF\Polls\Commands;
 use Carbon\Carbon;
 use Flarum\Post\PostRepository;
 use Flarum\Settings\SettingsRepositoryInterface;
+use Flarum\User\Exception\PermissionDeniedException;
+use FoF\Polls\Events\PollOptionCreated;
 use FoF\Polls\Events\PollWasCreated;
 use FoF\Polls\Events\SavingPollAttributes;
 use FoF\Polls\Poll;
@@ -61,7 +63,15 @@ class CreatePollHandler
 
     public function handle(CreatePoll $command)
     {
-        $command->actor->assertCan('startPoll', $command->post);
+        if ($command->post) {
+            $command->actor->assertCan('startPoll', $command->post);
+        } else {
+            if (!$this->settings->get('fof-polls.enableGlobalPolls')) {
+                throw new PermissionDeniedException('Global polls are not enabled');
+            }
+
+            $command->actor->assertCan('startGlobalPoll');
+        }
 
         $attributes = $command->data;
 
@@ -75,7 +85,7 @@ class CreatePollHandler
             foreach ($rawOptionsData as $rawOptionData) {
                 $optionsData[] = [
                     'answer'   => Arr::get($rawOptionData, 'answer'),
-                    'imageUrl' => Arr::get($rawOptionData, 'imageUrl') ?: null,
+                    'imageUrl' => Arr::get($rawOptionData, 'imageUrl'),
                 ];
             }
         }
@@ -98,7 +108,7 @@ class CreatePollHandler
 
             $poll = Poll::build(
                 Arr::get($attributes, 'question'),
-                $command->post->id,
+                $command->post ? $command->post->id : null,
                 $command->actor->id,
                 $carbonDate != null ? $carbonDate->utc() : null,
                 Arr::get($attributes, 'publicPoll'),
@@ -106,6 +116,9 @@ class CreatePollHandler
                 Arr::get($attributes, 'maxVotes'),
                 Arr::get($attributes, 'hideVotes'),
                 Arr::get($attributes, 'allowChangeVote'),
+                Arr::get($attributes, 'subtitle'),
+                Arr::get($attributes, 'pollImage'),
+                Arr::get($attributes, 'imageAlt')
             );
 
             $this->events->dispatch(new SavingPollAttributes($command->actor, $poll, $attributes, $attributes));
@@ -124,6 +137,8 @@ class CreatePollHandler
                 $option = PollOption::build(Arr::get($optionData, 'answer'), $imageUrl);
 
                 $poll->options()->save($option);
+
+                $this->events->dispatch(new PollOptionCreated($option, $command->actor));
             }
 
             return $poll;

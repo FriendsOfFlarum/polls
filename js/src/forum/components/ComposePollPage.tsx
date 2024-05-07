@@ -1,0 +1,137 @@
+import type Mithril from 'mithril';
+import app from 'flarum/forum/app';
+import Page from 'flarum/common/components/Page';
+import Poll from '../models/Poll';
+import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
+import PollForm from './PollForm';
+import PollFormState from '../states/PollFormState';
+import ComposePollHero from './ComposePollHero';
+import Button from 'flarum/common/components/Button';
+import listItems from 'flarum/common/helpers/listItems';
+import ItemList from 'flarum/common/utils/ItemList';
+import SelectDropdown from 'flarum/common/components/SelectDropdown';
+import IndexPage from 'flarum/forum/components/IndexPage';
+
+export default class ComposePollPage extends Page {
+  poll: Poll | null | undefined = null;
+
+  loading: boolean = false;
+
+  oninit(vnode: Mithril.Vnode) {
+    super.oninit(vnode);
+
+    if (!app.forum.attribute<boolean>('globalPollsEnabled')) {
+      m.route.set('/');
+      return;
+    }
+
+    // Get the `edit` parameter from the URL
+    const editId = m.route.param('id');
+    if (editId) {
+      this.poll = app.store.getById<Poll>('poll', editId);
+
+      if (!this.poll) {
+        this.loading = true;
+
+        app.store.find<Poll>('fof/polls', editId).then((item) => {
+          this.poll = item;
+          this.loading = false;
+          app.setTitle(app.translator.trans(`fof-polls.forum.compose.${!!this.poll?.id() ? 'edit' : 'add'}_title`) as string);
+          m.redraw();
+        });
+      }
+    } else {
+      this.poll = PollFormState.createNewPoll();
+    }
+
+    app.history.push('compose-poll', app.translator.trans(`fof-polls.forum.compose.${!!this.poll?.id() ? 'edit' : 'add'}_title`) as string);
+    this.bodyClass = 'App--compose-poll';
+    app.setTitle(app.translator.trans(`fof-polls.forum.compose.${!!this.poll?.id() ? 'edit' : 'add'}_title`) as string);
+  }
+
+  view(): Mithril.Children {
+    // prevent users from accessing the page if they can't start global polls
+    if (!app.forum.attribute<boolean>('canStartGlobalPolls')) {
+      m.route.set('/');
+      return;
+    }
+
+    if (this.loading) {
+      return <LoadingIndicator />;
+    }
+
+    return (
+      <div className="ComposePollPage">
+        <ComposePollHero poll={this.poll} />
+        <div className="container">
+          <div className="sideNavContainer">
+            <nav className="PollsPage-nav sideNav">
+              <ul>{listItems(this.sidebarItems().toArray())}</ul>
+            </nav>
+            <div className="sideNavOffset">
+              <PollForm poll={this.poll} onsubmit={this.onsubmit.bind(this)} />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  async onsubmit(data: Object, state: PollFormState) {
+    const isNew = state.poll.id() === undefined;
+    await state.save(data);
+
+    const alertAttrs = isNew
+      ? {
+          type: 'success',
+          controls: [
+            <Button
+              className="Button Button--link"
+              onclick={() =>
+                m.route.set(
+                  app.route('fof.polls.compose', {
+                    id: state.poll.id(),
+                  })
+                )
+              }
+            >
+              {app.translator.trans('fof-polls.forum.compose.continue_editing')}
+            </Button>,
+          ],
+        }
+      : {
+          type: 'success',
+        };
+
+    // Show success alert
+    const alertId = app.alerts.show(alertAttrs, app.translator.trans('fof-polls.forum.compose.success'));
+
+    // Hide alert after 10 seconds
+    setTimeout(() => app.alerts.dismiss(alertId), 10000);
+
+    if (isNew) {
+      m.route.set(app.route('fof.polls.list'));
+    }
+  }
+
+  sidebarItems(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+
+    items.add(
+      'nav',
+      <SelectDropdown
+        buttonClassName="Button"
+        className="App-titleControl"
+        accessibleToggleLabel={app.translator.trans('core.forum.index.toggle_sidenav_dropdown_accessible_label')}
+      >
+        {this.navItems().toArray()}
+      </SelectDropdown>
+    );
+
+    return items;
+  }
+
+  navItems() {
+    return IndexPage.prototype.navItems();
+  }
+}
