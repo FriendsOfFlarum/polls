@@ -5,12 +5,8 @@ import CommentPost from 'flarum/forum/components/CommentPost';
 import PollView from './components/PollView';
 import DiscussionPage from 'flarum/forum/components/DiscussionPage';
 import Poll from './models/Poll';
-import Post from 'flarum/common/models/Post';
 import PollOption from './models/PollOption';
-
-interface PollPost extends Post {
-  polls: () => Poll[];
-}
+import PostPoll from './components/PostPoll';
 
 interface PusherPollDto {
   pollId: string;
@@ -20,12 +16,12 @@ interface PusherPollDto {
 
 export default () => {
   extend(CommentPost.prototype, 'content', function (content) {
-    const post = this.attrs.post as PollPost;
+    const post = this.attrs.post;
 
     if ((!post.isHidden() || this.revealContent) && post.polls()) {
       for (const poll of post.polls()) {
         if (poll) {
-          content.push(<PollView poll={poll} />);
+          content.push(<PostPoll post={post} poll={poll} />);
         }
       }
     }
@@ -33,7 +29,7 @@ export default () => {
 
   extend(CommentPost.prototype, 'oninit', function () {
     this.subtree.check(() => {
-      const polls = (this.attrs.post as PollPost).polls();
+      const polls = this.attrs.post.polls();
 
       const checks = polls?.map?.(
         (poll) =>

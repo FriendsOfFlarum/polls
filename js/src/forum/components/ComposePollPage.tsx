@@ -20,43 +20,51 @@ export default class ComposePollPage extends Page {
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
 
-    if (!app.forum.attribute<boolean>('globalPollsEnabled')) {
+    // prevent users from accessing the page if they can't start global polls or if they are disabled altogether
+    if (!app.forum.attribute<boolean>('globalPollsEnabled') || !app.forum.attribute<boolean>('canStartGlobalPolls')) {
       m.route.set('/');
       return;
     }
+
+    this.bodyClass = 'App--compose-poll';
 
     // Get the `edit` parameter from the URL
     const editId = m.route.param('id');
-    if (editId) {
-      this.poll = app.store.getById<Poll>('poll', editId);
 
-      if (!this.poll) {
-        this.loading = true;
+    // either load the poll we're editing or create a new one
+    const pollPromise = editId ? this.loadEditingPoll(editId) : Promise.resolve(PollFormState.createNewPoll());
 
-        app.store.find<Poll>('fof/polls', editId).then((item) => {
-          this.poll = item;
-          this.loading = false;
-          app.setTitle(app.translator.trans(`fof-polls.forum.compose.${!!this.poll?.id() ? 'edit' : 'add'}_title`) as string);
-          m.redraw();
-        });
+    pollPromise.then((poll: Poll | null | undefined) => {
+      this.poll = poll;
+
+      if (poll && !poll.canEdit()) {
+        m.route.set('/');
+        return;
       }
-    } else {
-      this.poll = PollFormState.createNewPoll();
-    }
 
-    app.history.push('compose-poll', app.translator.trans(`fof-polls.forum.compose.${!!this.poll?.id() ? 'edit' : 'add'}_title`) as string);
-    this.bodyClass = 'App--compose-poll';
-    app.setTitle(app.translator.trans(`fof-polls.forum.compose.${!!this.poll?.id() ? 'edit' : 'add'}_title`) as string);
+      app.history.push('compose-poll', app.translator.trans(`fof-polls.forum.compose.${!!this.poll?.id() ? 'edit' : 'add'}_title`) as string);
+      app.setTitle(app.translator.trans(`fof-polls.forum.compose.${!!this.poll?.id() ? 'edit' : 'add'}_title`) as string);
+
+      m.redraw();
+    });
+  }
+
+  async loadEditingPoll(editId: string) {
+    const alreadyLoaded = app.store.getById<Poll>('poll', editId);
+
+    if (alreadyLoaded) return alreadyLoaded;
+
+    this.loading = true;
+
+    const poll = await app.store.find<Poll>('fof/polls', editId);
+
+    this.loading = false;
+
+    return poll;
   }
 
   view(): Mithril.Children {
-    // prevent users from accessing the page if they can't start global polls
-    if (!app.forum.attribute<boolean>('canStartGlobalPolls')) {
-      m.route.set('/');
-      return;
-    }
-
-    if (this.loading) {
+    if (this.loading || !this.poll) {
       return <LoadingIndicator />;
     }
 
