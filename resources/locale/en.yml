@@ -130,5 +130,5 @@ fof-polls:
       title: Voters
 
     upload_image:
-      remove_button: Remove Image
-      upload_button: Select Image
+      remove_button: Delete Image
+      upload_button: Upload Image
