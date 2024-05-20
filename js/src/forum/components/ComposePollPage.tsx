@@ -37,7 +37,7 @@ export default class ComposePollPage extends Page {
     pollPromise.then((poll: Poll | null | undefined) => {
       this.poll = poll;
 
-      if (poll && !poll.canEdit()) {
+      if (poll?.exists && !poll.canEdit()) {
         m.route.set('/');
         return;
       }
