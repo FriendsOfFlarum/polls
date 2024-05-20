@@ -183,7 +183,7 @@ export default class PostPoll extends Component<PostPollAttrs> {
           {canSeeVoteCount && <span className={classList('PollPercent', percent !== 100 && 'PollPercent--option')}>{percent}%</span>}
         </div>
 
-        {opt.imageUrl() ? <img className="PollAnswer-image" src={opt.imageUrl()} alt={opt.answer()} /> : null}
+        {opt.imageUrl() ? <img className="PollAnswer-image" src={opt.imageUrl()} alt={opt.answer()} loading="lazy" /> : null}
       </div>
     );
 
