@@ -130,6 +130,7 @@
     row-gap: 15px;
     margin-left: 15px;
     align-items: start;
+    margin-top: 15px;
 
     .PollAnswer when (@fof-polls-options-color-blend = true) {
       &-checkbox,
@@ -174,7 +175,12 @@
   .PollHeading {
     display: flex;
     align-items: baseline;
-    gap: 10px;
+
+    &-actions {
+      display: flex;
+      gap: 10px;
+      align-items: baseline;
+    }
 
     &-title-container {
       flex-grow: 1;
@@ -494,7 +500,6 @@
 
 .PollOption {
   position: relative;
-  padding: 10px;
   background: var(--body-bg);
   border-radius: 4px;
 

@@ -13,6 +13,7 @@ import type Mithril from 'mithril';
 import PollOption from '../models/PollOption';
 import Post from 'flarum/common/models/Post';
 import extractText from 'flarum/common/utils/extractText';
+import PollImage from './Poll/PollImage';
 
 export interface PostPollAttrs extends ComponentAttrs {
   poll: Poll;
@@ -81,6 +82,8 @@ export default class PostPoll extends Component<PostPollAttrs> {
             )}
           </div>
         </div>
+
+        {!!poll.imageUrl() && <PollImage poll={poll} />}
 
         <div>
           <div className="PollOptions">{options.map(this.viewOption.bind(this))}</div>
@@ -168,7 +171,7 @@ export default class PostPoll extends Component<PostPollAttrs> {
     const bar = (
       <div className="PollBar" data-selected={!!voted} style={`--poll-option-width: ${width}%`}>
         {showCheckmark && (
-          <label className="PollAnswer-checkbox checkbox">
+          <label className="PollAnswer-checkbox">
             <input onchange={this.changeVote.bind(this, opt)} type="checkbox" checked={voted} disabled={isDisabled} />
             <span className="checkmark" />
           </label>
