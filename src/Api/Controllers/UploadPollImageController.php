@@ -71,8 +71,25 @@ class UploadPollImageController implements RequestHandlerInterface
         $actor = RequestUtil::getActor($request);
         $pollId = Arr::get($request->getQueryParams(), 'pollId');
 
-        if ($actor->cannot('startPoll') || $actor->cannot('startGlobalPoll')) {
-            throw new PermissionDeniedException('You do not have permission to upload poll images');
+        $areUploadsAllowed = (bool) $this->settings->get('fof-polls.allowImageUploads');
+
+        if (!$areUploadsAllowed) {
+            throw new PermissionDeniedException();
+        }
+
+        $actor->assertCan('uploadPollImages');
+
+        // if a poll ID is given, check that the user can edit that poll (and thus upload images!)
+        if ($pollId) {
+            $poll = Poll::findOrFail($pollId);
+
+            $actor->assertCan('edit', $poll);
+        } else {
+            $poll = null;
+
+            // we don't know whether this image is for a global or a regular poll -- image upload can be done before poll creation
+            $actor->assertCan('startPoll');
+            $actor->assertCan('startGlobalPoll');
         }
 
         $file = Arr::get($request->getUploadedFiles(), $this->filenamePrefix);
@@ -83,7 +100,7 @@ class UploadPollImageController implements RequestHandlerInterface
 
         $this->uploadDir->put($uploadName, $encodedImage);
 
-        if ($pollId && $poll = Poll::find($pollId)) {
+        if ($pollId && $poll) {
             $poll->image = $uploadName;
             $poll->save();
         }

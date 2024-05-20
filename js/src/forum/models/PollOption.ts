@@ -11,6 +11,10 @@ export default class PollOption extends Model {
     return Model.attribute<string | null>('imageUrl').call(this);
   }
 
+  isImageUpload() {
+    return Model.attribute<boolean>('isImageUpload').call(this);
+  }
+
   voteCount() {
     return Model.attribute<number>('voteCount').call(this);
   }

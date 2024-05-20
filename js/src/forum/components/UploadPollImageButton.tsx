@@ -1,7 +1,7 @@
 import app from 'flarum/forum/app';
 import Button, { IButtonAttrs } from 'flarum/common/components/Button';
 import classList from 'flarum/common/utils/classList';
-import type Mithril from 'mithril';
+import Mithril from 'mithril';
 import Poll from '../models/Poll';
 import PollOption from '../models/PollOption';
 
@@ -31,6 +31,7 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
     this.attrs.className = classList(this.attrs.className, 'Button');
 
     const imageUrl = this.getImageUrl();
+    const canUpload = app.forum.attribute<boolean>('canUploadPollImages');
 
     if (imageUrl) {
       this.attrs.onclick = this.remove.bind(this);
@@ -40,14 +41,19 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
           <p>
             <img src={imageUrl} alt="" />
           </p>
-          <p>{super.view({ ...vnode, children: app.translator.trans('fof-polls.forum.upload_image.remove_button') })}</p>
+          <p>
+            {super.view({
+              ...vnode,
+              children: app.translator.trans('fof-polls.forum.upload_image.remove_button'),
+            })}
+          </p>
         </div>
       );
     } else {
       this.attrs.onclick = this.upload.bind(this);
     }
 
-    return super.view({ ...vnode, children: app.translator.trans('fof-polls.forum.upload_image.upload_button') });
+    return canUpload && super.view({ ...vnode, children: app.translator.trans('fof-polls.forum.upload_image.upload_button') });
   }
 
   /**
@@ -97,6 +103,17 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
       .request<PollUploadObject>({
         method: 'DELETE',
         url: this.resourceUrl(fileName),
+      })
+      .then((upload) => {
+        if (this.attrs.poll?.exists) {
+          this.attrs.poll.pushAttributes({ image: null, imageUrl: null, isImageUpload: false });
+        }
+
+        if (this.attrs.option?.exists) {
+          this.attrs.option.pushAttributes({ imageUrl: false });
+        }
+
+        return upload;
       })
       .then(this.success.bind(this), this.failure.bind(this));
   }

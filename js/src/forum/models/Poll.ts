@@ -26,6 +26,10 @@ export default class Poll extends Model {
     return Model.attribute<string | null>('imageAlt').call(this);
   }
 
+  isImageUpload() {
+    return Model.attribute<boolean>('isImageUpload').call(this);
+  }
+
   hasEnded() {
     return Model.attribute<boolean>('hasEnded').call(this);
   }

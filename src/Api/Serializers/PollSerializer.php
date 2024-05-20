@@ -64,6 +64,10 @@ class PollSerializer extends AbstractSerializer
             $attributes['allowChangeVote'] = $poll->allow_change_vote;
         }
 
+        if ($attributes['image']) {
+            $attributes['isImageUpload'] = !filter_var($poll->image, FILTER_VALIDATE_URL);
+        }
+
         return $attributes;
     }
 
@@ -105,6 +109,11 @@ class PollSerializer extends AbstractSerializer
         // early return if no image
         if ($poll->image === null) {
             return null;
+        }
+
+        // if image is a URL, return it
+        if (filter_var($poll->image, FILTER_VALIDATE_URL)) {
+            return $poll->image;
         }
 
         /** @var Cloud */
