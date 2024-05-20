@@ -28,7 +28,7 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
 
   view(vnode: Mithril.Vnode<UploadPollImageButtonAttrs>) {
     this.attrs.loading = this.loading;
-    this.attrs.className = classList(this.attrs.className, 'Button');
+    this.attrs.className = classList(this.attrs.className, 'Button', 'Button--inverted');
 
     const imageUrl = this.getImageUrl();
     const canUpload = app.forum.attribute<boolean>('canUploadPollImages');
@@ -53,7 +53,7 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
       this.attrs.onclick = this.upload.bind(this);
     }
 
-    return canUpload && super.view({ ...vnode, children: app.translator.trans('fof-polls.forum.upload_image.upload_button') });
+    return canUpload && super.view({ ...vnode, poll: undefined, children: app.translator.trans('fof-polls.forum.upload_image.upload_button') });
   }
 
   /**

@@ -107,14 +107,15 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
       <div className="Form-group">
         <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_image.label')}</label>
         {this.uploadConditional(
+          hasImage,
           this.state.poll?.isImageUpload(),
           <>
             <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_image.help')}</p>
-            <UploadPollImageButton name="pollImage" poll={this.state.poll} onUpload={this.pollImageUploadSuccess.bind(this)} />
             <input type="hidden" name="pollImage" bidi={this.image} />
           </>,
+          <UploadPollImageButton name="pollImage" poll={this.state.poll} onUpload={this.pollImageUploadSuccess.bind(this)} />,
           <input
-            type="url"
+            type="text"
             name="pollImage"
             className="FormControl"
             bidi={this.image}
@@ -295,16 +296,18 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
             {app.forum.attribute<boolean>('allowPollOptionImage') && (
               <div className="Poll-answer-image">
                 {this.uploadConditional(
+                  !!imgFunc(),
                   option?.isImageUpload(),
                   <>
                     <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_option_image.label')}</label>
                     <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_option_image.help')}</p>
-                    <UploadPollImageButton name="pollOptionImage" option={option} onUpload={this.pollOptionImageUploadSuccess.bind(this, i)} />
                     <input type="hidden" name={'answerImage' + (i + 1)} value={imgFunc()} />
                   </>,
 
+                  <UploadPollImageButton name="pollOptionImage" option={option} onUpload={this.pollOptionImageUploadSuccess.bind(this, i)} />,
+
                   <input
-                    type="url"
+                    type="text"
                     name={'answerImage' + (i + 1)}
                     className="FormControl"
                     bidi={imgFunc[i]}
@@ -431,7 +434,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     this.optionImageUrls[index] = Stream(fileName);
   }
 
-  uploadConditional(isUpload: boolean, ifCanUpload: JSX.Element, ifCannotUpload: JSX.Element) {
+  uploadConditional(hasImage: boolean, isUpload: boolean, ifCanUpload: JSX.Element, uploadButton: JSX.Element, imageUrlInput: JSX.Element) {
     const canUpload = app.forum.attribute<boolean>('canUploadPollImages');
     const canUploadNow = this.state.poll?.exists || (app.forum.attribute('canStartPolls') && app.forum.attribute('canStartGlobalPolls'));
 
@@ -441,15 +444,23 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
       if (!canUploadNow && !isUpload) {
         return (
           <>
-            {ifCannotUpload}
+            {imageUrlInput}
             <p class="helpText">{app.translator.trans('fof-polls.forum.modal.poll_image.later_help')}</p>
           </>
         );
       }
 
-      return ifCanUpload;
+      return (
+        <>
+          {ifCanUpload}
+          <div class="Poll-image-inputs">
+            {!hasImage && imageUrlInput}
+            {uploadButton}
+          </div>
+        </>
+      );
     }
 
-    return ifCannotUpload;
+    return imageUrlInput;
   }
 }
