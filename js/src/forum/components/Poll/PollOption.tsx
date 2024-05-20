@@ -75,7 +75,7 @@ export default class PollOption extends Component<PollOptionAttrs, PollState> {
 
         <div className="PollAnswer-text">{this.optionDisplayItems().toArray()}</div>
 
-        {this.option.imageUrl() ? <img className="PollAnswer-image" src={this.option.imageUrl()} alt={this.option.answer()} /> : null}
+        {this.option.imageUrl() ? <img className="PollAnswer-image" src={this.option.imageUrl()} alt={this.option.answer()} loading="lazy" /> : null}
       </label>
     );
 
