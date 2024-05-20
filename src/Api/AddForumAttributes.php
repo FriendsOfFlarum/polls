@@ -12,13 +12,27 @@
 namespace FoF\Polls\Api;
 
 use Flarum\Api\Serializer\ForumSerializer;
+use Flarum\Settings\SettingsRepositoryInterface;
 
 class AddForumAttributes
 {
+    /**
+     * @var SettingsRepositoryInterface
+     */
+    protected $settings;
+
+    public function __construct(SettingsRepositoryInterface $settings)
+    {
+        $this->settings = $settings;
+    }
+
     public function __invoke(ForumSerializer $serializer, array $model, array $attributes): array
     {
         $attributes['canStartPolls'] = $serializer->getActor()->can('discussion.polls.start');
         $attributes['canStartGlobalPolls'] = $serializer->getActor()->can('startGlobalPoll');
+
+        $areUploadsEnabled = (bool) $this->settings->get('fof-polls.allowImageUploads');
+        $attributes['canUploadPollImages'] = $areUploadsEnabled && $serializer->getActor()->can('uploadPollImages');
 
         return $attributes;
     }

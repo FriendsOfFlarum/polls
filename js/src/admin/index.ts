@@ -21,6 +21,12 @@ app.initializers.add('fof/polls', () => {
       min: 2,
     })
     .registerSetting({
+      setting: 'fof-polls.allowImageUploads',
+      type: 'switch',
+      label: app.translator.trans('fof-polls.admin.settings.allow_image_uploads'),
+      help: app.translator.trans('fof-polls.admin.settings.allow_image_uploads_help'),
+    })
+    .registerSetting({
       setting: 'fof-polls.enableGlobalPolls',
       type: 'boolean',
       label: app.translator.trans('fof-polls.admin.settings.enable_global_polls'),
@@ -74,6 +80,14 @@ app.initializers.add('fof/polls', () => {
         icon: 'fas fa-pencil-alt',
         label: app.translator.trans('fof-polls.admin.permissions.self_post_edit'),
         permission: 'polls.selfPostEdit',
+      },
+      'start'
+    )
+    .registerPermission(
+      {
+        icon: 'fas fa-image',
+        label: app.translator.trans('fof-polls.admin.permissions.upload_images'),
+        permission: 'uploadPollImages',
       },
       'start'
     )

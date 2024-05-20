@@ -2,6 +2,8 @@ fof-polls:
   admin:
     settings:
       allow_option_image: Allow an image URL to be provided for each poll option
+      allow_image_uploads: Allow image uploads for polls and their options
+      allow_image_uploads_help: If enabled, users will be able to upload images alongside also providing an image URL (if enabled for options, always enabled for the poll itself).
       enable_global_polls: Enable global polls
       enable_global_polls_help: Global polls are not tied to a specific post, and may be accessed from a dedicated polls page.
       max_options: Maximum number of options per poll
@@ -15,6 +17,7 @@ fof-polls:
       start_global: Start a global poll
       self_edit: Edit created polls (requires post edit permission)
       self_post_edit: Edit *all* polls on own posts (requires post edit permission)
+      upload_images: Allow users to upload images for polls
       vote: Vote on polls
       change_vote: Change vote
       moderate: Edit & remove polls
@@ -86,7 +89,7 @@ fof-polls:
       hide_votes_label: Hide votes until poll ends
       allow_change_vote_label: Allow users to change their vote
       question_placeholder: Question
-      subtitle_placeholder: Subtitle/Description (Optional)
+      subtitle_placeholder: Subtitle/Description (optional)
       submit: Submit
       delete: => core.ref.delete
       error: => core.lib.error.generic_message
@@ -95,6 +98,7 @@ fof-polls:
         help: Upload an image to be displayed alongside the poll (optional).
         alt_label: Image Alt Text
         alt_help_text: This text is required when an image is set, it will be displayed if the image fails to load.
+        later_help: You will be able to upload an image after creating the poll.
       poll_option_image:
         label: Poll Answer Image
         help: Upload an image to be displayed alongside the poll answer (optional).

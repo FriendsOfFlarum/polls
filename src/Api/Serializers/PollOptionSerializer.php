@@ -40,6 +40,10 @@ class PollOptionSerializer extends AbstractSerializer
             'voteCount'   => $this->actor->can('seeVoteCount', $option->poll) ? (int) $option->vote_count : null,
         ];
 
+        if ($attributes['imageUrl']) {
+            $attributes['isImageUpload'] = !filter_var($option->image_url, FILTER_VALIDATE_URL);
+        }
+
         return $attributes;
     }
 

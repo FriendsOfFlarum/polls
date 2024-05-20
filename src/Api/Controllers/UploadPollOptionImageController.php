@@ -27,19 +27,37 @@ class UploadPollOptionImageController extends UploadPollImageController
         $actor = RequestUtil::getActor($request);
         $optionId = Arr::get($request->getQueryParams(), 'optionId');
 
-        if ($actor->cannot('startPoll') || $actor->cannot('startGlobalPoll')) {
-            throw new PermissionDeniedException('You do not have permission to upload poll option images');
+        $areUploadsAllowed = (bool) $this->settings->get('fof-polls.allowImageUploads');
+
+        if (!$areUploadsAllowed) {
+            throw new PermissionDeniedException();
+        }
+
+        $actor->assertCan('uploadPollImages');
+
+        // if an option ID is given, check that the user can edit that poll (and thus upload images!)
+        if ($optionId) {
+            $option = PollOption::findOrFail($optionId);
+            $poll = $option->poll;
+
+            $actor->assertCan('edit', $poll);
+        } else {
+            $option = null;
+
+            // we don't know whether this image is for a global or a regular poll -- image upload can be done before poll creation
+            $actor->assertCan('startPoll');
+            $actor->assertCan('startGlobalPoll');
         }
 
         $file = Arr::get($request->getUploadedFiles(), $this->filenamePrefix);
 
-        $uploadName = $uploadName = $this->uploadName();
+        $uploadName = $this->uploadName();
 
         $encodedImage = $this->makeImage($file, $uploadName);
 
         $this->uploadDir->put($uploadName, $encodedImage);
 
-        if ($optionId && $option = PollOption::find($optionId)) {
+        if ($option) {
             $option->image_url = $uploadName;
             $option->save();
         }

@@ -110,6 +110,7 @@ return [
         ->default('fof-polls.enableGlobalPolls', false)
         ->default('fof-polls.image_height', 250)
         ->default('fof-polls.image_width', 250)
+        ->default('fof-polls.allowImageUploads', false)
         ->serializeToForum('globalPollsEnabled', 'fof-polls.enableGlobalPolls', 'boolval')
         ->serializeToForum('allowPollOptionImage', 'fof-polls.allowOptionImage', 'boolval')
         ->serializeToForum('pollMaxOptions', 'fof-polls.maxOptions', 'intval')

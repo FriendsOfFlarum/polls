@@ -22,6 +22,7 @@ class PollValidator extends AbstractValidator
         return [
             'question'   => 'required',
             'publicPoll' => 'nullable|boolean',
+            'image'      => 'nullable|url',
             'endDate'    => [
                 'nullable',
                 // max of 'timestamp' SQL column is 2038-01-18
