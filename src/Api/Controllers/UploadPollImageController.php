@@ -100,7 +100,7 @@ class UploadPollImageController implements RequestHandlerInterface
 
         $this->uploadDir->put($uploadName, $encodedImage);
 
-        if ($pollId && $poll) {
+        if ($poll) {
             $poll->image = $uploadName;
             $poll->save();
         }
