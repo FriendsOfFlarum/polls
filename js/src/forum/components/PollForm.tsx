@@ -310,7 +310,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
                     type="text"
                     name={'answerImage' + (i + 1)}
                     className="FormControl"
-                    bidi={imgFunc[i]}
+                    bidi={imgFunc}
                     placeholder={app.translator.trans('fof-polls.forum.modal.image_option_placeholder')}
                   />
                 )}
@@ -358,6 +358,15 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     if (this.options.length < 2) {
       throw new FormError(app.translator.trans('fof-polls.forum.modal.min'));
     }
+
+    console.log(
+      'option answers',
+      this.optionAnswers.map((o) => o())
+    );
+    console.log(
+      'option image urls',
+      this.optionImageUrls.map((o) => o())
+    );
 
     const pollExists = this.state.poll.exists;
     const options = this.options.map((option, i) => {
