@@ -13,6 +13,7 @@ namespace FoF\Polls\Api\Controllers;
 
 use Flarum\Http\RequestUtil;
 use FoF\Polls\Events\PollImageDeleting;
+use FoF\Polls\Poll;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Arr;
 use Laminas\Diactoros\Response\EmptyResponse;
@@ -25,6 +26,8 @@ class DeletePollImageByNameController extends DeletePollImageController
     {
         $actor = RequestUtil::getActor($request);
         $fileName = Arr::get($request->getQueryParams(), 'fileName');
+
+        $actor->assertCan('edit', new Poll());
 
         if ($this->uploadDir->exists($fileName)) {
             $this->events->dispatch(

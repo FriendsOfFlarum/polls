@@ -49,6 +49,8 @@ class DeletePollImageController implements RequestHandlerInterface
         /** @var Poll $poll */
         $poll = Poll::find($pollId);
 
+        $actor->assertCan('edit', $poll);
+
         $this->events->dispatch(
             new PollImageDeleting($poll->image, $actor)
         );
