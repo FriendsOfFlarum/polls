@@ -13,7 +13,6 @@ namespace FoF\Polls\Api\Controllers;
 
 use Flarum\Http\RequestUtil;
 use FoF\Polls\Events\PollImageDeleting;
-use FoF\Polls\Poll;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Arr;
 use Laminas\Diactoros\Response\EmptyResponse;
