@@ -359,15 +359,6 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
       throw new FormError(app.translator.trans('fof-polls.forum.modal.min'));
     }
 
-    console.log(
-      'option answers',
-      this.optionAnswers.map((o) => o())
-    );
-    console.log(
-      'option image urls',
-      this.optionImageUrls.map((o) => o())
-    );
-
     const pollExists = this.state.poll.exists;
     const options = this.options.map((option, i) => {
       option.pushAttributes({

@@ -59,8 +59,7 @@
     },
     "require-dev": {
         "flarum/phpstan": "*",
-        "flarum/testing": "^1.0.0",
-        "fof/upload": "*"
+        "flarum/testing": "^1.0.0"
     },
     "scripts": {
         "analyse:phpstan": "phpstan analyse",
