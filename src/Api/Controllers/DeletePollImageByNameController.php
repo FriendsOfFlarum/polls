@@ -26,6 +26,8 @@ class DeletePollImageByNameController extends DeletePollImageController
         $actor = RequestUtil::getActor($request);
         $fileName = Arr::get($request->getQueryParams(), 'fileName');
 
+        $actor->assertCan('uploadPollImages');
+
         if ($this->uploadDir->exists($fileName)) {
             $this->events->dispatch(
                 new PollImageDeleting($fileName, $actor)
