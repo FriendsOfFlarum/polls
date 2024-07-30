@@ -49,7 +49,7 @@ class DeletePollOptionImageController implements RequestHandlerInterface
         /** @var PollOption $option */
         $option = PollOption::find($optionId);
 
-        $actor->assertCan('edit', $option->poll);
+        $actor->assertCan('uploadPollImages');
 
         // if the image_url is a fully qualified URL, we just set it to null
         if (filter_var($option->image_url, FILTER_VALIDATE_URL)) {
