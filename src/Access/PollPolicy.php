@@ -65,6 +65,10 @@ class PollPolicy extends AbstractPolicy
         if (!$poll->allow_change_vote) {
             return $this->deny();
         }
+
+        if ($poll->allow_change_vote) {
+            return $this->allow();
+        }
     }
 
     public function edit(User $actor, Poll $poll)
