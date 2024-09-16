@@ -11,7 +11,6 @@
 
 namespace FoF\Polls\Commands;
 
-use Flarum\Database\Eloquent\Collection;
 use Flarum\Foundation\ErrorHandling\Reporter;
 use Flarum\Foundation\ValidationException;
 use Flarum\Settings\SettingsRepositoryInterface;
@@ -23,6 +22,7 @@ use FoF\Polls\PollRepository;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Factory;
 
