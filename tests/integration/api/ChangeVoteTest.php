@@ -150,7 +150,7 @@ class ChangeVoteTest extends TestCase
 
     /**
      * @test
-     * 
+     *
      * @dataProvider usersWhoCanChangeVote
      */
     public function user_with_permission_can_change_vote_on_change_poll(int $userId)
