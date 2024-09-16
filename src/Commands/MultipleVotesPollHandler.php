@@ -225,7 +225,7 @@ class MultipleVotesPollHandler
         }
     }
 
-    protected function isChangingVotes(array $optionIds, array $myVotes)
+    protected function isChangingVotes(array $optionIds, array $myVotes): bool
     {
         // Cast the values to integers
         foreach ($optionIds as $optionId => $value) {
