@@ -58,8 +58,12 @@ class PollPolicy extends AbstractPolicy
 
     public function changeVote(User $actor, Poll $poll)
     {
-        if ($poll->allow_change_vote && $actor->hasPermission('polls.changeVote')) {
+        if ($actor->hasPermission('polls.changeVote')) {
             return $this->allow();
+        }
+        
+        if (!$poll->allow_change_vote) {
+            return $this->deny();
         }
     }
 

@@ -11,6 +11,7 @@
 
 namespace FoF\Polls\Commands;
 
+use Flarum\Database\Eloquent\Collection;
 use Flarum\Foundation\ErrorHandling\Reporter;
 use Flarum\Foundation\ValidationException;
 use Flarum\Settings\SettingsRepositoryInterface;
@@ -21,10 +22,9 @@ use FoF\Polls\Poll;
 use FoF\Polls\PollRepository;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Database\ConnectionResolverInterface;
+use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Factory;
-use Pusher;
 
 class MultipleVotesPollHandler
 {
@@ -49,7 +49,7 @@ class MultipleVotesPollHandler
     private $validation;
 
     /**
-     * @var ConnectionResolverInterface
+     * @var DatabaseManager
      */
     private $db;
 
@@ -63,7 +63,7 @@ class MultipleVotesPollHandler
      * @param SettingsRepositoryInterface $settings
      * @param Container                   $container
      */
-    public function __construct(PollRepository $polls, Dispatcher $events, SettingsRepositoryInterface $settings, Container $container, Factory $validation, ConnectionResolverInterface $db)
+    public function __construct(PollRepository $polls, Dispatcher $events, SettingsRepositoryInterface $settings, Container $container, Factory $validation, DatabaseManager $db)
     {
         $this->polls = $polls;
         $this->events = $events;
@@ -96,25 +96,13 @@ class MultipleVotesPollHandler
             $maxVotes = $options->count();
         }
 
-        $validator = $this->validation->make([
-            'options' => $optionIds,
-        ], [
-            'options' => [
-                'present',
-                'array',
-                'max:'.$maxVotes,
-                function ($attribute, $value, $fail) use ($options) {
-                    foreach ($value as $optionId) {
-                        if (!$options->contains('id', $optionId)) {
-                            $fail('Invalid option ID.');
-                        }
-                    }
-                },
-            ],
-        ]);
+        $this->validateInput($optionIds, $maxVotes, $options);
 
-        if ($validator->fails()) {
-            throw new ValidationException(['options' => $validator->getMessageBag()->first('options')]);
+
+        if ($this->isChangingVotes($optionIds, $myVotes->pluck('option_id')->toArray())) {
+            //dd('changing vote');
+            //dd($actor->can('changeVote', $poll));
+            $actor->assertCan('changeVote', $poll);
         }
 
         $deletedVotes = $myVotes->filter(function ($vote) use ($optionIds) {
@@ -124,7 +112,6 @@ class MultipleVotesPollHandler
             return !$myVotes->contains('option_id', $optionId);
         });
 
-        /** @phpstan-ignore-next-line */
         $this->db->transaction(function () use ($myVotes, $options, $newOptionIds, $deletedVotes, $poll, $actor) {
             // Unvote options
             if ($deletedVotes->isNotEmpty()) {
@@ -238,6 +225,49 @@ class MultipleVotesPollHandler
                 $appId,
                 $options
             );
+        }
+    }
+
+    protected function isChangingVotes(array $optionIds, array $myVotes)
+    {
+        // Cast the values to integers
+        foreach ($optionIds as $optionId => $value) {
+            $optionIds[$optionId] = (int) $value;
+        }
+
+        foreach ($myVotes as $voteId => $value) {
+            $myVotes[$voteId] = (int) $value;
+        }
+        
+        // Check the arrays have the same values
+        $same = (count(array_diff($optionIds, $myVotes)) === 0 && count(array_diff($myVotes, $optionIds)) === 0);
+        //dd($optionIds, $myVotes, $same);
+        return !$same;
+    }
+
+    protected function validateInput(?array $optionIds, int $maxVotes, Collection $options): void
+    {
+        $validator = $this->validation->make([
+            'options' => $optionIds,
+        ], [
+            'options' => [
+                'present',
+                'array',
+                'max:'.$maxVotes,
+                function ($attribute, $value, $fail) use ($options) {
+                    if (is_array($value)) {
+                        foreach ($value as $optionId) {
+                            if (!$options->contains('id', $optionId)) {
+                                $fail('Invalid option ID.');
+                            }
+                        }
+                    }
+                },
+            ],
+        ]);
+
+        if ($validator->fails()) {
+            throw new ValidationException(['options' => $validator->getMessageBag()->first('options')]);
         }
     }
 }
