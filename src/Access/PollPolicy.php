@@ -61,7 +61,7 @@ class PollPolicy extends AbstractPolicy
         if ($actor->hasPermission('polls.changeVote')) {
             return $this->allow();
         }
-        
+
         if (!$poll->allow_change_vote) {
             return $this->deny();
         }

@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FoF\Polls\Tests\integration\api;
 
 use Carbon\Carbon;
@@ -10,7 +19,7 @@ use FoF\Polls\PollVote;
 class ChangeVoteTest extends TestCase
 {
     use RetrievesAuthorizedUsers;
-    
+
     public function setUp(): void
     {
         parent::setUp();
@@ -43,13 +52,13 @@ class ChangeVoteTest extends TestCase
                 ['permission' => 'discussion.polls.start', 'group_id' => 4],
                 ['permission' => 'startGlobalPoll', 'group_id' => 4],
                 ['permission' => 'uploadPollImages', 'group_id' => 4],
-                ['permission' => 'polls.changeVote', 'group_id' => 4]
+                ['permission' => 'polls.changeVote', 'group_id' => 4],
             ],
             'poll_votes' => [
                 ['id' => 1, 'poll_id' => 1, 'option_id' => 1, 'user_id' => 1, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
                 ['id' => 2, 'poll_id' => 1, 'option_id' => 1, 'user_id' => 2, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
                 ['id' => 3, 'poll_id' => 1, 'option_id' => 1, 'user_id' => 4, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-            ]
+            ],
         ]);
     }
 
@@ -57,7 +66,7 @@ class ChangeVoteTest extends TestCase
     {
         return [
             [1],
-            [4]
+            [4],
         ];
     }
 
@@ -69,7 +78,7 @@ class ChangeVoteTest extends TestCase
         $response = $this->send(
             $this->request('PATCH', '/api/fof/polls/1/votes', [
                 'authenticatedAs' => 4,
-                'json' => []
+                'json'            => [],
             ])
         );
 
@@ -83,6 +92,7 @@ class ChangeVoteTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider usersWhoCanChangeVote
      */
     public function user_with_permission_can_change_vote(int $userId)
@@ -90,12 +100,12 @@ class ChangeVoteTest extends TestCase
         $response = $this->send(
             $this->request('PATCH', '/api/fof/polls/1/votes', [
                 'authenticatedAs' => $userId,
-                'json' => [
+                'json'            => [
                     'data' => [
                         'optionIds' => [
-                            2
+                            2,
                         ],
-                    ]
+                    ],
                 ],
             ])
         );
@@ -115,12 +125,12 @@ class ChangeVoteTest extends TestCase
         $response = $this->send(
             $this->request('PATCH', '/api/fof/polls/1/votes', [
                 'authenticatedAs' => 2,
-                'json' => [
+                'json'            => [
                     'data' => [
                         'optionIds' => [
-                            2
+                            2,
                         ],
-                    ]
+                    ],
                 ],
             ])
         );

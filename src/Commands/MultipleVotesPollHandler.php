@@ -98,7 +98,6 @@ class MultipleVotesPollHandler
 
         $this->validateInput($optionIds, $maxVotes, $options);
 
-
         if ($this->isChangingVotes($optionIds, $myVotes->pluck('option_id')->toArray())) {
             //dd('changing vote');
             //dd($actor->can('changeVote', $poll));
@@ -238,9 +237,10 @@ class MultipleVotesPollHandler
         foreach ($myVotes as $voteId => $value) {
             $myVotes[$voteId] = (int) $value;
         }
-        
+
         // Check the arrays have the same values
         $same = (count(array_diff($optionIds, $myVotes)) === 0 && count(array_diff($myVotes, $optionIds)) === 0);
+
         //dd($optionIds, $myVotes, $same);
         return !$same;
     }
