@@ -14,6 +14,7 @@ namespace FoF\Polls\Access;
 use Flarum\User\Access\AbstractPolicy;
 use Flarum\User\User;
 use FoF\Polls\Poll;
+use Illuminate\Support\Arr;
 
 class PollPolicy extends AbstractPolicy
 {
@@ -58,9 +59,11 @@ class PollPolicy extends AbstractPolicy
 
     public function changeVote(User $actor, Poll $poll)
     {
-        if ($poll->allow_change_vote && $actor->hasPermission('polls.changeVote')) {
+        if ($actor->hasPermission('polls.changeVote')) {
             return $this->allow();
         }
+
+        return (bool) Arr::get($poll->settings, 'allow_change_vote', false);
     }
 
     public function edit(User $actor, Poll $poll)

@@ -30,7 +30,6 @@ use LogicException;
  * @property-read bool             $allow_multiple_votes
  * @property-read int              $max_votes
  * @property-read bool             $hide_votes
- * @property-read bool             $allow_change_vote
  * @property int                   $vote_count
  * @property Post                  $post
  * @property User                  $user
@@ -45,7 +44,7 @@ use LogicException;
  * @property string|null           $image
  * @property string|null           $image_alt
  *
- *  @phpstan-type PollSettings     array{'public_poll': bool, 'allow_multiple_votes': bool, 'max_votes': int}
+ *  @phpstan-type PollSettings     array{'public_poll': bool, 'allow_multiple_votes': bool, 'max_votes': int, 'allow_change_vote' : bool}
  */
 class Poll extends AbstractModel
 {
