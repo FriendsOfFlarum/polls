@@ -26,7 +26,7 @@ export default class PollListState<P extends PollListParams = PollListParams> ex
 
   requestParams(): PaginatedListRequestParams {
     const params = {
-      include: this.params.include || ['options', 'votes'],
+      include: this.requestIncludes(),
       filter: this.params.filter || {},
       sort: this.sortMap()[this.params.sort ?? ''],
     };
@@ -36,6 +36,20 @@ export default class PollListState<P extends PollListParams = PollListParams> ex
     }
 
     return params;
+  }
+
+  includes(): string[] {
+    return ['options', 'votes'];
+  }
+
+  private requestIncludes(): string {
+    const standard = this.includes();
+
+    // merge the standard includes with the custom includes
+    const merged = [...standard, ...(this.params.include || [])];
+
+    // return as a comma separated string
+    return merged.join(',');
   }
 
   protected loadPage(page: number = 1): Promise<ApiResponsePlural<Poll>> {
