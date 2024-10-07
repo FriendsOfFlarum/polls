@@ -125,16 +125,14 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
   /**
    * Allow extensions to revise the question string.
    */
-  pollQuestion(poll: Poll): string
-  {
+  pollQuestion(poll: Poll): string {
     return poll.question();
   }
 
   /**
    * Allow extensions to revise the subtitle string.
    */
-  pollSubtitle(poll: Poll): string|null
-  {
+  pollSubtitle(poll: Poll): string | null {
     return poll.subtitle();
   }
 
