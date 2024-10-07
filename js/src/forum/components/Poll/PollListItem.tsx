@@ -115,21 +115,28 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
   mainView(): Mithril.Children {
     return (
       <Link href={app.route('fof.polls.view', { id: this.poll.id() })} className="PollListItem-main">
-        <h2 className="PollListItem-title">{highlight(this.poll.question(), this.highlightRegExp)}</h2>
-        {this.poll.subtitle() && <p className="PollListItem-subtitle helpText">{this.poll.subtitle()}</p>}
+        <h2 className="PollListItem-title">{highlight(this.pollQuestion(this.poll), this.highlightRegExp)}</h2>
+        {this.poll.subtitle() && <p className="PollListItem-subtitle helpText">{this.pollSubtitle(this.poll)}</p>}
         <ul className="PollListItem-info">{listItems(this.infoItems().toArray())}</ul>
       </Link>
     );
   }
 
-  // infoView() {
-  //   return (
-  //     <div>
-  //       {this.poll.subtitle() && <p className="PollListItem-subtitle helpText">{this.poll.subtitle()}</p>}
-  //       <ul className="PollListItem-info">{listItems(this.infoItems().toArray())}</ul>
-  //     </div>
-  //   );
-  // }
+  /**
+   * Allow extensions to revise the question string.
+   */
+  pollQuestion(poll: Poll): string
+  {
+    return poll.question();
+  }
+
+  /**
+   * Allow extensions to revise the subtitle string.
+   */
+  pollSubtitle(poll: Poll): string|null
+  {
+    return poll.subtitle();
+  }
 
   oncreate(vnode: Mithril.VnodeDOM<CustomAttrs, this>) {
     super.oncreate(vnode);
