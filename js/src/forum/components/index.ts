@@ -18,6 +18,8 @@ import { AbstractPollPage } from './AbstractPollPage';
 import PollTitle from './Poll/PollTitle';
 import PollSubtitle from './Poll/PollSubtitle';
 import PollImage from './Poll/PollImage';
+import PollListItem from './Poll/PollListItem';
+import PollList from './Poll/PollList';
 
 export const components = {
   CreatePollModal,
@@ -40,4 +42,6 @@ export const components = {
   PollTitle,
   PollSubtitle,
   PollImage,
+  PollListItem,
+  PollList,
 };
