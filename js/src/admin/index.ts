@@ -1,47 +1,12 @@
 import app from 'flarum/admin/app';
+import PollsSettingsPage from './components/PollsSettingsPage';
+
+export * from './components';
 
 app.initializers.add('fof/polls', () => {
   app.extensionData
     .for('fof-polls')
-    .registerSetting({
-      setting: 'fof-polls.allowOptionImage',
-      type: 'switch',
-      label: app.translator.trans('fof-polls.admin.settings.allow_option_image'),
-    })
-    .registerSetting({
-      setting: 'fof-polls.optionsColorBlend',
-      type: 'switch',
-      label: app.translator.trans('fof-polls.admin.settings.options_color_blend'),
-      help: app.translator.trans('fof-polls.admin.settings.options_color_blend_help'),
-    })
-    .registerSetting({
-      setting: 'fof-polls.maxOptions',
-      type: 'number',
-      label: app.translator.trans('fof-polls.admin.settings.max_options'),
-      min: 2,
-    })
-    .registerSetting({
-      setting: 'fof-polls.allowImageUploads',
-      type: 'switch',
-      label: app.translator.trans('fof-polls.admin.settings.allow_image_uploads'),
-      help: app.translator.trans('fof-polls.admin.settings.allow_image_uploads_help'),
-    })
-    .registerSetting({
-      setting: 'fof-polls.enableGlobalPolls',
-      type: 'boolean',
-      label: app.translator.trans('fof-polls.admin.settings.enable_global_polls'),
-      help: app.translator.trans('fof-polls.admin.settings.enable_global_polls_help'),
-    })
-    .registerSetting({
-      setting: 'fof-polls.image_height',
-      type: 'number',
-      label: app.translator.trans('fof-polls.admin.settings.image_height'),
-    })
-    .registerSetting({
-      setting: 'fof-polls.image_width',
-      type: 'number',
-      label: app.translator.trans('fof-polls.admin.settings.image_width'),
-    })
+    .registerPage(PollsSettingsPage)
     .registerPermission(
       {
         icon: 'fas fa-poll',

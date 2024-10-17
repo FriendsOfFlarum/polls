@@ -1,0 +1,50 @@
+.PollsSettingsPage {
+    padding-top: 20px;
+  
+    .Button {
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+  
+    .PollsSettingsTabPage {
+      background: @control-bg; // Use control background for coherence
+      padding: 20px;
+      border-radius: @border-radius; // Consistent border radius
+      box-shadow: 0 2px 4px @shadow-color; // Subtle shadow for depth
+  
+      h3 {
+        color: @primary-color; // Primary color for headings
+        margin-bottom: 10px;
+      }
+  
+      .Section {
+        background: @body-bg; // Contrast with the section background
+        border-radius: @border-radius;
+        box-shadow: 0 1px 3px @shadow-color;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+  
+      .Form {
+        .control {
+          background: @body-bg;
+          border: 1px solid @muted-color; // Defines the input fields
+          color: @text-color;
+          padding: 6px 12px;
+          border-radius: @border-radius;
+        }
+        input {
+            max-width: 300px;
+        }
+      }
+    }
+  
+    &--settings {
+      //max-width: 720px;
+      margin: 0 auto; // Center align for better presentation
+  
+      @media @desktop-up {
+        margin: 0;
+      }
+    }
+}
