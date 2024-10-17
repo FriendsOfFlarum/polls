@@ -1,6 +1,15 @@
 fof-polls:
   admin:
     settings:
+      general:
+        heading: General Settings
+        help: These settings control the basic features of the Polls extension.
+      global_polls:
+        heading: Global Polls
+        help: These settings control the global polls feature.
+      image:
+        heading: Image Settings
+        help: These settings control the image settings for polls.
       allow_option_image: Allow an image URL to be provided for each poll option
       allow_image_uploads: Allow image uploads for polls and their options
       allow_image_uploads_help: If enabled, users will be able to upload images alongside also providing an image URL (if enabled for options, always enabled for the poll itself).
