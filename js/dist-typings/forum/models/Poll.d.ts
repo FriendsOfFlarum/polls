@@ -1,0 +1,32 @@
+import Model from 'flarum/common/Model';
+import PollOption from './PollOption';
+import PollVote from './PollVote';
+export default class Poll extends Model {
+    tempOptions: PollOption[] | undefined;
+    question(): string;
+    subtitle(): string | null;
+    image(): string | null;
+    imageUrl(): string | null;
+    imageAlt(): string | null;
+    isImageUpload(): boolean;
+    hasEnded(): boolean;
+    endDate(): Date | null | undefined;
+    publicPoll(): boolean;
+    hideVotes(): boolean;
+    allowChangeVote(): boolean;
+    allowMultipleVotes(): boolean;
+    maxVotes(): number;
+    voteCount(): number;
+    canVote(): boolean;
+    canEdit(): boolean;
+    canDelete(): boolean;
+    canSeeVoters(): boolean;
+    canChangeVote(): boolean;
+    options(): PollOption[];
+    votes(): false | (PollVote | undefined)[];
+    myVotes(): PollVote[];
+    isGlobal(): boolean;
+    isHidden(): boolean;
+    isUnread(): boolean;
+    apiEndpoint(): string;
+}
