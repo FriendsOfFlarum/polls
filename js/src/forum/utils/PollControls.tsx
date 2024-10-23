@@ -19,8 +19,9 @@ export default {
   controls(poll: Poll, context: Component): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
 
-    ['poll', 'moderation', 'destructive'].forEach((section) => {
-      const controls = (this[section + 'Controls'](poll, context) as ItemList<Mithril.Children>).toArray();
+    const sections: ('poll' | 'moderation' | 'destructive')[] = ['poll', 'moderation', 'destructive'];
+    sections.forEach((section) => {
+      const controls = (this[`${section}Controls`](poll, context) as ItemList<Mithril.Children>).toArray();
       if (controls.length) {
         controls.forEach((item) => items.add(item.itemName, item));
         items.add(section + 'Separator', <Separator />);
