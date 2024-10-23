@@ -43,6 +43,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
   view(): Mithril.Children {
     const poll = this.attrs.poll;
     const state = this.state;
+    // @ts-expect-error
     const controls = PollControls.controls(poll, this);
 
     (poll.publicPoll() || poll.canEdit()) &&
