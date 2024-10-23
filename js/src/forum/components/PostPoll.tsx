@@ -18,6 +18,7 @@ import PollImage from './Poll/PollImage';
 export interface PostPollAttrs extends ComponentAttrs {
   poll: Poll;
   post?: Post;
+  tooltipVisible?: boolean;
 }
 
 export default class PostPoll extends Component<PostPollAttrs> {
@@ -25,6 +26,7 @@ export default class PostPoll extends Component<PostPollAttrs> {
   useSubmitUI!: boolean;
   pendingSubmit: boolean = false;
   pendingOptions: any;
+  updateVisibility: () => void = () => {};
 
   oninit(vnode: Mithril.Vnode<PostPollAttrs, this>) {
     super.oninit(vnode);
@@ -206,11 +208,13 @@ export default class PostPoll extends Component<PostPollAttrs> {
   changeVote(option: PollOption, evt: Event) {
     if (!app.session.user) {
       app.modal.show(LogInModal);
-      evt.target.checked = false;
+      if (evt.target instanceof HTMLInputElement) {
+        evt.target.checked = false;
+      }
       return;
     }
 
-    const optionIds = this.pendingOptions || new Set(this.attrs.poll.myVotes().map?.((v) => v.option().id()));
+    const optionIds = this.pendingOptions || new Set(this.attrs.poll.myVotes().map?.((v) => v.option()?.id()));
     const isUnvoting = optionIds.delete(option.id());
     const allowsMultiple = this.attrs.poll.allowMultipleVotes();
 
@@ -228,42 +232,49 @@ export default class PostPoll extends Component<PostPollAttrs> {
       return;
     }
 
-    return this.submit(optionIds, null, () => (evt.target.checked = isUnvoting));
-  }
-
-  onsubmit() {
-    return this.submit(this.pendingOptions, () => {
-      this.pendingOptions = null;
-      this.pendingSubmit = false;
+    return this.submit(optionIds, null, () => {
+      if (evt.target instanceof HTMLInputElement) {
+        evt.target.checked = isUnvoting;
+      }
     });
   }
 
-  submit(optionIds, cb, onerror) {
+  onsubmit() {
+    return this.submit(
+      this.pendingOptions,
+      () => {
+        this.pendingOptions = null;
+        this.pendingSubmit = false;
+      },
+      null
+    );
+  }
+
+  async submit(optionIds: Iterable<unknown> | ArrayLike<unknown>, cb: { (): void; (): void } | null, onerror: any) {
     this.loadingOptions = true;
     m.redraw();
 
-    return app
-      .request({
-        method: 'PATCH',
-        url: `${app.forum.attribute('apiUrl')}/fof/polls/${this.attrs.poll.id()}/votes`,
-        body: {
-          data: {
-            optionIds: Array.from(optionIds),
+    try {
+      try {
+        const res = await app.request({
+          method: 'PATCH',
+          url: `${app.forum.attribute<Poll>('apiUrl')}/fof/polls/${this.attrs.poll.id()}/votes`,
+          body: {
+            data: {
+              optionIds: Array.from(optionIds),
+            },
           },
-        },
-      })
-      .then((res) => {
-        app.store.pushPayload(res);
+        });
+        app.store.pushPayload(res as any);
         cb?.();
-      })
-      .catch((err) => {
+      } catch (err) {
         onerror?.(err);
-      })
-      .finally(() => {
-        this.loadingOptions = false;
+      }
+    } finally {
+      this.loadingOptions = false;
 
-        m.redraw();
-      });
+      m.redraw();
+    }
   }
 
   showVoters() {
@@ -295,10 +306,11 @@ export default class PostPoll extends Component<PostPollAttrs> {
   /**
    * Alert before navigating away using browser's 'beforeunload' event
    */
-  preventClose(e) {
+  preventClose(e: Event) {
     if (this.pendingOptions) {
       e.preventDefault();
       return true;
     }
+    return undefined;
   }
 }

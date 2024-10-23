@@ -26,6 +26,7 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
   fileName: string | undefined = undefined;
   $input: JQuery<HTMLElement> | undefined;
 
+  // @ts-expect-error
   view(vnode: Mithril.Vnode<UploadPollImageButtonAttrs>) {
     this.attrs.loading = this.loading;
     this.attrs.className = classList(this.attrs.className, 'Button', 'Button--inverted');
@@ -70,6 +71,7 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
       .trigger('click')
       .on('change', (e) => {
         const body = new FormData();
+        // @ts-expect-error
         body.append(this.attrs.name, $(e.target)[0].files[0]);
 
         this.loading = true;
@@ -79,7 +81,7 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
           .request<PollUploadObject>({
             method: 'POST',
             url: this.resourceUrl(),
-            serialize: (raw) => raw,
+            serialize: (raw: any) => raw,
             body,
           })
           .then(this.success.bind(this), this.failure.bind(this));
