@@ -7,12 +7,14 @@ import Post from 'flarum/common/models/Post';
 export interface PostPollAttrs extends ComponentAttrs {
     poll: Poll;
     post?: Post;
+    tooltipVisible?: boolean;
 }
 export default class PostPoll extends Component<PostPollAttrs> {
     loadingOptions: boolean;
     useSubmitUI: boolean;
     pendingSubmit: boolean;
     pendingOptions: any;
+    updateVisibility: () => void;
     oninit(vnode: Mithril.Vnode<PostPollAttrs, this>): void;
     oncreate(vnode: Mithril.Vnode<PostPollAttrs, this>): void;
     onremove(vnode: Mithril.Vnode<PostPollAttrs, this>): void;
@@ -21,7 +23,10 @@ export default class PostPoll extends Component<PostPollAttrs> {
     viewOption(opt: PollOption): JSX.Element;
     changeVote(option: PollOption, evt: Event): Promise<void> | undefined;
     onsubmit(): Promise<void>;
-    submit(optionIds: any, cb: any, onerror: any): Promise<void>;
+    submit(optionIds: Iterable<unknown> | ArrayLike<unknown>, cb: {
+        (): void;
+        (): void;
+    } | null, onerror: any): Promise<void>;
     showVoters(): void;
     deletePoll(): void;
     /**
@@ -33,5 +38,5 @@ export default class PostPoll extends Component<PostPollAttrs> {
     /**
      * Alert before navigating away using browser's 'beforeunload' event
      */
-    preventClose(e: any): true | undefined;
+    preventClose(e: Event): true | undefined;
 }
