@@ -240,28 +240,31 @@ export default class PostPoll extends Component<PostPollAttrs> {
   }
 
   onsubmit() {
-    return this.submit(this.pendingOptions, () => {
-      this.pendingOptions = null;
-      this.pendingSubmit = false;
-    }, null);
+    return this.submit(
+      this.pendingOptions,
+      () => {
+        this.pendingOptions = null;
+        this.pendingSubmit = false;
+      },
+      null
+    );
   }
 
-  async submit(optionIds: Iterable<unknown> | ArrayLike<unknown>, cb: { (): void; (): void; } | null, onerror: any) {
+  async submit(optionIds: Iterable<unknown> | ArrayLike<unknown>, cb: { (): void; (): void } | null, onerror: any) {
     this.loadingOptions = true;
     m.redraw();
 
     try {
       try {
-        const res = await app
-          .request({
-            method: 'PATCH',
-            url: `${app.forum.attribute<Poll>('apiUrl')}/fof/polls/${this.attrs.poll.id()}/votes`,
-            body: {
-              data: {
-                optionIds: Array.from(optionIds),
-              },
+        const res = await app.request({
+          method: 'PATCH',
+          url: `${app.forum.attribute<Poll>('apiUrl')}/fof/polls/${this.attrs.poll.id()}/votes`,
+          body: {
+            data: {
+              optionIds: Array.from(optionIds),
             },
-          });
+          },
+        });
         app.store.pushPayload(res as any);
         cb?.();
       } catch (err) {
