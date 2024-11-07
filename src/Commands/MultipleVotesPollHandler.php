@@ -239,7 +239,8 @@ class MultipleVotesPollHandler
         // Check the arrays have the same values
         $same = (count(array_diff($optionIds, $myVotes)) === 0 && count(array_diff($myVotes, $optionIds)) === 0);
 
-        return !$same;
+        // Only when we have already voted that we are changing votes
+        return count($myVotes) !== 0 && !$same;
     }
 
     protected function validateInput(?array $optionIds, int $maxVotes, Collection $options): void
