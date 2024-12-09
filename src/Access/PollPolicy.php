@@ -21,7 +21,7 @@ class PollPolicy extends AbstractPolicy
     public function seeVoteCount(User $actor, Poll $poll)
     {
         $isPollAuthor = $actor->id === $poll->user_id;
-        
+
         if ($poll->hide_votes && $poll->end_date && !$poll->hasEnded() && !$isPollAuthor) {
             return $this->deny();
         }
