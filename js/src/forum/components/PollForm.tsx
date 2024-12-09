@@ -210,6 +210,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
         <Switch state={this.endDate() && this.hideVotes()} onchange={this.hideVotes} disabled={!this.endDate()}>
           {app.translator.trans('fof-polls.forum.modal.hide_votes_label')}
         </Switch>
+        <p className="helpText">{app.translator.trans('fof-polls.forum.modal.hide_votes_label_help')}</p>
       </div>,
       20
     );
