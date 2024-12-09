@@ -25,6 +25,7 @@ use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Factory;
+use Pusher;
 
 class MultipleVotesPollHandler
 {

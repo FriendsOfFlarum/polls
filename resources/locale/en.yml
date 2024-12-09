@@ -96,6 +96,7 @@ fof-polls:
       max_votes_label: Max votes per user
       max_votes_help: Set to 0 to allow users to vote for all options.
       hide_votes_label: Hide votes until poll ends
+      hide_votes_label_help: The user who started the poll will always be able to see the votes.
       allow_change_vote_label: Allow users to change their vote
       question_placeholder: Question
       subtitle_placeholder: Subtitle/Description (optional)
