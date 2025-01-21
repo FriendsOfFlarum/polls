@@ -171,11 +171,11 @@ export default class PollView extends Component<PollAttrs, PollState> {
       );
     }
 
-    if (poll.canVote()) {
+    if (poll.canVote() && !poll.hasEnded() && !this.state.hasVoted()) {
       items.add(
         'max-votes',
         <span>
-          <i className="icon fas fa-poll fa-fw" />
+          <i className="icon fas fa-chart-bar fa-fw" />
           {app.translator.trans('fof-polls.forum.max_votes_allowed', { max: maxVotes })}
         </span>
       );
@@ -189,6 +189,16 @@ export default class PollView extends Component<PollAttrs, PollState> {
           </span>
         );
       }
+    }
+
+    if (poll.hasEnded() || this.state.hasVoted()) {
+      items.add(
+        'total-vote-count',
+        <span>
+          <i className="icon fas fa-chart-bar fa-fw" aria-hidden="true" />
+          {app.translator.trans('fof-polls.forum.poll.total_votes', { count: poll.voteCount() })}
+        </span>
+      );
     }
 
     return items;
