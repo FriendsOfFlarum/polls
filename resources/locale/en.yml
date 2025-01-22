@@ -46,6 +46,7 @@ fof-polls:
       submit_button: Vote
       start_poll_button: Start Global Poll
       cannot_start_poll_button: Cannot Start Poll
+      total_votes: "{count, plural, one {# vote was given} other {# votes were given}}"
 
     poll_controls:
       edit_label: => core.ref.edit
