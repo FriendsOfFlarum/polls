@@ -100,6 +100,10 @@ class PollSerializer extends AbstractSerializer
 
     public function myVotes($model)
     {
+        if (!($model instanceof Poll)) {
+            return null;
+        }
+
         Poll::setStateUser($this->actor);
 
         // When called inside ShowDiscussionController, Flarum has already pre-loaded our relationship incorrectly
