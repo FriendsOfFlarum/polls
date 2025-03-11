@@ -15,6 +15,7 @@ use Flarum\Api\Serializer\AbstractSerializer;
 use FoF\Polls\Poll;
 use Illuminate\Contracts\Filesystem\Cloud;
 use Illuminate\Contracts\Filesystem\Factory;
+use InvalidArgumentException;
 
 class PollSerializer extends AbstractSerializer
 {
@@ -32,6 +33,12 @@ class PollSerializer extends AbstractSerializer
      */
     protected function getDefaultAttributes($poll)
     {
+        if (! ($poll instanceof Poll)) {
+            throw new InvalidArgumentException(
+                get_class($this).' can only serialize instances of '.Poll::class
+            );
+        }
+
         $canEdit = $this->actor->can('edit', $poll);
 
         $attributes = [
