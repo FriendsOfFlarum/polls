@@ -33,7 +33,7 @@ class PollOptionSerializer extends AbstractSerializer
      */
     protected function getDefaultAttributes($option)
     {
-        if (! ($option instanceof PollOption)) {
+        if (!($option instanceof PollOption)) {
             throw new InvalidArgumentException(
                 get_class($this).' can only serialize instances of '.PollOption::class
             );

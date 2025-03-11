@@ -32,7 +32,7 @@ class PollVoteSerializer extends AbstractSerializer
      */
     protected function getDefaultAttributes($vote)
     {
-        if (! ($vote instanceof PollVote)) {
+        if (!($vote instanceof PollVote)) {
             throw new InvalidArgumentException(
                 get_class($this).' can only serialize instances of '.PollVote::class
             );

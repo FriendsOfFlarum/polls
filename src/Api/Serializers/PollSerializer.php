@@ -33,7 +33,7 @@ class PollSerializer extends AbstractSerializer
      */
     protected function getDefaultAttributes($poll)
     {
-        if (! ($poll instanceof Poll)) {
+        if (!($poll instanceof Poll)) {
             throw new InvalidArgumentException(
                 get_class($this).' can only serialize instances of '.Poll::class
             );
