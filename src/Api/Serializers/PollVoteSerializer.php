@@ -14,6 +14,7 @@ namespace FoF\Polls\Api\Serializers;
 use Flarum\Api\Serializer\AbstractSerializer;
 use Flarum\Api\Serializer\BasicUserSerializer;
 use FoF\Polls\PollVote;
+use InvalidArgumentException;
 
 class PollVoteSerializer extends AbstractSerializer
 {
@@ -31,6 +32,12 @@ class PollVoteSerializer extends AbstractSerializer
      */
     protected function getDefaultAttributes($vote)
     {
+        if (!($vote instanceof PollVote)) {
+            throw new InvalidArgumentException(
+                get_class($this).' can only serialize instances of '.PollVote::class
+            );
+        }
+
         return [
             'pollId'    => $vote->poll_id,
             'optionId'  => $vote->option_id,

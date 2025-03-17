@@ -15,6 +15,7 @@ use Flarum\Api\Serializer\AbstractSerializer;
 use FoF\Polls\PollOption;
 use Illuminate\Contracts\Filesystem\Cloud;
 use Illuminate\Contracts\Filesystem\Factory;
+use InvalidArgumentException;
 
 class PollOptionSerializer extends AbstractSerializer
 {
@@ -32,6 +33,12 @@ class PollOptionSerializer extends AbstractSerializer
      */
     protected function getDefaultAttributes($option)
     {
+        if (!($option instanceof PollOption)) {
+            throw new InvalidArgumentException(
+                get_class($this).' can only serialize instances of '.PollOption::class
+            );
+        }
+
         $attributes = [
             'answer'      => $option->answer,
             'imageUrl'    => $this->getImageUrl($option),
