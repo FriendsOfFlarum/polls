@@ -147,7 +147,7 @@ class Poll extends AbstractModel
 
     protected static $stateUser;
 
-    public function myVotes(User $user = null)
+    public function myVotes(?User $user = null)
     {
         $user = $user ?: static::$stateUser;
 

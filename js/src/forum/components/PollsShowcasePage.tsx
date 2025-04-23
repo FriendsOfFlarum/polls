@@ -47,8 +47,9 @@ export default class PollsShowcasePage extends AbstractPollPage {
     const items = super.sidebarItems();
     const canStartPoll = app.forum.attribute<boolean>('canStartGlobalPolls');
 
+    items.remove('newDiscussion');
+
     if (canStartPoll) {
-      items.remove('newDiscussion');
       items.add(
         'newGlobalPoll',
         <Button
