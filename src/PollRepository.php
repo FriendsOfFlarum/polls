@@ -43,12 +43,12 @@ class PollRepository
     /**
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function findOrFail($id, User $actor = null): Poll
+    public function findOrFail($id, ?User $actor = null): Poll
     {
         return $this->queryVisibleTo($actor)->findOrFail($id);
     }
 
-    public function find($id, User $actor = null): ?Poll
+    public function find($id, ?User $actor = null): ?Poll
     {
         return $this->queryVisibleTo($actor)->find($id);
     }

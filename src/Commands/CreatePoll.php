@@ -42,7 +42,7 @@ class CreatePoll
      * @param array         $data
      * @param callable|null $savePollOn
      */
-    public function __construct(User $actor, ?Post $post, array $data, callable $savePollOn = null)
+    public function __construct(User $actor, ?Post $post, array $data, ?callable $savePollOn = null)
     {
         $this->actor = $actor;
         $this->post = $post;
