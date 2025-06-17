@@ -58,7 +58,6 @@ return [
         ->patch('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.edit', Controllers\EditPollGroupController::class)
         ->delete('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.delete', Controllers\DeletePollGroupController::class),
 
-
     (new Extend\Model(Post::class))
         ->hasMany('polls', Poll::class, 'post_id', 'id'),
 

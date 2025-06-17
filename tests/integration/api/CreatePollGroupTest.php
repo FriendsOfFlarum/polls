@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FoF\Polls\Tests\integration\api;
 
 use FoF\Polls\PollGroup;
@@ -17,7 +26,7 @@ class CreatePollGroupTest extends AbstractPollGroupTestCase
                 '/api/fof/polls/groups',
                 [
                     'authenticatedAs' => 3,
-                    'json' => [
+                    'json'            => [
                         'data' => [
                             'attributes' => [
                                 'name' => 'Test Poll Group',
@@ -55,7 +64,7 @@ class CreatePollGroupTest extends AbstractPollGroupTestCase
                 '/api/fof/polls/groups',
                 [
                     'authenticatedAs' => 2,
-                    'json' => [
+                    'json'            => [
                         'data' => [
                             'attributes' => [
                                 'name' => 'Test Poll Group',

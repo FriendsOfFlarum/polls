@@ -1,9 +1,18 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FoF\Polls\Tests\integration\api;
 
-use FoF\Polls\PollGroup;
 use FoF\Polls\Poll;
+use FoF\Polls\PollGroup;
 
 class DeletePollGroupTest extends AbstractPollGroupTestCase
 {
@@ -73,7 +82,7 @@ class DeletePollGroupTest extends AbstractPollGroupTestCase
         );
 
         $this->assertEquals(204, $response->getStatusCode());
-        
+
         // Check if poll_group_id is set to null for associated polls
         $poll = Poll::find(1);
         $this->assertNull($poll->poll_group_id);

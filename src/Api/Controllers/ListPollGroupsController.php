@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FoF\Polls\Api\Controllers;
 
 use Flarum\Api\Controller\AbstractListController;
@@ -7,9 +16,9 @@ use Flarum\Http\RequestUtil;
 use Flarum\Http\UrlGenerator;
 use FoF\Polls\Api\Serializers\PollGroupSerializer;
 use FoF\Polls\PollGroupRepository;
+use Illuminate\Database\Eloquent\Collection;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
-use Illuminate\Database\Eloquent\Collection;
 
 class ListPollGroupsController extends AbstractListController
 {
@@ -38,7 +47,7 @@ class ListPollGroupsController extends AbstractListController
         $actor = RequestUtil::getActor($request);
         $sort = $this->extractSort($request);
         $sortIsDefault = $this->sortIsDefault($request);
-        
+
         $limit = $this->extractLimit($request);
         $offset = $this->extractOffset($request);
         $include = $this->extractInclude($request);

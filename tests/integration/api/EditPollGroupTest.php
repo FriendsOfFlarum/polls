@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FoF\Polls\Tests\integration\api;
 
 use FoF\Polls\PollGroup;
@@ -26,7 +35,7 @@ class EditPollGroupTest extends AbstractPollGroupTestCase
                 '/api/fof/polls/groups/1',
                 [
                     'authenticatedAs' => 4,
-                    'json' => [
+                    'json'            => [
                         'data' => [
                             'attributes' => [
                                 'name' => 'Updated Group Name',
@@ -51,14 +60,15 @@ class EditPollGroupTest extends AbstractPollGroupTestCase
     /**
      * @test
      */
-    public function authorized_moderator_user_can_edit_other_poll_group(){
+    public function authorized_moderator_user_can_edit_other_poll_group()
+    {
         $response = $this->send(
             $this->request(
                 'PATCH',
                 '/api/fof/polls/groups/1',
                 [
                     'authenticatedAs' => 3,
-                    'json' => [
+                    'json'            => [
                         'data' => [
                             'attributes' => [
                                 'name' => 'Updated Group Name by User 3',
@@ -91,7 +101,7 @@ class EditPollGroupTest extends AbstractPollGroupTestCase
                 '/api/fof/polls/groups/1',
                 [
                     'authenticatedAs' => 2,
-                    'json' => [
+                    'json'            => [
                         'data' => [
                             'attributes' => [
                                 'name' => 'Updated Group Name',
@@ -103,7 +113,6 @@ class EditPollGroupTest extends AbstractPollGroupTestCase
         );
 
         $this->assertEquals(403, $response->getStatusCode());
-
 
         $pollGroup = PollGroup::find(1);
         $this->assertNotEquals('Updated Group Name', $pollGroup->name);
