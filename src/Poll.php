@@ -138,6 +138,14 @@ class Poll extends AbstractModel
         return $this->hasMany(PollVote::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function pollGroup()
+    {
+        return $this->belongsTo(PollGroup::class);
+    }
+
     public function refreshVoteCount(): self
     {
         $this->vote_count = $this->votes()->count();

@@ -51,7 +51,13 @@ return [
         ->post('/fof/polls/pollOptionImage', 'fof.polls.upload-option-image-option', Controllers\UploadPollOptionImageController::class)
         ->delete('/fof/polls/pollOptionImage/name/{fileName}', 'fof.polls.delete-option-image-name', Controllers\DeletePollImageByNameController::class)
         ->post('/fof/polls/pollOptionImage/{optionId:\d+}', 'fof.polls.upload-option-image', Controllers\UploadPollOptionImageController::class)
-        ->delete('/fof/polls/pollOptionImage/{optionId:\d+}', 'fof.polls.delete-option-image', Controllers\DeletePollOptionImageController::class),
+        ->delete('/fof/polls/pollOptionImage/{optionId:\d+}', 'fof.polls.delete-option-image', Controllers\DeletePollOptionImageController::class)
+        ->get('/fof/polls/groups', 'fof.polls.groups.index', Controllers\ListPollGroupsController::class)
+        ->get('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.show', Controllers\ShowPollGroupController::class)
+        ->post('/fof/polls/groups', 'fof.polls.groups.create', Controllers\CreatePollGroupController::class)
+        ->patch('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.edit', Controllers\EditPollGroupController::class)
+        ->delete('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.delete', Controllers\DeletePollGroupController::class),
+
 
     (new Extend\Model(Post::class))
         ->hasMany('polls', Poll::class, 'post_id', 'id'),
@@ -101,6 +107,7 @@ return [
 
     (new Extend\Policy())
         ->modelPolicy(Poll::class, Access\PollPolicy::class)
+        ->modelPolicy(PollGroup::class, Access\PollGroupPolicy::class)
         ->modelPolicy(Post::class, Access\PostPolicy::class),
 
     (new Extend\Settings())

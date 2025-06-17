@@ -9,6 +9,7 @@ import PollsPage from './components/PollsPage';
 import ComposePollPage from './components/ComposePollPage';
 import PollViewPage from './components/PollViewPage';
 import PollsShowcasePage from './components/PollsShowcasePage';
+import PollGroup from './models/PollGroup';
 
 export default [
   new Extend.Routes() //
@@ -20,7 +21,8 @@ export default [
   new Extend.Store() //
     .add('polls', Poll)
     .add('poll_options', PollOption)
-    .add('poll_votes', PollVote),
+    .add('poll_votes', PollVote)
+    .add('poll_groups', PollGroup),
 
   new Extend.Model(Post) //
     .hasMany<Poll>('polls')

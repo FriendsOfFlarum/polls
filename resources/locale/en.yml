@@ -30,6 +30,8 @@ fof-polls:
       vote: Vote on polls
       change_vote: Change vote
       moderate: Edit & remove polls
+      start_group: Create poll groups
+      moderate_group: Edit & remove poll groups
 
   forum:
     days_remaining: Poll ends {time}.
