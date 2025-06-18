@@ -13,6 +13,7 @@ namespace FoF\Polls\Tests\integration\api;
 
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
+use FoF\Polls\Poll;
 
 class EditPollTest extends TestCase
 {
@@ -40,10 +41,15 @@ class EditPollTest extends TestCase
             ],
             'polls' => [
                 ['id' => 1, 'question' => 'Testing Poll--Global', 'subtitle' => 'Testing subtitle', 'image' => 'pollimage-abcdef.png', 'image_alt' => 'test alt', 'post_id' => null, 'user_id' => 1, 'public_poll' => 0, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'allow_multiple_votes' => 0, 'max_votes' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
+                ['id' => 2, 'question' => 'Testing Poll--Group', 'subtitle' => 'Testing subtitle', 'image' => null, 'image_alt' => null, 'user_id' => 4, 'public_poll' => 1, 'end_date' => null, 'poll_group_id' => 1, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'allow_multiple_votes' => 0, 'max_votes' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
             ],
             'poll_options' => [
                 ['id' => 1, 'answer' => 'Option 1', 'poll_id' => 1, 'vote_count' => 0, 'image_url' => 'pollimage-hijklm.png', 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
                 ['id' => 2, 'answer' => 'Option 2', 'poll_id' => 1, 'vote_count' => 0, 'image_url' => 'pollimage-nopqrs.png', 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
+            ],
+            'poll_groups' => [
+                ['id' => 1, 'name' => 'Test Group', 'user_id' => 3],
+                ['id' => 2, 'name' => 'Another Group', 'user_id' => 4],
             ],
             'group_user' => [
                 ['user_id' => 4, 'group_id' => 4],
@@ -52,6 +58,9 @@ class EditPollTest extends TestCase
                 ['permission' => 'discussion.polls.start', 'group_id' => 4],
                 ['permission' => 'startGlobalPoll', 'group_id' => 4],
                 ['permission' => 'uploadPollImages', 'group_id' => 4],
+                ['permission' => 'polls.moderate', 'group_id' => 4],
+                ['permission' => 'startPollGroup', 'group_id' => 4],
+                ['permission' => 'polls.moderate_group', 'group_id' => 4],
             ],
         ]);
     }
@@ -174,5 +183,141 @@ class EditPollTest extends TestCase
         // We need to expect a 404 because the file is not found in the filesystem under test.
         // TODO - improve this!
         $this->assertEquals(404, $response->getStatusCode());
+    }
+
+    /**
+     * @test
+     */
+    public function poll_owner_can_add_poll_to_group()
+    {
+        $response = $this->send(
+            $this->request(
+                'PATCH',
+                '/api/fof/polls/1',
+                [
+                    'authenticatedAs' => 1,
+                    'json'            => [
+                        'data' => [
+                            'relationships' => [
+                                'pollGroup' => [
+                                    'data' => [
+                                        'type' => 'poll-groups',
+                                        'id'   => '1',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $poll = Poll::find(1);
+        $this->assertEquals(1, $poll->poll_group_id);
+    }
+
+    /**
+     * @test
+     */
+    public function moderator_can_change_poll_group()
+    {
+        $this->app();
+        $poll = Poll::find(2);
+        $this->assertEquals(1, $poll->poll_group_id);
+
+        $response = $this->send(
+            $this->request(
+                'PATCH',
+                '/api/fof/polls/2',
+                [
+                    'authenticatedAs' => 4,
+                    'json'            => [
+                        'data' => [
+                            'relationships' => [
+                                'pollGroup' => [
+                                    'data' => [
+                                        'type' => 'poll-groups',
+                                        'id'   => '2',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $poll = Poll::find(2);
+        $this->assertEquals(2, $poll->poll_group_id);
+    }
+
+    /**
+     * @test
+     */
+    public function unauthorized_user_cannot_change_poll_group()
+    {
+        $response = $this->send(
+            $this->request(
+                'PATCH',
+                '/api/fof/polls/2',
+                [
+                    'authenticatedAs' => 2,
+                    'json'            => [
+                        'data' => [
+                            'relationships' => [
+                                'pollGroup' => [
+                                    'data' => [
+                                        'type' => 'poll-groups',
+                                        'id'   => '1',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        $this->assertEquals(403, $response->getStatusCode());
+
+        $poll = Poll::find(1);
+        $this->assertNull($poll->poll_group_id);
+    }
+
+    /**
+     * @test
+     */
+    public function cannot_assign_poll_to_nonexistent_group()
+    {
+        $response = $this->send(
+            $this->request(
+                'PATCH',
+                '/api/fof/polls/1',
+                [
+                    'authenticatedAs' => 1,
+                    'json'            => [
+                        'data' => [
+                            'relationships' => [
+                                'pollGroup' => [
+                                    'data' => [
+                                        'type' => 'poll-groups',
+                                        'id'   => '999', // Non-existent ID
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        $this->assertEquals(404, $response->getStatusCode());
+
+        $poll = Poll::find(1);
+        $this->assertNull($poll->poll_group_id);
     }
 }

@@ -24,6 +24,8 @@ use Illuminate\Support\Str;
 
 class EditPollHandler
 {
+    use PollGroupRelationTrait;
+
     /**
      * @var PollValidator
      */
@@ -110,6 +112,8 @@ class EditPollHandler
             }
         }
 
+        $this->setPollGroupRelationData($command->actor, $poll, $command->data);
+
         $this->events->dispatch(new SavingPollAttributes($command->actor, $poll, $attributes, $command->data));
 
         $poll->save();
@@ -126,7 +130,7 @@ class EditPollHandler
             $id = Arr::get($opt, 'id');
 
             $optionAttributes = [
-                'answer'   => Arr::get($opt, 'attributes.answer'),
+                'answer' => Arr::get($opt, 'attributes.answer'),
                 'imageUrl' => Arr::get($opt, 'attributes.imageUrl'),
             ];
 
@@ -139,7 +143,7 @@ class EditPollHandler
             $option = $poll->options()->updateOrCreate([
                 'id' => $id,
             ], [
-                'answer'    => Arr::get($optionAttributes, 'answer'),
+                'answer' => Arr::get($optionAttributes, 'answer'),
                 'image_url' => Arr::get($optionAttributes, 'imageUrl'),
             ]);
 

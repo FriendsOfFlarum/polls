@@ -27,6 +27,8 @@ use Illuminate\Support\Arr;
 
 class CreatePollHandler
 {
+    use PollGroupRelationTrait;
+
     /**
      * @var PollValidator
      */
@@ -98,6 +100,8 @@ class CreatePollHandler
             $this->optionValidator->assertValid($optionData);
         }
 
+        $this->setPollGroupRelationData($command->actor, null, $command->data);
+
         return ($command->savePollOn)(function () use ($optionsData, $attributes, $command) {
             $endDate = Arr::get($attributes, 'endDate');
             $carbonDate = Carbon::parse($endDate);
@@ -120,6 +124,8 @@ class CreatePollHandler
                 Arr::get($attributes, 'pollImage'),
                 Arr::get($attributes, 'imageAlt')
             );
+
+            $this->setPollGroupRelationData($command->actor, $poll, $command->data);
 
             $this->events->dispatch(new SavingPollAttributes($command->actor, $poll, $attributes, $attributes));
 
