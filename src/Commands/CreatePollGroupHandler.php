@@ -11,11 +11,11 @@
 
 namespace FoF\Polls\Commands;
 
+use FoF\Polls\Events\SavingPollGroup;
 use FoF\Polls\PollGroup;
 use FoF\Polls\Validators\PollGroupValidator;
-use Illuminate\Support\Arr;
-use FoF\Polls\Events\SavingPollGroup;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Support\Arr;
 
 class CreatePollGroupHandler
 {
