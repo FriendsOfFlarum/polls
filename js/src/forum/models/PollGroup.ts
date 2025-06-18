@@ -21,6 +21,6 @@ export default class PollGroup extends Model {
 
   apiEndpoint() {
     //@ts-ignore
-    return `/fof/polls/groups${this.exists ? `/${this.data.id}` : ''}`;
+    return `/fof/polls/groups${this.exists ? `/${this.id()}` : ''}`;
   }
 }
