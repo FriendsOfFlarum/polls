@@ -71,7 +71,9 @@ class SavePollsToDatabase
             new CreatePoll(
                 $event->actor,
                 $event->post,
-                $attributes,
+                [
+                    'attributes' => $attributes,
+                ],
                 function (callable $callback) use ($event) {
                     $event->post->afterSave($callback);
                 }

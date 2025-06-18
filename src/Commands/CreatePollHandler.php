@@ -73,7 +73,7 @@ class CreatePollHandler
             $command->actor->assertCan('startGlobalPoll');
         }
 
-        $attributes = $command->data;
+        $attributes = Arr::get($command->data, 'attributes', []);
 
         // Ideally we would use some JSON:API relationship syntax, but it's just too complicated with Flarum to generate the correct JSON payload
         // Instead we just pass an array of option objects that are each a set of key-value pairs for the option attributes
