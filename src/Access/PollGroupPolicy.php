@@ -17,11 +17,9 @@ use FoF\Polls\PollGroup;
 
 class PollGroupPolicy extends AbstractPolicy
 {
-    public function can(User $user, string $ability, PollGroup $pollGroup)
+    public function edit(User $user, PollGroup $pollGroup)
     {
-        if ($ability === 'edit' || $ability === 'delete') {
-            return $user->id === $pollGroup->user_id || $user->hasPermission('polls.moderate_group');
-        }
+        return $user->id === $pollGroup->user_id || $user->hasPermission('polls.moderate_group');
     }
 
     public function create(User $user)
