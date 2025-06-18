@@ -130,7 +130,7 @@ class EditPollHandler
             $id = Arr::get($opt, 'id');
 
             $optionAttributes = [
-                'answer' => Arr::get($opt, 'attributes.answer'),
+                'answer'   => Arr::get($opt, 'attributes.answer'),
                 'imageUrl' => Arr::get($opt, 'attributes.imageUrl'),
             ];
 
@@ -143,7 +143,7 @@ class EditPollHandler
             $option = $poll->options()->updateOrCreate([
                 'id' => $id,
             ], [
-                'answer' => Arr::get($optionAttributes, 'answer'),
+                'answer'    => Arr::get($optionAttributes, 'answer'),
                 'image_url' => Arr::get($optionAttributes, 'imageUrl'),
             ]);
 
