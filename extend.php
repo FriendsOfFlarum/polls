@@ -29,7 +29,8 @@ return [
         ->route('/polls', 'fof.polls.showcase')
         ->route('/polls/all', 'fof.polls.list', Content\PollsDirectory::class)
         ->route('/polls/view/{id}', 'fof.poll.view')
-        ->route('/polls/composer', 'fof.polls.composer'),
+        ->route('/polls/composer', 'fof.polls.composer')
+        ->route('/polls/group/composer', 'fof.polls.group.compose'),
 
     (new Extend\Frontend('admin'))
         ->js(__DIR__.'/js/dist/admin.js')

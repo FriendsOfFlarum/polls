@@ -31,6 +31,8 @@ class PollGroupSerializer extends AbstractSerializer
         return [
             'name'        => $group->name,
             'createdAt'   => $this->formatDate($group->created_at),
+            'canEdit'            => $this->actor->can('edit', $group),
+            'canDelete'          => $this->actor->can('delete', $group),
         ];
     }
 

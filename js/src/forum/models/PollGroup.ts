@@ -19,6 +19,14 @@ export default class PollGroup extends Model {
     return Model.hasMany<Poll>('polls').call(this);
   }
 
+  canEdit() {
+    return Model.attribute<boolean>('canEdit').call(this);
+  }
+
+  canDelete() {
+    return Model.attribute<boolean>('canDelete').call(this);
+  }
+
   apiEndpoint() {
     //@ts-ignore
     return `/fof/polls/groups${this.exists ? `/${this.id()}` : ''}`;

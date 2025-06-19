@@ -10,13 +10,15 @@ import ComposePollPage from './components/ComposePollPage';
 import PollViewPage from './components/PollViewPage';
 import PollsShowcasePage from './components/PollsShowcasePage';
 import PollGroup from './models/PollGroup';
+import ComposePollGroupPage from './components/ComposePollGroupPage';
 
 export default [
   new Extend.Routes() //
     .add('fof.polls.showcase', '/polls', PollsShowcasePage)
     .add('fof.polls.list', '/polls/all', PollsPage)
     .add('fof.polls.view', '/polls/view/:id', PollViewPage)
-    .add('fof.polls.compose', '/polls/composer', ComposePollPage),
+    .add('fof.polls.compose', '/polls/composer', ComposePollPage)
+    .add('fof.polls.group.compose', '/polls/group/composer', ComposePollGroupPage),
 
   new Extend.Store() //
     .add('polls', Poll)
