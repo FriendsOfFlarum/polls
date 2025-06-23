@@ -20,7 +20,7 @@ export default class ComposePollGroupPage extends Page {
     super.oninit(vnode);
 
     // Permission check (adjust attribute names as needed)
-    if (!app.forum.attribute<boolean>('globalPollsEnabled') || !app.forum.attribute<boolean>('canStartPollGroup')) {
+    if (!app.forum.attribute<boolean>('pollGroupsEnabled') || !app.forum.attribute<boolean>('canStartPollGroup')) {
       m.route.set('/');
       return;
     }
@@ -49,7 +49,7 @@ export default class ComposePollGroupPage extends Page {
   }
 
   async loadEditingPollGroup(editId: string) {
-    const alreadyLoaded = app.store.getById<PollGroup>('poll-groups', editId);
+    const alreadyLoaded = app.store.getById<PollGroup>('poll_groups', editId);
     if (alreadyLoaded) return alreadyLoaded;
 
     this.loading = true;
