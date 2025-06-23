@@ -644,7 +644,7 @@ class CreatePollTest extends TestCase
                             'relationships' => [
                                 'pollGroup' => [
                                     'data' => [
-                                        'type' => 'poll-groups',
+                                        'type' => 'poll_groups',
                                         'id'   => '2',
                                     ],
                                 ],
@@ -700,7 +700,7 @@ class CreatePollTest extends TestCase
                             'relationships' => [
                                 'pollGroup' => [
                                     'data' => [
-                                        'type' => 'poll-groups',
+                                        'type' => 'poll_groups',
                                         'id'   => '2',
                                     ],
                                 ],
@@ -747,7 +747,7 @@ class CreatePollTest extends TestCase
                             'relationships' => [
                                 'pollGroup' => [
                                     'data' => [
-                                        'type' => 'poll-groups',
+                                        'type' => 'poll_groups',
                                         'id'   => '999', // Non-existent ID
                                     ],
                                 ],

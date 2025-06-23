@@ -8,7 +8,7 @@ export default class PollGroupFormState {
   deleting: boolean;
 
   static createNewPollGroup() {
-    const pollGroup = app.store.createRecord<PollGroup>('poll-groups');
+    const pollGroup = app.store.createRecord<PollGroup>('poll_groups');
 
     pollGroup.pushAttributes({
       name: '',

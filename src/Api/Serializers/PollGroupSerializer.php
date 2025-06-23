@@ -18,7 +18,7 @@ use InvalidArgumentException;
 
 class PollGroupSerializer extends AbstractSerializer
 {
-    protected $type = 'poll-groups';
+    protected $type = 'poll_groups';
 
     protected function getDefaultAttributes($group)
     {

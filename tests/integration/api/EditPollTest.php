@@ -201,7 +201,7 @@ class EditPollTest extends TestCase
                             'relationships' => [
                                 'pollGroup' => [
                                     'data' => [
-                                        'type' => 'poll-groups',
+                                        'type' => 'poll_groups',
                                         'id'   => '1',
                                     ],
                                 ],
@@ -238,7 +238,7 @@ class EditPollTest extends TestCase
                             'relationships' => [
                                 'pollGroup' => [
                                     'data' => [
-                                        'type' => 'poll-groups',
+                                        'type' => 'poll_groups',
                                         'id'   => '2',
                                     ],
                                 ],
@@ -271,7 +271,7 @@ class EditPollTest extends TestCase
                             'relationships' => [
                                 'pollGroup' => [
                                     'data' => [
-                                        'type' => 'poll-groups',
+                                        'type' => 'poll_groups',
                                         'id'   => '1',
                                     ],
                                 ],
@@ -304,7 +304,7 @@ class EditPollTest extends TestCase
                             'relationships' => [
                                 'pollGroup' => [
                                     'data' => [
-                                        'type' => 'poll-groups',
+                                        'type' => 'poll_groups',
                                         'id'   => '999', // Non-existent ID
                                     ],
                                 ],
