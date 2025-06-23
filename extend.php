@@ -30,7 +30,8 @@ return [
         ->route('/polls/all', 'fof.polls.list', Content\PollsDirectory::class)
         ->route('/polls/view/{id}', 'fof.poll.view')
         ->route('/polls/composer', 'fof.polls.composer')
-        ->route('/polls/group/composer', 'fof.polls.group.compose'),
+        ->route('/polls/group/composer', 'fof.polls.group.compose')
+        ->route('/polls/groups', 'fof.polls.groups.list'),
 
     (new Extend\Frontend('admin'))
         ->js(__DIR__.'/js/dist/admin.js')
@@ -119,6 +120,7 @@ return [
         ->default('fof-polls.image_width', 250)
         ->default('fof-polls.allowImageUploads', false)
         ->serializeToForum('globalPollsEnabled', 'fof-polls.enableGlobalPolls', 'boolval')
+        ->serializeToForum('pollGroupsEnabled', 'fof-polls.enablePollGroups', 'boolval')
         ->serializeToForum('allowPollOptionImage', 'fof-polls.allowOptionImage', 'boolval')
         ->serializeToForum('pollMaxOptions', 'fof-polls.maxOptions', 'intval')
         ->registerLessConfigVar('fof-polls-options-color-blend', 'fof-polls.optionsColorBlend', function ($value) {

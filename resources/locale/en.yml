@@ -15,6 +15,8 @@ fof-polls:
       allow_image_uploads_help: If enabled, users will be able to upload images alongside also providing an image URL (if enabled for options, always enabled for the poll itself).
       enable_global_polls: Enable global polls
       enable_global_polls_help: Global polls are not tied to a specific post, and may be accessed from a dedicated polls page.
+      enabled_poll_groups: Enable poll groups
+      enabled_poll_groups_help: Poll groups allow you to group globals polls together, and display them in a dedicated page.
       max_options: Maximum number of options per poll
       options_color_blend: Color blend text in poll options
       options_color_blend_help: Use this to use color mixing to make the poll options more readable. Disable if this feature causes issues with your forum's appearance, reducing readability.
@@ -61,6 +63,18 @@ fof-polls:
     poll_form:
       delete: Delete Poll
       error: There was an error saving the poll, please contact any administrator.
+
+    poll_groups:
+      composer:
+        add_title: Add Poll Group
+        edit_title: Edit Poll Group
+        save_changes: => core.ref.save_changes
+        delete: Delete Poll Group
+
+      list_page:
+        title: Poll Groups
+        empty_text: It looks as though there are no poll groups here.
+        load_more_button: => core.ref.load_more
 
     polls_page:
       title: Polls
@@ -128,6 +142,7 @@ fof-polls:
     page:
       nav: Polls
       nav-all: All Global Polls
+      nav-groups: Poll Groups
 
     showcase:
       active-polls: Active Polls
