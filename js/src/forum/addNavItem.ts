@@ -36,5 +36,19 @@ export default function addNavItem() {
         32
       );
     }
+
+    if (app.forum.attribute<boolean>('pollGroupsEnabled')) {
+      items.add(
+        'fof-poll-groups-list',
+        LinkButton.component(
+          {
+            href: app.route('fof.polls.groups.list'),
+            icon: 'fas fa-layer-group',
+          },
+          app.translator.trans('fof-polls.forum.page.nav-groups')
+        ),
+        30
+      );
+    }
   });
 }
