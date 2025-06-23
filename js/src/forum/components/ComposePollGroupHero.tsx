@@ -23,7 +23,7 @@ export default class ComposePollGroupHero extends Component<ComposePollGroupHero
         <div className="container">
           <div className="containerNarrow">
             <h2 className="Hero-title">
-              {app.translator.trans(`fof-polls.forum.pollgroup.${!!this.pollGroup.id() ? 'edit' : 'add'}_title`)}
+              {app.translator.trans(`fof-polls.forum.poll_groups.composer.${!!this.pollGroup.id() ? 'edit' : 'add'}_title`)}
             </h2>
             <div className="ComposePollGroupHero-controls">{this.controlItems().toArray()}</div>
           </div>
@@ -43,7 +43,7 @@ export default class ComposePollGroupHero extends Component<ComposePollGroupHero
         itemClassName="App-primaryControl"
         href={app.route('fof.polls.groups.list')}
       >
-        {app.translator.trans('fof-polls.forum.pollgroup.groups_manager')}
+        {app.translator.trans('fof-polls.forum.poll_groups.composer.groups_manager')}
       </LinkButton>
     );
 

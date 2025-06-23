@@ -444,11 +444,16 @@
 }
 
 @media @desktop-up {
-  .PollsPage .item-newGlobalPoll .Button {
-    display: block;
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .PollsPage {
+    .item-newGlobalPoll,
+    .item-newPollGroup {
+      .Button {
+        display: block;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
   }
 }
 

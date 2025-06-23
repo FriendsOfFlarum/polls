@@ -18,7 +18,7 @@ export default class PollGroupForm extends Component<PollGroupFormAttrs, PollGro
 
   oninit(vnode: Mithril.Vnode): void {
     super.oninit(vnode);
-    
+
     this.state = new PollGroupFormState(this.attrs.pollGroup);
     this.name = Stream(this.state.pollGroup.name() || '');
   }
@@ -48,13 +48,13 @@ export default class PollGroupForm extends Component<PollGroupFormAttrs, PollGro
     items.add(
       'submit',
       <div className="Form-group">
-        <Button 
-          type="submit" 
-          className="Button Button--primary PollGroupModal-SubmitButton" 
-          icon="fas fa-save" 
+        <Button
+          type="submit"
+          className="Button Button--primary PollGroupModal-SubmitButton"
+          icon="fas fa-save"
           loading={this.state.loading}
         >
-          {app.translator.trans('core.forum.composer.submit_button')}
+          {app.translator.trans('fof-polls.forum.poll_groups.composer.save_changes')}
         </Button>
         {this.state.pollGroup.exists && (
           <Button
@@ -63,7 +63,7 @@ export default class PollGroupForm extends Component<PollGroupFormAttrs, PollGro
             loading={this.state.deleting}
             onclick={this.delete.bind(this)}
           >
-            {app.translator.trans('core.forum.composer.discard_button')}
+            {app.translator.trans('fof-polls.forum.poll_groups.composer.delete')}
           </Button>
         )}
       </div>,

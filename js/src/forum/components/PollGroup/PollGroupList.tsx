@@ -27,13 +27,13 @@ export default class PollGroupList extends Component<PollGroupListAttrs> {
     } else if (state.hasNext()) {
       loading = (
         <Button className="Button" onclick={state.loadNext.bind(state)}>
-          {app.translator.trans('fof-polls.forum.pollgroups_list.load_more_button')}
+          {app.translator.trans('fof-polls.forum.poll_groups.list_page.load_more_button')}
         </Button>
       );
     }
 
     if (state.isEmpty()) {
-      const text = app.translator.trans('fof-polls.forum.pollgroups_list.empty_text');
+      const text = app.translator.trans('fof-polls.forum.poll_groups.list_page.empty_text');
       return (
         <div className="PollGroupList">
           <Placeholder text={text} />

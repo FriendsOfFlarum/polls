@@ -70,9 +70,12 @@ fof-polls:
         edit_title: Edit Poll Group
         save_changes: => core.ref.save_changes
         delete: Delete Poll Group
+        groups_manager: Poll Groups Manager
 
       list_page:
         title: Poll Groups
+        start_poll_group_button: Start a Poll Group
+        cannot_start_poll_group_button: Cannot Start a Poll Group
         empty_text: It looks as though there are no poll groups here.
         load_more_button: => core.ref.load_more
 
