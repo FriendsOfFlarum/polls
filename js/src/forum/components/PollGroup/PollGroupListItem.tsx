@@ -1,34 +1,60 @@
 import Component, { ComponentAttrs } from 'flarum/common/Component';
 import PollGroup from '../../models/PollGroup';
+import Poll from '../../models/Poll';
 import classList from 'flarum/common/utils/classList';
 import app from 'flarum/forum/app';
-import PollListState from '../../states/PollListState';
 import PollListItem from '../Poll/PollListItem';
 import Mithril from 'mithril';
 import Dropdown from 'flarum/common/components/Dropdown';
 import PollGroupControls from '../../utils/PollGroupControls';
+import ItemList from 'flarum/common/utils/ItemList';
+import PollGroupListState from 'src/forum/states/PollGroupListState';
 
 interface PollGroupListItemAttrs extends ComponentAttrs {
   pollGroup: PollGroup;
+  poll: Poll;
   params?: any;
+  state: PollGroupListState;
 }
 
-export default class PollGroupListItem extends Component<PollGroupListItemAttrs, PollListState> {
-  oninit(vnode: any) {
-    super.oninit(vnode);
+export default class PollGroupListItem extends Component<PollGroupListItemAttrs> {
+  // oninit(vnode: any) {
+  //   super.oninit(vnode);
 
-    this.state = new PollListState({
-      filter: {
-        pollGroup: this.attrs.pollGroup.id(),
-      },
+  //   this.state = new PollListState({
+  //     filter: {
+  //       pollGroup: this.attrs.pollGroup.id(),
+  //     },
+  //   });
+  //   this.state.refresh();
+  // }
+
+  pollItems(): ItemList<Mithril.Children> {
+    const polls = this.attrs.pollGroup.polls();
+    const items = new ItemList<Mithril.Children>();
+
+    if (!polls || polls.length === 0) {
+      return items;
+    }
+
+    polls.forEach((poll: Poll | undefined): void => {
+      if (poll) {
+        items.add(
+          'poll-' + poll.id(),
+          <li key={poll.id()} className="PollGroup-poll">
+            <PollListItem poll={poll} />
+          </li>
+        );
+      }
     });
-    this.state.refresh();
+
+    return items;
   }
 
   view() {
     const pollGroup = this.attrs.pollGroup;
-    // @ts-expect-error
     const controls = PollGroupControls.controls(pollGroup, this);
+    const polls = this.pollItems().toArray();
 
     return (
       <div className={classList('PollGroupListItem', 'PollGroupListItem--pollgroup')}>
@@ -38,17 +64,7 @@ export default class PollGroupListItem extends Component<PollGroupListItemAttrs,
         </div>
 
         <ul className="PollGroupListItem-polls">
-          {this.state.getPages().length > 0 ? (
-            this.state.getPages().map((pg) => {
-              return pg.items.map((poll) => (
-                <li key={poll.id()} data-id={poll.id()}>
-                  <PollListItem poll={poll} params={{}} />
-                </li>
-              ));
-            })
-          ) : (
-            <span>{app.translator.trans('fof-polls.forum.poll_groups.list_page.no_polls')}</span>
-          )}
+          {polls.length > 0 ? polls : <span>{app.translator.trans('fof-polls.forum.poll_groups.list_page.no_polls')}</span>}
         </ul>
       </div>
     );
