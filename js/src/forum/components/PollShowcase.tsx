@@ -5,6 +5,7 @@ import ItemList from 'flarum/common/utils/ItemList';
 import PollShowcaseItem from './PollShowcaseItem';
 import Placeholder from 'flarum/common/components/Placeholder';
 import app from 'flarum/forum/app';
+import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 
 export interface PollListAttrs extends ComponentAttrs {
   state: PollListState;
@@ -37,6 +38,9 @@ export default class PollShowcase extends Component<PollListAttrs, PollListState
   showcaseItems(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
 
+    // Show loading indicator while the state is loading
+    this.attrs.state.isLoading() && items.add('loading', <LoadingIndicator />);
+
     this.attrs.state.getPages().map((page) => {
       page.items.map((poll) => {
         if (!poll.hasEnded()) {
@@ -50,6 +54,9 @@ export default class PollShowcase extends Component<PollListAttrs, PollListState
 
   endedItems(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
+
+    // Show loading indicator while the state is loading
+    this.attrs.state.isLoading() && items.add('loading', <LoadingIndicator />);
 
     this.attrs.state.getPages().map((page) => {
       page.items.map((poll) => {
