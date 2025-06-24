@@ -1,6 +1,7 @@
 import Model from 'flarum/common/Model';
 import PollOption from './PollOption';
 import PollVote from './PollVote';
+import PollGroup from './PollGroup';
 export default class Poll extends Model {
     tempOptions: PollOption[] | undefined;
     question(): string;
@@ -25,6 +26,7 @@ export default class Poll extends Model {
     options(): PollOption[];
     votes(): false | (PollVote | undefined)[];
     myVotes(): PollVote[];
+    pollGroup(): false | PollGroup;
     isGlobal(): boolean;
     isHidden(): boolean;
     isUnread(): boolean;
