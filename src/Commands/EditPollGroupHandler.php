@@ -11,6 +11,7 @@
 
 namespace FoF\Polls\Commands;
 
+use FoF\Polls\Events\SavedPollGroup;
 use FoF\Polls\Events\SavingPollGroup;
 use FoF\Polls\PollGroup;
 use FoF\Polls\Validators\PollGroupValidator;
@@ -46,6 +47,8 @@ class EditPollGroupHandler
         $this->events->dispatch(new SavingPollGroup($actor, $group, $data));
 
         $group->save();
+
+        $this->events->dispatch(new SavedPollGroup($actor, $group, $data));
 
         return $group;
     }

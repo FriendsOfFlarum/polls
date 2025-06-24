@@ -16,6 +16,16 @@ use Illuminate\Database\Eloquent\Builder;
 
 class PollGroupRepository
 {
+    public static function createPollGroup(User $actor, string $name): PollGroup
+    {
+        $pollGroup = new PollGroup();
+        $pollGroup->user_id = $actor->id;
+        $pollGroup->name = $name;
+
+        return $pollGroup;
+    }
+
+
     /**
      * @return Builder
      */

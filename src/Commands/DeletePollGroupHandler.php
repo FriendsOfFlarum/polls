@@ -11,10 +11,20 @@
 
 namespace FoF\Polls\Commands;
 
+use FoF\Polls\Events\DeletedPollGroup;
+use FoF\Polls\Events\DeletingPollGroup;
 use FoF\Polls\PollGroup;
+use Illuminate\Contracts\Events\Dispatcher;
 
 class DeletePollGroupHandler
 {
+    protected $events;
+
+    public function __construct(Dispatcher $events)
+    {
+        $this->events = $events;
+    }
+
     public function handle(DeletePollGroup $command)
     {
         $actor = $command->actor;
@@ -22,7 +32,11 @@ class DeletePollGroupHandler
 
         $actor->assertCan('delete', $group);
 
+        $this->events->dispatch(new DeletingPollGroup($actor, $group));
+
         $group->delete();
+
+        $this->events->dispatch(new DeletedPollGroup($actor, $group));
 
         return $group;
     }
