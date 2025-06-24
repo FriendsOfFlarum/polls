@@ -1,6 +1,5 @@
 import Model from 'flarum/common/Model';
 import Poll from './Poll';
-import User from 'flarum/common/models/User';
 
 export default class PollGroup extends Model {
   name() {
@@ -9,10 +8,6 @@ export default class PollGroup extends Model {
 
   createdAt() {
     return Model.attribute('createdAt', Model.transformDate).call(this);
-  }
-
-  user() {
-    return Model.hasOne<User>('user').call(this);
   }
 
   polls() {

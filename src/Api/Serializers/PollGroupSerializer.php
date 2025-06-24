@@ -36,11 +36,6 @@ class PollGroupSerializer extends AbstractSerializer
         ];
     }
 
-    protected function user($group)
-    {
-        return $this->hasOne($group, BasicUserSerializer::class);
-    }
-
     protected function polls($group)
     {
         return $this->hasMany($group, PollSerializer::class);

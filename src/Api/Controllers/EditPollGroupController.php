@@ -24,6 +24,8 @@ class EditPollGroupController extends AbstractShowController
 {
     public $serializer = PollGroupSerializer::class;
 
+    public $include = ['polls'];
+
     protected $bus;
 
     public function __construct(Dispatcher $bus)

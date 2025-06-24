@@ -23,7 +23,9 @@ class ShowPollGroupController extends AbstractShowController
 {
     public $serializer = PollGroupSerializer::class;
 
-    public $include = ['user', 'polls', 'polls.options', 'polls.votes'];
+    public $include = ['polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option'];
+
+    public $optionalInclude = ['polls.votes', 'polls.votes.option', 'polls.votes.user'];
 
     /**
      * @var PollGroupRepository
