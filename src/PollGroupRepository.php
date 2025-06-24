@@ -25,7 +25,6 @@ class PollGroupRepository
         return $pollGroup;
     }
 
-
     /**
      * @return Builder
      */
