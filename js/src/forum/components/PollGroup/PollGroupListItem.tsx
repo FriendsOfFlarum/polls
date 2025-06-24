@@ -20,16 +20,6 @@ interface PollGroupListItemAttrs extends ComponentAttrs {
 }
 
 export default class PollGroupListItem extends Component<PollGroupListItemAttrs> {
-  // oninit(vnode: any) {
-  //   super.oninit(vnode);
-
-    // this.state = new PollListState({
-  //     filter: {
-  //       pollGroup: this.attrs.pollGroup.id(),
-  //     },
-  //   });
-    // this.state.refresh();
-  // }
 
   pollItems(): ItemList<Mithril.Children> {
     const polls = this.attrs.pollGroup.polls();
@@ -44,11 +34,7 @@ export default class PollGroupListItem extends Component<PollGroupListItemAttrs>
         items.add(
           'poll-' + poll.id(),
           <li key={poll.id()} className="PollGroup-poll">
-            {(!this.attrs.compactView) ? (
-              <PollShowcaseItem poll={poll} />
-            ) : (
-              <PollListItem poll={poll} />
-            )}
+            {!this.attrs.compactView ? <PollShowcaseItem poll={poll} /> : <PollListItem poll={poll} />}
           </li>
         );
       }

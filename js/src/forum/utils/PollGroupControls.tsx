@@ -59,7 +59,6 @@ export default {
           {app.translator.trans(`fof-polls.forum.poll_groups.controls.view_label`)}
         </Button>
       );
-
     }
 
     return items;
