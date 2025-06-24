@@ -136,4 +136,8 @@ return [
 
     (new Extend\Filesystem())
         ->disk('fof-polls', PollImageDisk::class),
+
+    (new Extend\Filter(Filter\GlobalPollFilterer::class))
+        ->addFilter(Filter\PollGroupFilter::class)
+        ->addFilterMutator(Filter\HideGroupedPollsFromGlobalPolls::class),
 ];
