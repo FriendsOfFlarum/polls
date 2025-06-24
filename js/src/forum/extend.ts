@@ -19,8 +19,8 @@ export default [
     .add('fof.polls.showcase', '/polls', PollsShowcasePage)
     .add('fof.polls.list', '/polls/all', PollsPage)
     .add('fof.polls.view', '/polls/view/:id', PollViewPage)
-    .add('fof.polls.compose', '/polls/composer', ComposePollPage)
-    .add('fof.polls.group.compose', '/polls/groups/composer', ComposePollGroupPage)
+    .add('fof.polls.composer', '/polls/composer', ComposePollPage)
+    .add('fof.polls.groups.composer', '/polls/groups/composer', ComposePollGroupPage)
     .add('fof.polls.groups.list', '/polls/groups', PollGroupListPage)
     .add('fof.polls.groups.view', '/polls/groups/:id', PollGroupViewPage),
 

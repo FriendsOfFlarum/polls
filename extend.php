@@ -30,7 +30,7 @@ return [
         ->route('/polls/all', 'fof.polls.list', Content\PollsDirectory::class)
         ->route('/polls/view/{id}', 'fof.poll.view')
         ->route('/polls/composer', 'fof.polls.composer')
-        ->route('/polls/groups/composer', 'fof.polls.groups.compose')
+        ->route('/polls/groups/composer', 'fof.polls.groups.composer')
         ->route('/polls/groups', 'fof.polls.groups.list')
         ->route('/polls/groups/{id}', 'fof.polls.groups.view'),
 
