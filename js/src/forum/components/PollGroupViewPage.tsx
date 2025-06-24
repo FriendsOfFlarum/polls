@@ -31,7 +31,7 @@ export default class PollGroupViewPage extends AbstractPollGroupsPage {
     const items = super.contentItems();
 
     if (this.pollGroup) {
-      items.add('pollGroup', <PollGroupListItem pollGroup={this.pollGroup} />);
+      items.add('pollGroup', <PollGroupListItem pollGroup={this.pollGroup} compactView={false} />);
     }
 
     return items;

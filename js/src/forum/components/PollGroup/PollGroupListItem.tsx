@@ -8,25 +8,27 @@ import Mithril from 'mithril';
 import Dropdown from 'flarum/common/components/Dropdown';
 import PollGroupControls from '../../utils/PollGroupControls';
 import ItemList from 'flarum/common/utils/ItemList';
-import PollGroupListState from 'src/forum/states/PollGroupListState';
+import PollShowcaseItem from '../Poll/PollShowcaseItem';
+// import PollGroupListState from 'src/forum/states/PollGroupListState';
 
 interface PollGroupListItemAttrs extends ComponentAttrs {
   pollGroup: PollGroup;
   poll: Poll;
   params?: any;
-  state: PollGroupListState;
+  compactView: boolean;
+  // state: PollGroupListState;
 }
 
 export default class PollGroupListItem extends Component<PollGroupListItemAttrs> {
   // oninit(vnode: any) {
   //   super.oninit(vnode);
 
-  //   this.state = new PollListState({
+    // this.state = new PollListState({
   //     filter: {
   //       pollGroup: this.attrs.pollGroup.id(),
   //     },
   //   });
-  //   this.state.refresh();
+    // this.state.refresh();
   // }
 
   pollItems(): ItemList<Mithril.Children> {
@@ -42,7 +44,11 @@ export default class PollGroupListItem extends Component<PollGroupListItemAttrs>
         items.add(
           'poll-' + poll.id(),
           <li key={poll.id()} className="PollGroup-poll">
-            <PollListItem poll={poll} />
+            {(!this.attrs.compactView) ? (
+              <PollShowcaseItem poll={poll} />
+            ) : (
+              <PollListItem poll={poll} />
+            )}
           </li>
         );
       }

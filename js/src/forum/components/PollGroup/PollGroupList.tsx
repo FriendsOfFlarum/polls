@@ -47,7 +47,7 @@ export default class PollGroupList extends Component<PollGroupListAttrs> {
           {state.getPages().map((pg) => {
             return pg.items.map((pollGroup) => (
               <li key={pollGroup.id()} data-id={pollGroup.id()}>
-                <PollGroupListItem pollGroup={pollGroup} params={params} />
+                <PollGroupListItem pollGroup={pollGroup} params={params} compactView={true} />
               </li>
             ));
           })}
