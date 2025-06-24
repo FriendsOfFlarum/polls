@@ -6,6 +6,8 @@ import ItemList from 'flarum/common/utils/ItemList';
 import Separator from 'flarum/common/components/Separator';
 import Button from 'flarum/common/components/Button';
 import ComposePollGroupPage from '../components/ComposePollGroupPage';
+import CreatePollModal from '../components/CreatePollModal';
+import PollModelAttributes from '../models/PollModelAttributes';
 
 /**
  * The `PollGroupControls` utility constructs a list of buttons for a poll group which
@@ -118,6 +120,27 @@ export default {
    * Add poll to group.
    */
   addPoll(pollGroup: PollGroup): void {
-    m.route.set(app.route('fof.polls.compose', { pollGroupId: pollGroup.id() }));
+    app.modal.show(CreatePollModal, { onsubmit: function (data: PollModelAttributes):void {
+          app.store
+            .createRecord('polls')
+            .save(
+              {
+                ...data,
+                relationships: {
+                  pollGroup: pollGroup,
+                },
+              },
+              {
+                data: {
+                  include: 'options,myVotes,myVotes.option',
+                },
+              }
+            )
+            .then((poll) => {
+              // @ts-ignore
+              pollGroup.rawRelationship('polls')?.push?.({ type: 'polls', id: poll.id() });
+            });
+
+      }});
   },
 };

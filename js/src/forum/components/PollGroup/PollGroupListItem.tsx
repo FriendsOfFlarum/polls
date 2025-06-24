@@ -24,6 +24,7 @@ export default class PollGroupListItem extends Component<PollGroupListItemAttrs,
         pollGroup: this.attrs.pollGroup.id(),
       },
     });
+    this.state.refresh();
   }
 
   view() {

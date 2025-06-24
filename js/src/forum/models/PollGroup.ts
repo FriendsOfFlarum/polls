@@ -16,7 +16,7 @@ export default class PollGroup extends Model {
   }
 
   polls() {
-    return Model.hasMany<Poll>('polls').call(this);
+    return Model.hasMany<Poll>('polls').call(this) || null;
   }
 
   canEdit() {

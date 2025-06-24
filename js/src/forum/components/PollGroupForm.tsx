@@ -7,6 +7,10 @@ import Stream from 'flarum/common/utils/Stream';
 import FormError from './form/FormError';
 import PollGroupModel from '../models/PollGroup';
 import PollGroupFormState from '../states/PollGroupFormState';
+import CreatePollModal from './CreatePollModal';
+import PollModelAttributes from '../models/PollModelAttributes';
+import PollCompactListItem from './Poll/PollCompactListItem';
+import PollGroupControls from '../utils/PollGroupControls';
 
 interface PollGroupFormAttrs extends ComponentAttrs {
   pollGroup: PollGroupModel;
@@ -43,6 +47,26 @@ export default class PollGroupForm extends Component<PollGroupFormAttrs, PollGro
       100
     );
 
+    if (this.state.pollGroup.exists) {
+      items.add(
+        'addPoll',
+        <div className="Form-group">
+          <Button
+            className="Button Button--primary PollGroupModal-addPollButton"
+            icon="fas fa-plus"
+            onclick={() => PollGroupControls.addPoll(this.state.pollGroup)}
+          >
+            {app.translator.trans('fof-polls.forum.pollgroup_controls.add_poll_button')}
+          </Button>
+        </div>
+      );
+
+      const pollItems = this.pollItems().toArray();
+      if (pollItems.length > 0) {
+        items.add('polls', <div className="PollGroup-polls">{pollItems}</div>);
+      }
+    }
+
     items.add(
       'submit',
       <div className="Form-group">
@@ -62,6 +86,28 @@ export default class PollGroupForm extends Component<PollGroupFormAttrs, PollGro
       </div>,
       -10
     );
+
+    return items;
+  }
+
+  pollItems(): ItemList<Mithril.Children> {
+    const polls = this.state.pollGroup.polls();
+    const items = new ItemList<Mithril.Children>();
+
+    if (!polls || polls.length === 0) {
+      return items;
+    }
+
+    polls.forEach((poll): void => {
+      if (poll) {
+        items.add(
+          'poll-' + poll.id(),
+          <div key={poll.id()} className="PollGroup-poll">
+            <PollCompactListItem poll={poll} />
+          </div>
+        );
+      }
+    });
 
     return items;
   }
