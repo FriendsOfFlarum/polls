@@ -110,7 +110,7 @@ export default class PollGroupListState<P extends PollGroupListParams = PollGrou
     const index = this.extraGroups.indexOf(pollGroup);
 
     if (index !== -1) {
-      this.extraGroups.splice(index);
+      this.extraGroups.splice(index,1);
     }
 
     m.redraw();

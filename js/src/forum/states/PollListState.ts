@@ -110,7 +110,7 @@ export default class PollListState<P extends PollListParams = PollListParams> ex
     const index = this.extraPolls.indexOf(poll);
 
     if (index !== -1) {
-      this.extraPolls.splice(index);
+      this.extraPolls.splice(index, 1);
     }
 
     m.redraw();
