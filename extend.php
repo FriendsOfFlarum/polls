@@ -129,7 +129,7 @@ return [
         ->disk('fof-polls', PollImageDisk::class),
 
     (new Extend\Conditional())
-        ->when(new Extender\IsPollGroupEnabled(), function (){
+        ->when(new Extender\IsPollGroupEnabled(), function () {
             return [
                 (new Extend\Policy())
                     ->modelPolicy(PollGroup::class, Access\PollGroupPolicy::class),
