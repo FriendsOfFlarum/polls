@@ -15,12 +15,20 @@ use Flarum\Testing\integration\TestCase;
 
 abstract class AbstractPollGroupTestCase extends TestCase
 {
+    public static function enablePollGroup(): void
+    {
+        if (!defined('FOF_POLLS_TESTS_POLL_GROUP_ENABLED')) {
+            define('FOF_POLLS_TESTS_POLL_GROUP_ENABLED', true);
+        }
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->extension('fof-polls');
         $this->prepareDatabase($this->getDefaultData());
+        static::enablePollGroup();
     }
 
     protected function getDefaultData(): array

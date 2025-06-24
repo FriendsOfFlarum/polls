@@ -616,6 +616,7 @@ class CreatePollTest extends TestCase
      */
     public function authorized_user_can_create_poll_with_poll_group(int $userId)
     {
+        AbstractPollGroupTestCase::enablePollGroup();
         $response = $this->send(
             $this->request(
                 'POST',
@@ -672,6 +673,7 @@ class CreatePollTest extends TestCase
      */
     public function unauthorized_user_cannot_create_poll_with_poll_group(int $userId)
     {
+        AbstractPollGroupTestCase::enablePollGroup();
         $response = $this->send(
             $this->request(
                 'POST',
@@ -719,6 +721,7 @@ class CreatePollTest extends TestCase
      */
     public function cannot_create_poll_with_nonexistent_poll_group()
     {
+        AbstractPollGroupTestCase::enablePollGroup();
         $response = $this->send(
             $this->request(
                 'POST',

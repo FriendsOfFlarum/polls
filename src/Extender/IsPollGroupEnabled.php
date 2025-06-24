@@ -17,6 +17,10 @@ class IsPollGroupEnabled
 {
     public function __invoke(SettingsRepositoryInterface $settings)
     {
+        if(defined('FOF_POLLS_TESTS_POLL_GROUP_ENABLED')) {
+            return true;
+        }
+
         return (bool) $settings->get('fof-polls.enablePollGroups', false);
     }
 }
