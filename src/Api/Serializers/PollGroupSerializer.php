@@ -12,7 +12,6 @@
 namespace FoF\Polls\Api\Serializers;
 
 use Flarum\Api\Serializer\AbstractSerializer;
-use Flarum\Api\Serializer\BasicUserSerializer;
 use FoF\Polls\PollGroup;
 use InvalidArgumentException;
 
