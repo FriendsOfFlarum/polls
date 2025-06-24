@@ -30,8 +30,9 @@ return [
         ->route('/polls/all', 'fof.polls.list', Content\PollsDirectory::class)
         ->route('/polls/view/{id}', 'fof.poll.view')
         ->route('/polls/composer', 'fof.polls.composer')
-        ->route('/polls/group/composer', 'fof.polls.group.compose')
-        ->route('/polls/groups', 'fof.polls.groups.list'),
+        ->route('/polls/groups/composer', 'fof.polls.groups.compose')
+        ->route('/polls/groups', 'fof.polls.groups.list')
+        ->route('/polls/groups/{id}', 'fof.polls.groups.view'),
 
     (new Extend\Frontend('admin'))
         ->js(__DIR__.'/js/dist/admin.js')
