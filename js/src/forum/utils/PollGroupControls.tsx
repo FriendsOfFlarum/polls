@@ -120,28 +120,29 @@ export default {
    * Add poll to group.
    */
   addPoll(pollGroup: PollGroup): void {
-    app.modal.show(CreatePollModal, { onsubmit: function (data: PollModelAttributes):void {
-          app.store
-            .createRecord('polls')
-            .save(
-              {
-                ...data,
-                relationships: {
-                  pollGroup: pollGroup,
-                },
+    app.modal.show(CreatePollModal, {
+      onsubmit: function (data: PollModelAttributes): void {
+        app.store
+          .createRecord('polls')
+          .save(
+            {
+              ...data,
+              relationships: {
+                pollGroup: pollGroup,
               },
-              {
-                data: {
-                  include: 'options,myVotes,myVotes.option',
-                },
-              }
-            )
-            .then((poll) => {
-              // @ts-ignore
-              pollGroup.rawRelationship('polls')?.push?.({ type: 'polls', id: poll.id() });
-              m.redraw();
-            });
-
-      }});
+            },
+            {
+              data: {
+                include: 'options,myVotes,myVotes.option',
+              },
+            }
+          )
+          .then((poll) => {
+            // @ts-ignore
+            pollGroup.rawRelationship('polls')?.push?.({ type: 'polls', id: poll.id() });
+            m.redraw();
+          });
+      },
+    });
   },
 };
