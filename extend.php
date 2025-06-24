@@ -29,10 +29,7 @@ return [
         ->route('/polls', 'fof.polls.showcase')
         ->route('/polls/all', 'fof.polls.list', Content\PollsDirectory::class)
         ->route('/polls/view/{id}', 'fof.poll.view')
-        ->route('/polls/composer', 'fof.polls.composer')
-        ->route('/polls/groups/composer', 'fof.polls.groups.composer')
-        ->route('/polls/groups', 'fof.polls.groups.list')
-        ->route('/polls/groups/{id}', 'fof.polls.groups.view'),
+        ->route('/polls/composer', 'fof.polls.composer'),
 
     (new Extend\Frontend('admin'))
         ->js(__DIR__.'/js/dist/admin.js')
@@ -54,12 +51,7 @@ return [
         ->post('/fof/polls/pollOptionImage', 'fof.polls.upload-option-image-option', Controllers\UploadPollOptionImageController::class)
         ->delete('/fof/polls/pollOptionImage/name/{fileName}', 'fof.polls.delete-option-image-name', Controllers\DeletePollImageByNameController::class)
         ->post('/fof/polls/pollOptionImage/{optionId:\d+}', 'fof.polls.upload-option-image', Controllers\UploadPollOptionImageController::class)
-        ->delete('/fof/polls/pollOptionImage/{optionId:\d+}', 'fof.polls.delete-option-image', Controllers\DeletePollOptionImageController::class)
-        ->get('/fof/polls/groups', 'fof.polls.groups.index', Controllers\ListPollGroupsController::class)
-        ->get('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.show', Controllers\ShowPollGroupController::class)
-        ->post('/fof/polls/groups', 'fof.polls.groups.create', Controllers\CreatePollGroupController::class)
-        ->patch('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.edit', Controllers\EditPollGroupController::class)
-        ->delete('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.delete', Controllers\DeletePollGroupController::class),
+        ->delete('/fof/polls/pollOptionImage/{optionId:\d+}', 'fof.polls.delete-option-image', Controllers\DeletePollOptionImageController::class),
 
     (new Extend\Model(Post::class))
         ->hasMany('polls', Poll::class, 'post_id', 'id'),
@@ -109,7 +101,6 @@ return [
 
     (new Extend\Policy())
         ->modelPolicy(Poll::class, Access\PollPolicy::class)
-        ->modelPolicy(PollGroup::class, Access\PollGroupPolicy::class)
         ->modelPolicy(Post::class, Access\PostPolicy::class),
 
     (new Extend\Settings())
@@ -137,7 +128,27 @@ return [
     (new Extend\Filesystem())
         ->disk('fof-polls', PollImageDisk::class),
 
-    (new Extend\Filter(Filter\GlobalPollFilterer::class))
-        ->addFilter(Filter\PollGroupFilter::class)
-        ->addFilterMutator(Filter\HideGroupedPollsFromGlobalPolls::class),
+    (new Extend\Conditional())
+        ->when(new Extender\IsPollGroupEnabled(), function (){
+            return [
+                (new Extend\Policy())
+                    ->modelPolicy(PollGroup::class, Access\PollGroupPolicy::class),
+
+                (new Extend\Frontend('forum'))
+                    ->route('/polls/groups/composer', 'fof.polls.groups.composer')
+                    ->route('/polls/groups', 'fof.polls.groups.list')
+                    ->route('/polls/groups/{id}', 'fof.polls.groups.view'),
+
+                (new Extend\Routes('api'))
+                    ->get('/fof/polls/groups', 'fof.polls.groups.index', Controllers\ListPollGroupsController::class)
+                    ->get('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.show', Controllers\ShowPollGroupController::class)
+                    ->post('/fof/polls/groups', 'fof.polls.groups.create', Controllers\CreatePollGroupController::class)
+                    ->patch('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.edit', Controllers\EditPollGroupController::class)
+                    ->delete('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.delete', Controllers\DeletePollGroupController::class),
+
+                (new Extend\Filter(Filter\GlobalPollFilterer::class))
+                    ->addFilter(Filter\PollGroupFilter::class)
+                    ->addFilterMutator(Filter\HideGroupedPollsFromGlobalPolls::class),
+            ];
+        }),
 ];
