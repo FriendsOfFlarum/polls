@@ -20,6 +20,13 @@ import PollSubtitle from './Poll/PollSubtitle';
 import PollImage from './Poll/PollImage';
 import PollListItem from './Poll/PollListItem';
 import PollList from './Poll/PollList';
+import PollGroupList from './PollGroup/PollGroupList';
+import PollGroupListItem from './PollGroup/PollGroupListItem';
+import { AbstractPollGroupsPage } from './AbstractPollGroupsPage';
+import PollGroupListPage from './PollGroupListPage';
+import PollGroupViewPage from './PollGroupViewPage';
+import PollGroupForm from './PollGroup/PollGroupForm';
+import ComposePollGroupPage from './ComposePollGroupPage';
 
 export const components = {
   CreatePollModal,
@@ -44,4 +51,11 @@ export const components = {
   PollImage,
   PollListItem,
   PollList,
+  PollGroupList,
+  PollGroupListItem,
+  AbstractPollGroupsPage,
+  PollGroupListPage,
+  PollGroupViewPage,
+  PollGroupForm,
+  ComposePollGroupPage,
 };
