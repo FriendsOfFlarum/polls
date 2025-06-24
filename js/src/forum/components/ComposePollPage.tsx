@@ -3,7 +3,7 @@ import app from 'flarum/forum/app';
 import Page from 'flarum/common/components/Page';
 import Poll from '../models/Poll';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
-import PollForm from './PollForm';
+import PollForm from './Poll/PollForm';
 import PollFormState from '../states/PollFormState';
 import ComposePollHero from './ComposePollHero';
 import Button from 'flarum/common/components/Button';

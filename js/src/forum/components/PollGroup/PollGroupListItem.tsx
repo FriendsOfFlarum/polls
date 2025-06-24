@@ -4,8 +4,6 @@ import classList from 'flarum/common/utils/classList';
 import app from 'flarum/forum/app';
 import PollListState from '../../states/PollListState';
 import PollListItem from '../Poll/PollListItem';
-import Button from 'flarum/common/components/LinkButton';
-import LogInModal from 'flarum/forum/components/LogInModal';
 import Mithril from 'mithril';
 import Dropdown from 'flarum/common/components/Dropdown';
 import PollGroupControls from '../../utils/PollGroupControls';

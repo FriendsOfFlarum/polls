@@ -1,7 +1,7 @@
 import Component, { ComponentAttrs } from 'flarum/common/Component';
-import Poll from '../models/Poll';
+import Poll from '../../models/Poll';
 import type Mithril from 'mithril';
-import PollView from './PollView';
+import PollView from '../PollView';
 
 export interface PollShowcaseItemAttrs extends ComponentAttrs {
   poll: Poll;

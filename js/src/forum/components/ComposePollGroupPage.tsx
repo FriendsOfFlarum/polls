@@ -3,7 +3,7 @@ import app from 'flarum/forum/app';
 import Page from 'flarum/common/components/Page';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import PollGroup from '../models/PollGroup';
-import PollGroupForm from './PollGroupForm';
+import PollGroupForm from './PollGroup/PollGroupForm';
 import PollGroupFormState from '../states/PollGroupFormState';
 import Button from 'flarum/common/components/Button';
 import listItems from 'flarum/common/helpers/listItems';
