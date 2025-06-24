@@ -4,13 +4,11 @@ import app from 'flarum/forum/app';
 import Button from 'flarum/common/components/Button';
 import ItemList from 'flarum/common/utils/ItemList';
 import Stream from 'flarum/common/utils/Stream';
-import FormError from './form/FormError';
-import PollGroupModel from '../models/PollGroup';
-import PollGroupFormState from '../states/PollGroupFormState';
-import CreatePollModal from './CreatePollModal';
-import PollModelAttributes from '../models/PollModelAttributes';
-import PollCompactListItem from './Poll/PollCompactListItem';
-import PollGroupControls from '../utils/PollGroupControls';
+import FormError from '../form/FormError';
+import PollGroupModel from '../../models/PollGroup';
+import PollGroupFormState from '../../states/PollGroupFormState';
+import PollGroupControls from '../../utils/PollGroupControls';
+import PollListItem from '../Poll/PollListItem';
 
 interface PollGroupFormAttrs extends ComponentAttrs {
   pollGroup: PollGroupModel;
@@ -47,26 +45,6 @@ export default class PollGroupForm extends Component<PollGroupFormAttrs, PollGro
       100
     );
 
-    if (this.state.pollGroup.exists) {
-      items.add(
-        'addPoll',
-        <div className="Form-group">
-          <Button
-            className="Button Button--primary PollGroupModal-addPollButton"
-            icon="fas fa-plus"
-            onclick={() => PollGroupControls.addPoll(this.state.pollGroup)}
-          >
-            {app.translator.trans('fof-polls.forum.pollgroup_controls.add_poll_button')}
-          </Button>
-        </div>
-      );
-
-      const pollItems = this.pollItems().toArray();
-      if (pollItems.length > 0) {
-        items.add('polls', <div className="PollGroup-polls">{pollItems}</div>);
-      }
-    }
-
     items.add(
       'submit',
       <div className="Form-group">
@@ -83,9 +61,33 @@ export default class PollGroupForm extends Component<PollGroupFormAttrs, PollGro
             {app.translator.trans('fof-polls.forum.poll_groups.composer.delete')}
           </Button>
         )}
-      </div>,
-      -10
+      </div>
     );
+
+    if (this.state.pollGroup.exists) {
+      const pollItems = this.pollItems().toArray();
+      if (pollItems.length > 0) {
+        items.add(
+          'polls',
+          <div className="PollList">
+            <ul className="PollList-polls PollGroup-polls">{pollItems}</ul>
+          </div>
+        );
+      }
+
+      items.add(
+        'addPoll',
+        <div className="Form-group">
+          <Button
+            className="Button Button--primary PollGroupModal-addPollButton"
+            icon="fas fa-plus"
+            onclick={() => PollGroupControls.addPoll(this.state.pollGroup)}
+          >
+            {app.translator.trans('fof-polls.forum.poll_groups.controls.add_poll_label')}
+          </Button>
+        </div>
+      );
+    }
 
     return items;
   }
@@ -102,9 +104,9 @@ export default class PollGroupForm extends Component<PollGroupFormAttrs, PollGro
       if (poll) {
         items.add(
           'poll-' + poll.id(),
-          <div key={poll.id()} className="PollGroup-poll">
-            <PollCompactListItem poll={poll} />
-          </div>
+          <li key={poll.id()} className="PollGroup-poll">
+            <PollListItem poll={poll} />
+          </li>
         );
       }
     });
