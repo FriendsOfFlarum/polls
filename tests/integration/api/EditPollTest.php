@@ -190,6 +190,7 @@ class EditPollTest extends TestCase
      */
     public function poll_owner_can_add_poll_to_group()
     {
+        AbstractPollGroupTestCase::enablePollGroup();
         $response = $this->send(
             $this->request(
                 'PATCH',
@@ -223,6 +224,7 @@ class EditPollTest extends TestCase
      */
     public function moderator_can_change_poll_group()
     {
+        AbstractPollGroupTestCase::enablePollGroup();
         $this->app();
         $poll = Poll::find(2);
         $this->assertEquals(1, $poll->poll_group_id);
@@ -260,6 +262,7 @@ class EditPollTest extends TestCase
      */
     public function unauthorized_user_cannot_change_poll_group()
     {
+        AbstractPollGroupTestCase::enablePollGroup();
         $response = $this->send(
             $this->request(
                 'PATCH',
@@ -293,6 +296,7 @@ class EditPollTest extends TestCase
      */
     public function cannot_assign_poll_to_nonexistent_group()
     {
+        AbstractPollGroupTestCase::enablePollGroup();
         $response = $this->send(
             $this->request(
                 'PATCH',
