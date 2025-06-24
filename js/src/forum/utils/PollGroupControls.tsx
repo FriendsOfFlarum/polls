@@ -139,6 +139,7 @@ export default {
             .then((poll) => {
               // @ts-ignore
               pollGroup.rawRelationship('polls')?.push?.({ type: 'polls', id: poll.id() });
+              m.redraw();
             });
 
       }});
