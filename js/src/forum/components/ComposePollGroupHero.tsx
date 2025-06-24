@@ -56,7 +56,7 @@ export default class ComposePollGroupHero extends Component<ComposePollGroupHero
           itemClassName="App-primaryControl"
           href={app.route('fof.polls.groups.view', { id: this.pollGroup.id() })}
         >
-          {app.translator.trans('fof-polls.forum.pollgroup.groups_preview')}
+          {app.translator.trans('fof-polls.forum.poll_groups.composer.view_group')}
         </LinkButton>
       );
     }
