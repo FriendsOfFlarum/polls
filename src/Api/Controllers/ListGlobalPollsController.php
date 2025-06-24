@@ -66,7 +66,6 @@ class ListGlobalPollsController extends AbstractListController
         $offset = $this->extractOffset($request);
         $include = $this->extractInclude($request);
 
-
         $criteria = new QueryCriteria($actor, $filters, $sort, $sortIsDefault);
         $results = $this->filterer->filter($criteria, $limit, $offset);
 

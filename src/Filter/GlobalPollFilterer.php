@@ -1,11 +1,11 @@
 <?php
 
 /*
- * This file is part of glowingblue/victorinox-collection
+ * This file is part of fof/polls.
  *
- * Copyright (c) Glowing Blue AG.
+ * Copyright (c) FriendsOfFlarum.
  *
- * For the full copyright and license information, please view the LICENSE.md
+ * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
