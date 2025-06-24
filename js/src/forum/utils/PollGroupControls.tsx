@@ -52,6 +52,14 @@ export default {
           {app.translator.trans(`fof-polls.forum.poll_groups.controls.add_poll_label`)}
         </Button>
       );
+
+      items.add(
+        'view',
+        <Button icon="far fa-arrow-up-right-from-square" onclick={() => m.route.set(app.route('fof.polls.groups.view', { id: pollGroup.id() }))}>
+          {app.translator.trans(`fof-polls.forum.poll_groups.controls.view_label`)}
+        </Button>
+      );
+
     }
 
     return items;
