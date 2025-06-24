@@ -21,9 +21,9 @@ export default function addNavItem() {
       35
     );
 
-    const showAllGlobalPolls = app.forum.attribute<boolean>('canStartGlobalPolls');
+    const canStartGlobalPolls = app.forum.attribute<boolean>('canStartGlobalPolls');
 
-    if (showAllGlobalPolls) {
+    if (canStartGlobalPolls) {
       items.add(
         'fof-polls-list',
         LinkButton.component(
@@ -37,7 +37,9 @@ export default function addNavItem() {
       );
     }
 
-    if (app.forum.attribute<boolean>('pollGroupsEnabled')) {
+    const pollGroupsEnabled = app.forum.attribute<boolean>('pollGroupsEnabled');
+
+    if (pollGroupsEnabled && canStartGlobalPolls) {
       items.add(
         'fof-poll-groups-list',
         LinkButton.component(
