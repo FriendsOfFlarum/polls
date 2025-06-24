@@ -40,7 +40,14 @@ export default {
       items.add(
         'edit',
         <Button icon="fas fa-pencil-alt" onclick={this.editAction.bind(this, pollGroup)}>
-          {app.translator.trans(`fof-polls.forum.pollgroup_controls.edit_label`)}
+          {app.translator.trans(`fof-polls.forum.poll_groups.controls.edit_label`)}
+        </Button>
+      );
+
+      items.add(
+        'addPoll',
+        <Button icon="fas fa-plus" onclick={this.addPoll.bind(this, pollGroup)}>
+          {app.translator.trans(`fof-polls.forum.poll_groups.controls.add_poll_label`)}
         </Button>
       );
     }
@@ -59,7 +66,7 @@ export default {
       items.add(
         'delete',
         <Button icon="far fa-trash-alt" onclick={this.deleteAction.bind(this, pollGroup)}>
-          {app.translator.trans(`fof-polls.forum.pollgroup_controls.delete_label`)}
+          {app.translator.trans(`fof-polls.forum.poll_groups.controls.delete_label`)}
         </Button>
       );
     }
@@ -105,5 +112,12 @@ export default {
    */
   editAction(pollGroup: PollGroup): void {
     m.route.set(app.route('fof.polls.group.compose', { id: pollGroup.id() }));
+  },
+
+  /**
+   * Add poll to group.
+   */
+  addPoll(pollGroup: PollGroup): void {
+    m.route.set(app.route('fof.polls.compose', { pollGroupId: pollGroup.id() }));
   },
 };
