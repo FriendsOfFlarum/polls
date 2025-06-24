@@ -21,7 +21,7 @@ export default class PollGroupListState<P extends PollGroupListParams = PollGrou
   }
 
   get type(): string {
-    return '/fof/polls/groups';
+    return 'fof/polls/groups';
   }
 
   requestParams(): PaginatedListRequestParams {
@@ -39,7 +39,7 @@ export default class PollGroupListState<P extends PollGroupListParams = PollGrou
   }
 
   includes(): string[] {
-    return ['polls', 'user'];
+    return ['polls'];
   }
 
   private requestIncludes(): string {
