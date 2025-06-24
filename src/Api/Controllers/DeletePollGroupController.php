@@ -12,6 +12,7 @@
 namespace FoF\Polls\Api\Controllers;
 
 use Flarum\Api\Controller\AbstractDeleteController;
+use Flarum\Http\RequestUtil;
 use FoF\Polls\Commands\DeletePollGroup;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Support\Arr;
@@ -30,7 +31,7 @@ class DeletePollGroupController extends AbstractDeleteController
     {
         $this->bus->dispatch(
             new DeletePollGroup(
-                $request->getAttribute('actor'),
+                RequestUtil::getActor($request),
                 Arr::get($request->getQueryParams(), 'id')
             )
         );

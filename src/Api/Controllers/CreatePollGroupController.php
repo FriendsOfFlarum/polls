@@ -12,6 +12,7 @@
 namespace FoF\Polls\Api\Controllers;
 
 use Flarum\Api\Controller\AbstractCreateController;
+use Flarum\Http\RequestUtil;
 use FoF\Polls\Api\Serializers\PollGroupSerializer;
 use FoF\Polls\Commands\CreatePollGroup;
 use Illuminate\Contracts\Bus\Dispatcher;
@@ -34,7 +35,7 @@ class CreatePollGroupController extends AbstractCreateController
     {
         return $this->bus->dispatch(
             new CreatePollGroup(
-                $request->getAttribute('actor'),
+                RequestUtil::getActor($request),
                 Arr::get($request->getParsedBody(), 'data', [])
             )
         );
