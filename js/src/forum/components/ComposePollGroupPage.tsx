@@ -92,7 +92,7 @@ export default class ComposePollGroupPage extends Page {
               className="Button Button--link"
               onclick={() =>
                 m.route.set(
-                  app.route('fof.polls.groups.compose', {
+                  app.route('fof.polls.groups.composer', {
                     id: state.pollGroup.id(),
                   })
                 )
@@ -106,7 +106,7 @@ export default class ComposePollGroupPage extends Page {
           type: 'success',
         };
 
-    const alertId = app.alerts.show(alertAttrs, app.translator.trans('fof-polls.forum.pollgroup.success'));
+    const alertId = app.alerts.show(alertAttrs, app.translator.trans('fof-polls.forum.poll_groups.composer.success'));
     setTimeout(() => app.alerts.dismiss(alertId), 10000);
 
     if (isNew) {

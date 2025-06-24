@@ -40,7 +40,7 @@ export default class PollGroupFormState {
   }
 
   async delete() {
-    if (!confirm(app.translator.trans(`fof-polls.forum.pollgroup_controls.delete_confirmation`) as string)) {
+    if (!confirm(app.translator.trans(`fof-polls.forum.poll_groups.controls.delete_confirmation`) as string)) {
       return;
     }
 

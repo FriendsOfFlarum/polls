@@ -72,6 +72,7 @@ fof-polls:
         delete: Delete Poll Group
         groups_manager: Poll Groups Manager
         view_group: View Poll Group
+        success: Poll group saved successfully.
 
       list_page:
         title: Poll Groups
@@ -86,6 +87,9 @@ fof-polls:
         add_poll_label: Add Poll
         edit_label: => core.ref.edit
         delete_label: => core.ref.delete
+        delete_confirmation: Are you sure you want to delete this poll group?
+        delete_success_message: Poll group deleted successfully.
+        delete_error_message: There went something wrong while deleting the poll group.
 
     polls_page:
       title: Polls

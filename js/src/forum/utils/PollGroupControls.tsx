@@ -78,7 +78,7 @@ export default {
    * Delete the poll group.
    */
   async deleteAction(pollGroup: PollGroup): Promise<void> {
-    if (!confirm(app.translator.trans(`fof-polls.forum.pollgroup_controls.delete_confirmation`) as string)) {
+    if (!confirm(app.translator.trans(`fof-polls.forum.poll_groups.controls.delete_confirmation`) as string)) {
       return;
     }
 
@@ -100,8 +100,8 @@ export default {
    */
   showDeletionAlert(pollGroup: PollGroup, type: string): void {
     const message = {
-      success: `fof-polls.forum.pollgroup_controls.delete_success_message`,
-      error: `fof-polls.forum.pollgroup_controls.delete_error_message`,
+      success: `fof-polls.forum.poll_groups.controls.delete_success_message`,
+      error: `fof-polls.forum.poll_groups.controls.delete_error_message`,
     }[type]!;
 
     app.alerts.show({ type }, app.translator.trans(message, { pollGroup: pollGroup }));
@@ -111,7 +111,7 @@ export default {
    * Edit the poll group.
    */
   editAction(pollGroup: PollGroup): void {
-    m.route.set(app.route('fof.polls.group.compose', { id: pollGroup.id() }));
+    m.route.set(app.route('fof.polls.groups.composer', { id: pollGroup.id() }));
   },
 
   /**

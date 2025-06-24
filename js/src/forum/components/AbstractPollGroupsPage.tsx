@@ -130,6 +130,6 @@ export abstract class AbstractPollGroupsPage extends Page<IPageAttrs, PollGroupL
       return;
     }
 
-    m.route.set(app.route('fof.polls.group.compose'));
+    m.route.set(app.route('fof.polls.groups.composer'));
   }
 }
