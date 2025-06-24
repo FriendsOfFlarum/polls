@@ -26,9 +26,7 @@ export default class PollGroupForm extends Component<PollGroupFormAttrs, PollGro
   view(): Mithril.Children {
     return (
       <form onsubmit={this.onsubmit.bind(this)}>
-        <div className="PollGroupModal-form">
-          {this.fields().toArray()}
-        </div>
+        <div className="PollGroupModal-form">{this.fields().toArray()}</div>
       </form>
     );
   }
@@ -48,12 +46,7 @@ export default class PollGroupForm extends Component<PollGroupFormAttrs, PollGro
     items.add(
       'submit',
       <div className="Form-group">
-        <Button
-          type="submit"
-          className="Button Button--primary PollGroupModal-SubmitButton"
-          icon="fas fa-save"
-          loading={this.state.loading}
-        >
+        <Button type="submit" className="Button Button--primary PollGroupModal-SubmitButton" icon="fas fa-save" loading={this.state.loading}>
           {app.translator.trans('fof-polls.forum.poll_groups.composer.save_changes')}
         </Button>
         {this.state.pollGroup.exists && (
