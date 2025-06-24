@@ -40,9 +40,9 @@ export default class ComposePollGroupPage extends Page {
 
       app.history.push(
         'compose-poll-group',
-        app.translator.trans(`fof-polls.forum.pollgroup.${!!this.pollGroup?.id() ? 'edit' : 'add'}_title`) as string
+        app.translator.trans(`fof-polls.forum.poll_groups.composer.${!!this.pollGroup?.id() ? 'edit' : 'add'}_title`) as string
       );
-      app.setTitle(app.translator.trans(`fof-polls.forum.pollgroup.${!!this.pollGroup?.id() ? 'edit' : 'add'}_title`) as string);
+      app.setTitle(app.translator.trans(`fof-polls.forum.poll_groups.composer.${!!this.pollGroup?.id() ? 'edit' : 'add'}_title`) as string);
 
       m.redraw();
     });
