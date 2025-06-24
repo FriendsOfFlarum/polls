@@ -24,9 +24,9 @@ class ListPollGroupsController extends AbstractListController
 {
     public $serializer = PollGroupSerializer::class;
 
-    public $include = ['polls'];
+    public $include = ['polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option'];
 
-    public $optionalInclude = ['polls.votes', 'polls.options', 'polls.myVotes', 'polls.myVotes.option', 'polls.votes.option', 'polls.votes.user'];
+    public $optionalInclude = ['polls.votes', 'polls.votes.option', 'polls.votes.user'];
 
     /**
      * @var PollGroupRepository
