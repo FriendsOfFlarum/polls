@@ -20,7 +20,6 @@ interface PollGroupListItemAttrs extends ComponentAttrs {
 }
 
 export default class PollGroupListItem extends Component<PollGroupListItemAttrs> {
-
   pollItems(): ItemList<Mithril.Children> {
     const polls = this.attrs.pollGroup.polls();
     const items = new ItemList<Mithril.Children>();
