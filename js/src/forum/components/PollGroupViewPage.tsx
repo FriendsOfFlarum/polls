@@ -7,7 +7,7 @@ import { AbstractPollGroupsPage } from './AbstractPollGroupsPage';
 
 export default class PollGroupViewPage extends AbstractPollGroupsPage {
   oninit(vnode: Mithril.Vnode) {
-    if (!app.forum.attribute<boolean>('pollGroupsEnabled')) {
+    if (!app.forum.attribute<boolean>('canViewPollGroups')) {
       m.route.set('/');
       return;
     }
@@ -31,7 +31,7 @@ export default class PollGroupViewPage extends AbstractPollGroupsPage {
     const items = super.contentItems();
 
     if (this.pollGroup) {
-      items.add('pollGroup', <PollGroupListItem pollGroup={this.pollGroup} compactView={false} />);
+      items.add('pollGroup', <PollGroupListItem pollGroup={this.pollGroup} />);
     }
 
     return items;

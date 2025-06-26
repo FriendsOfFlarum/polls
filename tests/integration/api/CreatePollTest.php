@@ -48,7 +48,7 @@ class CreatePollTest extends TestCase
             'group_permission' => [
                 ['permission' => 'discussion.polls.start', 'group_id' => 4],
                 ['permission' => 'startGlobalPoll', 'group_id' => 4],
-                ['permission' => 'viewPollGroup', 'group_id' => 4],
+                ['permission' => 'viewPollGroups', 'group_id' => 4],
                 ['permission' => 'startPollGroup', 'group_id' => 4],
                 ['permission' => 'polls.moderate_group', 'group_id' => 4],
             ],

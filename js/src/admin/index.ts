@@ -84,7 +84,7 @@ app.initializers.add('fof/polls', () => {
       {
         icon: 'fas fa-poll',
         label: app.translator.trans('fof-polls.admin.permissions.view_group'),
-        permission: 'viewPollGroup',
+        permission: 'viewPollGroups',
         allowGuest: true,
       },
       'view'

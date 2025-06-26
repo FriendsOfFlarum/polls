@@ -10,7 +10,7 @@ export default class PollGroupListPage extends AbstractPollGroupsPage {
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
 
-    if (!app.forum.attribute<boolean>('pollGroupsEnabled')) {
+    if (!app.forum.attribute<boolean>('canViewPollGroups')) {
       m.route.set('/');
       return;
     }

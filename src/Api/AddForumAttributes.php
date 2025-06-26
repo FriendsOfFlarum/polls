@@ -30,10 +30,17 @@ class AddForumAttributes
     {
         $attributes['canStartPolls'] = $serializer->getActor()->can('discussion.polls.start');
         $attributes['canStartGlobalPolls'] = $serializer->getActor()->can('startGlobalPoll');
-        $attributes['canStartPollGroup'] = $serializer->getActor()->can('startPollGroup');
 
         $areUploadsEnabled = (bool) $this->settings->get('fof-polls.allowImageUploads');
         $attributes['canUploadPollImages'] = $areUploadsEnabled && $serializer->getActor()->can('uploadPollImages');
+
+        if ($this->settings->get('fof-polls.enablePollGroups', false)) {
+            $attributes['canStartPollGroup'] = $serializer->getActor()->can('startPollGroup');
+            $attributes['canViewPollGroups'] = $serializer->getActor()->can('viewPollGroups');
+        } else {
+            $attributes['canStartPollGroup'] = false;
+            $attributes['canViewPollGroups'] = false;
+        }
 
         return $attributes;
     }

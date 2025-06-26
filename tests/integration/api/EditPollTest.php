@@ -59,7 +59,7 @@ class EditPollTest extends TestCase
                 ['permission' => 'startGlobalPoll', 'group_id' => 4],
                 ['permission' => 'uploadPollImages', 'group_id' => 4],
                 ['permission' => 'polls.moderate', 'group_id' => 4],
-                ['permission' => 'viewPollGroup', 'group_id' => 2],
+                ['permission' => 'viewPollGroups', 'group_id' => 2],
                 ['permission' => 'startPollGroup', 'group_id' => 4],
                 ['permission' => 'polls.moderate_group', 'group_id' => 4],
             ],
