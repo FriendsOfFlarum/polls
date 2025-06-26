@@ -17,7 +17,6 @@ use Flarum\Http\UrlGenerator;
 use Flarum\Query\QueryCriteria;
 use FoF\Polls\Api\Serializers\PollSerializer;
 use FoF\Polls\Filter\GlobalPollFilterer;
-use FoF\Polls\PollRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
@@ -39,19 +38,13 @@ class ListGlobalPollsController extends AbstractListController
     protected $filterer;
 
     /**
-     * @var PollRepository
-     */
-    protected $polls;
-
-    /**
      * @var UrlGenerator
      */
     protected $url;
 
-    public function __construct(GlobalPollFilterer $filterer, PollRepository $polls, UrlGenerator $url)
+    public function __construct(GlobalPollFilterer $filterer, UrlGenerator $url)
     {
         $this->filterer = $filterer;
-        $this->polls = $polls;
         $this->url = $url;
     }
 

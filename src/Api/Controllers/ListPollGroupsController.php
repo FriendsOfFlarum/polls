@@ -14,8 +14,9 @@ namespace FoF\Polls\Api\Controllers;
 use Flarum\Api\Controller\AbstractListController;
 use Flarum\Http\RequestUtil;
 use Flarum\Http\UrlGenerator;
+use Flarum\Query\QueryCriteria;
 use FoF\Polls\Api\Serializers\PollGroupSerializer;
-use FoF\Polls\PollGroupRepository;
+use FoF\Polls\Filter\PollGroupFilterer;
 use Illuminate\Database\Eloquent\Collection;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
@@ -29,24 +30,25 @@ class ListPollGroupsController extends AbstractListController
     public $optionalInclude = ['polls.votes', 'polls.options', 'polls.myVotes', 'polls.myVotes.option', 'polls.votes.option', 'polls.votes.user'];
 
     /**
-     * @var PollGroupRepository
+     * @var PollGroupFilterer
      */
-    protected $groups;
+    protected $filterer;
 
     /**
      * @var UrlGenerator
      */
     protected $url;
 
-    public function __construct(PollGroupRepository $groups, UrlGenerator $url)
+    public function __construct(PollGroupFilterer $filterer, UrlGenerator $url)
     {
-        $this->groups = $groups;
+        $this->filterer = $filterer;
         $this->url = $url;
     }
 
     protected function data(ServerRequestInterface $request, Document $document): Collection
     {
         $actor = RequestUtil::getActor($request);
+        $filters = $this->extractFilter($request);
         $sort = $this->extractSort($request);
         $sortIsDefault = $this->sortIsDefault($request);
 
@@ -54,21 +56,18 @@ class ListPollGroupsController extends AbstractListController
         $offset = $this->extractOffset($request);
         $include = $this->extractInclude($request);
 
-        $results = $this->groups->queryVisibleTo($actor)
-            ->orderBy($sortIsDefault ? 'id' : $sort, 'desc')
-            ->skip($offset)
-            ->take($limit);
-
-        $totalItems = $results->count();
-        $results = $results->get();
+        $criteria = new QueryCriteria($actor, $filters, $sort, $sortIsDefault);
+        $results = $this->filterer->filter($criteria, $limit, $offset);
 
         $document->addPaginationLinks(
             $this->url->to('api')->route('fof.polls.groups.index'),
             $request->getQueryParams(),
             $offset,
             $limit,
-            $totalItems - ($offset + $limit) > 0 ? null : 0
+            $results->areMoreResults() ? null : 0
         );
+
+        $results = $results->getResults();
 
         $this->loadRelations($results, $include, $request);
 
