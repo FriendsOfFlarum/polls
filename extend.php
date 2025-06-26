@@ -145,10 +145,6 @@ return [
                     ->post('/fof/polls/groups', 'fof.polls.groups.create', Controllers\CreatePollGroupController::class)
                     ->patch('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.edit', Controllers\EditPollGroupController::class)
                     ->delete('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.delete', Controllers\DeletePollGroupController::class),
-
-                (new Extend\Filter(Filter\GlobalPollFilterer::class))
-                    ->addFilter(Filter\PollGroupFilter::class)
-                    ->addFilterMutator(Filter\HideGroupedPollsFromGlobalPolls::class),
             ];
         }),
 ];

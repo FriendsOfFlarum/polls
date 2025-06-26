@@ -30,6 +30,7 @@ class GlobalPollFilterer extends AbstractFilterer
     {
         return $this->polls->queryVisibleTo($actor)
             ->select('polls.*')
-            ->whereNull('post_id');
+            ->whereNull('post_id')
+            ->whereNull('poll_group_id');
     }
 }
