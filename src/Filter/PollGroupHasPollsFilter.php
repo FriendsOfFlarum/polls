@@ -13,6 +13,7 @@ namespace FoF\Polls\Filter;
 
 use Flarum\Filter\FilterInterface;
 use Flarum\Filter\FilterState;
+use Illuminate\Database\Query\Builder;
 
 class PollGroupHasPollsFilter implements FilterInterface
 {
@@ -27,12 +28,21 @@ class PollGroupHasPollsFilter implements FilterInterface
 
         if ($negate) {
             // If negating, we want to find groups that do not have polls
-            //@phpstan-ignore-next-line
-            return $query->doesntHave('polls');
+            return $query->whereNotExists(function ($query) {
+                $this->selectPolls($query);
+            });
         }
 
         // Otherwise, we want to find groups that have at least one poll
-        //@phpstan-ignore-next-line
-        return $query->has('polls');
+        return $query->whereExists(function ($query) {
+            $this->selectPolls($query);
+        });
+    }
+
+    protected function selectPolls(Builder $query): void
+    {
+        $query->selectRaw('1')
+            ->from('polls')
+            ->whereRaw('polls.poll_group_id = poll_groups.id');
     }
 }
