@@ -27,10 +27,12 @@ class PollGroupHasPollsFilter implements FilterInterface
 
         if ($negate) {
             // If negating, we want to find groups that do not have polls
+            //@phpstan-ignore-next-line
             return $query->doesntHave('polls');
         }
 
         // Otherwise, we want to find groups that have at least one poll
+        //@phpstan-ignore-next-line
         return $query->has('polls');
     }
 }
