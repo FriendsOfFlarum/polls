@@ -20,7 +20,7 @@ class GlobalPollFilterer extends AbstractFilterer
 {
     protected $polls;
 
-    public function __construct(PollRepository $polls, array $filters, array $filterMutators)
+    public function __construct(PollRepository $polls, ?array $filters, array $filterMutators)
     {
         $this->polls = $polls;
         parent::__construct($filters, $filterMutators);

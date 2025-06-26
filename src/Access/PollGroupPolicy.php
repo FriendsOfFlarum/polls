@@ -22,11 +22,6 @@ class PollGroupPolicy extends AbstractPolicy
         return $user->id === $pollGroup->user_id || $user->hasPermission('polls.moderate_group');
     }
 
-    public function create(User $user)
-    {
-        return $user->hasPermission('startPollGroup');
-    }
-
     public function delete(User $user, PollGroup $pollGroup)
     {
         return $user->id === $pollGroup->user_id || $user->hasPermission('polls.moderate_group');

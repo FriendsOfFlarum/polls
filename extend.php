@@ -128,6 +128,9 @@ return [
     (new Extend\Filesystem())
         ->disk('fof-polls', PollImageDisk::class),
 
+    (new Extend\Filter(Filter\GlobalPollFilterer::class))
+        ->addFilter(Filter\PollIsEndedFilter::class),
+
     (new Extend\Conditional())
         ->when(new Extender\IsPollGroupEnabled(), function () {
             return [
@@ -145,6 +148,12 @@ return [
                     ->post('/fof/polls/groups', 'fof.polls.groups.create', Controllers\CreatePollGroupController::class)
                     ->patch('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.edit', Controllers\EditPollGroupController::class)
                     ->delete('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.delete', Controllers\DeletePollGroupController::class),
+
+                (new Extend\Filter(Filter\PollGroupFilterer::class))
+                    ->addFilter(Filter\PollGroupHasPollsFilter::class),
+
+                (new Extend\ModelVisibility(PollGroup::class))
+                    ->scope(Access\ScopePollGroupVisibility::class),
             ];
         }),
 ];

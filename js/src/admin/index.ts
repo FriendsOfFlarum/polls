@@ -82,6 +82,14 @@ app.initializers.add('fof/polls', () => {
     )
     .registerPermission(
       {
+        icon: 'fas fa-poll',
+        label: app.translator.trans('fof-polls.admin.permissions.view_group'),
+        permission: 'viewPollGroup',
+      },
+      'view'
+    )
+    .registerPermission(
+      {
         icon: 'fas fa-plus',
         label: app.translator.trans('fof-polls.admin.permissions.start_group'),
         permission: 'startPollGroup',

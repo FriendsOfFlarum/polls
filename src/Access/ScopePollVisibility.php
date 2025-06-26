@@ -13,17 +13,29 @@ namespace FoF\Polls\Access;
 
 use Flarum\Post\Post;
 use Flarum\User\User;
+use FoF\Polls\PollGroup;
 use Illuminate\Database\Eloquent\Builder;
 
 class ScopePollVisibility
 {
     public function __invoke(User $actor, Builder $query)
     {
-        $query->whereExists(function ($query) use ($actor) {
-            $query->selectRaw('1')
-                 ->from('posts')
-                 ->whereColumn('posts.id', 'polls.post_id');
-            Post::query()->setQuery($query)->whereVisibleTo($actor);
-        })->orWhere('polls.post_id', null);
+        $query->where(function ($query) use ($actor) {
+            $query->whereExists(function ($query) use ($actor) {
+                $query->selectRaw('1')
+                    ->from('posts')
+                    ->whereColumn('posts.id', 'polls.post_id');
+                Post::query()->setQuery($query)->whereVisibleTo($actor);
+            });
+            $query->orWhere('polls.post_id', null);
+        })->where(function ($query) use ($actor) {
+            $query->whereExists(function ($query) use ($actor) {
+                $query->selectRaw('1')
+                    ->from('poll_groups')
+                    ->whereColumn('poll_groups.id', 'polls.poll_group_id');
+                PollGroup::query()->setQuery($query)->whereVisibleTo($actor);
+            });
+            $query->orWhere('polls.poll_group_id', null);
+        });
     }
 }
