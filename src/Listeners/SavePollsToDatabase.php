@@ -14,9 +14,6 @@ namespace FoF\Polls\Listeners;
 use Flarum\Foundation\ValidationException;
 use Flarum\Post\Event\Saving;
 use FoF\Polls\Commands\CreatePoll;
-use FoF\Polls\Validators\PollOptionValidator;
-use FoF\Polls\Validators\PollValidator;
-use Illuminate\Contracts\Events\Dispatcher;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SavePollsToDatabase
@@ -46,7 +43,6 @@ class SavePollsToDatabase
         // 'assertCan' throws a generic no permission error, but we want to be more specific.
         // There are a lot of different reasons why a user might not be able to post a discussion.
         if ($event->actor->cannot('startPoll', $event->post)) {
-
             throw new ValidationException([
                 'poll' => $this->translator->trans('fof-polls.forum.composer_discussion.no_permission_alert'),
             ]);
