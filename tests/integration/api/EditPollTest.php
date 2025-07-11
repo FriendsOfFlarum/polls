@@ -267,7 +267,7 @@ class EditPollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'PATCH',
-                '/api/fof/polls/2',
+                '/api/fof/polls/1',
                 [
                     'authenticatedAs' => 2,
                     'json'            => [
