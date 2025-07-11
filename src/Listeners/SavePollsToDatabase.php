@@ -22,31 +22,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class SavePollsToDatabase
 {
     /**
-     * @var PollValidator
-     */
-    protected $validator;
-
-    /**
-     * @var PollOptionValidator
-     */
-    protected $optionValidator;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $events;
-
-    /**
      * @var \Flarum\Bus\Dispatcher
      */
     protected $bus;
 
-    public function __construct(PollValidator $validator, PollOptionValidator $optionValidator, Dispatcher $events, \Flarum\Bus\Dispatcher $bus)
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    public function __construct(\Flarum\Bus\Dispatcher $bus, TranslatorInterface $translator)
     {
-        $this->validator = $validator;
-        $this->optionValidator = $optionValidator;
-        $this->events = $events;
         $this->bus = $bus;
+        $this->translator = $translator;
     }
 
     public function handle(Saving $event)
@@ -58,10 +46,9 @@ class SavePollsToDatabase
         // 'assertCan' throws a generic no permission error, but we want to be more specific.
         // There are a lot of different reasons why a user might not be able to post a discussion.
         if ($event->actor->cannot('startPoll', $event->post)) {
-            $translator = resolve(TranslatorInterface::class);
 
             throw new ValidationException([
-                'poll' => $translator->trans('fof-polls.forum.composer_discussion.no_permission_alert'),
+                'poll' => $this->translator->trans('fof-polls.forum.composer_discussion.no_permission_alert'),
             ]);
         }
 
