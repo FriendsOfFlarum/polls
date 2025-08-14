@@ -11,6 +11,7 @@ interface PollGroupListItemAttrs extends ComponentAttrs {
 }
 export default class PollGroupListItem extends Component<PollGroupListItemAttrs> {
     pollItems(): ItemList<Mithril.Children>;
+    mainItems(): ItemList<Mithril.Children>;
     view(): JSX.Element;
     controlsView(controls: Mithril.ChildArray): Mithril.Children;
 }
