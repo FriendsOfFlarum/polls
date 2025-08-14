@@ -42,17 +42,22 @@ export default class PollGroupListItem extends Component<PollGroupListItemAttrs>
     return items;
   }
 
-  view() {
+  mainItems(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
     const pollGroup = this.attrs.pollGroup;
-    const controls = PollGroupControls.controls(pollGroup, this);
+
+    items.add('title', <h3 className="PollGroupListItem-title">{pollGroup.name()}</h3>);
+    items.add('controls', this.controlsView(PollGroupControls.controls(pollGroup, this).toArray()));
+
+    return items;
+  }
+
+  view() {
     const polls = this.pollItems().toArray();
 
     return (
       <div className={classList('PollGroupListItem', 'PollGroupListItem--pollgroup')}>
-        <div className="PollGroupListItem-main">
-          <h3 className="PollGroupListItem-title">{pollGroup.name()}</h3>
-          {this.controlsView(controls.toArray())}
-        </div>
+        <div className="PollGroupListItem-main">{this.mainItems().toArray()}</div>
 
         <ul className="PollGroupListItem-polls">
           {polls.length > 0 ? polls : <span>{app.translator.trans('fof-polls.forum.poll_groups.list_page.no_polls')}</span>}
