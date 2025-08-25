@@ -92,12 +92,12 @@ fof-polls:
       option_placeholder: Answer
       image_option_placeholder: Image URL (optional)
       options_label: Answers
-      public_poll_label: Allow people to see who voted
+      public_poll_label: Allow everyone to see who voted
       allow_multiple_votes_label: Allow people to vote for multiple options
       max_votes_label: Max votes per user
       max_votes_help: Set to 0 to allow users to vote for all options.
-      hide_votes_label: Hide votes until poll ends
-      hide_votes_label_help: The user who started the poll will always be able to see the votes.
+      hide_votes_label: Hide poll results until poll ends
+      hide_votes_label_help: The user who started the poll will always be able to see the poll results. It requires a poll end date.
       allow_change_vote_label: Allow users to change their vote
       question_placeholder: Question
       subtitle_placeholder: Subtitle/Description (optional)
