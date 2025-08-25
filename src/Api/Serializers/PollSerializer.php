@@ -88,8 +88,7 @@ class PollSerializer extends AbstractSerializer
 
     public function votes($model)
     {
-        // allow admins to always see votes
-        if (!$this->actor->isAdmin() && $this->actor->cannot('seeVoters', $model)) {
+        if ($this->actor->cannot('seeVoters', $model)) {
             return null;
         }
 
