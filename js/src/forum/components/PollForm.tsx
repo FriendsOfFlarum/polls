@@ -193,13 +193,9 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     items.add(
       'public',
       <div className="Form-group">
-        {Switch.component(
-          {
-            state: this.publicPoll() || false,
-            onchange: this.publicPoll,
-          },
-          app.translator.trans('fof-polls.forum.modal.public_poll_label')
-        )}
+        <Switch state={this.publicPoll() || false} onchange={this.publicPoll} disabled={this.hideVotes()}>
+          {app.translator.trans('fof-polls.forum.modal.public_poll_label')}
+        </Switch>
       </div>,
       20
     );
@@ -207,7 +203,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     items.add(
       'hide-votes',
       <div className="Form-group">
-        <Switch state={this.endDate() && this.hideVotes()} onchange={this.hideVotes} disabled={!this.endDate()}>
+        <Switch state={this.endDate() && this.hideVotes()} onchange={this.hideVotes} disabled={!this.endDate() || this.publicPoll()}>
           {app.translator.trans('fof-polls.forum.modal.hide_votes_label')}
         </Switch>
         <p className="helpText">{app.translator.trans('fof-polls.forum.modal.hide_votes_label_help')}</p>
