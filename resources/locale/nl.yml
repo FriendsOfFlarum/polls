@@ -1,0 +1,145 @@
+fof-polls:
+  admin:
+    settings:
+      general:
+        heading: Algemene Instellingen
+        help: Deze instellingen bepalen de basis functies van de Polls extensie.
+      global_polls:
+        heading: Globale Peilingen
+        help: Deze instellingen bepalen de globale peilingen functie.
+      image:
+        heading: Afbeelding Instellingen
+        help: Deze instellingen bepalen de afbeelding instellingen voor peilingen.
+      allow_option_image: Sta een afbeelding URL toe voor elke peiling optie
+      allow_image_uploads: Sta afbeelding uploads toe voor peilingen en hun opties
+      allow_image_uploads_help: Indien ingeschakeld kunnen gebruikers afbeeldingen uploaden naast het verstrekken van een afbeelding URL (indien ingeschakeld voor opties, altijd ingeschakeld voor de peiling zelf).
+      enable_global_polls: Globale peilingen inschakelen
+      enable_global_polls_help: Globale peilingen zijn niet gekoppeld aan een specifiek bericht en kunnen worden benaderd vanaf een speciale peilingen pagina.
+      max_options: Maximum aantal opties per peiling
+      options_color_blend: Kleur meng tekst in peiling opties
+      options_color_blend_help: Gebruik dit om kleur mengen te gebruiken om de peiling opties beter leesbaar te maken. Schakel uit als deze functie problemen veroorzaakt met het uiterlijk van je forum, wat de leesbaarheid vermindert.
+      image_height: Pas afbeelding hoogte aan
+      image_width: Pas afbeelding breedte aan
+    permissions:
+      view_results_without_voting: Bekijk resultaten zonder te stemmen
+      start: Start een peiling
+      start_global: Start een globale peiling
+      self_edit: Bewerk gemaakte peilingen (vereist bericht bewerkingsrechten)
+      self_post_edit: Bewerk *alle* peilingen op eigen berichten (vereist bericht bewerkingsrechten)
+      upload_images: Sta gebruikers toe afbeeldingen te uploaden voor peilingen
+      vote: Stem op peilingen
+      change_vote: Wijzig stem
+      moderate: Bewerk en verwijder peilingen
+
+  forum:
+    days_remaining: Peiling eindigt {time}.
+    no_permission: Je hebt geen toestemming om te stemmen
+    poll_ended: Deze peiling is geëindigd.
+    public_poll: Bekijk stemmers
+    max_votes_allowed: "Peiling staat stemmen toe voor {max, plural, one {# optie} other {# opties}}."
+    polls_count: "{count, plural, one { {count} stem} other {{count} stemmen}}"
+    poll_never_ends: Peiling eindigt nooit
+    answers: Antwoorden
+
+    poll:
+      cannot_change_vote: Je kunt je stem niet wijzigen na het stemmen.
+      submit_button: Stem
+      start_poll_button: Start Globale Peiling
+      cannot_start_poll_button: Kan Geen Peiling Starten
+      total_votes: "{count, plural, one {# stem werd gegeven} other {# stemmen werden gegeven}}"
+
+    poll_controls:
+      edit_label: => core.ref.edit
+      delete_label: => core.ref.delete
+      view_label: => core.ref.view
+      delete_confirmation: Weet je zeker dat je deze peiling wilt verwijderen?
+      delete_success_message: Peiling succesvol verwijderd.
+      delete_error_message: Er ging iets mis bij het verwijderen van de peiling.
+
+    poll_form:
+      delete: Peiling Verwijderen
+      error: Er was een fout bij het opslaan van de peiling, neem contact op met een beheerder.
+
+    polls_page:
+      title: Peilingen
+
+    polls_list:
+      empty_text: Het lijkt erop dat er geen gemeenschapsbrede peilingen zijn.
+      load_more_button: => core.ref.load_more
+
+    composer_discussion:
+      add_poll: => fof-polls.forum.moderation.add
+      edit_poll: => fof-polls.forum.moderation.edit
+      no_permission_alert: Je hebt geen toestemming om een peiling te starten.
+
+    compose:
+      add_title: Voeg een Peiling Toe
+      edit_title: Peiling Bewerken
+      polls_manager: Peilingen Beheerder
+      polls_preview: Bekijk Peiling
+      continue_editing: Blijf Bewerken
+      success: Peiling succesvol opgeslagen.
+
+    modal:
+      add_title: Voeg een Peiling Toe
+      add_option_label: Voeg een Optie Toe
+      date_placeholder: Peiling einddatum (Optioneel)
+      edit_title: Peiling Bewerken
+      include_question: Je moet een vraag opnemen
+      max: Je kunt maximaal {max} antwoorden hebben
+      min: Je moet minimaal 2 antwoorden opnemen
+      no_voters: Geen Stemmen
+      option_placeholder: Antwoord
+      image_option_placeholder: Afbeelding URL (optioneel)
+      options_label: Antwoorden
+      public_poll_label: Sta mensen toe te zien wie heeft gestemd
+      allow_multiple_votes_label: Sta mensen toe voor meerdere opties te stemmen
+      max_votes_label: Max stemmen per gebruiker
+      max_votes_help: Zet op 0 om gebruikers toe te staan voor alle opties te stemmen.
+      hide_votes_label: Verberg stemmen tot peiling eindigt
+      hide_votes_label_help: De gebruiker die de peiling heeft gestart kan altijd de stemmen zien.
+      allow_change_vote_label: Sta gebruikers toe hun stem te wijzigen
+      question_placeholder: Vraag
+      subtitle_placeholder: Ondertitel/Beschrijving (optioneel)
+      submit: Versturen
+      delete: => core.ref.delete
+      error: => core.lib.error.generic_message
+      poll_image:
+        label: Peiling Afbeelding
+        help: Upload een afbeelding om naast de peiling weer te geven (optioneel).
+        alt_label: Afbeelding Alt Tekst
+        alt_help_text: Deze tekst is vereist wanneer een afbeelding is ingesteld, deze wordt weergegeven als de afbeelding niet kan laden.
+        later_help: Je kunt een afbeelding uploaden nadat je de peiling hebt gemaakt.
+      poll_option_image:
+        label: Peiling Antwoord Afbeelding
+        help: Upload een afbeelding om naast het peiling antwoord weer te geven (optioneel).
+      tooltip:
+        options:
+          add-button: Antwoord Toevoegen
+
+    moderation:
+      add: Peiling Toevoegen
+      delete: Peiling Verwijderen
+      delete_confirm: Weet je zeker dat je deze peiling wilt verwijderen?
+      edit: Peiling Bewerken
+
+    page:
+      nav: Peilingen
+      nav-all: Alle Globale Peilingen
+
+    showcase:
+      active-polls: Actieve Peilingen
+      ended-polls: Afgesloten Peilingen
+      no-active-polls: Er zijn momenteel geen actieve peilingen.
+      no-recent-polls: Er zijn momenteel geen recent afgesloten peilingen.
+
+    tooltip:
+      badge: Peiling
+      votes: "{count, plural, one {# stem} other {# stemmen}}"
+
+    votes_modal:
+      title: Stemmers
+
+    upload_image:
+      remove_button: Afbeelding Verwijderen
+      upload_button: Afbeelding Uploaden 
