@@ -23,6 +23,7 @@ export default class PollViewPage extends AbstractPollPage {
       app.store.find<PollModel>('fof/polls', editId).then((item) => {
         this.poll = item;
         this.loading = false;
+        app.current.set('poll', item);
         app.setTitle(this.poll.question());
         m.redraw();
       });
