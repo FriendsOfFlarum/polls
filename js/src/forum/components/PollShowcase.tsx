@@ -39,7 +39,7 @@ export default class PollShowcase extends Component<PollListAttrs, PollListState
     const items = new ItemList<Mithril.Children>();
 
     // Show loading indicator while the state is loading
-    this.attrs.state.isLoading() && items.add('loading', <LoadingIndicator />);
+    this.attrs.state.isLoading() && items.add('loading', <LoadingIndicator size="large" />);
 
     this.attrs.state.getPages().map((page) => {
       page.items.map((poll) => {
@@ -56,7 +56,7 @@ export default class PollShowcase extends Component<PollListAttrs, PollListState
     const items = new ItemList<Mithril.Children>();
 
     // Show loading indicator while the state is loading
-    this.attrs.state.isLoading() && items.add('loading', <LoadingIndicator />);
+    this.attrs.state.isLoading() && items.add('loading', <LoadingIndicator size="large" />);
 
     this.attrs.state.getPages().map((page) => {
       page.items.map((poll) => {
