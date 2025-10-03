@@ -45,6 +45,8 @@ export default class ComposePollPage extends Page {
       app.history.push('compose-poll', app.translator.trans(`fof-polls.forum.compose.${!!this.poll?.id() ? 'edit' : 'add'}_title`) as string);
       app.setTitle(app.translator.trans(`fof-polls.forum.compose.${!!this.poll?.id() ? 'edit' : 'add'}_title`) as string);
 
+      app.current.set('poll', poll);
+
       m.redraw();
     });
   }
