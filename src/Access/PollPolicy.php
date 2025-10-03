@@ -21,12 +21,13 @@ class PollPolicy extends AbstractPolicy
     public function seeVoteCount(User $actor, Poll $poll)
     {
         $isPollAuthor = $actor->id === $poll->user_id;
+        $isAdmin = $actor->isAdmin();
 
-        if ($poll->hide_votes && $poll->end_date && !$poll->hasEnded() && !$isPollAuthor) {
+        if ($poll->hide_votes && $poll->end_date && !$poll->hasEnded() && !$isPollAuthor && !$isAdmin) {
             return $this->deny();
         }
 
-        if ($poll->myVotes($actor)->count() || $actor->can('polls.viewResultsWithoutVoting', $poll->post !== null ? $poll->post->discussion : null) || $poll->isGlobal() || $isPollAuthor) {
+        if ($poll->myVotes($actor)->count() || $actor->can('polls.viewResultsWithoutVoting', $poll->post !== null ? $poll->post->discussion : null) || $poll->isGlobal() || $isPollAuthor || $isAdmin) {
             return $this->allow();
         }
     }
