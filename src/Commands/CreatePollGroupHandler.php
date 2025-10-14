@@ -41,7 +41,7 @@ class CreatePollGroupHandler
 
         $this->validator->assertValid($data);
 
-        $group = $this->pollGroups::createPollGroup($actor, $attributes['name']);
+        $group = $this->pollGroups->createPollGroup($actor, $attributes['name']);
 
         $this->events->dispatch(new SavingPollGroup($actor, $group, $data));
 
