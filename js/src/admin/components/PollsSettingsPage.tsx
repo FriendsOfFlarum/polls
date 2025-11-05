@@ -91,6 +91,36 @@ export default class PollsSettingsPage extends ExtensionPage {
       })
     );
 
+    items.add(
+      'enabledPollGroups',
+      this.buildSettingComponent({
+        setting: 'fof-polls.enablePollGroups',
+        type: 'boolean',
+        label: app.translator.trans('fof-polls.admin.settings.enabled_poll_groups'),
+        help: app.translator.trans('fof-polls.admin.settings.enabled_poll_groups_help'),
+        disabled: this.setting('fof-polls.enableGlobalPolls')() === false,
+      })
+    );
+
+    this.onsaved = () => {
+      this.loading = false;
+
+      app.alerts.show({ type: 'success' }, app.translator.trans('core.admin.settings.saved_message'));
+
+      items.setContent(
+        'enabledPollGroups',
+        this.buildSettingComponent({
+          setting: 'fof-polls.enablePollGroups',
+          type: 'boolean',
+          label: app.translator.trans('fof-polls.admin.settings.enabled_poll_groups'),
+          help: app.translator.trans('fof-polls.admin.settings.enabled_poll_groups_help'),
+          disabled: this.setting('fof-polls.enableGlobalPolls')() === false,
+        })
+      );
+
+      m.redraw();
+    };
+
     return items;
   }
 

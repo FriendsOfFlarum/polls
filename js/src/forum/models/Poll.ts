@@ -2,6 +2,7 @@ import Model from 'flarum/common/Model';
 import PollOption from './PollOption';
 import PollVote from './PollVote';
 import computed from 'flarum/common/utils/computed';
+import PollGroup from './PollGroup';
 
 export default class Poll extends Model {
   public tempOptions: PollOption[] | undefined;
@@ -94,6 +95,10 @@ export default class Poll extends Model {
   myVotes(): PollVote[] {
     const myVotes = Model.hasMany<PollVote>('myVotes').call(this);
     return myVotes ? (myVotes as PollVote[]) : [];
+  }
+
+  pollGroup() {
+    return Model.hasOne<PollGroup>('pollGroup').call(this);
   }
 
   isGlobal() {

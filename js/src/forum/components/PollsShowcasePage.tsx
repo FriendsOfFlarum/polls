@@ -7,7 +7,7 @@ import extractText from 'flarum/common/utils/extractText';
 import Button from 'flarum/common/components/Button';
 import LogInModal from 'flarum/forum/components/LogInModal';
 import { AbstractPollPage } from './AbstractPollPage';
-import PollShowcase from './PollShowcase';
+import PollShowcase from './Poll/PollShowcase';
 
 export default class PollsShowcasePage extends AbstractPollPage {
   oninit(vnode: Mithril.Vnode<IPageAttrs, PollListState>) {
@@ -76,6 +76,6 @@ export default class PollsShowcasePage extends AbstractPollPage {
       return;
     }
 
-    m.route.set(app.route('fof.polls.compose'));
+    m.route.set(app.route('fof.polls.composer'));
   }
 }

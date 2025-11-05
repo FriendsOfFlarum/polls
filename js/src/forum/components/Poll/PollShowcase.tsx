@@ -1,5 +1,5 @@
 import Component, { ComponentAttrs } from 'flarum/common/Component';
-import PollListState from '../states/PollListState';
+import PollListState from '../../states/PollListState';
 import type Mithril from 'mithril';
 import ItemList from 'flarum/common/utils/ItemList';
 import PollShowcaseItem from './PollShowcaseItem';

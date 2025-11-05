@@ -24,6 +24,8 @@ use Illuminate\Support\Str;
 
 class EditPollHandler
 {
+    use PollGroupRelationTrait;
+
     /**
      * @var PollValidator
      */
@@ -109,6 +111,8 @@ class EditPollHandler
                 $poll->end_date = null;
             }
         }
+
+        $this->setPollGroupRelationData($command->actor, $poll, $command->data);
 
         $this->events->dispatch(new SavingPollAttributes($command->actor, $poll, $attributes, $command->data));
 

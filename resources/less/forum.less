@@ -444,11 +444,14 @@
 }
 
 @media @desktop-up {
-  .PollsPage .item-newGlobalPoll .Button {
-    display: block;
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .item-newGlobalPoll,
+  .item-newPollGroup {
+    .Button {
+      display: block;
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 }
 
@@ -703,11 +706,13 @@
 }
 
 @media @desktop-up {
-  .PollsPage {
+  .PollsPage,
+  .PollGroupsPage {
     .sideNav {
       .sideNav--horizontal();
       float: none;
       width: auto;
+      margin-right: 0;
       padding-top: 0;
 
       &:after {
@@ -743,4 +748,47 @@
       }
     }
   }
+}
+
+// .PollsPage--groups
+.PollGroupList-pollgroups,
+.PollGroupListItem-polls {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  padding-inline-start: 0;
+}
+
+.PollGroupListItem-polls {
+  border: 10px solid #ededed;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.PollGroupList-pollgroups {
+  gap: 20px;
+}
+
+.PollGroupListItem {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.PollGroupListItem-main {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.PollGroupListItem-title {
+  display: inline-block;
+  margin-block: 0;
+}
+
+// Poll Groups Composer
+.PollGroupModal-SubmitButton {
+  margin-right: 10px;
 }

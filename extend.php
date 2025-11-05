@@ -112,6 +112,7 @@ return [
         ->default('fof-polls.image_width', 250)
         ->default('fof-polls.allowImageUploads', false)
         ->serializeToForum('globalPollsEnabled', 'fof-polls.enableGlobalPolls', 'boolval')
+        ->serializeToForum('pollGroupsEnabled', 'fof-polls.enablePollGroups', 'boolval')
         ->serializeToForum('allowPollOptionImage', 'fof-polls.allowOptionImage', 'boolval')
         ->serializeToForum('pollMaxOptions', 'fof-polls.maxOptions', 'intval')
         ->registerLessConfigVar('fof-polls-options-color-blend', 'fof-polls.optionsColorBlend', function ($value) {
@@ -126,4 +127,33 @@ return [
 
     (new Extend\Filesystem())
         ->disk('fof-polls', PollImageDisk::class),
+
+    (new Extend\Filter(Filter\GlobalPollFilterer::class))
+        ->addFilter(Filter\PollIsEndedFilter::class),
+
+    (new Extend\Conditional())
+        ->when(new Extender\IsPollGroupEnabled(), function () {
+            return [
+                (new Extend\Policy())
+                    ->modelPolicy(PollGroup::class, Access\PollGroupPolicy::class),
+
+                (new Extend\Frontend('forum'))
+                    ->route('/polls/groups/composer', 'fof.polls.groups.composer')
+                    ->route('/polls/groups', 'fof.polls.groups.list')
+                    ->route('/polls/groups/{id}', 'fof.polls.groups.view'),
+
+                (new Extend\Routes('api'))
+                    ->get('/fof/polls/groups', 'fof.polls.groups.index', Controllers\ListPollGroupsController::class)
+                    ->get('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.show', Controllers\ShowPollGroupController::class)
+                    ->post('/fof/polls/groups', 'fof.polls.groups.create', Controllers\CreatePollGroupController::class)
+                    ->patch('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.edit', Controllers\EditPollGroupController::class)
+                    ->delete('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.delete', Controllers\DeletePollGroupController::class),
+
+                (new Extend\Filter(Filter\PollGroupFilterer::class))
+                    ->addFilter(Filter\PollGroupHasPollsFilter::class),
+
+                (new Extend\ModelVisibility(PollGroup::class))
+                    ->scope(Access\ScopePollGroupVisibility::class),
+            ];
+        }),
 ];

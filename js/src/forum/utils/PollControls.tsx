@@ -114,6 +114,6 @@ export default {
    * Edit the poll.
    */
   editAction(poll: Poll): void {
-    m.route.set(app.route('fof.polls.compose', { id: poll.id() }));
+    m.route.set(app.route('fof.polls.composer', { id: poll.id() }));
   },
 };

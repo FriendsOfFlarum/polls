@@ -136,6 +136,6 @@ export default class PollsPage extends AbstractPollPage {
       return;
     }
 
-    m.route.set(app.route('fof.polls.compose'));
+    m.route.set(app.route('fof.polls.composer'));
   }
 }

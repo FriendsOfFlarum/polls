@@ -27,6 +27,8 @@ use Illuminate\Support\Arr;
 
 class CreatePollHandler
 {
+    use PollGroupRelationTrait;
+
     /**
      * @var PollValidator
      */
@@ -73,7 +75,7 @@ class CreatePollHandler
             $command->actor->assertCan('startGlobalPoll');
         }
 
-        $attributes = $command->data;
+        $attributes = Arr::get($command->data, 'attributes', []);
 
         // Ideally we would use some JSON:API relationship syntax, but it's just too complicated with Flarum to generate the correct JSON payload
         // Instead we just pass an array of option objects that are each a set of key-value pairs for the option attributes
@@ -98,6 +100,8 @@ class CreatePollHandler
             $this->optionValidator->assertValid($optionData);
         }
 
+        $this->setPollGroupRelationData($command->actor, null, $command->data);
+
         return ($command->savePollOn)(function () use ($optionsData, $attributes, $command) {
             $endDate = Arr::get($attributes, 'endDate');
             $carbonDate = Carbon::parse($endDate);
@@ -120,6 +124,8 @@ class CreatePollHandler
                 Arr::get($attributes, 'pollImage'),
                 Arr::get($attributes, 'imageAlt')
             );
+
+            $this->setPollGroupRelationData($command->actor, $poll, $command->data);
 
             $this->events->dispatch(new SavingPollAttributes($command->actor, $poll, $attributes, $attributes));
 

@@ -1,22 +1,22 @@
 .PollsSettingsPage {
     padding-top: 20px;
-  
+
     .Button {
       margin-right: 10px;
       margin-bottom: 10px;
     }
-  
+
     .PollsSettingsTabPage {
       background: @control-bg;
       padding: 20px;
       border-radius: @border-radius;
       box-shadow: 0 2px 4px @shadow-color;
-  
+
       h3 {
         color: @primary-color;
         margin-bottom: 10px;
       }
-  
+
       .Section {
         background: @body-bg;
         border-radius: @border-radius;
@@ -24,7 +24,7 @@
         padding: 15px;
         margin-bottom: 20px;
       }
-  
+
       .Form {
         .control {
           background: @body-bg;
@@ -36,12 +36,16 @@
         input {
             max-width: 300px;
         }
+
+        .disabled {
+          opacity: 0.5;
+        }
       }
     }
-  
+
     &--settings {
       margin: 0 auto;
-  
+
       @media @desktop-up {
         margin: 0;
       }

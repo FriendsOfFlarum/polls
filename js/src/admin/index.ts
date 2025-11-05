@@ -79,5 +79,30 @@ app.initializers.add('fof/polls', () => {
         permission: 'discussion.polls.moderate',
       },
       'moderate'
+    )
+    .registerPermission(
+      {
+        icon: 'fas fa-poll',
+        label: app.translator.trans('fof-polls.admin.permissions.view_group'),
+        permission: 'viewPollGroups',
+        allowGuest: true,
+      },
+      'view'
+    )
+    .registerPermission(
+      {
+        icon: 'fas fa-plus',
+        label: app.translator.trans('fof-polls.admin.permissions.start_group'),
+        permission: 'startPollGroup',
+      },
+      'start'
+    )
+    .registerPermission(
+      {
+        icon: 'fas fa-edit',
+        label: app.translator.trans('fof-polls.admin.permissions.moderate_group'),
+        permission: 'polls.moderate_group',
+      },
+      'moderate'
     );
 });

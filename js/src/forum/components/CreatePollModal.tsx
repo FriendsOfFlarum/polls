@@ -1,7 +1,7 @@
 import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import Modal, { IInternalModalAttrs } from 'flarum/common/components/Modal';
-import PollForm from './PollForm';
+import PollForm from './Poll/PollForm';
 import PollModel from '../models/Poll';
 import PollFormState from '../states/PollFormState';
 

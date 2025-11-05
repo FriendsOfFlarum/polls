@@ -2,7 +2,7 @@ import CreatePollModal from './CreatePollModal';
 import PostPoll from './PostPoll';
 import EditPollModal from './EditPollModal';
 import ListVotersModal from './ListVotersModal';
-import PollForm from './PollForm';
+import PollForm from './Poll/PollForm';
 import ComposePollHero from './ComposePollHero';
 import ComposePollPage from './ComposePollPage';
 import PollsPage from './PollsPage';
@@ -12,14 +12,21 @@ import PollSubmitButton from './Poll/PollSubmitButton';
 import PollOption from './Poll/PollOption';
 import PollOptions from './Poll/PollOptions';
 import PollsShowcasePage from './PollsShowcasePage';
-import PollShowcase from './PollShowcase';
-import PollShowcaseItem from './PollShowcaseItem';
+import PollShowcase from './Poll/PollShowcase';
+import PollShowcaseItem from './Poll/PollShowcaseItem';
 import { AbstractPollPage } from './AbstractPollPage';
 import PollTitle from './Poll/PollTitle';
 import PollSubtitle from './Poll/PollSubtitle';
 import PollImage from './Poll/PollImage';
 import PollListItem from './Poll/PollListItem';
 import PollList from './Poll/PollList';
+import PollGroupList from './PollGroup/PollGroupList';
+import PollGroupListItem from './PollGroup/PollGroupListItem';
+import { AbstractPollGroupsPage } from './AbstractPollGroupsPage';
+import PollGroupListPage from './PollGroupListPage';
+import PollGroupViewPage from './PollGroupViewPage';
+import PollGroupForm from './PollGroup/PollGroupForm';
+import ComposePollGroupPage from './ComposePollGroupPage';
 
 export const components = {
   CreatePollModal,
@@ -44,4 +51,11 @@ export const components = {
   PollImage,
   PollListItem,
   PollList,
+  PollGroupList,
+  PollGroupListItem,
+  AbstractPollGroupsPage,
+  PollGroupListPage,
+  PollGroupViewPage,
+  PollGroupForm,
+  ComposePollGroupPage,
 };

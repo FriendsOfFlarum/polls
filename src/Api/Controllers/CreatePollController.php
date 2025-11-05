@@ -58,7 +58,7 @@ class CreatePollController extends AbstractCreateController
             new CreatePoll(
                 $actor,
                 $post,
-                Arr::get($request->getParsedBody(), 'data.attributes')
+                Arr::get($request->getParsedBody(), 'data')
             )
         );
     }

@@ -15,6 +15,8 @@ fof-polls:
       allow_image_uploads_help: If enabled, users will be able to upload images alongside also providing an image URL (if enabled for options, always enabled for the poll itself).
       enable_global_polls: Enable global polls
       enable_global_polls_help: Global polls are not tied to a specific post, and may be accessed from a dedicated polls page.
+      enabled_poll_groups: Enable poll groups
+      enabled_poll_groups_help: Poll groups allow you to group globals polls together, and display them in a dedicated page.
       max_options: Maximum number of options per poll
       options_color_blend: Color blend text in poll options
       options_color_blend_help: Use this to use color mixing to make the poll options more readable. Disable if this feature causes issues with your forum's appearance, reducing readability.
@@ -30,6 +32,9 @@ fof-polls:
       vote: Vote on polls
       change_vote: Change vote
       moderate: Edit & remove polls
+      view_group: View poll groups
+      start_group: Create poll groups
+      moderate_group: Edit & remove poll groups
 
   forum:
     days_remaining: Poll ends {time}.
@@ -59,6 +64,34 @@ fof-polls:
     poll_form:
       delete: Delete Poll
       error: There was an error saving the poll, please contact any administrator.
+
+    poll_groups:
+      composer:
+        add_title: Add Poll Group
+        edit_title: Edit Poll Group
+        save_changes: => core.ref.save_changes
+        delete: Delete Poll Group
+        groups_manager: Poll Groups Manager
+        view_group: View Poll Group
+        success: Poll group saved successfully.
+
+      list_page:
+        title: Poll Groups
+        start_poll_group_button: Start a Poll Group
+        cannot_start_poll_group_button: Cannot Start a Poll Group
+        empty_text: It looks as though there are no poll groups here.
+        load_more_button: => core.ref.load_more
+        no_polls: There are no polls in this group.
+        add_poll_button: Add Poll to Group
+
+      controls:
+        add_poll_label: Add Poll
+        edit_label: => core.ref.edit
+        view_label: View Poll Group
+        delete_label: => core.ref.delete
+        delete_confirmation: Are you sure you want to delete this poll group?
+        delete_success_message: Poll group deleted successfully.
+        delete_error_message: There went something wrong while deleting the poll group.
 
     polls_page:
       title: Polls
@@ -126,6 +159,7 @@ fof-polls:
     page:
       nav: Polls
       nav-all: All Global Polls
+      nav-groups: Poll Groups
 
     showcase:
       active-polls: Active Polls

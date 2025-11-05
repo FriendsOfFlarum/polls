@@ -38,12 +38,19 @@ class CreatePollTest extends TestCase
             'posts' => [
                 ['id' => 1, 'user_id' => 1, 'discussion_id' => 1, 'number' => 1, 'created_at' => '2021-01-01 00:00:00', 'content' => 'Post 1', 'type' => 'comment'],
             ],
+            'poll_groups' => [
+                ['id' => 1, 'name' => 'Default Group', 'user_id' => 2],
+                ['id' => 2, 'name' => 'Another Group', 'user_id' => 3],
+            ],
             'group_user' => [
                 ['user_id' => 3, 'group_id' => 4],
             ],
             'group_permission' => [
                 ['permission' => 'discussion.polls.start', 'group_id' => 4],
                 ['permission' => 'startGlobalPoll', 'group_id' => 4],
+                ['permission' => 'viewPollGroups', 'group_id' => 4],
+                ['permission' => 'startPollGroup', 'group_id' => 4],
+                ['permission' => 'polls.moderate_group', 'group_id' => 4],
             ],
         ]);
     }
@@ -601,5 +608,160 @@ class CreatePollTest extends TestCase
 
         $this->assertEquals('What is your favourite colour?', $poll->question);
         $this->assertEquals('This is a subtitle', $poll->subtitle);
+    }
+
+    /**
+     * @dataProvider authorizedUserProvider
+     *
+     * @test
+     */
+    public function authorized_user_can_create_poll_with_poll_group(int $userId)
+    {
+        AbstractPollGroupTestCase::enablePollGroup();
+        $response = $this->send(
+            $this->request(
+                'POST',
+                '/api/fof/polls',
+                [
+                    'authenticatedAs' => $userId,
+                    'json'            => [
+                        'data' => [
+                            'attributes' => [
+                                'question'           => 'Poll with group',
+                                'publicPoll'         => false,
+                                'hideVotes'          => false,
+                                'allowChangeVote'    => true,
+                                'allowMultipleVotes' => false,
+                                'maxVotes'           => 0,
+                                'endDate'            => false,
+                                'options'            => [
+                                    [
+                                        'answer' => 'Yes',
+                                    ],
+                                    [
+                                        'answer' => 'No',
+                                    ],
+                                ],
+                            ],
+                            'relationships' => [
+                                'pollGroup' => [
+                                    'data' => [
+                                        'type' => 'poll_groups',
+                                        'id'   => '2',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        $this->assertEquals(201, $response->getStatusCode());
+
+        $json = json_decode($response->getBody()->getContents(), true);
+        $pollId = $json['data']['id'];
+
+        $poll = Poll::find($pollId);
+        $this->assertNotNull($poll);
+        $this->assertEquals(2, $poll->poll_group_id);
+    }
+
+    /**
+     * @dataProvider unauthorizedUserProvider
+     *
+     * @test
+     */
+    public function unauthorized_user_cannot_create_poll_with_poll_group(int $userId)
+    {
+        AbstractPollGroupTestCase::enablePollGroup();
+        $response = $this->send(
+            $this->request(
+                'POST',
+                '/api/fof/polls',
+                [
+                    'authenticatedAs' => $userId,
+                    'json'            => [
+                        'data' => [
+                            'attributes' => [
+                                'question'           => 'Poll with group',
+                                'publicPoll'         => false,
+                                'hideVotes'          => false,
+                                'allowChangeVote'    => true,
+                                'allowMultipleVotes' => false,
+                                'maxVotes'           => 0,
+                                'endDate'            => false,
+                                'options'            => [
+                                    [
+                                        'answer' => 'Yes',
+                                    ],
+                                    [
+                                        'answer' => 'No',
+                                    ],
+                                ],
+                            ],
+                            'relationships' => [
+                                'pollGroup' => [
+                                    'data' => [
+                                        'type' => 'poll_groups',
+                                        'id'   => '2',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        $this->assertEquals(403, $response->getStatusCode());
+    }
+
+    /**
+     * @test
+     */
+    public function cannot_create_poll_with_nonexistent_poll_group()
+    {
+        AbstractPollGroupTestCase::enablePollGroup();
+        $response = $this->send(
+            $this->request(
+                'POST',
+                '/api/fof/polls',
+                [
+                    'authenticatedAs' => 1,
+                    'json'            => [
+                        'data' => [
+                            'attributes' => [
+                                'question'           => 'Poll with invalid group',
+                                'publicPoll'         => false,
+                                'hideVotes'          => false,
+                                'allowChangeVote'    => true,
+                                'allowMultipleVotes' => false,
+                                'maxVotes'           => 0,
+                                'endDate'            => false,
+                                'options'            => [
+                                    [
+                                        'answer' => 'Yes',
+                                    ],
+                                    [
+                                        'answer' => 'No',
+                                    ],
+                                ],
+                            ],
+                            'relationships' => [
+                                'pollGroup' => [
+                                    'data' => [
+                                        'type' => 'poll_groups',
+                                        'id'   => '999', // Non-existent ID
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        $this->assertEquals(404, $response->getStatusCode());
     }
 }

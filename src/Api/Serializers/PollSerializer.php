@@ -115,6 +115,14 @@ class PollSerializer extends AbstractSerializer
         );
     }
 
+    public function pollGroup($model)
+    {
+        return $this->hasOne(
+            $model,
+            PollGroupSerializer::class
+        );
+    }
+
     protected function getImageUrl(Poll $poll): ?string
     {
         // early return if no image

@@ -21,9 +21,9 @@ export default function addNavItem() {
       35
     );
 
-    const showAllGlobalPolls = app.forum.attribute<boolean>('canStartGlobalPolls');
+    const canStartGlobalPolls = app.forum.attribute<boolean>('canStartGlobalPolls');
 
-    if (showAllGlobalPolls) {
+    if (canStartGlobalPolls) {
       items.add(
         'fof-polls-list',
         LinkButton.component(
@@ -35,6 +35,21 @@ export default function addNavItem() {
         ),
         32
       );
+
+      const canViewPollGroups = app.forum.attribute<boolean>('canViewPollGroups');
+      if (canViewPollGroups) {
+        items.add(
+          'fof-poll-groups-list',
+          LinkButton.component(
+            {
+              href: app.route('fof.polls.groups.list'),
+              icon: 'fas fa-layer-group',
+            },
+            app.translator.trans('fof-polls.forum.page.nav-groups')
+          ),
+          30
+        );
+      }
     }
   });
 }

@@ -2,9 +2,9 @@ import Component, { ComponentAttrs } from 'flarum/common/Component';
 import Mithril from 'mithril';
 import ItemList from 'flarum/common/utils/ItemList';
 import Stream from 'flarum/common/utils/Stream';
-import PollFormState from '../states/PollFormState';
-import PollModel from '../models/Poll';
-import PollOption from '../models/PollOption';
+import PollFormState from '../../states/PollFormState';
+import PollModel from '../../models/Poll';
+import PollOption from '../../models/PollOption';
 interface PollFormAttrs extends ComponentAttrs {
     poll: PollModel;
     onsubmit: (data: object, state: PollFormState) => Promise<void>;
