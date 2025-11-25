@@ -10,6 +10,8 @@ export default class PollListState<P extends PollListParams = PollListParams> ex
     protected eventEmitter: EventEmitter;
     constructor(params: P, page?: number);
     get type(): string;
+    getSort(): string;
+    setSort(sort: string): void;
     requestParams(): PaginatedListRequestParams;
     includes(): string[];
     private requestIncludes;
