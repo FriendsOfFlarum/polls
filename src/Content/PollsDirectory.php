@@ -43,12 +43,10 @@ class PollsDirectory
      * @var array
      */
     private $sortMap = [
-        'username_az'       => 'username',
-        'username_za'       => '-username',
-        'newest'            => '-joinedAt',
-        'oldest'            => 'joinedAt',
-        'most_discussions'  => '-discussionCount',
-        'least_discussions' => 'discussionCount',
+        'newest'            => '-createdAt',
+        'oldest'            => 'createdAt',
+        'most_voted'        => '-voteCount',
+        'least_voted'       => 'voteCount',
     ];
 
     public function __construct(Client $api, Factory $view, SettingsRepositoryInterface $settings)
@@ -70,16 +68,22 @@ class PollsDirectory
         $queryParams = $request->getQueryParams();
         $actor = RequestUtil::getActor($request);
 
-        $sort = Arr::pull($queryParams, 'sort') ?: $this->settings->get('fof-polls.directory-default-sort');
+        $defaultSortKey = $this->settings->get('fof-polls.directory-default-sort');
+        $sortKey = Arr::pull($queryParams, 'sort') ?: $defaultSortKey;
+        $sort = isset($this->sortMap[$sortKey]) ? $this->sortMap[$sortKey] : '-createdAt';
         $q = Arr::pull($queryParams, 'q');
         $page = Arr::pull($queryParams, 'page', 1);
+        $filters = Arr::pull($queryParams, 'filter', []);
 
         $params = [
-            // ?? used to prevent null values. null would result in the whole sortMap array being sent in the params
-            'sort'   => Arr::get($this->sortMap, $sort ?? '', ''),
-            'filter' => compact('q'),
+            'sort'   => $sort,
+            'filter' => $filters,
             'page'   => ['offset' => ($page - 1) * 20, 'limit' => 20],
         ];
+
+        if ($q) {
+            $params['filter']['q'] = $q;
+        }
 
         $apiDocument = $this->getDocument($actor, $params, $request);
 
