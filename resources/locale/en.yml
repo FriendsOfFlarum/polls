@@ -99,6 +99,12 @@ fof-polls:
     polls_list:
       empty_text: It looks as though there are no community wide polls here.
       load_more_button: => core.ref.load_more
+      sort_dropdown:
+        newest: Newest
+        oldest: Oldest
+        most_voted: Most Voted
+        least_voted: Least Voted
+        sort_dropdown.default: => fof-polls.forum.polls_list.sort_dropdown.newest
 
     composer_discussion:
       add_poll: => fof-polls.forum.moderation.add
