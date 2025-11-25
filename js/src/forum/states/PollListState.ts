@@ -24,11 +24,20 @@ export default class PollListState<P extends PollListParams = PollListParams> ex
     return 'fof/polls';
   }
 
+  getSort(): string {
+    return this.params.sort || '-createdAt';
+  }
+
+  setSort(sort: string): void {
+    this.params.sort = sort;
+    this.refresh();
+  }
+
   requestParams(): PaginatedListRequestParams {
     const params = {
       include: this.requestIncludes(),
       filter: this.params.filter || {},
-      sort: this.sortMap()[this.params.sort ?? ''],
+      sort: this.getSort(),
     };
 
     if (this.params.q) {
@@ -82,6 +91,8 @@ export default class PollListState<P extends PollListParams = PollListParams> ex
     }
     map.newest = '-createdAt';
     map.oldest = 'createdAt';
+    map.most_voted = '-voteCount';
+    map.least_voted = 'voteCount';
 
     return map;
   }
