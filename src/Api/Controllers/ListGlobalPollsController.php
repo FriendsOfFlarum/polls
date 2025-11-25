@@ -32,6 +32,10 @@ class ListGlobalPollsController extends AbstractListController
         'myVotes.option',
     ];
 
+    public $sortFields = ['createdAt', 'voteCount'];
+
+    public $sort = ['createdAt' => 'desc'];
+
     /**
      * @var GlobalPollFilterer
      */

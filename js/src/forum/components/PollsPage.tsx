@@ -12,8 +12,11 @@ import SelectDropdown from 'flarum/common/components/SelectDropdown';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import PollView from './PollView';
 import { AbstractPollPage } from './AbstractPollPage';
+import Dropdown from 'flarum/common/components/Dropdown';
 
 export default class PollsPage extends AbstractPollPage {
+  defaultSort?: string;
+
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
 
@@ -22,8 +25,10 @@ export default class PollsPage extends AbstractPollPage {
       return;
     }
 
+    const defaultSort = String(app.forum.attribute('pollsDirectoryDefaultSort')) || 'newest';
+
     this.state = new PollListState({
-      sort: m.route.param('sort'),
+      sort: defaultSort,
       filter: m.route.param('filter'),
     });
 
@@ -120,7 +125,42 @@ export default class PollsPage extends AbstractPollPage {
   }
 
   viewItems() {
-    return IndexPage.prototype.viewItems();
+    const items = new ItemList<Mithril.Children>();
+    const sortMap = this.state.sortMap();
+
+    const currentSortKey = Object.keys(sortMap).find((key) => sortMap[key] === this.state.getSort()) || this.defaultSort; // fallback to '-createdAt' or your default
+
+    const sortOptions = Object.keys(sortMap).reduce((acc: any, sortId) => {
+      acc[sortId] = app.translator.trans(`fof-polls.forum.polls_list.sort_dropdown.${sortId}`);
+      return acc;
+    }, {});
+
+    items.add(
+      'sort',
+      <Dropdown
+        buttonClassName="Button"
+        label={currentSortKey ? sortOptions[currentSortKey] : app.translator.trans('fof-polls.forum.polls_list.sort_dropdown.default')}
+      >
+        {Object.keys(sortOptions).map((value) => {
+          const label = sortOptions[value];
+          const active = currentSortKey === value;
+
+          return (
+            <Button
+              icon={active ? 'fas fa-check' : true}
+              onclick={() => {
+                this.state.setSort(sortMap[value]);
+              }}
+              active={active}
+            >
+              {label}
+            </Button>
+          );
+        })}
+      </Dropdown>
+    );
+
+    return items;
   }
 
   navItems() {
