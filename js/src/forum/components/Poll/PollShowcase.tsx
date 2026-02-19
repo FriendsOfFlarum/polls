@@ -39,11 +39,7 @@ export default class PollShowcase extends Component<PollListAttrs, PollListState
             <Placeholder text={app.translator.trans('fof-polls.forum.showcase.no-recent-polls')} />
           )}
           {this.attrs.endedState.hasNext() && (
-            <Button
-              className="Button"
-              loading={this.attrs.endedState.isLoadingNext()}
-              onclick={() => this.attrs.endedState.loadNext()}
-            >
+            <Button className="Button" loading={this.attrs.endedState.isLoadingNext()} onclick={() => this.attrs.endedState.loadNext()}>
               {app.translator.trans('core.forum.discussion_list.load_more_button')}
             </Button>
           )}
