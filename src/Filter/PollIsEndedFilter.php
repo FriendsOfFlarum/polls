@@ -25,9 +25,16 @@ class PollIsEndedFilter implements FilterInterface
     public function filter(FilterState $filterState, string $filterValue, bool $negate)
     {
         if ($negate) {
-            return $filterState->getQuery()->whereNull('end_date')->orWhere('end_date', '<=', Carbon::now());
+            // filter[-isEnded]=1 → active polls (not ended)
+            $filterState->getQuery()->where(function ($query) {
+                $query->whereNull('end_date')
+                      ->orWhere('end_date', '>', Carbon::now());
+            });
+        } else {
+            // filter[isEnded]=1 → ended polls
+            $filterState->getQuery()
+                ->whereNotNull('end_date')
+                ->where('end_date', '<=', Carbon::now());
         }
-
-        return $filterState->getQuery()->where('end_date', '>', Carbon::now());
     }
 }
