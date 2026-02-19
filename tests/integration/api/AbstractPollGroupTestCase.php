@@ -74,6 +74,6 @@ abstract class AbstractPollGroupTestCase extends TestCase
 
     protected function getDefaultPoll(): array
     {
-        return ['id' => 1, 'question' => 'Test Poll', 'poll_group_id' => 1, 'user_id' => 1];
+        return ['id' => 1, 'question' => 'Test Poll', 'poll_group_id' => 1, 'user_id' => 1, 'settings' => '{}'];
     }
 }
