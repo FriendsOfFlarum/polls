@@ -74,7 +74,9 @@ return [
         ->attributes(Api\AddForumAttributes::class),
 
     (new Extend\ApiController(Controller\ListDiscussionsController::class))
-        ->addInclude(['polls'])
+        ->loadWhere('polls', function ($query) {
+            $query->select(['id', 'post_id']);
+        })
         ->addOptionalInclude(['firstPost.polls']),
 
     (new Extend\ApiController(Controller\ShowDiscussionController::class))
