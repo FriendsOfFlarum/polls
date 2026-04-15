@@ -15,6 +15,11 @@ use Carbon\Carbon;
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
 use FoF\Polls\PollVote;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use Flarum\User\User;
+use Flarum\Discussion\Discussion;
+use Flarum\Post\Post;
 
 class ChangeVoteTest extends TestCase
 {
@@ -27,15 +32,15 @@ class ChangeVoteTest extends TestCase
         $this->extension('fof-polls');
 
         $this->prepareDatabase([
-            'users' => [
+            User::class => [
                 $this->normalUser(),
                 ['id' => 3, 'username' => 'polluser', 'email' => 'polluser@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => true],
                 ['id' => 4, 'username' => 'moderator', 'email' => 'moderator@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => true],
             ],
-            'discussions' => [
+            Discussion::class => [
                 ['id' => 1, 'title' => 'Discussion 1', 'comment_count' => 1, 'participant_count' => 1, 'created_at' => '2021-01-01 00:00:00'],
             ],
-            'posts' => [
+            Post::class => [
                 ['id' => 1, 'user_id' => 1, 'discussion_id' => 1, 'number' => 1, 'created_at' => '2021-01-01 00:00:00', 'content' => 'Post 1', 'type' => 'comment'],
             ],
             'polls' => [
@@ -68,7 +73,7 @@ class ChangeVoteTest extends TestCase
         ]);
     }
 
-    public function usersWhoCanChangeVote(): array
+    public static function usersWhoCanChangeVote(): array
     {
         return [
             [1],
@@ -76,9 +81,7 @@ class ChangeVoteTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validation_error_when_no_data_is_passed()
     {
         $response = $this->send(
@@ -96,11 +99,8 @@ class ChangeVoteTest extends TestCase
         $this->assertEquals('/data/attributes/options', $data['errors'][0]['source']['pointer']);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider usersWhoCanChangeVote
-     */
+    #[Test]
+    #[DataProvider('usersWhoCanChangeVote')]
     public function user_with_permission_can_change_vote_on_no_change_poll(int $userId)
     {
         $response = $this->send(
@@ -123,9 +123,7 @@ class ChangeVoteTest extends TestCase
         $this->assertEquals(2, $vote->option_id);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function user_without_permission_cannot_change_vote_on_no_change_poll()
     {
         $response = $this->send(
@@ -148,11 +146,8 @@ class ChangeVoteTest extends TestCase
         $this->assertEquals(1, $vote->option_id);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider usersWhoCanChangeVote
-     */
+    #[Test]
+    #[DataProvider('usersWhoCanChangeVote')]
     public function user_with_permission_can_change_vote_on_change_poll(int $userId)
     {
         $response = $this->send(
@@ -175,9 +170,7 @@ class ChangeVoteTest extends TestCase
         $this->assertEquals(4, $vote->option_id);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function user_without_permission_can_change_vote_on_change_poll()
     {
         $response = $this->send(

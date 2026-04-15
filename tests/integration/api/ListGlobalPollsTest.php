@@ -13,6 +13,8 @@ namespace FoF\Polls\Tests\integration\api;
 
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
+use PHPUnit\Framework\Attributes\Test;
+use Flarum\User\User;
 
 class ListGlobalPollsTest extends TestCase
 {
@@ -27,7 +29,7 @@ class ListGlobalPollsTest extends TestCase
         $this->setting('fof-polls.enableGlobalPolls', true);
 
         $this->prepareDatabase([
-            'users' => [
+            User::class => [
                 $this->normalUser(),
             ],
             'polls' => [
@@ -53,9 +55,7 @@ class ListGlobalPollsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function can_list_all_global_polls()
     {
         $response = $this->send(
@@ -71,9 +71,7 @@ class ListGlobalPollsTest extends TestCase
         $this->assertCount(4, $data);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function can_filter_ended_polls()
     {
         $response = $this->send(
@@ -97,9 +95,7 @@ class ListGlobalPollsTest extends TestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function can_filter_active_polls()
     {
         $response = $this->send(
@@ -123,9 +119,7 @@ class ListGlobalPollsTest extends TestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function active_filter_includes_null_end_date()
     {
         $response = $this->send(
@@ -143,9 +137,7 @@ class ListGlobalPollsTest extends TestCase
         $this->assertNull($poll1['attributes']['endDate']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function active_filter_includes_future_end_date()
     {
         $response = $this->send(
@@ -164,9 +156,7 @@ class ListGlobalPollsTest extends TestCase
         $this->assertFalse($poll2['attributes']['hasEnded']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function ended_filter_excludes_null_end_date()
     {
         $response = $this->send(

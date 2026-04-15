@@ -14,6 +14,11 @@ namespace FoF\Polls\Tests\integration\api;
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
 use FoF\Polls\Poll;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use Flarum\User\User;
+use Flarum\Discussion\Discussion;
+use Flarum\Post\Post;
 
 class CreatePollTest extends TestCase
 {
@@ -28,14 +33,14 @@ class CreatePollTest extends TestCase
         $this->setting('fof-polls.enableGlobalPolls', true);
 
         $this->prepareDatabase([
-            'users' => [
+            User::class => [
                 $this->normalUser(),
                 ['id' => 3, 'username' => 'polluser', 'email' => 'polluser@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => true],
             ],
-            'discussions' => [
+            Discussion::class => [
                 ['id' => 1, 'title' => 'Discussion 1', 'comment_count' => 1, 'participant_count' => 1, 'created_at' => '2021-01-01 00:00:00'],
             ],
-            'posts' => [
+            Post::class => [
                 ['id' => 1, 'user_id' => 1, 'discussion_id' => 1, 'number' => 1, 'created_at' => '2021-01-01 00:00:00', 'content' => 'Post 1', 'type' => 'comment'],
             ],
             'poll_groups' => [
@@ -55,7 +60,7 @@ class CreatePollTest extends TestCase
         ]);
     }
 
-    public function authorizedUserProvider(): array
+    public static function authorizedUserProvider(): array
     {
         return [
             [1],
@@ -63,18 +68,15 @@ class CreatePollTest extends TestCase
         ];
     }
 
-    public function unauthorizedUserProvider(): array
+    public static function unauthorizedUserProvider(): array
     {
         return [
             [2],
         ];
     }
 
-    /**
-     * @dataProvider authorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('authorizedUserProvider')]
     public function authorized_user_can_create_poll_in_post(int $userId)
     {
         $response = $this->send(
@@ -156,11 +158,8 @@ class CreatePollTest extends TestCase
         $this->assertFalse($json['data']['attributes']['isGlobal']);
     }
 
-    /**
-     * @dataProvider unauthorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('unauthorizedUserProvider')]
     public function unauthorized_user_cannot_create_poll_in_post(int $userId)
     {
         $response = $this->send(
@@ -215,11 +214,8 @@ class CreatePollTest extends TestCase
         $this->assertEquals('/data/attributes/poll', $errors[0]['source']['pointer']);
     }
 
-    /**
-     * @dataProvider authorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('authorizedUserProvider')]
     public function authorized_user_can_create_post_poll_on_api(int $userId)
     {
         $response = $this->send(
@@ -278,11 +274,8 @@ class CreatePollTest extends TestCase
         $this->assertEquals(1, $poll->post_id);
     }
 
-    /**
-     * @dataProvider unauthorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('unauthorizedUserProvider')]
     public function unauthorized_user_cannot_create_post_poll_on_api(int $userId)
     {
         $response = $this->send(
@@ -327,11 +320,8 @@ class CreatePollTest extends TestCase
         $this->assertEquals(403, $response->getStatusCode());
     }
 
-    /**
-     * @dataProvider authorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('authorizedUserProvider')]
     public function authorized_user_cannot_create_post_poll_with_invalid_postId(int $userId)
     {
         $response = $this->send(
@@ -376,11 +366,8 @@ class CreatePollTest extends TestCase
         $this->assertEquals(404, $response->getStatusCode());
     }
 
-    /**
-     * @dataProvider authorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('authorizedUserProvider')]
     public function authorized_user_can_create_global_poll_on_api(int $userId)
     {
         $response = $this->send(
@@ -448,11 +435,8 @@ class CreatePollTest extends TestCase
         $this->assertTrue($json['data']['attributes']['isGlobal']);
     }
 
-    /**
-     * @dataProvider unauthorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('unauthorizedUserProvider')]
     public function unauthorized_user_cannot_create_global_poll_on_api(int $userId)
     {
         $response = $this->send(
@@ -489,11 +473,8 @@ class CreatePollTest extends TestCase
         $this->assertEquals(403, $response->getStatusCode());
     }
 
-    /**
-     * @dataProvider authorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('authorizedUserProvider')]
     public function authorized_user_can_create_a_poll_with_a_subtitle_via_api(int $userId)
     {
         $response = $this->send(
@@ -539,11 +520,8 @@ class CreatePollTest extends TestCase
         $this->assertEquals('This is a subtitle', $attributes['subtitle']);
     }
 
-    /**
-     * @dataProvider authorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('authorizedUserProvider')]
     public function authorized_user_can_create_a_poll_with_a_subtitle_via_post(int $userId)
     {
         $response = $this->send(
@@ -610,11 +588,8 @@ class CreatePollTest extends TestCase
         $this->assertEquals('This is a subtitle', $poll->subtitle);
     }
 
-    /**
-     * @dataProvider authorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('authorizedUserProvider')]
     public function authorized_user_can_create_poll_with_poll_group(int $userId)
     {
         AbstractPollGroupTestCase::enablePollGroup();
@@ -667,11 +642,8 @@ class CreatePollTest extends TestCase
         $this->assertEquals(2, $poll->poll_group_id);
     }
 
-    /**
-     * @dataProvider unauthorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('unauthorizedUserProvider')]
     public function unauthorized_user_cannot_create_poll_with_poll_group(int $userId)
     {
         AbstractPollGroupTestCase::enablePollGroup();
@@ -717,9 +689,7 @@ class CreatePollTest extends TestCase
         $this->assertEquals(403, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function cannot_create_poll_with_nonexistent_poll_group()
     {
         AbstractPollGroupTestCase::enablePollGroup();

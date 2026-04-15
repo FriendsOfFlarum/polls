@@ -12,12 +12,11 @@
 namespace FoF\Polls\Tests\integration\api;
 
 use FoF\Polls\PollGroup;
+use PHPUnit\Framework\Attributes\Test;
 
 class CreatePollGroupTest extends AbstractPollGroupTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function authorized_user_can_create_poll_group()
     {
         $response = $this->send(
@@ -53,9 +52,7 @@ class CreatePollGroupTest extends AbstractPollGroupTestCase
         $this->assertEquals(3, $pollGroup->user_id);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unauthorized_user_cannot_create_poll_group()
     {
         $response = $this->send(

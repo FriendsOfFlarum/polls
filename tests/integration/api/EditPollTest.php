@@ -14,6 +14,10 @@ namespace FoF\Polls\Tests\integration\api;
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
 use FoF\Polls\Poll;
+use PHPUnit\Framework\Attributes\Test;
+use Flarum\User\User;
+use Flarum\Discussion\Discussion;
+use Flarum\Post\Post;
 
 class EditPollTest extends TestCase
 {
@@ -28,15 +32,15 @@ class EditPollTest extends TestCase
         $this->setting('fof-polls.enableGlobalPolls', true);
 
         $this->prepareDatabase([
-            'users' => [
+            User::class => [
                 $this->normalUser(),
                 ['id' => 3, 'username' => 'polluser', 'email' => 'polluser@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => true],
                 ['id' => 4, 'username' => 'moderator', 'email' => 'moderator@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => true],
             ],
-            'discussions' => [
+            Discussion::class => [
                 ['id' => 1, 'title' => 'Discussion 1', 'comment_count' => 1, 'participant_count' => 1, 'created_at' => '2021-01-01 00:00:00'],
             ],
-            'posts' => [
+            Post::class => [
                 ['id' => 1, 'user_id' => 1, 'discussion_id' => 1, 'number' => 1, 'created_at' => '2021-01-01 00:00:00', 'content' => 'Post 1', 'type' => 'comment'],
             ],
             'polls' => [
@@ -66,9 +70,7 @@ class EditPollTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function user_without_permission_cannot_remove_pollimage_from_global_poll()
     {
         $response = $this->send(
@@ -80,9 +82,7 @@ class EditPollTest extends TestCase
         $this->assertEquals(403, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function user_with_permission_can_remove_pollimage_from_global_poll()
     {
         $response = $this->send(
@@ -94,9 +94,7 @@ class EditPollTest extends TestCase
         $this->assertEquals(204, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function user_without_permission_cannot_remove_pollimage_by_name_from_global_poll()
     {
         $response = $this->send(
@@ -108,9 +106,7 @@ class EditPollTest extends TestCase
         $this->assertEquals(403, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function user_with_permission_can_remove_pollimage_by_name_from_global_poll()
     {
         $fileName = 'pollimage-abcdef.png';
@@ -126,9 +122,7 @@ class EditPollTest extends TestCase
         $this->assertEquals(404, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function user_without_permission_cannot_remove_polloption_image_from_global_poll()
     {
         $response = $this->send(
@@ -140,9 +134,7 @@ class EditPollTest extends TestCase
         $this->assertEquals(403, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function user_with_permission_can_remove_polloption_image_from_global_poll()
     {
         $response = $this->send(
@@ -154,9 +146,7 @@ class EditPollTest extends TestCase
         $this->assertEquals(204, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function user_without_permission_cannot_remove_polloption_image_by_name_from_global_poll()
     {
         $response = $this->send(
@@ -168,9 +158,7 @@ class EditPollTest extends TestCase
         $this->assertEquals(403, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function user_with_permission_can_remove_polloption_image_by_name_from_global_poll()
     {
         $fileName = 'pollimage-hijklm.png';
@@ -186,9 +174,7 @@ class EditPollTest extends TestCase
         $this->assertEquals(404, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function poll_owner_can_add_poll_to_group()
     {
         AbstractPollGroupTestCase::enablePollGroup();
@@ -220,9 +206,7 @@ class EditPollTest extends TestCase
         $this->assertEquals(1, $poll->poll_group_id);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moderator_can_change_poll_group()
     {
         AbstractPollGroupTestCase::enablePollGroup();
@@ -258,9 +242,7 @@ class EditPollTest extends TestCase
         $this->assertEquals(2, $poll->poll_group_id);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unauthorized_user_cannot_change_poll_group()
     {
         AbstractPollGroupTestCase::enablePollGroup();
@@ -292,9 +274,7 @@ class EditPollTest extends TestCase
         $this->assertNull($poll->poll_group_id);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function cannot_assign_poll_to_nonexistent_group()
     {
         AbstractPollGroupTestCase::enablePollGroup();
