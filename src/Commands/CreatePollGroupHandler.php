@@ -20,15 +20,8 @@ use Illuminate\Support\Arr;
 
 class CreatePollGroupHandler
 {
-    protected $pollGroups;
-    protected $validator;
-    protected $events;
-
-    public function __construct(PollGroupRepository $pollGroups, PollGroupValidator $validator, Dispatcher $events)
+    public function __construct(protected PollGroupRepository $pollGroups, protected PollGroupValidator $validator, protected Dispatcher $events)
     {
-        $this->pollGroups = $pollGroups;
-        $this->validator = $validator;
-        $this->events = $events;
     }
 
     public function handle(CreatePollGroup $command)

@@ -29,20 +29,8 @@ class ListPollGroupsController extends AbstractListController
 
     public $optionalInclude = ['polls.votes', 'polls.options', 'polls.myVotes', 'polls.myVotes.option', 'polls.votes.option', 'polls.votes.user'];
 
-    /**
-     * @var PollGroupFilterer
-     */
-    protected $filterer;
-
-    /**
-     * @var UrlGenerator
-     */
-    protected $url;
-
-    public function __construct(PollGroupFilterer $filterer, UrlGenerator $url)
+    public function __construct(protected PollGroupFilterer $filterer, protected UrlGenerator $url)
     {
-        $this->filterer = $filterer;
-        $this->url = $url;
     }
 
     protected function data(ServerRequestInterface $request, Document $document): Collection

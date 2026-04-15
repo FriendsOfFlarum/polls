@@ -39,31 +39,13 @@ class UploadPollImageController implements RequestHandlerInterface
      */
     protected $uploadDir;
 
-    /**
-     * @var ImageManager
-     */
-    protected $imageManager;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $events;
-
-    /**
-     * @var SettingsRepositoryInterface
-     */
-    protected $settings;
-
     public function __construct(
         Factory $filesystemFactory,
-        ImageManager $imageManager,
-        Dispatcher $events,
-        SettingsRepositoryInterface $settings
+        protected ImageManager $imageManager,
+        protected Dispatcher $events,
+        protected SettingsRepositoryInterface $settings
     ) {
-        $this->imageManager = $imageManager;
         $this->uploadDir = $filesystemFactory->disk('fof-polls');
-        $this->events = $events;
-        $this->settings = $settings;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface

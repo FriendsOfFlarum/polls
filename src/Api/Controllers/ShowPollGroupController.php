@@ -27,14 +27,8 @@ class ShowPollGroupController extends AbstractShowController
 
     public $optionalInclude = ['polls.votes', 'polls.votes.option', 'polls.votes.user'];
 
-    /**
-     * @var PollGroupRepository
-     */
-    protected $groups;
-
-    public function __construct(PollGroupRepository $groups)
+    public function __construct(protected PollGroupRepository $groups)
     {
-        $this->groups = $groups;
     }
 
     protected function data(ServerRequestInterface $request, Document $document)

@@ -15,14 +15,8 @@ use FoF\Polls\PollRepository;
 
 class DeletePollHandler
 {
-    /**
-     * @var PollRepository
-     */
-    protected $polls;
-
-    public function __construct(PollRepository $polls)
+    public function __construct(protected PollRepository $polls)
     {
-        $this->polls = $polls;
     }
 
     public function handle(DeletePoll $command)

@@ -18,11 +18,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class GlobalPollFilterer extends AbstractFilterer
 {
-    protected $polls;
-
-    public function __construct(PollRepository $polls, ?array $filters, array $filterMutators)
+    public function __construct(protected PollRepository $polls, ?array $filters, array $filterMutators)
     {
-        $this->polls = $polls;
         parent::__construct($filters, $filterMutators);
     }
 

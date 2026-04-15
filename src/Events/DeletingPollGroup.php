@@ -16,19 +16,7 @@ use FoF\Polls\PollGroup;
 
 class DeletingPollGroup
 {
-    /**
-     * @var User
-     */
-    public $actor;
-
-    /**
-     * @var PollGroup
-     */
-    public $pollGroup;
-
-    public function __construct(User $actor, PollGroup $pollGroup)
+    public function __construct(public User $actor, public PollGroup $pollGroup)
     {
-        $this->actor = $actor;
-        $this->pollGroup = $pollGroup;
     }
 }

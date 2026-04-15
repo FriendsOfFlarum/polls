@@ -31,13 +31,7 @@ class PollVote extends AbstractModel
      */
     public $timestamps = true;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected $dates = [
-        'created_at',
-        'updated_at',
-    ];
+    protected $casts = ['created_at' => 'datetime', 'updated_at' => 'datetime'];
 
     protected $fillable = ['user_id', 'option_id'];
 

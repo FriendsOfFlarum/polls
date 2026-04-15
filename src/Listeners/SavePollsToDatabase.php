@@ -18,20 +18,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SavePollsToDatabase
 {
-    /**
-     * @var \Flarum\Bus\Dispatcher
-     */
-    protected $bus;
-
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    public function __construct(\Flarum\Bus\Dispatcher $bus, TranslatorInterface $translator)
+    public function __construct(protected \Flarum\Bus\Dispatcher $bus, protected TranslatorInterface $translator)
     {
-        $this->bus = $bus;
-        $this->translator = $translator;
     }
 
     public function handle(Saving $event)

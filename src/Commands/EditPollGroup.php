@@ -15,14 +15,7 @@ use Flarum\User\User;
 
 class EditPollGroup
 {
-    public $groupId;
-    public $actor;
-    public $data;
-
-    public function __construct(User $actor, int $groupId, array $data)
+    public function __construct(public User $actor, public int $groupId, public array $data)
     {
-        $this->groupId = $groupId;
-        $this->actor = $actor;
-        $this->data = $data;
     }
 }

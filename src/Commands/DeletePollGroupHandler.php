@@ -18,11 +18,8 @@ use Illuminate\Contracts\Events\Dispatcher;
 
 class DeletePollGroupHandler
 {
-    protected $events;
-
-    public function __construct(Dispatcher $events)
+    public function __construct(protected Dispatcher $events)
     {
-        $this->events = $events;
     }
 
     public function handle(DeletePollGroup $command)

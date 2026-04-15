@@ -30,14 +30,8 @@ class ShowPollController extends AbstractShowController
 
     public $optionalInclude = ['votes', 'votes.option', 'votes.user'];
 
-    /**
-     * @var PollRepository
-     */
-    protected $polls;
-
-    public function __construct(PollRepository $polls)
+    public function __construct(protected PollRepository $polls)
     {
-        $this->polls = $polls;
     }
 
     /**

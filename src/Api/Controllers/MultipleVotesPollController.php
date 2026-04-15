@@ -35,17 +35,8 @@ class MultipleVotesPollController extends AbstractShowController
 
     public $optionalInclude = ['votes', 'votes.option', 'votes.user'];
 
-    /**
-     * @var Dispatcher
-     */
-    protected $bus;
-
-    /**
-     * @param Dispatcher $bus
-     */
-    public function __construct(Dispatcher $bus)
+    public function __construct(protected Dispatcher $bus)
     {
-        $this->bus = $bus;
     }
 
     /**

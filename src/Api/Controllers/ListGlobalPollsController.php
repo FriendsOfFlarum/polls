@@ -36,20 +36,8 @@ class ListGlobalPollsController extends AbstractListController
 
     public $sort = ['createdAt' => 'desc'];
 
-    /**
-     * @var GlobalPollFilterer
-     */
-    protected $filterer;
-
-    /**
-     * @var UrlGenerator
-     */
-    protected $url;
-
-    public function __construct(GlobalPollFilterer $filterer, UrlGenerator $url)
+    public function __construct(protected GlobalPollFilterer $filterer, protected UrlGenerator $url)
     {
-        $this->filterer = $filterer;
-        $this->url = $url;
     }
 
     public function data(ServerRequestInterface $request, Document $document): Collection

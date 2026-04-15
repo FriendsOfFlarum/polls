@@ -26,38 +26,8 @@ class EditPollHandler
 {
     use PollGroupRelationTrait;
 
-    /**
-     * @var PollValidator
-     */
-    protected $validator;
-
-    /**
-     * @var PollOptionValidator
-     */
-    protected $optionValidator;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $events;
-
-    /**
-     * @var SettingsRepositoryInterface
-     */
-    protected $settings;
-
-    /**
-     * @var PollRepository
-     */
-    protected $polls;
-
-    public function __construct(PollRepository $polls, PollValidator $validator, PollOptionValidator $optionValidator, Dispatcher $events, SettingsRepositoryInterface $settings)
+    public function __construct(protected PollRepository $polls, protected PollValidator $validator, protected PollOptionValidator $optionValidator, protected Dispatcher $events, protected SettingsRepositoryInterface $settings)
     {
-        $this->validator = $validator;
-        $this->optionValidator = $optionValidator;
-        $this->events = $events;
-        $this->settings = $settings;
-        $this->polls = $polls;
     }
 
     public function handle(EditPoll $command)

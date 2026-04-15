@@ -17,7 +17,7 @@ use Illuminate\Validation\Rule;
 
 class PollValidator extends AbstractValidator
 {
-    protected function getRules()
+    protected function getRules(): array
     {
         return [
             'question'   => 'required',

@@ -16,19 +16,7 @@ use FoF\Polls\PollOption;
 
 class PollOptionUpdated
 {
-    /**
-     * @var PollOption
-     */
-    public $option;
-
-    /**
-     * @var User
-     */
-    public $actor;
-
-    public function __construct(PollOption $option, User $actor)
+    public function __construct(public PollOption $option, public User $actor)
     {
-        $this->option = $option;
-        $this->actor = $actor;
     }
 }

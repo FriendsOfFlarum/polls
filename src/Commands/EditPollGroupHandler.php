@@ -20,13 +20,8 @@ use Illuminate\Support\Arr;
 
 class EditPollGroupHandler
 {
-    protected $validator;
-    protected $events;
-
-    public function __construct(PollGroupValidator $validator, Dispatcher $events)
+    public function __construct(protected PollGroupValidator $validator, protected Dispatcher $events)
     {
-        $this->validator = $validator;
-        $this->events = $events;
     }
 
     public function handle(EditPollGroup $command)

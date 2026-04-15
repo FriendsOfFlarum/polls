@@ -28,17 +28,8 @@ class DeletePollController extends AbstractDeleteController
 
     public $include = ['options'];
 
-    /**
-     * @var Dispatcher
-     */
-    protected $bus;
-
-    /**
-     * @param Dispatcher $bus
-     */
-    public function __construct(Dispatcher $bus)
+    public function __construct(protected Dispatcher $bus)
     {
-        $this->bus = $bus;
     }
 
     /**
@@ -46,7 +37,7 @@ class DeletePollController extends AbstractDeleteController
      *
      * @param ServerRequestInterface $request
      */
-    protected function delete(ServerRequestInterface $request)
+    protected function delete(ServerRequestInterface $request): void
     {
         return $this->bus->dispatch(
             new DeletePoll(

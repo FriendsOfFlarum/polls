@@ -18,38 +18,10 @@ use Illuminate\Support\Collection;
 class PollVotesChanged
 {
     /**
-     * @var User
-     */
-    public $actor;
-
-    /**
-     * @var Poll
-     */
-    public $poll;
-
-    /**
-     * @var Collection
-     */
-    public $unvotedOptionIds;
-
-    /**
-     * @var Collection
-     */
-    public $votedOptionIds;
-
-    /**
      * PollWasCreated constructor.
      *
-     * @param User       $actor
-     * @param Poll       $poll
-     * @param Collection $unvotedOptionIds
-     * @param Collection $votedOptionIds
      */
-    public function __construct(User $actor, Poll $poll, Collection $unvotedOptionIds, Collection $votedOptionIds)
+    public function __construct(public User $actor, public Poll $poll, public Collection $unvotedOptionIds, public Collection $votedOptionIds)
     {
-        $this->actor = $actor;
-        $this->poll = $poll;
-        $this->unvotedOptionIds = $unvotedOptionIds;
-        $this->votedOptionIds = $votedOptionIds;
     }
 }

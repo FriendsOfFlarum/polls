@@ -18,11 +18,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class PollGroupFilterer extends AbstractFilterer
 {
-    protected $pollGroups;
-
-    public function __construct(PollGroupRepository $pollGroups, array $filters, array $filterMutators)
+    public function __construct(protected PollGroupRepository $pollGroups, array $filters, array $filterMutators)
     {
-        $this->pollGroups = $pollGroups;
         parent::__construct($filters, $filterMutators);
     }
 

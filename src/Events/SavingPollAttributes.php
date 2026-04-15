@@ -25,37 +25,7 @@ use FoF\Polls\Poll;
  */
 class SavingPollAttributes
 {
-    /**
-     * @var User
-     */
-    public $actor;
-
-    /**
-     * @var Poll
-     */
-    public $poll;
-
-    /**
-     * @var array
-     */
-    public $attributes;
-
-    /**
-     * @var array
-     */
-    public $data;
-
-    /**
-     * @param User  $actor
-     * @param Poll  $poll
-     * @param array $attributes
-     * @param array $data
-     */
-    public function __construct(User $actor, Poll $poll, array $attributes, array $data)
+    public function __construct(public User $actor, public Poll $poll, public array $attributes, public array $data)
     {
-        $this->actor = $actor;
-        $this->poll = $poll;
-        $this->attributes = $attributes;
-        $this->data = $data;
     }
 }

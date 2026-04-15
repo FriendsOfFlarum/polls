@@ -15,7 +15,7 @@ use Flarum\Foundation\AbstractValidator;
 
 class PollGroupValidator extends AbstractValidator
 {
-    protected $rules = [
+    protected array $rules = [
         'name' => 'required|string|max:255',
     ];
 }

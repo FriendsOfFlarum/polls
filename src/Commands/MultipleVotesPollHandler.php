@@ -29,49 +29,8 @@ use Pusher;
 
 class MultipleVotesPollHandler
 {
-    /**
-     * @var Dispatcher
-     */
-    private $events;
-
-    /**
-     * @var SettingsRepositoryInterface
-     */
-    private $settings;
-
-    /**
-     * @var Container
-     */
-    private $container;
-
-    /**
-     * @var Factory
-     */
-    private $validation;
-
-    /**
-     * @var DatabaseManager
-     */
-    private $db;
-
-    /**
-     * @var PollRepository
-     */
-    private $polls;
-
-    /**
-     * @param Dispatcher                  $events
-     * @param SettingsRepositoryInterface $settings
-     * @param Container                   $container
-     */
-    public function __construct(PollRepository $polls, Dispatcher $events, SettingsRepositoryInterface $settings, Container $container, Factory $validation, DatabaseManager $db)
+    public function __construct(private PollRepository $polls, private Dispatcher $events, private SettingsRepositoryInterface $settings, private Container $container, private Factory $validation, private DatabaseManager $db)
     {
-        $this->polls = $polls;
-        $this->events = $events;
-        $this->settings = $settings;
-        $this->container = $container;
-        $this->validation = $validation;
-        $this->db = $db;
     }
 
     /**

@@ -29,38 +29,8 @@ class CreatePollHandler
 {
     use PollGroupRelationTrait;
 
-    /**
-     * @var PollValidator
-     */
-    protected $validator;
-
-    /**
-     * @var PollOptionValidator
-     */
-    protected $optionValidator;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $events;
-
-    /**
-     * @var SettingsRepositoryInterface
-     */
-    protected $settings;
-
-    /**
-     * @var PostRepository
-     */
-    protected $posts;
-
-    public function __construct(PostRepository $posts, PollValidator $validator, PollOptionValidator $optionValidator, Dispatcher $events, SettingsRepositoryInterface $settings)
+    public function __construct(protected PostRepository $posts, protected PollValidator $validator, protected PollOptionValidator $optionValidator, protected Dispatcher $events, protected SettingsRepositoryInterface $settings)
     {
-        $this->validator = $validator;
-        $this->optionValidator = $optionValidator;
-        $this->events = $events;
-        $this->settings = $settings;
-        $this->posts = $posts;
     }
 
     public function handle(CreatePoll $command)

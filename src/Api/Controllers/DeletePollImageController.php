@@ -30,15 +30,9 @@ class DeletePollImageController implements RequestHandlerInterface
      */
     protected $uploadDir;
 
-    /**
-     * @var Dispatcher
-     */
-    protected $events;
-
-    public function __construct(Factory $filesystemFactory, Dispatcher $events)
+    public function __construct(Factory $filesystemFactory, protected Dispatcher $events)
     {
         $this->uploadDir = $filesystemFactory->disk('fof-polls');
-        $this->events = $events;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface

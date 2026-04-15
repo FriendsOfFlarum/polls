@@ -15,31 +15,7 @@ use Intervention\Image\Image;
 
 class PollImageWillBeResized
 {
-    /**
-     * @var Image
-     */
-    public $image;
-
-    /**
-     * @var string
-     */
-    public $fileName;
-
-    /**
-     * @var int
-     */
-    public $height;
-
-    /**
-     * @var int
-     */
-    public $width;
-
-    public function __construct(Image $image, string $fileName, int $height, int $width)
+    public function __construct(public Image $image, public string $fileName, public int $height, public int $width)
     {
-        $this->image = $image;
-        $this->fileName = $fileName;
-        $this->height = $height;
-        $this->width = $width;
     }
 }

@@ -23,21 +23,6 @@ use Psr\Http\Message\ServerRequestInterface;
 class PollsDirectory
 {
     /**
-     * @var Client
-     */
-    protected $api;
-
-    /**
-     * @var Factory
-     */
-    protected $view;
-
-    /**
-     * @var SettingsRepositoryInterface
-     */
-    protected $settings;
-
-    /**
      * A map of sort query param values to their API sort param.
      *
      * @var array
@@ -49,11 +34,8 @@ class PollsDirectory
         'least_voted'       => 'voteCount',
     ];
 
-    public function __construct(Client $api, Factory $view, SettingsRepositoryInterface $settings)
+    public function __construct(protected Client $api, protected Factory $view, protected SettingsRepositoryInterface $settings)
     {
-        $this->api = $api;
-        $this->view = $view;
-        $this->settings = $settings;
     }
 
     private function getDocument(User $actor, array $params, ServerRequestInterface $request)

@@ -27,20 +27,8 @@ class CreatePollController extends AbstractCreateController
 
     public $include = ['options'];
 
-    /**
-     * @var PostRepository
-     */
-    protected $posts;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $bus;
-
-    public function __construct(PostRepository $posts, Dispatcher $bus)
+    public function __construct(protected PostRepository $posts, protected Dispatcher $bus)
     {
-        $this->posts = $posts;
-        $this->bus = $bus;
     }
 
     protected function data(ServerRequestInterface $request, Document $document)
