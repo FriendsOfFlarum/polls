@@ -21,6 +21,10 @@ use Flarum\Post\Event\Saving as PostSaving;
 use Flarum\Post\Post;
 use Flarum\Settings\Event\Saved as SettingsSaved;
 use FoF\Polls\Api\Controllers;
+use Flarum\Api\Context;
+use Flarum\Api\Endpoint;
+use Flarum\Api\Resource;
+use Flarum\Api\Schema;
 
 return [
     (new Extend\Frontend('forum'))
@@ -63,38 +67,47 @@ return [
         ->listen(PostSaving::class, Listeners\SavePollsToDatabase::class)
         ->listen(SettingsSaved::class, Listeners\ClearFormatterCache::class),
 
+    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
     (new Extend\ApiSerializer(DiscussionSerializer::class))
         ->attributes(Api\AddDiscussionAttributes::class),
 
+    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
     (new Extend\ApiSerializer(PostSerializer::class))
         ->hasMany('polls', Api\Serializers\PollSerializer::class)
         ->attributes(Api\AddPostAttributes::class),
 
+    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
     (new Extend\ApiSerializer(ForumSerializer::class))
         ->attributes(Api\AddForumAttributes::class),
 
+    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
     (new Extend\ApiController(Controller\ListDiscussionsController::class))
         ->loadWhere('polls', function ($query) {
             $query->select(['id', 'post_id']);
         })
         ->addOptionalInclude(['firstPost.polls']),
 
+    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
     (new Extend\ApiController(Controller\ShowDiscussionController::class))
         ->addInclude(['posts.polls', 'posts.polls.options', 'posts.polls.myVotes', 'posts.polls.myVotes.option'])
         ->addOptionalInclude(['posts.polls.votes', 'posts.polls.votes.user', 'posts.polls.votes.option']),
 
+    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
     (new Extend\ApiController(Controller\CreateDiscussionController::class))
         ->addInclude(['firstPost.polls', 'firstPost.polls.options', 'firstPost.polls.myVotes', 'firstPost.polls.myVotes.option'])
         ->addOptionalInclude(['firstPost.polls.votes', 'firstPost.polls.votes.user', 'firstPost.polls.votes.option']),
 
+    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
     (new Extend\ApiController(Controller\CreatePostController::class))
         ->addInclude(['polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option'])
         ->addOptionalInclude(['polls.votes', 'polls.votes.user', 'polls.votes.option']),
 
+    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
     (new Extend\ApiController(Controller\ListPostsController::class))
         ->addInclude(['polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option'])
         ->addOptionalInclude(['polls.votes', 'polls.votes.user', 'polls.votes.option']),
 
+    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
     (new Extend\ApiController(Controller\ShowPostController::class))
         ->addInclude(['polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option'])
         ->addOptionalInclude(['polls.votes', 'polls.votes.user', 'polls.votes.option']),
@@ -158,6 +171,14 @@ return [
 
                 (new Extend\ModelVisibility(PollGroup::class))
                     ->scope(Access\ScopePollGroupVisibility::class),
+                new Extend\ApiResource(Api\Resource\PollGroupResource::class),
+                new Extend\ApiResource(Api\Resource\PollOptionResource::class),
+                new Extend\ApiResource(Api\Resource\PollResource::class),
+                new Extend\ApiResource(Api\Resource\PollVoteResource::class),
             ];
         }),
+    new Extend\ApiResource(Api\Resource\PollGroupResource::class),
+    new Extend\ApiResource(Api\Resource\PollOptionResource::class),
+    new Extend\ApiResource(Api\Resource\PollResource::class),
+    new Extend\ApiResource(Api\Resource\PollVoteResource::class),
 ];

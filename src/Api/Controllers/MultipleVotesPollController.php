@@ -21,8 +21,10 @@ use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
 
 /**
- * This class also works for single-vote polls.
- * The existing API endpoint only allows for one vote per user, so we need to create a new one.
+ * @TODO: Remove this in favor of one of the API resource classes that were added.
+ *      Or extend an existing API Resource to add this to.
+ *      Or use a vanilla RequestHandlerInterface controller.
+ *      @link https://docs.flarum.org/2.x/extend/api#endpoints
  */
 class MultipleVotesPollController extends AbstractShowController
 {
