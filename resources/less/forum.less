@@ -76,7 +76,7 @@
     flex-shrink: 1;
     margin-left: 10px;
 
-    .Button--color(@muted-color; darken(@control-bg, 5%));
+    .Button--color(@muted-color; var(--control-bg-darken-5));
 
     .icon {
       margin-right: 0;
@@ -146,12 +146,9 @@
 
     .PollAnswer when (@fof-polls-options-color-blend = true) {
       &-checkbox,
-      &-text {
-        & when (@config-dark-mode =true) {
+      &-text {[data-theme^=dark] & {
           mix-blend-mode: difference;
-        }
-
-        & when (@config-dark-mode =false) {
+        }[data-theme^=light] & {
           mix-blend-mode: darken;
         }
       }
@@ -168,7 +165,7 @@
     align-items: flex-start;
     column-gap: 15px;
     background-color: var(--body-bg);
-    .box-shadow(inset 0px 2px 0px 0px var(--muted-more-bg));
+    box-shadow: inset 0px 2px 0px 0px var(--muted-more-bg);
 
     &:empty {
       display: none;
@@ -466,7 +463,7 @@
     align-items: flex-start;
     column-gap: 15px;
     background-color: var(--body-bg);
-    .box-shadow(inset 0px 2px 0px 0px var(--muted-more-bg));
+    box-shadow: inset 0px 2px 0px 0px var(--muted-more-bg);
 
     &:empty {
       display: none;
@@ -731,20 +728,20 @@
 
 .PollShowcase {
   &--item {
-    background-color: @control-bg;
-    border-radius: @border-radius;
+    background-color: var(--control-bg);
+    border-radius: var(--border-radius);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 10px;
     margin-bottom: 20px;
 
     .Poll {
       padding: 20px;
-      border-radius: @border-radius;
-      background-color: @body-bg;
+      border-radius: var(--border-radius);
+      background-color: var(--body-bg);
 
       .Poll-header {
-        background-color: @header-bg;
-        color: @header-color;
+        background-color: var(--header-bg);
+        color: var(--header-color);
       }
     }
   }
@@ -791,4 +788,11 @@
 // Poll Groups Composer
 .PollGroupModal-SubmitButton {
   margin-right: 10px;
+}
+
+[data-theme^=light] {
+  --control-bg-darken-5: darken(@control-bg-light, 5%);
+}
+[data-theme^=dark] {
+  --control-bg-darken-5: darken(@control-bg-dark, 5%);
 }
