@@ -4,7 +4,6 @@ import listItems from 'flarum/common/helpers/listItems';
 import ItemList from 'flarum/common/utils/ItemList';
 import IndexPage from 'flarum/forum/components/IndexPage';
 import PollList from './Poll/PollList';
-import LogInModal from 'flarum/forum/components/LogInModal';
 import extractText from 'flarum/common/utils/extractText';
 import PollListState from '../states/PollListState';
 import Button from 'flarum/common/components/Button';
@@ -172,7 +171,7 @@ export default class PollsPage extends AbstractPollPage {
    */
   newPollAction(): void {
     if (!app.session.user) {
-      app.modal.show(LogInModal);
+      app.modal.show(() => import('flarum/forum/components/LogInModal'));
       return;
     }
 

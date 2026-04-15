@@ -1,7 +1,6 @@
 import app from 'flarum/forum/app';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
 import Button from 'flarum/common/components/Button';
-import LogInModal from 'flarum/forum/components/LogInModal';
 import ListVotersModal from './ListVotersModal';
 import classList from 'flarum/common/utils/classList';
 import ItemList from 'flarum/common/utils/ItemList';
@@ -207,7 +206,7 @@ export default class PostPoll extends Component<PostPollAttrs> {
 
   changeVote(option: PollOption, evt: Event) {
     if (!app.session.user) {
-      app.modal.show(LogInModal);
+      app.modal.show(() => import('flarum/forum/components/LogInModal'));
       if (evt.target instanceof HTMLInputElement) {
         evt.target.checked = false;
       }

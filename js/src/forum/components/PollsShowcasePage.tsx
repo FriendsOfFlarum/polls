@@ -5,7 +5,6 @@ import Mithril from 'mithril';
 import PollListState from '../states/PollListState';
 import extractText from 'flarum/common/utils/extractText';
 import Button from 'flarum/common/components/Button';
-import LogInModal from 'flarum/forum/components/LogInModal';
 import { AbstractPollPage } from './AbstractPollPage';
 import PollShowcase from './Poll/PollShowcase';
 
@@ -81,7 +80,7 @@ export default class PollsShowcasePage extends AbstractPollPage {
 
   newPollAction(): void {
     if (!app.session.user) {
-      app.modal.show(LogInModal);
+      app.modal.show(() => import('flarum/forum/components/LogInModal'));
       return;
     }
 

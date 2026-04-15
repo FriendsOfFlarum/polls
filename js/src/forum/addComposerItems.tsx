@@ -2,8 +2,6 @@ import app from 'flarum/forum/app';
 
 import { extend } from 'flarum/common/extend';
 import classList from 'flarum/common/utils/classList';
-import DiscussionComposer from 'flarum/forum/components/DiscussionComposer';
-import ReplyComposer from 'flarum/forum/components/ReplyComposer';
 import CreatePollModal from './components/CreatePollModal';
 import Poll from './models/Poll';
 import PollOption from './models/PollOption';

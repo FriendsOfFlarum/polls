@@ -10,7 +10,6 @@ import app from 'flarum/forum/app';
 import SelectDropdown from 'flarum/common/components/SelectDropdown';
 import IndexPageHero from './PollPageHero';
 import Button from 'flarum/common/components/Button';
-import LogInModal from 'flarum/forum/components/LogInModal';
 
 export abstract class AbstractPollGroupsPage extends Page<IPageAttrs, PollGroupListState> {
   loading: boolean = false;
@@ -126,7 +125,7 @@ export abstract class AbstractPollGroupsPage extends Page<IPageAttrs, PollGroupL
 
   newPollGroupAction(): void {
     if (!app.session.user) {
-      app.modal.show(LogInModal);
+      app.modal.show(() => import('flarum/forum/components/LogInModal'));
       return;
     }
 

@@ -1,6 +1,5 @@
 import app from 'flarum/forum/app';
 import Poll from '../models/Poll';
-import LogInModal from 'flarum/forum/components/LogInModal';
 import PollOption from '../models/PollOption';
 import PollVote from '../models/PollVote';
 import ListVotersModal from '../components/ListVotersModal';
@@ -59,7 +58,7 @@ export default class PollState {
     const target = evt.target as HTMLInputElement;
 
     if (!app.session.user) {
-      app.modal.show(LogInModal);
+      app.modal.show(() => import('flarum/forum/components/LogInModal'));
       target.checked = false;
       return;
     }
