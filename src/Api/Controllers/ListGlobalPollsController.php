@@ -14,7 +14,7 @@ namespace FoF\Polls\Api\Controllers;
 use Flarum\Api\Controller\AbstractListController;
 use Flarum\Http\RequestUtil;
 use Flarum\Http\UrlGenerator;
-use Flarum\Query\QueryCriteria;
+use Flarum\Search\SearchCriteria;
 use FoF\Polls\Api\Serializers\PollSerializer;
 use FoF\Polls\Filter\GlobalPollFilterer;
 use Illuminate\Database\Eloquent\Collection;
@@ -57,7 +57,7 @@ class ListGlobalPollsController extends AbstractListController
         $offset = $this->extractOffset($request);
         $include = $this->extractInclude($request);
 
-        $criteria = new QueryCriteria($actor, $filters, $sort, $sortIsDefault);
+        $criteria = new SearchCriteria($actor, $filters, $sort, $sortIsDefault);
         $results = $this->filterer->filter($criteria, $limit, $offset);
 
         $document->addPaginationLinks(

@@ -145,9 +145,6 @@ return [
     (new Extend\Filesystem())
         ->disk('fof-polls', PollImageDisk::class),
 
-    (new Extend\Filter(Filter\GlobalPollFilterer::class))
-        ->addFilter(Filter\PollIsEndedFilter::class),
-
     (new Extend\Conditional())
         ->when(new Extender\IsPollGroupEnabled(), function () {
             return [
@@ -166,19 +163,22 @@ return [
                     ->patch('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.edit', Controllers\EditPollGroupController::class)
                     ->delete('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.delete', Controllers\DeletePollGroupController::class),
 
-                (new Extend\Filter(Filter\PollGroupFilterer::class))
-                    ->addFilter(Filter\PollGroupHasPollsFilter::class),
-
                 (new Extend\ModelVisibility(PollGroup::class))
                     ->scope(Access\ScopePollGroupVisibility::class),
                 new Extend\ApiResource(Api\Resource\PollGroupResource::class),
                 new Extend\ApiResource(Api\Resource\PollOptionResource::class),
                 new Extend\ApiResource(Api\Resource\PollResource::class),
                 new Extend\ApiResource(Api\Resource\PollVoteResource::class),
+                (new Extend\SearchDriver(\Flarum\Search\Database\DatabaseSearchDriver::class))
+        ->addFilter(Filter\GlobalPollSearcher::class, Filter\PollIsEndedFilter::class)
+        ->addFilter(Filter\PollGroupSearcher::class, Filter\PollGroupHasPollsFilter::class),
             ];
         }),
     new Extend\ApiResource(Api\Resource\PollGroupResource::class),
     new Extend\ApiResource(Api\Resource\PollOptionResource::class),
     new Extend\ApiResource(Api\Resource\PollResource::class),
     new Extend\ApiResource(Api\Resource\PollVoteResource::class),
+    (new Extend\SearchDriver(\Flarum\Search\Database\DatabaseSearchDriver::class))
+        ->addFilter(Filter\GlobalPollSearcher::class, Filter\PollIsEndedFilter::class)
+        ->addFilter(Filter\PollGroupSearcher::class, Filter\PollGroupHasPollsFilter::class),
 ];

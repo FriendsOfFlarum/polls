@@ -11,7 +11,7 @@
 
 namespace FoF\Polls\Filter;
 
-use Flarum\Filter\AbstractFilterer;
+use Flarum\Search\Filter\AbstractFilterer;
 use Flarum\User\User;
 use FoF\Polls\PollRepository;
 use Illuminate\Database\Eloquent\Builder;
