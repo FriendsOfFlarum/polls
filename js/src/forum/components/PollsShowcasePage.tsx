@@ -10,6 +10,8 @@ import { AbstractPollPage } from './AbstractPollPage';
 import PollShowcase from './Poll/PollShowcase';
 
 export default class PollsShowcasePage extends AbstractPollPage {
+  endedState!: PollListState;
+
   oninit(vnode: Mithril.Vnode<IPageAttrs, PollListState>) {
     super.oninit(vnode);
 
@@ -20,11 +22,18 @@ export default class PollsShowcasePage extends AbstractPollPage {
 
     this.state = new PollListState({
       sort: m.route.param('sort'),
-      filter: m.route.param('filter'),
+      filter: { '-isEnded': '1' },
+      include: this.includeParams(),
+    });
+
+    this.endedState = new PollListState({
+      sort: m.route.param('sort'),
+      filter: { isEnded: '1' },
       include: this.includeParams(),
     });
 
     this.state.refresh();
+    this.endedState.refresh();
 
     app.setTitle(extractText(app.translator.trans('fof-polls.forum.page.nav')));
   }
@@ -37,7 +46,7 @@ export default class PollsShowcasePage extends AbstractPollPage {
     const items = super.contentItems();
 
     if (!this.loading) {
-      items.add('poll-showcase', <PollShowcase state={this.state} />);
+      items.add('poll-showcase', <PollShowcase activeState={this.state} endedState={this.endedState} />);
     }
 
     return items;
