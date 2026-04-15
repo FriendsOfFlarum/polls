@@ -92,6 +92,10 @@ class UploadPollImageController implements RequestHandlerInterface
 
     protected function makeImage(UploadedFileInterface $file, string $uploadName): Image
     {
+        /**
+         * @TODO: confirm if this still works with intervention/image v3
+         *        see: https://image.intervention.io/v3/introduction/upgrade
+         */
         $image = $this->imageManager->make($file->getStream()->getMetadata('uri'));
 
         $height = $this->settings->get('fof-polls.image_height');
