@@ -4,7 +4,7 @@ import PollsSettingsPage from './components/PollsSettingsPage';
 export * from './components';
 
 app.initializers.add('fof/polls', () => {
-  app.extensionData
+  app.registry
     .for('fof-polls')
     .registerPage(PollsSettingsPage)
     .registerPermission(

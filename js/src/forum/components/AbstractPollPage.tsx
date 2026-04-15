@@ -1,3 +1,4 @@
+import IndexSidebar from 'flarum/forum/components/IndexSidebar';
 import Page, { IPageAttrs } from 'flarum/common/components/Page';
 import PollListState from '../states/PollListState';
 import Poll from '../models/Poll';
@@ -64,7 +65,7 @@ export abstract class AbstractPollPage extends Page<IPageAttrs, PollListState> {
   }
 
   sidebarItems(): ItemList<Mithril.Children> {
-    const items = IndexPage.prototype.sidebarItems();
+    const items = IndexSidebar.prototype.items();
 
     items.setContent(
       'nav',
@@ -81,7 +82,7 @@ export abstract class AbstractPollPage extends Page<IPageAttrs, PollListState> {
   }
 
   navItems(): ItemList<Mithril.Children> {
-    const items = IndexPage.prototype.navItems();
+    const items = IndexSidebar.prototype.navItems();
 
     if (app.initializers.has('flarum-tags')) {
       // remove the tags from the nav items

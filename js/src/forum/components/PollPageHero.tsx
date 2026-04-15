@@ -1,7 +1,7 @@
 import app from 'flarum/forum/app';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
 import classList from 'flarum/common/utils/classList';
-import icon from 'flarum/common/helpers/icon';
+import Icon from 'flarum/common/components/Icon';
 import ItemList from 'flarum/common/utils/ItemList';
 import type Mithril from 'mithril';
 
@@ -54,7 +54,7 @@ export default class PollPageHero extends Component<PollPageHeroAttrs> {
 
   items() {
     const items = new ItemList();
-    items.add('title', <h2 className="Hero-title">{[icon(this.icon), ' ', this.title]}</h2>, 50);
+    items.add('title', <h2 className="Hero-title">{[<Icon name={this.icon} />, ' ', this.title]}</h2>, 50);
 
     return items;
   }

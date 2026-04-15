@@ -1,10 +1,11 @@
+import IndexSidebar from 'flarum/forum/components/IndexSidebar';
 import app from 'flarum/forum/app';
 import { extend } from 'flarum/common/extend';
 import IndexPage from 'flarum/forum/components/IndexPage';
 import LinkButton from 'flarum/common/components/LinkButton';
 
 export default function addNavItem() {
-  extend(IndexPage.prototype, 'navItems', (items) => {
+  extend(IndexSidebar.prototype, 'navItems', (items) => {
     if (!app.forum.attribute<boolean>('globalPollsEnabled')) {
       return;
     }

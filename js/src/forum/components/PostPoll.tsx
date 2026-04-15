@@ -5,7 +5,7 @@ import ListVotersModal from './ListVotersModal';
 import classList from 'flarum/common/utils/classList';
 import ItemList from 'flarum/common/utils/ItemList';
 import Tooltip from 'flarum/common/components/Tooltip';
-import icon from 'flarum/common/helpers/icon';
+import Icon from 'flarum/common/components/Icon';
 import EditPollModal from './EditPollModal';
 import Poll from '../models/Poll';
 import type Mithril from 'mithril';
@@ -180,7 +180,7 @@ export default class PostPoll extends Component<PostPollAttrs> {
 
         <div className="PollAnswer-text">
           <span className="PollAnswer-text-answer">{opt.answer()}</span>
-          {voted && !showCheckmark && icon('fas fa-check-circle', { className: 'PollAnswer-check' })}
+          {voted && !showCheckmark && <Icon name="fas fa-check-circle" className="PollAnswer-check" />}
           {canSeeVoteCount && <span className={classList('PollPercent', percent !== 100 && 'PollPercent--option')}>{percent}%</span>}
         </div>
 

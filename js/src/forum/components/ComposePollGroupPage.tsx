@@ -1,3 +1,4 @@
+import IndexSidebar from 'flarum/forum/components/IndexSidebar';
 import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import Page from 'flarum/common/components/Page';
@@ -132,6 +133,6 @@ export default class ComposePollGroupPage extends Page {
   }
 
   navItems() {
-    return IndexPage.prototype.navItems();
+    return IndexSidebar.prototype.navItems();
   }
 }

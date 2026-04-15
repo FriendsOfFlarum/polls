@@ -1,3 +1,4 @@
+import IndexSidebar from 'flarum/forum/components/IndexSidebar';
 import Page, { IPageAttrs } from 'flarum/common/components/Page';
 import PollGroupListState from '../states/PollGroupListState';
 import PollGroup from '../models/PollGroup';
@@ -65,7 +66,7 @@ export abstract class AbstractPollGroupsPage extends Page<IPageAttrs, PollGroupL
   }
 
   sidebarItems(): ItemList<Mithril.Children> {
-    const items = IndexPage.prototype.sidebarItems();
+    const items = IndexSidebar.prototype.items();
     const canStartPoll = app.forum.attribute<boolean>('canStartGlobalPolls');
 
     items.setContent(
@@ -105,7 +106,7 @@ export abstract class AbstractPollGroupsPage extends Page<IPageAttrs, PollGroupL
   }
 
   navItems(): ItemList<Mithril.Children> {
-    const items = IndexPage.prototype.navItems();
+    const items = IndexSidebar.prototype.navItems();
 
     if (app.initializers.has('flarum-tags')) {
       // remove the tags from the nav items

@@ -1,3 +1,4 @@
+import Form from 'flarum/common/components/Form';
 import app from 'flarum/admin/app';
 import ExtensionPage from 'flarum/admin/components/ExtensionPage';
 import ItemList from 'flarum/common/utils/ItemList';
@@ -9,10 +10,10 @@ export default class PollsSettingsPage extends ExtensionPage {
       <div className="PollsSettingsPage">
         <div className="container">
           <div className="PollsSettingsTabPage PollsSettingsPage--settings">
-            <div className="Form">
+            <Form>
               {this.settingsItems().toArray()}
               <div className="Form-group">{this.submitButton()}</div>
-            </div>
+            </Form>
           </div>
         </div>
       </div>

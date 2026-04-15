@@ -1,7 +1,7 @@
 import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import Modal, { IInternalModalAttrs } from 'flarum/common/components/Modal';
-import avatar from 'flarum/common/helpers/avatar';
+import Avatar from 'flarum/common/components/Avatar';
 import username from 'flarum/common/helpers/username';
 import Link from 'flarum/common/components/Link';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
@@ -68,7 +68,7 @@ export default class ListVotersModal extends Modal<ListVotersModalAttrs> {
 
     return (
       <Link {...attrs}>
-        {avatar(user)} {username(user)}
+        <Avatar user={user} /> {username(user)}
       </Link>
     );
   }

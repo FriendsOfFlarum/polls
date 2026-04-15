@@ -1,3 +1,4 @@
+import IndexSidebar from 'flarum/forum/components/IndexSidebar';
 import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import listItems from 'flarum/common/helpers/listItems';
@@ -163,7 +164,7 @@ export default class PollsPage extends AbstractPollPage {
   }
 
   navItems() {
-    return IndexPage.prototype.navItems();
+    return IndexSidebar.prototype.navItems();
   }
 
   /**

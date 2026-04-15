@@ -4,7 +4,7 @@ import Component, { ComponentAttrs } from 'flarum/common/Component';
 import PollOptionModel from '../../models/PollOption';
 import PollState from '../../states/PollState';
 import Tooltip, { TooltipAttrs } from 'flarum/common/components/Tooltip';
-import icon from 'flarum/common/helpers/icon';
+import Icon from 'flarum/common/components/Icon';
 import classList from 'flarum/common/utils/classList';
 import ItemList from 'flarum/common/utils/ItemList';
 import Poll from '../../models/Poll';
@@ -117,7 +117,7 @@ export default class PollOption extends Component<PollOptionAttrs, PollState> {
       </span>
     );
 
-    this.voted && !this.state.showCheckMarks && items.add('check', icon('fas fa-check-circle', { className: 'PollAnswer-check' }));
+    this.voted && !this.state.showCheckMarks && items.add('check', <Icon name="fas fa-check-circle" className="PollAnswer-check" />);
 
     this.canSeeVoteCount &&
       items.add('percent', <span className={classList('PollPercent', this.percent() !== 100 && 'PollPercent--option')}>{this.percent()}%</span>);
