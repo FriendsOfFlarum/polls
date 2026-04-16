@@ -34,13 +34,13 @@ class ListGlobalPollsTest extends TestCase
             ],
             'polls' => [
                 // Poll 1: Active — no end date (perpetual)
-                ['id' => 1, 'question' => 'Active poll no end', 'subtitle' => null, 'image' => null, 'image_alt' => null, 'post_id' => null, 'user_id' => 1, 'public_poll' => 0, 'end_date' => null, 'created_at' => '2025-01-01 00:00:00', 'updated_at' => '2025-01-01 00:00:00', 'vote_count' => 0, 'allow_multiple_votes' => 0, 'max_votes' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
+                ['id' => 1, 'question' => 'Active poll no end', 'subtitle' => null, 'image' => null, 'image_alt' => null, 'post_id' => null, 'user_id' => 1, 'end_date' => null, 'created_at' => '2025-01-01 00:00:00', 'updated_at' => '2025-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
                 // Poll 2: Active — end date in the future
-                ['id' => 2, 'question' => 'Active poll future end', 'subtitle' => null, 'image' => null, 'image_alt' => null, 'post_id' => null, 'user_id' => 1, 'public_poll' => 0, 'end_date' => '2030-01-01 00:00:00', 'created_at' => '2025-01-02 00:00:00', 'updated_at' => '2025-01-02 00:00:00', 'vote_count' => 0, 'allow_multiple_votes' => 0, 'max_votes' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
+                ['id' => 2, 'question' => 'Active poll future end', 'subtitle' => null, 'image' => null, 'image_alt' => null, 'post_id' => null, 'user_id' => 1, 'end_date' => '2030-01-01 00:00:00', 'created_at' => '2025-01-02 00:00:00', 'updated_at' => '2025-01-02 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
                 // Poll 3: Ended — end date in the past
-                ['id' => 3, 'question' => 'Ended poll old', 'subtitle' => null, 'image' => null, 'image_alt' => null, 'post_id' => null, 'user_id' => 1, 'public_poll' => 0, 'end_date' => '2020-01-01 00:00:00', 'created_at' => '2025-01-03 00:00:00', 'updated_at' => '2025-01-03 00:00:00', 'vote_count' => 0, 'allow_multiple_votes' => 0, 'max_votes' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
+                ['id' => 3, 'question' => 'Ended poll old', 'subtitle' => null, 'image' => null, 'image_alt' => null, 'post_id' => null, 'user_id' => 1, 'end_date' => '2020-01-01 00:00:00', 'created_at' => '2025-01-03 00:00:00', 'updated_at' => '2025-01-03 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
                 // Poll 4: Ended — end date in the past (more recent)
-                ['id' => 4, 'question' => 'Ended poll recent', 'subtitle' => null, 'image' => null, 'image_alt' => null, 'post_id' => null, 'user_id' => 1, 'public_poll' => 0, 'end_date' => '2021-06-01 00:00:00', 'created_at' => '2025-01-04 00:00:00', 'updated_at' => '2025-01-04 00:00:00', 'vote_count' => 0, 'allow_multiple_votes' => 0, 'max_votes' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
+                ['id' => 4, 'question' => 'Ended poll recent', 'subtitle' => null, 'image' => null, 'image_alt' => null, 'post_id' => null, 'user_id' => 1, 'end_date' => '2021-06-01 00:00:00', 'created_at' => '2025-01-04 00:00:00', 'updated_at' => '2025-01-04 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
             ],
             'poll_options' => [
                 ['id' => 1, 'answer' => 'Yes', 'poll_id' => 1, 'vote_count' => 0, 'created_at' => '2025-01-01 00:00:00', 'updated_at' => '2025-01-01 00:00:00'],
@@ -59,7 +59,7 @@ class ListGlobalPollsTest extends TestCase
     public function can_list_all_global_polls()
     {
         $response = $this->send(
-            $this->request('GET', '/api/fof/polls', [
+            $this->request('GET', '/api/polls', [
                 'authenticatedAs' => 1,
             ])
         );
@@ -75,7 +75,7 @@ class ListGlobalPollsTest extends TestCase
     public function can_filter_ended_polls()
     {
         $response = $this->send(
-            $this->request('GET', '/api/fof/polls', [
+            $this->request('GET', '/api/polls', [
                 'authenticatedAs' => 1,
             ])->withQueryParams(['filter' => ['isEnded' => '1']])
         );
@@ -99,7 +99,7 @@ class ListGlobalPollsTest extends TestCase
     public function can_filter_active_polls()
     {
         $response = $this->send(
-            $this->request('GET', '/api/fof/polls', [
+            $this->request('GET', '/api/polls', [
                 'authenticatedAs' => 1,
             ])->withQueryParams(['filter' => ['-isEnded' => '1']])
         );
@@ -123,7 +123,7 @@ class ListGlobalPollsTest extends TestCase
     public function active_filter_includes_null_end_date()
     {
         $response = $this->send(
-            $this->request('GET', '/api/fof/polls', [
+            $this->request('GET', '/api/polls', [
                 'authenticatedAs' => 1,
             ])->withQueryParams(['filter' => ['-isEnded' => '1']])
         );
@@ -141,7 +141,7 @@ class ListGlobalPollsTest extends TestCase
     public function active_filter_includes_future_end_date()
     {
         $response = $this->send(
-            $this->request('GET', '/api/fof/polls', [
+            $this->request('GET', '/api/polls', [
                 'authenticatedAs' => 1,
             ])->withQueryParams(['filter' => ['-isEnded' => '1']])
         );
@@ -160,7 +160,7 @@ class ListGlobalPollsTest extends TestCase
     public function ended_filter_excludes_null_end_date()
     {
         $response = $this->send(
-            $this->request('GET', '/api/fof/polls', [
+            $this->request('GET', '/api/polls', [
                 'authenticatedAs' => 1,
             ])->withQueryParams(['filter' => ['isEnded' => '1']])
         );

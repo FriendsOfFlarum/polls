@@ -11,11 +11,16 @@
 
 namespace FoF\Polls\Events;
 
-use Intervention\Image\Image;
+use Intervention\Image\Interfaces\ImageInterface;
 
 class PollImageWillBeResized
 {
-    public function __construct(public Image $image, public string $fileName, public int $height, public int $width)
-    {
+    public function __construct(
+        public ImageInterface $image,
+        public string $fileName,
+        public int $baseHeight,
+        public int $baseWidth,
+        public bool $isAnimated,
+    ) {
     }
 }

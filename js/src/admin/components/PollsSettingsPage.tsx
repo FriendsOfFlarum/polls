@@ -129,21 +129,13 @@ export default class PollsSettingsPage extends ExtensionPage {
     const items = new ItemList<Mithril.Children>();
 
     items.add(
-      'allowOptionImage',
+      'maxImageUploadSize',
       this.buildSettingComponent({
-        setting: 'fof-polls.allowOptionImage',
-        type: 'switch',
-        label: app.translator.trans('fof-polls.admin.settings.allow_option_image'),
-      })
-    );
-
-    items.add(
-      'allowImageUploads',
-      this.buildSettingComponent({
-        setting: 'fof-polls.allowImageUploads',
-        type: 'switch',
-        label: app.translator.trans('fof-polls.admin.settings.allow_image_uploads'),
-        help: app.translator.trans('fof-polls.admin.settings.allow_image_uploads_help'),
+        setting: 'fof-polls.maxImageUploadSize',
+        type: 'number',
+        label: app.translator.trans('fof-polls.admin.settings.max_image_upload_size'),
+        help: app.translator.trans('fof-polls.admin.settings.max_image_upload_size_help'),
+        min: 1,
       })
     );
 
@@ -153,6 +145,7 @@ export default class PollsSettingsPage extends ExtensionPage {
         setting: 'fof-polls.image_height',
         type: 'number',
         label: app.translator.trans('fof-polls.admin.settings.image_height'),
+        help: app.translator.trans('fof-polls.admin.settings.image_dimensions_help'),
       })
     );
 

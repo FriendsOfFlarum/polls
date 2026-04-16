@@ -29,7 +29,9 @@ export default class PollImage extends Component<PollImageAttrs> {
   imageItems(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
 
-    items.add('image', <img src={this.imageUrl} alt={this.imageAlt ?? ''} className="PollImage-image" loading="lazy" />);
+    const srcset = this.attrs.poll.imageSrcset();
+
+    items.add('image', <img src={this.imageUrl} srcset={srcset ?? undefined} alt={this.imageAlt ?? ''} className="PollImage-image" loading="lazy" />);
 
     return items;
   }

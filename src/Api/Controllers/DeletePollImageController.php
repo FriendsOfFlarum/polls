@@ -14,9 +14,8 @@ namespace FoF\Polls\Api\Controllers;
 use Flarum\Http\RequestUtil;
 use FoF\Polls\Events\PollImageDeleting;
 use FoF\Polls\Poll;
+use FoF\Polls\PollImageUploader;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Filesystem\Cloud;
-use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Support\Arr;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Psr\Http\Message\ResponseInterface;
@@ -25,14 +24,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class DeletePollImageController implements RequestHandlerInterface
 {
-    /**
-     * @var Cloud
-     */
-    protected $uploadDir;
-
-    public function __construct(Factory $filesystemFactory, protected Dispatcher $events)
-    {
-        $this->uploadDir = $filesystemFactory->disk('fof-polls');
+    public function __construct(
+        protected PollImageUploader $uploader,
+        protected Dispatcher $events,
+    ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -49,7 +44,9 @@ class DeletePollImageController implements RequestHandlerInterface
             new PollImageDeleting($poll->image, $actor)
         );
 
-        $this->uploadDir->delete($poll->image);
+        if ($poll->image && ! filter_var($poll->image, FILTER_VALIDATE_URL)) {
+            $this->uploader->deleteAllVariants($poll->image);
+        }
 
         $poll->image = null;
         $poll->save();

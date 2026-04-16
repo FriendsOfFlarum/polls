@@ -104,13 +104,7 @@ class CreatePollHandler
             $this->events->dispatch(new PollWasCreated($command->actor, $poll));
 
             foreach ($optionsData as $optionData) {
-                $imageUrl = Arr::get($optionData, 'imageUrl');
-
-                if (!$this->settings->get('fof-polls.allowOptionImage')) {
-                    $imageUrl = null;
-                }
-
-                $option = PollOption::build(Arr::get($optionData, 'answer'), $imageUrl);
+                $option = PollOption::build(Arr::get($optionData, 'answer'), Arr::get($optionData, 'imageUrl'));
 
                 $poll->options()->save($option);
 

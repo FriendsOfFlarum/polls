@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of fof/polls.
+ *
+ * Copyright (c) FriendsOfFlarum.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FoF\Polls\Api\Resource;
 
 use Flarum\Api\Context;
@@ -7,6 +16,8 @@ use Flarum\Api\Endpoint;
 use Flarum\Api\Resource;
 use Flarum\Api\Schema;
 use Flarum\Api\Sort\SortColumn;
+use FoF\Polls\Commands\CreatePollGroup;
+use FoF\Polls\Commands\EditPollGroup;
 use FoF\Polls\PollGroup;
 use Illuminate\Database\Eloquent\Builder;
 use Tobyz\JsonApiServer\Context as OriginalContext;
@@ -16,6 +27,11 @@ use Tobyz\JsonApiServer\Context as OriginalContext;
  */
 class PollGroupResource extends Resource\AbstractDatabaseResource
 {
+    public function __construct(
+        protected \Flarum\Bus\Dispatcher $bus,
+    ) {
+    }
+
     public function type(): string
     {
         return 'poll_groups';
@@ -34,45 +50,95 @@ class PollGroupResource extends Resource\AbstractDatabaseResource
     public function endpoints(): array
     {
         return [
-            Endpoint\Create::make()
-                ->can('createPollGroup'),
+            Endpoint\Endpoint::make('create')
+                ->route('POST', '/')
+                ->authenticated()
+                ->action(function (Context $context) {
+                    return $this->bus->dispatch(
+                        new CreatePollGroup(
+                            $context->getActor(),
+                            $context->body()['data'] ?? []
+                        )
+                    );
+                })
+                ->response(function (Context $context, PollGroup $group) {
+                    $serializer = new \Flarum\Api\Serializer($context);
+
+                    $serializer->addPrimary(
+                        $context->resource($context->collection->resource($group, $context)),
+                        $group,
+                        [],
+                    );
+
+                    [$primary, $included] = $serializer->serialize();
+
+                    $document = ['data' => $primary[0]];
+
+                    if (count($included)) {
+                        $document['included'] = $included;
+                    }
+
+                    return \Tobyz\JsonApiServer\json_api_response($document)
+                        ->withStatus(201);
+                }),
+            Endpoint\Endpoint::make('update')
+                ->route('PATCH', '/{id}')
+                ->authenticated()
+                ->action(function (Context $context) {
+                    return $this->bus->dispatch(
+                        new EditPollGroup(
+                            $context->getActor(),
+                            $context->modelId,
+                            $context->body()['data'] ?? []
+                        )
+                    );
+                }),
             Endpoint\Delete::make()
+                ->authenticated()
                 ->can('delete'),
             Endpoint\Show::make()
-                ->authenticated(),
+                ->defaultInclude(['polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option']),
             Endpoint\Index::make()
-                ->paginate(),
+                ->paginate()
+                ->defaultInclude(['polls']),
         ];
     }
 
     public function fields(): array
     {
         return [
-
-            /**
-             * @todo migrate logic from old serializer and controllers to this API Resource.
-             * @see https://docs.flarum.org/2.x/extend/api#api-resources
-             */
-
-            // Example:
             Schema\Str::make('name')
                 ->requiredOnCreate()
-                ->minLength(3)
-                ->maxLength(255)
-                ->writable(),
-
+                ->writable(fn () => true),
+            Schema\DateTime::make('createdAt'),
+            Schema\Boolean::make('canEdit')
+                ->get(fn (PollGroup $group, Context $context) => $context->getActor()->can('edit', $group)),
+            Schema\Boolean::make('canDelete')
+                ->get(fn (PollGroup $group, Context $context) => $context->getActor()->can('delete', $group)),
 
             Schema\Relationship\ToMany::make('polls')
                 ->includable()
-                // ->inverse('?') // the inverse relationship name if any.
-                ->type('pollss'), // the serialized type of this relation (type of the relation model's API resource).
+                ->type('polls'),
+            Schema\Relationship\ToOne::make('user')
+                ->includable()
+                ->type('users'),
         ];
     }
 
     public function sorts(): array
     {
         return [
-            // SortColumn::make('createdAt'),
+            SortColumn::make('createdAt'),
         ];
+    }
+
+    /**
+     * Null out poll_group_id on associated polls before deleting the group.
+     * This handles the cascade in application code since SQLite does not
+     * enforce foreign key ON DELETE SET NULL constraints by default.
+     */
+    public function deleting(object $model, \Tobyz\JsonApiServer\Context $context): void
+    {
+        $model->polls()->update(['poll_group_id' => null]);
     }
 }

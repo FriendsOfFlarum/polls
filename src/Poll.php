@@ -15,12 +15,9 @@ use Flarum\Database\AbstractModel;
 use Flarum\Database\ScopeVisibilityTrait;
 use Flarum\Post\Post;
 use Flarum\User\User;
-use Illuminate\Contracts\Filesystem\Cloud;
-use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
-use LogicException;
 
 /**
  * @property int         $id
@@ -194,14 +191,8 @@ class Poll extends AbstractModel
 
     public function delete()
     {
-        if ($this->image) {
-            /** @var Cloud $pollUploadDir */
-            $pollUploadDir = resolve(Factory::class)->disk('fof-polls');
-            if ($pollUploadDir->exists($this->image)) {
-                $pollUploadDir->delete($this->image);
-            } else {
-                throw new LogicException('Poll image file not found: '.$this->image);
-            }
+        if ($this->image && ! filter_var($this->image, FILTER_VALIDATE_URL)) {
+            resolve(PollImageUploader::class)->deleteAllVariants($this->image);
         }
 
         return parent::delete();

@@ -21,7 +21,10 @@ class PostPolicy extends AbstractPolicy
 
     public function startPoll(User $actor, Post $post)
     {
-        if (!in_array($post->type, static::$ALLOWED_POST_TYPES)) {
+        // During post creation, $post->type is not yet set (it's assigned in the
+        // Eloquent `creating` event which fires after the Flarum `Saving` event).
+        // Only check the post type for existing posts.
+        if ($post->exists && !in_array($post->type, static::$ALLOWED_POST_TYPES)) {
             return $this->deny();
         }
 

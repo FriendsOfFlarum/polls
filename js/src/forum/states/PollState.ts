@@ -2,11 +2,12 @@ import app from 'flarum/forum/app';
 import Poll from '../models/Poll';
 import PollOption from '../models/PollOption';
 import PollVote from '../models/PollVote';
-import ListVotersModal from '../components/ListVotersModal';
+import Post from 'flarum/common/models/Post';
 import { ApiPayloadSingle } from 'flarum/common/Store';
 
 export default class PollState {
   public poll: Poll;
+  public post?: Post;
   protected pendingSubmit: boolean = false;
   protected pendingOptions: Set<string> | null = null;
   public loadingOptions: boolean = false;
@@ -14,8 +15,9 @@ export default class PollState {
   public showCheckMarks: boolean;
   public canSeeVoteCount: boolean;
 
-  constructor(poll: Poll) {
+  constructor(poll: Poll, post?: Post) {
     this.poll = poll;
+    this.post = post;
     this.useSubmitUI = !poll?.canChangeVote() && poll?.allowMultipleVotes();
     this.showCheckMarks = !app.session.user || (!poll.hasEnded() && poll.canVote() && (!this.hasVoted() || poll.canChangeVote()));
     this.canSeeVoteCount = typeof poll.voteCount() === 'number';
@@ -106,7 +108,7 @@ export default class PollState {
     return app
       .request<ApiPayloadSingle>({
         method: 'PATCH',
-        url: `${app.forum.attribute('apiUrl')}/fof/polls/${this.poll.id()}/votes`,
+        url: `${app.forum.attribute('apiUrl')}/polls/${this.poll.id()}/votes`,
         body: {
           data: {
             optionIds: Array.from(optionIds),
@@ -129,8 +131,9 @@ export default class PollState {
 
   showVoters = () => {
     // Load all the votes only when opening the votes list
-    app.modal.show(ListVotersModal, {
+    app.modal.show(() => import('../components/ListVotersModal'), {
       poll: this.poll,
+      post: this.post,
     });
   };
 }

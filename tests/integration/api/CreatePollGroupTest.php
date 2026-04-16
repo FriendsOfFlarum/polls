@@ -22,7 +22,7 @@ class CreatePollGroupTest extends AbstractPollGroupTestCase
         $response = $this->send(
             $this->request(
                 'POST',
-                '/api/fof/polls/groups',
+                '/api/poll_groups',
                 [
                     'authenticatedAs' => 3,
                     'json'            => [
@@ -58,7 +58,7 @@ class CreatePollGroupTest extends AbstractPollGroupTestCase
         $response = $this->send(
             $this->request(
                 'POST',
-                '/api/fof/polls/groups',
+                '/api/poll_groups',
                 [
                     'authenticatedAs' => 2,
                     'json'            => [

@@ -11,15 +11,9 @@ export default class EditPollModal extends CreatePollModal {
   async onFormSubmit(data: object, state: PollFormState): Promise<void> {
     await state.save(data);
 
-    // Show success alert
-    const alertId = app.alerts.show(
-      {
-        type: 'success',
-      },
-      app.translator.trans('fof-polls.forum.compose.success')
-    );
+    this.hide();
 
-    // Hide alert after 10 seconds
+    const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.compose.success'));
     setTimeout(() => app.alerts.dismiss(alertId), 10000);
   }
 }

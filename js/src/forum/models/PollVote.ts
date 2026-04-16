@@ -24,8 +24,4 @@ export default class PollVote extends Model {
   optionId() {
     return Model.attribute<number>('optionId').call(this);
   }
-
-  apiEndpoint() {
-    return `/fof/polls/${this.pollId()}/vote`;
-  }
 }

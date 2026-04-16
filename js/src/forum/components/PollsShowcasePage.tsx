@@ -1,14 +1,16 @@
 import app from 'flarum/forum/app';
-import { IPageAttrs } from 'flarum/common/components/Page';
+import Page, { IPageAttrs } from 'flarum/common/components/Page';
+import PageStructure from 'flarum/forum/components/PageStructure';
+import IndexSidebar from 'flarum/forum/components/IndexSidebar';
 import ItemList from 'flarum/common/utils/ItemList';
-import Mithril from 'mithril';
-import PollListState from '../states/PollListState';
 import extractText from 'flarum/common/utils/extractText';
-import Button from 'flarum/common/components/Button';
-import { AbstractPollPage } from './AbstractPollPage';
+import type Mithril from 'mithril';
+import PollListState from '../states/PollListState';
 import PollShowcase from './Poll/PollShowcase';
+import PollPageHero from './PollPageHero';
 
-export default class PollsShowcasePage extends AbstractPollPage {
+export default class PollsShowcasePage extends Page<IPageAttrs, PollListState> {
+  state!: PollListState;
   endedState!: PollListState;
 
   oninit(vnode: Mithril.Vnode<IPageAttrs, PollListState>) {
@@ -41,39 +43,26 @@ export default class PollsShowcasePage extends AbstractPollPage {
     return ['options', 'votes', 'myVotes', 'myVotes.option'];
   }
 
-  contentItems(): ItemList<Mithril.Children> {
-    const items = super.contentItems();
-
-    if (!this.loading) {
-      items.add('poll-showcase', <PollShowcase activeState={this.state} endedState={this.endedState} />);
-    }
-
-    return items;
+  view(): Mithril.Children {
+    return (
+      <PageStructure className="PollsShowcasePage" hero={this.hero.bind(this)} sidebar={this.sidebar.bind(this)} loading={!this.state}>
+        {this.contentItems().toArray()}
+      </PageStructure>
+    );
   }
 
-  sidebarItems(): ItemList<Mithril.Children> {
-    const items = super.sidebarItems();
-    const canStartPoll = app.forum.attribute<boolean>('canStartGlobalPolls');
+  hero(): Mithril.Children {
+    return <PollPageHero />;
+  }
 
-    items.remove('newDiscussion');
+  sidebar(): Mithril.Children {
+    return <IndexSidebar />;
+  }
 
-    if (canStartPoll) {
-      items.add(
-        'newGlobalPoll',
-        <Button
-          icon="fas fa-edit"
-          className="Button Button--primary App-primaryControl PollsPage-newPoll"
-          itemClassName="App-primaryControl"
-          onclick={() => {
-            this.newPollAction();
-          }}
-          disabled={!canStartPoll}
-        >
-          {app.translator.trans(`fof-polls.forum.poll.${canStartPoll ? 'start_poll_button' : 'cannot_start_poll_button'}`)}
-        </Button>,
-        100
-      );
-    }
+  contentItems(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+
+    items.add('poll-showcase', <PollShowcase activeState={this.state} endedState={this.endedState} />);
 
     return items;
   }

@@ -21,9 +21,4 @@ export default class PollGroup extends Model {
   canDelete() {
     return Model.attribute<boolean>('canDelete').call(this);
   }
-
-  apiEndpoint() {
-    //@ts-ignore
-    return `/fof/polls/groups${this.exists ? `/${this.id()}` : ''}`;
-  }
 }

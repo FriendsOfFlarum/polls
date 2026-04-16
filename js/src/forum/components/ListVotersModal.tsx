@@ -22,7 +22,7 @@ export default class ListVotersModal extends Modal<ListVotersModalAttrs> {
     this.loading = true;
 
     app.store
-      .find('fof/polls', this.attrs.poll.id()!, {
+      .find('polls', this.attrs.poll.id()!, {
         include: 'votes,votes.user,votes.option',
       })
       .then(() => (this.loading = false))

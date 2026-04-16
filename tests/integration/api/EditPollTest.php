@@ -44,8 +44,8 @@ class EditPollTest extends TestCase
                 ['id' => 1, 'user_id' => 1, 'discussion_id' => 1, 'number' => 1, 'created_at' => '2021-01-01 00:00:00', 'content' => 'Post 1', 'type' => 'comment'],
             ],
             'polls' => [
-                ['id' => 1, 'question' => 'Testing Poll--Global', 'subtitle' => 'Testing subtitle', 'image' => 'pollimage-abcdef.png', 'image_alt' => 'test alt', 'post_id' => null, 'user_id' => 1, 'public_poll' => 0, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'allow_multiple_votes' => 0, 'max_votes' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
-                ['id' => 2, 'question' => 'Testing Poll--Group', 'subtitle' => 'Testing subtitle', 'image' => null, 'image_alt' => null, 'user_id' => 4, 'public_poll' => 1, 'end_date' => null, 'poll_group_id' => 1, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'allow_multiple_votes' => 0, 'max_votes' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
+                ['id' => 1, 'question' => 'Testing Poll--Global', 'subtitle' => 'Testing subtitle', 'image' => 'pollimage-abcdef.png', 'image_alt' => 'test alt', 'post_id' => null, 'user_id' => 1, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
+                ['id' => 2, 'question' => 'Testing Poll--Group', 'subtitle' => 'Testing subtitle', 'image' => null, 'image_alt' => null, 'user_id' => 4, 'end_date' => null, 'poll_group_id' => 1, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
             ],
             'poll_options' => [
                 ['id' => 1, 'answer' => 'Option 1', 'poll_id' => 1, 'vote_count' => 0, 'image_url' => 'pollimage-hijklm.png', 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
@@ -74,7 +74,7 @@ class EditPollTest extends TestCase
     public function user_without_permission_cannot_remove_pollimage_from_global_poll()
     {
         $response = $this->send(
-            $this->request('DELETE', '/api/fof/polls/pollImage/1', [
+            $this->request('DELETE', '/api/polls/pollImage/1', [
                 'authenticatedAs' => 2,
             ])
         );
@@ -86,7 +86,7 @@ class EditPollTest extends TestCase
     public function user_with_permission_can_remove_pollimage_from_global_poll()
     {
         $response = $this->send(
-            $this->request('DELETE', '/api/fof/polls/pollImage/1', [
+            $this->request('DELETE', '/api/polls/pollImage/1', [
                 'authenticatedAs' => 4,
             ])
         );
@@ -98,7 +98,7 @@ class EditPollTest extends TestCase
     public function user_without_permission_cannot_remove_pollimage_by_name_from_global_poll()
     {
         $response = $this->send(
-            $this->request('DELETE', '/api/fof/polls/pollImage/name/pollimage-abcdef.png', [
+            $this->request('DELETE', '/api/polls/pollImage/name/pollimage-abcdef.png', [
                 'authenticatedAs' => 2,
             ])
         );
@@ -112,21 +112,20 @@ class EditPollTest extends TestCase
         $fileName = 'pollimage-abcdef.png';
 
         $response = $this->send(
-            $this->request('DELETE', '/api/fof/polls/pollImage/name/'.$fileName, [
+            $this->request('DELETE', '/api/polls/pollImage/name/'.$fileName, [
                 'authenticatedAs' => 4,
             ])
         );
 
-        // We need to expect a 404 because the file is not found in the filesystem under test.
-        // TODO - improve this!
-        $this->assertEquals(404, $response->getStatusCode());
+        // deleteAllVariants is idempotent — succeeds even if file doesn't exist on disk
+        $this->assertEquals(204, $response->getStatusCode());
     }
 
     #[Test]
     public function user_without_permission_cannot_remove_polloption_image_from_global_poll()
     {
         $response = $this->send(
-            $this->request('DELETE', '/api/fof/polls/pollOptionImage/1', [
+            $this->request('DELETE', '/api/polls/pollOptionImage/1', [
                 'authenticatedAs' => 2,
             ])
         );
@@ -138,7 +137,7 @@ class EditPollTest extends TestCase
     public function user_with_permission_can_remove_polloption_image_from_global_poll()
     {
         $response = $this->send(
-            $this->request('DELETE', '/api/fof/polls/pollOptionImage/1', [
+            $this->request('DELETE', '/api/polls/pollOptionImage/1', [
                 'authenticatedAs' => 4,
             ])
         );
@@ -150,7 +149,7 @@ class EditPollTest extends TestCase
     public function user_without_permission_cannot_remove_polloption_image_by_name_from_global_poll()
     {
         $response = $this->send(
-            $this->request('DELETE', '/api/fof/polls/pollOptionImage/name/pollimage-hijklm.png', [
+            $this->request('DELETE', '/api/polls/pollOptionImage/name/pollimage-hijklm.png', [
                 'authenticatedAs' => 2,
             ])
         );
@@ -164,14 +163,13 @@ class EditPollTest extends TestCase
         $fileName = 'pollimage-hijklm.png';
 
         $response = $this->send(
-            $this->request('DELETE', '/api/fof/polls/pollOptionImage/name/'.$fileName, [
+            $this->request('DELETE', '/api/polls/pollOptionImage/name/'.$fileName, [
                 'authenticatedAs' => 4,
             ])
         );
 
-        // We need to expect a 404 because the file is not found in the filesystem under test.
-        // TODO - improve this!
-        $this->assertEquals(404, $response->getStatusCode());
+        // deleteAllVariants is idempotent — succeeds even if file doesn't exist on disk
+        $this->assertEquals(204, $response->getStatusCode());
     }
 
     #[Test]
@@ -181,7 +179,7 @@ class EditPollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'PATCH',
-                '/api/fof/polls/1',
+                '/api/polls/1',
                 [
                     'authenticatedAs' => 1,
                     'json'            => [
@@ -217,7 +215,7 @@ class EditPollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'PATCH',
-                '/api/fof/polls/2',
+                '/api/polls/2',
                 [
                     'authenticatedAs' => 4,
                     'json'            => [
@@ -249,7 +247,7 @@ class EditPollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'PATCH',
-                '/api/fof/polls/1',
+                '/api/polls/1',
                 [
                     'authenticatedAs' => 2,
                     'json'            => [
@@ -281,7 +279,7 @@ class EditPollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'PATCH',
-                '/api/fof/polls/1',
+                '/api/polls/1',
                 [
                     'authenticatedAs' => 1,
                     'json'            => [

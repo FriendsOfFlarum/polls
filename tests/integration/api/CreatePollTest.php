@@ -144,7 +144,7 @@ class CreatePollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'GET',
-                '/api/fof/polls/'.$pollId,
+                '/api/polls/'.$pollId,
                 [
                     'authenticatedAs' => $userId,
                 ]
@@ -221,7 +221,7 @@ class CreatePollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'POST',
-                '/api/fof/polls',
+                '/api/polls',
                 [
                     'authenticatedAs' => $userId,
                     'json'            => [
@@ -281,7 +281,7 @@ class CreatePollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'POST',
-                '/api/fof/polls',
+                '/api/polls',
                 [
                     'authenticatedAs' => $userId,
                     'json'            => [
@@ -327,7 +327,7 @@ class CreatePollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'POST',
-                '/api/fof/polls',
+                '/api/polls',
                 [
                     'authenticatedAs' => $userId,
                     'json'            => [
@@ -373,7 +373,7 @@ class CreatePollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'POST',
-                '/api/fof/polls',
+                '/api/polls',
                 [
                     'authenticatedAs' => $userId,
                     'json'            => [
@@ -421,7 +421,7 @@ class CreatePollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'GET',
-                '/api/fof/polls/'.$pollId,
+                '/api/polls/'.$pollId,
                 [
                     'authenticatedAs' => $userId,
                 ]
@@ -442,7 +442,7 @@ class CreatePollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'POST',
-                '/api/fof/polls',
+                '/api/polls',
                 [
                     'authenticatedAs' => $userId,
                     'json'            => [
@@ -480,7 +480,7 @@ class CreatePollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'POST',
-                '/api/fof/polls',
+                '/api/polls',
                 [
                     'authenticatedAs' => $userId,
                     'json'            => [
@@ -590,13 +590,121 @@ class CreatePollTest extends TestCase
 
     #[Test]
     #[DataProvider('authorizedUserProvider')]
+    public function authorized_user_can_create_poll_via_discussion(int $userId)
+    {
+        $response = $this->send(
+            $this->request(
+                'POST',
+                '/api/discussions',
+                [
+                    'authenticatedAs' => $userId,
+                    'json'            => [
+                        'data' => [
+                            'type'       => 'discussions',
+                            'attributes' => [
+                                'title'   => 'Discussion with poll',
+                                'content' => 'Here is my poll via discussion creation',
+                                'poll'    => [
+                                    'question'           => 'Best programming language?',
+                                    'publicPoll'         => false,
+                                    'hideVotes'          => false,
+                                    'allowChangeVote'    => true,
+                                    'allowMultipleVotes' => false,
+                                    'maxVotes'           => 0,
+                                    'endDate'            => false,
+                                    'options'            => [
+                                        ['answer' => 'PHP'],
+                                        ['answer' => 'TypeScript'],
+                                        ['answer' => 'Rust'],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        $this->assertEquals(201, $response->getStatusCode());
+
+        $json = json_decode($response->getBody()->getContents(), true);
+        $data = $json['data'];
+
+        // The discussion's first post should have polls included
+        $firstPostId = $data['relationships']['firstPost']['data']['id'] ?? null;
+        $this->assertNotNull($firstPostId);
+
+        // Find the poll in the included resources or via the post
+        $post = \Flarum\Post\Post::find($firstPostId);
+        $this->assertNotNull($post);
+
+        $poll = $post->polls()->first();
+        $this->assertNotNull($poll, 'Poll should be created on the first post of the discussion');
+        $this->assertEquals('Best programming language?', $poll->question);
+        $this->assertEquals(3, $poll->options()->count());
+    }
+
+    #[Test]
+    #[DataProvider('unauthorizedUserProvider')]
+    public function unauthorized_user_cannot_create_poll_via_discussion(int $userId)
+    {
+        $response = $this->send(
+            $this->request(
+                'POST',
+                '/api/discussions',
+                [
+                    'authenticatedAs' => $userId,
+                    'json'            => [
+                        'data' => [
+                            'type'       => 'discussions',
+                            'attributes' => [
+                                'title'   => 'Discussion with poll',
+                                'content' => 'Unauthorized poll attempt',
+                                'poll'    => [
+                                    'question'           => 'Should not work',
+                                    'publicPoll'         => false,
+                                    'hideVotes'          => false,
+                                    'allowChangeVote'    => true,
+                                    'allowMultipleVotes' => false,
+                                    'maxVotes'           => 0,
+                                    'endDate'            => false,
+                                    'options'            => [
+                                        ['answer' => 'Yes'],
+                                        ['answer' => 'No'],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        // Discussion should still be created (201), but the poll should not
+        // The unauthorized user cannot start polls, so the poll is silently skipped
+        // or a validation error is returned
+        $this->assertContains($response->getStatusCode(), [201, 422]);
+
+        if ($response->getStatusCode() === 201) {
+            $json = json_decode($response->getBody()->getContents(), true);
+            $firstPostId = $json['data']['relationships']['firstPost']['data']['id'] ?? null;
+
+            if ($firstPostId) {
+                $post = \Flarum\Post\Post::find($firstPostId);
+                $this->assertTrue($post->polls()->count() === 0, 'Unauthorized user should not create a poll');
+            }
+        }
+    }
+
+    #[Test]
+    #[DataProvider('authorizedUserProvider')]
     public function authorized_user_can_create_poll_with_poll_group(int $userId)
     {
         AbstractPollGroupTestCase::enablePollGroup();
         $response = $this->send(
             $this->request(
                 'POST',
-                '/api/fof/polls',
+                '/api/polls',
                 [
                     'authenticatedAs' => $userId,
                     'json'            => [
@@ -650,7 +758,7 @@ class CreatePollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'POST',
-                '/api/fof/polls',
+                '/api/polls',
                 [
                     'authenticatedAs' => $userId,
                     'json'            => [
@@ -696,7 +804,7 @@ class CreatePollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'POST',
-                '/api/fof/polls',
+                '/api/polls',
                 [
                     'authenticatedAs' => 1,
                     'json'            => [

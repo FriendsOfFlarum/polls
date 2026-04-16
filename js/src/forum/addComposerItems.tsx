@@ -2,7 +2,6 @@ import app from 'flarum/forum/app';
 
 import { extend } from 'flarum/common/extend';
 import classList from 'flarum/common/utils/classList';
-import CreatePollModal from './components/CreatePollModal';
 import Poll from './models/Poll';
 import PollOption from './models/PollOption';
 import { ModelAttributes } from 'flarum/common/Model';
@@ -24,26 +23,24 @@ function toPoll(data: PollModelAttributes) {
   return data;
 }
 
-export const addToComposer = (composer: ComponentClass) => {
-  // @ts-ignore
-  composer.prototype.addPoll = function () {
-    app.modal.show(CreatePollModal, {
-      poll: toPoll(this.composer.fields.poll),
-      onsubmit: (poll: PollModelAttributes) => (this.composer.fields.poll = poll),
-    });
-  };
+function addPoll(composer: any) {
+  app.modal.show(() => import('./components/CreatePollModal'), {
+    poll: toPoll(composer.composer.fields.poll),
+    onsubmit: (poll: PollModelAttributes) => (composer.composer.fields.poll = poll),
+  });
+}
 
-  // Add button to DiscussionComposer header
-  extend(composer.prototype, 'headerItems', function (items) {
+export const addToComposer = (composerPath: string) => {
+  // Add button to composer header
+  extend(composerPath, 'headerItems', function (this: any, items) {
     const discussion = this.composer.body?.attrs?.discussion;
 
-    // @ts-ignore
     const canStartPoll = discussion?.canStartPoll() ?? app.forum.canStartPolls();
 
     if (canStartPoll) {
       items.add(
         'polls',
-        <a className="ComposerBody-poll" onclick={this.addPoll.bind(this)}>
+        <a className="ComposerBody-poll" onclick={() => addPoll(this)}>
           <span className={classList('PollLabel', !this.composer.fields.poll && 'none')}>
             {app.translator.trans(`fof-polls.forum.composer_discussion.${this.composer.fields.poll ? 'edit' : 'add'}_poll`)}
           </span>
@@ -53,7 +50,7 @@ export const addToComposer = (composer: ComponentClass) => {
     }
   });
 
-  extend(composer.prototype, 'data', function (data) {
+  extend(composerPath, 'data', function (this: any, data) {
     if (this.composer.fields.poll) {
       data.poll = this.composer.fields.poll;
     }
@@ -61,6 +58,6 @@ export const addToComposer = (composer: ComponentClass) => {
 };
 
 export default () => {
-  addToComposer(DiscussionComposer);
-  addToComposer(ReplyComposer);
+  addToComposer('flarum/forum/components/DiscussionComposer');
+  addToComposer('flarum/forum/components/ReplyComposer');
 };

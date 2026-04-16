@@ -35,7 +35,7 @@ class DeletePollGroupTest extends AbstractPollGroupTestCase
         $response = $this->send(
             $this->request(
                 'DELETE',
-                '/api/fof/polls/groups/1',
+                '/api/poll_groups/1',
                 [
                     'authenticatedAs' => 3,
                 ]
@@ -52,7 +52,7 @@ class DeletePollGroupTest extends AbstractPollGroupTestCase
         $response = $this->send(
             $this->request(
                 'DELETE',
-                '/api/fof/polls/groups/1',
+                '/api/poll_groups/1',
                 [
                     'authenticatedAs' => 2,
                 ]
@@ -69,7 +69,7 @@ class DeletePollGroupTest extends AbstractPollGroupTestCase
         $response = $this->send(
             $this->request(
                 'DELETE',
-                '/api/fof/polls/groups/1',
+                '/api/poll_groups/1',
                 [
                     'authenticatedAs' => 3,
                 ]

@@ -23,10 +23,15 @@ export default class Poll extends Model {
     return Model.attribute<string | null>('imageUrl').call(this);
   }
 
+  imageSrcset() {
+    return Model.attribute<string | null>('imageSrcset').call(this);
+  }
+
   imageAlt() {
     return Model.attribute<string | null>('imageAlt').call(this);
   }
 
+  /** @deprecated Use imageSrcset() presence instead */
   isImageUpload() {
     return Model.attribute<boolean>('isImageUpload').call(this);
   }
@@ -112,10 +117,5 @@ export default class Poll extends Model {
   // TODO: These two don't make sense as of now
   isUnread() {
     return false;
-  }
-
-  apiEndpoint() {
-    /** @ts-ignore */
-    return `/fof/polls${this.exists ? `/${this.data.id}` : ''}`;
   }
 }

@@ -31,7 +31,7 @@ class EditPollGroupTest extends AbstractPollGroupTestCase
         $response = $this->send(
             $this->request(
                 'PATCH',
-                '/api/fof/polls/groups/1',
+                '/api/poll_groups/1',
                 [
                     'authenticatedAs' => 4,
                     'json'            => [
@@ -62,7 +62,7 @@ class EditPollGroupTest extends AbstractPollGroupTestCase
         $response = $this->send(
             $this->request(
                 'PATCH',
-                '/api/fof/polls/groups/1',
+                '/api/poll_groups/1',
                 [
                     'authenticatedAs' => 3,
                     'json'            => [
@@ -93,7 +93,7 @@ class EditPollGroupTest extends AbstractPollGroupTestCase
         $response = $this->send(
             $this->request(
                 'PATCH',
-                '/api/fof/polls/groups/1',
+                '/api/poll_groups/1',
                 [
                     'authenticatedAs' => 2,
                     'json'            => [

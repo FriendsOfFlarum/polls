@@ -1,21 +1,19 @@
-import IndexSidebar from 'flarum/forum/components/IndexSidebar';
 import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
-import listItems from 'flarum/common/helpers/listItems';
+import Page, { IPageAttrs } from 'flarum/common/components/Page';
+import PageStructure from 'flarum/forum/components/PageStructure';
+import IndexSidebar from 'flarum/forum/components/IndexSidebar';
 import ItemList from 'flarum/common/utils/ItemList';
-import IndexPage from 'flarum/forum/components/IndexPage';
-import PollList from './Poll/PollList';
+import listItems from 'flarum/common/helpers/listItems';
 import extractText from 'flarum/common/utils/extractText';
-import PollListState from '../states/PollListState';
 import Button from 'flarum/common/components/Button';
-import SelectDropdown from 'flarum/common/components/SelectDropdown';
-import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
-import PollView from './PollView';
-import { AbstractPollPage } from './AbstractPollPage';
 import Dropdown from 'flarum/common/components/Dropdown';
+import PollList from './Poll/PollList';
+import PollListState from '../states/PollListState';
+import PollPageHero from './PollPageHero';
 
-export default class PollsPage extends AbstractPollPage {
-  defaultSort?: string;
+export default class PollsPage extends Page<IPageAttrs, PollListState> {
+  state!: PollListState;
 
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
@@ -38,69 +36,69 @@ export default class PollsPage extends AbstractPollPage {
   }
 
   view(): Mithril.Children {
-    if (this.loading) {
-      return <LoadingIndicator />;
-    }
-
-    if (this.poll) {
-      return (
-        <div className="PollsListPage">
-          <div className="container">
-            <PollView poll={this.poll} />
-          </div>
-        </div>
-      );
-    }
-
     return (
-      <div className="PollsListPage">
-        {super.hero()}
-        <div className="container">
-          <div className="sideNavContainer">
-            <nav className="PollsListPage-nav sideNav">
-              <ul>{listItems(this.sidebarItems().toArray())}</ul>
-            </nav>
-            <div className="PollsPage-results sideNavOffset">
-              <div className="IndexPage-toolbar">
-                <ul className="IndexPage-toolbar-view">{listItems(this.viewItems().toArray())}</ul>
-                <ul className="IndexPage-toolbar-action">{listItems(this.actionItems().toArray())}</ul>
-              </div>
-              <PollList state={this.state} />
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageStructure className="PollsPage" hero={this.hero.bind(this)} sidebar={this.sidebar.bind(this)} loading={!this.state}>
+        {this.contentItems().toArray()}
+      </PageStructure>
     );
   }
 
-  sidebarItems(): ItemList<Mithril.Children> {
+  hero(): Mithril.Children {
+    return <PollPageHero />;
+  }
+
+  sidebar(): Mithril.Children {
+    return <IndexSidebar />;
+  }
+
+  contentItems(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
-    const canStartPoll = app.forum.attribute<boolean>('canStartGlobalPolls');
+
+    items.add('toolbar', <div className="IndexPage-toolbar">{this.toolbarItems().toArray()}</div>, 100);
+    items.add('pollList', <PollList state={this.state} />, 10);
+
+    return items;
+  }
+
+  toolbarItems(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+
+    items.add('view', <ul className="IndexPage-toolbar-view">{listItems(this.viewItems().toArray())}</ul>, 100);
+    items.add('action', <ul className="IndexPage-toolbar-action">{listItems(this.actionItems().toArray())}</ul>, 10);
+
+    return items;
+  }
+
+  viewItems(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+    const sortMap = this.state.sortMap();
+
+    const currentSortKey =
+      Object.keys(sortMap).find((key) => sortMap[key] === this.state.getSort()) ||
+      String(app.forum.attribute('pollsDirectoryDefaultSort')) ||
+      'newest';
+
+    const sortOptions = Object.keys(sortMap).reduce((acc: Record<string, string>, sortId) => {
+      acc[sortId] = extractText(app.translator.trans(`fof-polls.forum.polls_list.sort_dropdown.${sortId}`));
+      return acc;
+    }, {});
 
     items.add(
-      'newGlobalPoll',
-      <Button
-        icon="fas fa-edit"
-        className="Button Button--primary App-primaryControl PollsPage-newPoll"
-        itemClassName="App-primaryControl"
-        onclick={() => {
-          this.newPollAction();
-        }}
-        disabled={!canStartPoll}
-      >
-        {app.translator.trans(`fof-polls.forum.poll.${canStartPoll ? 'start_poll_button' : 'cannot_start_poll_button'}`)}
-      </Button>
-    );
-
-    items.add(
-      'nav',
-      <SelectDropdown
+      'sort',
+      <Dropdown
         buttonClassName="Button"
-        className="App-titleControl"
-        accessibleToggleLabel={app.translator.trans('core.forum.index.toggle_sidenav_dropdown_accessible_label')}
+        label={sortOptions[currentSortKey] || app.translator.trans('fof-polls.forum.polls_list.sort_dropdown.default')}
       >
-        {this.navItems().toArray()}
-      </SelectDropdown>
+        {Object.keys(sortOptions).map((value) => (
+          <Button
+            icon={currentSortKey === value ? 'fas fa-check' : true}
+            onclick={() => this.state.setSort(sortMap[value])}
+            active={currentSortKey === value}
+          >
+            {sortOptions[value]}
+          </Button>
+        ))}
+      </Dropdown>
     );
 
     return items;
@@ -111,65 +109,17 @@ export default class PollsPage extends AbstractPollPage {
 
     items.add(
       'refresh',
-      Button.component({
-        title: app.translator.trans('fof-polls.forum.page.refresh_tooltip'),
-        icon: 'fas fa-sync',
-        className: 'Button Button--icon',
-        onclick: () => {
-          this.state.refresh();
-        },
-      })
+      <Button
+        aria-label={extractText(app.translator.trans('fof-polls.forum.page.refresh_tooltip'))}
+        icon="fas fa-sync"
+        className="Button Button--icon"
+        onclick={() => this.state.refresh()}
+      />
     );
 
     return items;
   }
 
-  viewItems() {
-    const items = new ItemList<Mithril.Children>();
-    const sortMap = this.state.sortMap();
-
-    const currentSortKey = Object.keys(sortMap).find((key) => sortMap[key] === this.state.getSort()) || this.defaultSort; // fallback to '-createdAt' or your default
-
-    const sortOptions = Object.keys(sortMap).reduce((acc: any, sortId) => {
-      acc[sortId] = app.translator.trans(`fof-polls.forum.polls_list.sort_dropdown.${sortId}`);
-      return acc;
-    }, {});
-
-    items.add(
-      'sort',
-      <Dropdown
-        buttonClassName="Button"
-        label={currentSortKey ? sortOptions[currentSortKey] : app.translator.trans('fof-polls.forum.polls_list.sort_dropdown.default')}
-      >
-        {Object.keys(sortOptions).map((value) => {
-          const label = sortOptions[value];
-          const active = currentSortKey === value;
-
-          return (
-            <Button
-              icon={active ? 'fas fa-check' : true}
-              onclick={() => {
-                this.state.setSort(sortMap[value]);
-              }}
-              active={active}
-            >
-              {label}
-            </Button>
-          );
-        })}
-      </Dropdown>
-    );
-
-    return items;
-  }
-
-  navItems() {
-    return IndexSidebar.prototype.navItems();
-  }
-
-  /**
-   * Change to create new poll page
-   */
   newPollAction(): void {
     if (!app.session.user) {
       app.modal.show(() => import('flarum/forum/components/LogInModal'));

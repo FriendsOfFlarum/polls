@@ -6,7 +6,6 @@ import ItemList from 'flarum/common/utils/ItemList';
 import Separator from 'flarum/common/components/Separator';
 import Button from 'flarum/common/components/Button';
 import ComposePollGroupPage from '../components/ComposePollGroupPage';
-import CreatePollModal from '../components/CreatePollModal';
 import PollModelAttributes from '../models/PollModelAttributes';
 
 /**
@@ -127,7 +126,7 @@ export default {
    * Add poll to group.
    */
   addPoll(pollGroup: PollGroup): void {
-    app.modal.show(CreatePollModal, {
+    app.modal.show(() => import('../components/CreatePollModal'), {
       onsubmit: function (data: PollModelAttributes): void {
         app.store
           .createRecord('polls')

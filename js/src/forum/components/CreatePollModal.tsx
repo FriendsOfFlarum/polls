@@ -1,16 +1,16 @@
 import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
-import Modal, { IInternalModalAttrs } from 'flarum/common/components/Modal';
+import FormModal, { IFormModalAttrs } from 'flarum/common/components/FormModal';
 import PollForm from './Poll/PollForm';
 import PollModel from '../models/Poll';
 import PollFormState from '../states/PollFormState';
 
-interface CreatePollModalAttrs extends IInternalModalAttrs {
+interface CreatePollModalAttrs extends IFormModalAttrs {
   poll: PollModel;
   onsubmit: (data: object) => Promise<void>;
 }
 
-export default class CreatePollModal extends Modal<CreatePollModalAttrs> {
+export default class CreatePollModal extends FormModal<CreatePollModalAttrs> {
   title(): Mithril.Children {
     return app.translator.trans('fof-polls.forum.modal.add_title');
   }

@@ -13,65 +13,60 @@ namespace FoF\Polls\Content;
 
 use Flarum\Api\Client;
 use Flarum\Frontend\Document;
-use Flarum\Http\RequestUtil;
 use Flarum\Settings\SettingsRepositoryInterface;
-use Flarum\User\User;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Arr;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class PollsDirectory
 {
-    /**
-     * A map of sort query param values to their API sort param.
-     *
-     * @var array
-     */
-    private $sortMap = [
-        'newest'            => '-createdAt',
-        'oldest'            => 'createdAt',
-        'most_voted'        => '-voteCount',
-        'least_voted'       => 'voteCount',
+    private array $sortMap = [
+        'newest'       => '-createdAt',
+        'oldest'       => 'createdAt',
+        'most_voted'   => '-voteCount',
+        'least_voted'  => 'voteCount',
     ];
 
-    public function __construct(protected Client $api, protected Factory $view, protected SettingsRepositoryInterface $settings)
-    {
+    public function __construct(
+        protected Client $api,
+        protected Factory $view,
+        protected SettingsRepositoryInterface $settings,
+    ) {
     }
 
-    private function getDocument(User $actor, array $params, ServerRequestInterface $request)
-    {
-        $actor->assertCan('seePollsList');
-
-        return json_decode($this->api->withQueryParams($params)->withParentRequest($request)->get('/fof/polls')->getBody());
-    }
-
-    public function __invoke(Document $document, ServerRequestInterface $request): Document
+    public function __invoke(Document $document, Request $request): Document
     {
         $queryParams = $request->getQueryParams();
-        $actor = RequestUtil::getActor($request);
 
         $defaultSortKey = $this->settings->get('fof-polls.directory-default-sort');
-        $sortKey = Arr::pull($queryParams, 'sort') ?: $defaultSortKey;
-        $sort = isset($this->sortMap[$sortKey]) ? $this->sortMap[$sortKey] : '-createdAt';
+        $sort = Arr::pull($queryParams, 'sort') ?: $defaultSortKey;
         $q = Arr::pull($queryParams, 'q');
-        $page = Arr::pull($queryParams, 'page', 1);
-        $filters = Arr::pull($queryParams, 'filter', []);
+        $page = max(1, intval(Arr::pull($queryParams, 'page')));
 
         $params = [
-            'sort'   => $sort,
-            'filter' => $filters,
-            'page'   => ['offset' => ($page - 1) * 20, 'limit' => 20],
+            'sort' => isset($this->sortMap[$sort]) ? $this->sortMap[$sort] : '-createdAt',
+            'filter' => Arr::pull($queryParams, 'filter', []),
+            'page' => ['number' => $page],
         ];
 
         if ($q) {
             $params['filter']['q'] = $q;
         }
 
-        $apiDocument = $this->getDocument($actor, $params, $request);
+        $apiDocument = json_decode(
+            json: $this->api
+                ->withoutErrorHandling()
+                ->withParentRequest($request)
+                ->withQueryParams($params)
+                ->get('/polls')
+                ->getBody(),
+            associative: false,
+        );
 
         $document->content = $this->view->make('fof-polls::directory.index', compact('page', 'apiDocument'));
-
         $document->payload['apiDocument'] = $apiDocument;
+        $document->page = $page;
+        $document->hasNextPage = isset($apiDocument->links->next);
 
         return $document;
     }

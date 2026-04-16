@@ -32,7 +32,7 @@ class PollIsEndedFilter implements FilterInterface
             });
         } else {
             // filter[isEnded]=1 → ended polls
-            $filterState->getQuery()
+            $state->getQuery()
                 ->whereNotNull('end_date')
                 ->where('end_date', '<=', Carbon::now());
         }

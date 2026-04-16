@@ -44,8 +44,8 @@ class ChangeVoteTest extends TestCase
                 ['id' => 1, 'user_id' => 1, 'discussion_id' => 1, 'number' => 1, 'created_at' => '2021-01-01 00:00:00', 'content' => 'Post 1', 'type' => 'comment'],
             ],
             'polls' => [
-                ['id' => 1, 'question' => 'Testing Poll--Global', 'subtitle' => 'Testing subtitle', 'image' => 'pollimage-abcdef.png', 'image_alt' => 'test alt', 'post_id' => null, 'user_id' => 1, 'public_poll' => 0, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'allow_multiple_votes' => 0, 'max_votes' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
-                ['id' => 2, 'question' => 'Testing Poll--Global 2', 'subtitle' => 'Testing subtitle', 'image' => 'pollimage-abcdef.png', 'image_alt' => 'test alt', 'post_id' => null, 'user_id' => 1, 'public_poll' => 0, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'allow_multiple_votes' => 0, 'max_votes' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": true,"allow_multiple_votes": false}'],
+                ['id' => 1, 'question' => 'Testing Poll--Global', 'subtitle' => 'Testing subtitle', 'image' => 'pollimage-abcdef.png', 'image_alt' => 'test alt', 'post_id' => null, 'user_id' => 1, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
+                ['id' => 2, 'question' => 'Testing Poll--Global 2', 'subtitle' => 'Testing subtitle', 'image' => 'pollimage-abcdef.png', 'image_alt' => 'test alt', 'post_id' => null, 'user_id' => 1, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": true,"allow_multiple_votes": false}'],
             ],
             'poll_options' => [
                 ['id' => 1, 'answer' => 'Option 1', 'poll_id' => 1, 'vote_count' => 0, 'image_url' => 'pollimage-hijklm.png', 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
@@ -85,7 +85,7 @@ class ChangeVoteTest extends TestCase
     public function validation_error_when_no_data_is_passed()
     {
         $response = $this->send(
-            $this->request('PATCH', '/api/fof/polls/1/votes', [
+            $this->request('PATCH', '/api/polls/1/votes', [
                 'authenticatedAs' => 4,
                 'json'            => [],
             ])
@@ -95,7 +95,7 @@ class ChangeVoteTest extends TestCase
 
         $data = json_decode($response->getBody(), true);
 
-        $this->assertEquals('The options must be an array.', $data['errors'][0]['detail']);
+        $this->assertEquals('The options field must be an array.', $data['errors'][0]['detail']);
         $this->assertEquals('/data/attributes/options', $data['errors'][0]['source']['pointer']);
     }
 
@@ -104,7 +104,7 @@ class ChangeVoteTest extends TestCase
     public function user_with_permission_can_change_vote_on_no_change_poll(int $userId)
     {
         $response = $this->send(
-            $this->request('PATCH', '/api/fof/polls/1/votes', [
+            $this->request('PATCH', '/api/polls/1/votes', [
                 'authenticatedAs' => $userId,
                 'json'            => [
                     'data' => [
@@ -127,7 +127,7 @@ class ChangeVoteTest extends TestCase
     public function user_without_permission_cannot_change_vote_on_no_change_poll()
     {
         $response = $this->send(
-            $this->request('PATCH', '/api/fof/polls/1/votes', [
+            $this->request('PATCH', '/api/polls/1/votes', [
                 'authenticatedAs' => 2,
                 'json'            => [
                     'data' => [
@@ -151,7 +151,7 @@ class ChangeVoteTest extends TestCase
     public function user_with_permission_can_change_vote_on_change_poll(int $userId)
     {
         $response = $this->send(
-            $this->request('PATCH', '/api/fof/polls/2/votes', [
+            $this->request('PATCH', '/api/polls/2/votes', [
                 'authenticatedAs' => $userId,
                 'json'            => [
                     'data' => [
@@ -174,7 +174,7 @@ class ChangeVoteTest extends TestCase
     public function user_without_permission_can_change_vote_on_change_poll()
     {
         $response = $this->send(
-            $this->request('PATCH', '/api/fof/polls/2/votes', [
+            $this->request('PATCH', '/api/polls/2/votes', [
                 'authenticatedAs' => 2,
                 'json'            => [
                     'data' => [
@@ -191,5 +191,44 @@ class ChangeVoteTest extends TestCase
         $vote = PollVote::where('user_id', 2)->where('poll_id', 2)->first();
 
         $this->assertEquals(4, $vote->option_id);
+    }
+
+    #[Test]
+    public function vote_response_includes_options_and_myVotes()
+    {
+        $response = $this->send(
+            $this->request('PATCH', '/api/polls/2/votes', [
+                'authenticatedAs' => 4,
+                'json'            => [
+                    'data' => [
+                        'optionIds' => [
+                            3,
+                        ],
+                    ],
+                ],
+            ])
+        );
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $json = json_decode($response->getBody()->getContents(), true);
+        $data = $json['data'];
+
+        // Response should include the poll with relationships
+        $this->assertEquals('polls', $data['type']);
+        $this->assertArrayHasKey('options', $data['relationships']);
+        $this->assertArrayHasKey('myVotes', $data['relationships']);
+
+        // Included resources should contain options with vote counts and myVotes
+        $included = $json['included'] ?? [];
+        $optionTypes = array_filter($included, fn ($r) => $r['type'] === 'poll_options');
+        $voteTypes = array_filter($included, fn ($r) => $r['type'] === 'poll_votes');
+
+        $this->assertNotEmpty($optionTypes, 'Response should include poll_options');
+        $this->assertNotEmpty($voteTypes, 'Response should include poll_votes (myVotes)');
+
+        // Check that options have voteCount attribute
+        $firstOption = reset($optionTypes);
+        $this->assertArrayHasKey('voteCount', $firstOption['attributes']);
     }
 }

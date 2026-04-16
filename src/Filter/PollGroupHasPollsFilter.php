@@ -28,13 +28,15 @@ class PollGroupHasPollsFilter implements FilterInterface
 
         if ($negate) {
             // If negating, we want to find groups that do not have polls
-            return $query->whereNotExists(function ($query) {
+            $query->whereNotExists(function ($query) {
                 $this->selectPolls($query);
             });
+
+            return;
         }
 
         // Otherwise, we want to find groups that have at least one poll
-        return $query->whereExists(function ($query) {
+        $query->whereExists(function ($query) {
             $this->selectPolls($query);
         });
     }

@@ -76,7 +76,8 @@
     flex-shrink: 1;
     margin-left: 10px;
 
-    .Button--color(@muted-color; var(--control-bg-darken-5));
+    --button-color: var(--muted-color);
+    --button-bg: var(--control-bg-darken-5);
 
     .icon {
       margin-right: 0;
@@ -273,12 +274,18 @@
     grid-auto-flow: row;
     gap: 10px;
     align-items: flex-start;
+    cursor: pointer;
 
-    &:hover {
-      cursor: pointer;
+    // All children pass clicks through to the .PollBar onclick handler
+    > * {
+      pointer-events: none;
     }
 
-    .PollAnswer-input[disabled] {
+    &[data-selected] .checkmark:after {
+      display: block;
+    }
+
+    .PollAnswer-input[disabled] ~ * {
       cursor: not-allowed;
     }
 
@@ -702,29 +709,7 @@
   }
 }
 
-@media @desktop-up {
-  .PollsPage,
-  .PollGroupsPage {
-    .sideNav {
-      .sideNav--horizontal();
-      float: none;
-      width: auto;
-      margin-right: 0;
-      padding-top: 0;
-
-      &:after {
-        display: none;
-      }
-
-      > ul > li:first-child {
-        width: 190px;
-      }
-    }
-    .sideNavOffset {
-      margin: 15px 0 0;
-    }
-  }
-}
+// Layout is now handled by PageStructure's .Page styles.
 
 .PollShowcase {
   &--item {

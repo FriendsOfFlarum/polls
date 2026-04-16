@@ -12,56 +12,66 @@
 namespace FoF\Polls\Api\Controllers;
 
 use Flarum\Http\RequestUtil;
-use Flarum\User\Exception\PermissionDeniedException;
+use FoF\Polls\Events\PollImageWillBeResized;
 use FoF\Polls\PollOption;
 use Illuminate\Support\Arr;
+use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class UploadPollOptionImageController extends UploadPollImageController
 {
-    protected $filenamePrefix = 'pollOptionImage';
+    protected string $filenamePrefix = 'pollOptionImage';
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $actor = RequestUtil::getActor($request);
         $optionId = Arr::get($request->getQueryParams(), 'optionId');
 
-        $areUploadsAllowed = (bool) $this->settings->get('fof-polls.allowImageUploads');
-
-        if (!$areUploadsAllowed) {
-            throw new PermissionDeniedException();
-        }
-
         $actor->assertCan('uploadPollImages');
 
-        // if an option ID is given, check that the user can edit that poll (and thus upload images!)
         if ($optionId) {
             $option = PollOption::findOrFail($optionId);
             $poll = $option->poll;
-
             $actor->assertCan('edit', $poll);
         } else {
             $option = null;
-
-            // we don't know whether this image is for a global or a regular poll -- image upload can be done before poll creation
             $actor->assertCan('startPoll');
             $actor->assertCan('startGlobalPoll');
         }
 
         $file = Arr::get($request->getUploadedFiles(), $this->filenamePrefix);
 
-        $uploadName = $this->uploadName();
+        $this->validator->assertValid([$this->filenamePrefix => $file]);
 
-        $encodedImage = $this->makeImage($file, $uploadName);
+        $image = $this->imageManager->read($file->getStream()->getMetadata('uri'));
 
-        $this->uploadDir->put($uploadName, $encodedImage);
+        $baseWidth = (int) ($this->settings->get('fof-polls.image_width') ?: 250);
+        $baseHeight = (int) ($this->settings->get('fof-polls.image_height') ?: 250);
+
+        $this->events->dispatch(new PollImageWillBeResized(
+            $image,
+            $this->filenamePrefix,
+            $baseHeight,
+            $baseWidth,
+            $image->isAnimated(),
+        ));
+
+        $uploadName = $this->uploader->upload($this->filenamePrefix, $image);
 
         if ($option) {
+            // Delete old image variants if replacing
+            if ($option->image_url && ! filter_var($option->image_url, FILTER_VALIDATE_URL)) {
+                $this->uploader->deleteAllVariants($option->image_url);
+            }
+
             $option->image_url = $uploadName;
             $option->save();
         }
 
-        return $this->jsonResponse($uploadName);
+        return new JsonResponse([
+            'fileUrl' => $this->uploader->url($uploadName),
+            'fileName' => $uploadName,
+        ]);
     }
 }
