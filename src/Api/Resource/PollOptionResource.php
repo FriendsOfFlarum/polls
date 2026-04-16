@@ -68,8 +68,8 @@ class PollOptionResource extends Resource\AbstractDatabaseResource
              * @deprecated Will be removed in the next major version. Use imageSrcset presence instead.
              */
             Schema\Boolean::make('isImageUpload')
-                ->visible(fn (PollOption $option) => ! empty($this->getImageUrl($option)))
-                ->get(fn (PollOption $option) => ! filter_var($option->image_url, FILTER_VALIDATE_URL)),
+                ->visible(fn (PollOption $option) => !empty($this->getImageUrl($option)))
+                ->get(fn (PollOption $option) => !filter_var($option->image_url, FILTER_VALIDATE_URL)),
         ];
     }
 
@@ -80,7 +80,7 @@ class PollOptionResource extends Resource\AbstractDatabaseResource
 
     protected function getImageUrl(PollOption $option): ?string
     {
-        if (! $option->image_url) {
+        if (!$option->image_url) {
             return null;
         }
 
@@ -96,7 +96,7 @@ class PollOptionResource extends Resource\AbstractDatabaseResource
 
     protected function getImageSrcset(PollOption $option): ?string
     {
-        if (! $option->image_url) {
+        if (!$option->image_url) {
             return null;
         }
 

@@ -60,7 +60,7 @@ class EditPollHandler
             $newImage = empty($attributes['pollImage']) ? null : $attributes['pollImage'];
 
             // Clean up old image files if the image is changing
-            if ($poll->image && $poll->image !== $newImage && ! filter_var($poll->image, FILTER_VALIDATE_URL)) {
+            if ($poll->image && $poll->image !== $newImage && !filter_var($poll->image, FILTER_VALIDATE_URL)) {
                 $this->uploader->deleteAllVariants($poll->image);
             }
 
@@ -110,7 +110,7 @@ class EditPollHandler
             $removedOptions = $poll->options()->whereNotIn('id', $ids)->get();
 
             foreach ($removedOptions as $removedOption) {
-                if ($removedOption->image_url && ! filter_var($removedOption->image_url, FILTER_VALIDATE_URL)) {
+                if ($removedOption->image_url && !filter_var($removedOption->image_url, FILTER_VALIDATE_URL)) {
                     $this->uploader->deleteAllVariants($removedOption->image_url);
                 }
             }
@@ -144,7 +144,7 @@ class EditPollHandler
                 if ($existingOption && $existingOption->image_url) {
                     $newImageUrl = Arr::get($optionAttributes, 'imageUrl');
 
-                    if ($existingOption->image_url !== $newImageUrl && ! filter_var($existingOption->image_url, FILTER_VALIDATE_URL)) {
+                    if ($existingOption->image_url !== $newImageUrl && !filter_var($existingOption->image_url, FILTER_VALIDATE_URL)) {
                         $this->uploader->deleteAllVariants($existingOption->image_url);
                     }
                 }

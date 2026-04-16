@@ -41,7 +41,7 @@ class PollImageUploader
     {
         $isAnimated = $image->isAnimated();
         $extension = $isAnimated ? 'gif' : 'webp';
-        $baseName = $filenamePrefix . '-' . Str::lower(Str::random(8)) . '.' . $extension;
+        $baseName = $filenamePrefix.'-'.Str::lower(Str::random(8)).'.'.$extension;
 
         $sourceWidth = $image->width();
         $sourceHeight = $image->height();
@@ -141,7 +141,7 @@ class PollImageUploader
 
     /**
      * Derive a variant path from the base path and a suffix.
-     * e.g. "pollImage-abc.webp" + "@2x" => "pollImage-abc@2x.webp"
+     * e.g. "pollImage-abc.webp" + "@2x" => "pollImage-abc@2x.webp".
      */
     public function variantPath(string $basePath, string $suffix): string
     {
@@ -152,8 +152,8 @@ class PollImageUploader
         $dot = strrpos($basePath, '.');
 
         return $dot !== false
-            ? substr($basePath, 0, $dot) . $suffix . substr($basePath, $dot)
-            : $basePath . $suffix;
+            ? substr($basePath, 0, $dot).$suffix.substr($basePath, $dot)
+            : $basePath.$suffix;
     }
 
     /**

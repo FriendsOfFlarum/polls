@@ -75,7 +75,7 @@ class UploadPollImageController implements RequestHandlerInterface
 
         if ($poll) {
             // Delete old image variants if replacing
-            if ($poll->image && ! filter_var($poll->image, FILTER_VALIDATE_URL)) {
+            if ($poll->image && !filter_var($poll->image, FILTER_VALIDATE_URL)) {
                 $this->uploader->deleteAllVariants($poll->image);
             }
 
@@ -84,7 +84,7 @@ class UploadPollImageController implements RequestHandlerInterface
         }
 
         return new JsonResponse([
-            'fileUrl' => $this->uploader->url($uploadName),
+            'fileUrl'  => $this->uploader->url($uploadName),
             'fileName' => $uploadName,
         ]);
     }

@@ -191,7 +191,7 @@ class Poll extends AbstractModel
 
     public function delete()
     {
-        if ($this->image && ! filter_var($this->image, FILTER_VALIDATE_URL)) {
+        if ($this->image && !filter_var($this->image, FILTER_VALIDATE_URL)) {
             resolve(PollImageUploader::class)->deleteAllVariants($this->image);
         }
 

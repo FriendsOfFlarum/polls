@@ -11,13 +11,13 @@
 
 namespace FoF\Polls\Tests\integration\api;
 
-use Flarum\Testing\integration\RetrievesAuthorizedUsers;
-use Flarum\Testing\integration\TestCase;
-use FoF\Polls\Poll;
-use PHPUnit\Framework\Attributes\Test;
-use Flarum\User\User;
 use Flarum\Discussion\Discussion;
 use Flarum\Post\Post;
+use Flarum\Testing\integration\RetrievesAuthorizedUsers;
+use Flarum\Testing\integration\TestCase;
+use Flarum\User\User;
+use FoF\Polls\Poll;
+use PHPUnit\Framework\Attributes\Test;
 
 class EditPollTest extends TestCase
 {

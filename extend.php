@@ -11,9 +11,9 @@
 
 namespace FoF\Polls;
 
+use Flarum\Api\Context;
 use Flarum\Api\Resource;
 use Flarum\Api\Schema;
-use Flarum\Api\Context;
 use Flarum\Discussion\Discussion;
 use Flarum\Extend;
 use Flarum\Post\Event\Saving as PostSaving;

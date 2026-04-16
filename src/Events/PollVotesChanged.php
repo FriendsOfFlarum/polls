@@ -19,7 +19,6 @@ class PollVotesChanged
 {
     /**
      * PollWasCreated constructor.
-     *
      */
     public function __construct(public User $actor, public Poll $poll, public Collection $unvotedOptionIds, public Collection $votedOptionIds)
     {

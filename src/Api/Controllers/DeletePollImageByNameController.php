@@ -15,7 +15,6 @@ use Flarum\Http\RequestUtil;
 use FoF\Polls\Events\PollImageDeleting;
 use FoF\Polls\PollImageUploader;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Arr;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Psr\Http\Message\ResponseInterface;

@@ -44,7 +44,7 @@ class DeletePollImageController implements RequestHandlerInterface
             new PollImageDeleting($poll->image, $actor)
         );
 
-        if ($poll->image && ! filter_var($poll->image, FILTER_VALIDATE_URL)) {
+        if ($poll->image && !filter_var($poll->image, FILTER_VALIDATE_URL)) {
             $this->uploader->deleteAllVariants($poll->image);
         }
 

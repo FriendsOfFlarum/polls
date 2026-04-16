@@ -44,9 +44,9 @@ class PollsDirectory
         $page = max(1, intval(Arr::pull($queryParams, 'page')));
 
         $params = [
-            'sort' => isset($this->sortMap[$sort]) ? $this->sortMap[$sort] : '-createdAt',
+            'sort'   => isset($this->sortMap[$sort]) ? $this->sortMap[$sort] : '-createdAt',
             'filter' => Arr::pull($queryParams, 'filter', []),
-            'page' => ['number' => $page],
+            'page'   => ['number' => $page],
         ];
 
         if ($q) {

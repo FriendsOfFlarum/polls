@@ -79,7 +79,7 @@ class PollImageValidator extends AbstractValidator
 
         $guessedExtension = MimeTypes::getDefault()->getExtensions($file->getClientMediaType())[0] ?? null;
 
-        if (! in_array($guessedExtension, $allowedTypes)) {
+        if (!in_array($guessedExtension, $allowedTypes)) {
             $this->raise('mimes', [':values' => implode(', ', $allowedTypes)]);
         }
 
@@ -113,7 +113,7 @@ class PollImageValidator extends AbstractValidator
 
     public function getMaxSize(): int
     {
-        return (int) ($this->settings->get('fof-polls.maxImageUploadSize'));
+        return (int) $this->settings->get('fof-polls.maxImageUploadSize');
     }
 
     protected function getAllowedTypes(): array

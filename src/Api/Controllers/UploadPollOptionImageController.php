@@ -61,7 +61,7 @@ class UploadPollOptionImageController extends UploadPollImageController
 
         if ($option) {
             // Delete old image variants if replacing
-            if ($option->image_url && ! filter_var($option->image_url, FILTER_VALIDATE_URL)) {
+            if ($option->image_url && !filter_var($option->image_url, FILTER_VALIDATE_URL)) {
                 $this->uploader->deleteAllVariants($option->image_url);
             }
 
@@ -70,7 +70,7 @@ class UploadPollOptionImageController extends UploadPollImageController
         }
 
         return new JsonResponse([
-            'fileUrl' => $this->uploader->url($uploadName),
+            'fileUrl'  => $this->uploader->url($uploadName),
             'fileName' => $uploadName,
         ]);
     }

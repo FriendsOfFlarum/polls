@@ -18,7 +18,6 @@ class PollWasCreated
 {
     /**
      * PollWasCreated constructor.
-     *
      */
     public function __construct(public User $actor, public Poll $poll)
     {

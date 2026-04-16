@@ -19,11 +19,9 @@ use Flarum\Api\Sort\SortColumn;
 use Flarum\Post\PostRepository;
 use Flarum\Settings\SettingsRepositoryInterface;
 use FoF\Polls\Commands\CreatePoll;
-use FoF\Polls\Commands\DeletePoll;
 use FoF\Polls\Commands\EditPoll;
 use FoF\Polls\Commands\MultipleVotesPoll;
 use FoF\Polls\Poll;
-use Illuminate\Contracts\Filesystem\Cloud;
 use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Database\Eloquent\Builder;
 use Tobyz\JsonApiServer\Context as OriginalContext;
@@ -248,7 +246,7 @@ class PollResource extends Resource\AbstractDatabaseResource
              */
             Schema\Boolean::make('isImageUpload')
                 ->visible(fn (Poll $poll) => $poll->image !== null)
-                ->get(fn (Poll $poll) => ! filter_var($poll->image, FILTER_VALIDATE_URL)),
+                ->get(fn (Poll $poll) => !filter_var($poll->image, FILTER_VALIDATE_URL)),
 
             Schema\Relationship\ToMany::make('options')
                 ->includable()

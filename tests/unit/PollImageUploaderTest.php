@@ -25,9 +25,9 @@ class PollImageUploaderTest extends TestCase
         $settings = $this->createMock(SettingsRepositoryInterface::class);
         $settings->method('get')->willReturnCallback(function ($key) use ($baseWidth, $baseHeight) {
             return match ($key) {
-                'fof-polls.image_width' => $baseWidth,
+                'fof-polls.image_width'  => $baseWidth,
                 'fof-polls.image_height' => $baseHeight,
-                default => null,
+                default                  => null,
             };
         });
 
@@ -132,7 +132,7 @@ class PollImageUploaderTest extends TestCase
         $disk = $this->createMock(Cloud::class);
         $disk->method('exists')->willReturn(true); // all variants exist
         $disk->method('url')->willReturnCallback(function ($path) {
-            return 'https://example.com/assets/polls/' . $path;
+            return 'https://example.com/assets/polls/'.$path;
         });
 
         $uploader = $this->makeUploader(250, 250, $disk);
@@ -156,7 +156,7 @@ class PollImageUploaderTest extends TestCase
             return in_array($path, ['pollImage-abc.webp', 'pollImage-abc@2x.webp']);
         });
         $disk->method('url')->willReturnCallback(function ($path) {
-            return 'https://example.com/assets/polls/' . $path;
+            return 'https://example.com/assets/polls/'.$path;
         });
 
         $uploader = $this->makeUploader(250, 250, $disk);
@@ -206,5 +206,4 @@ class PollImageUploaderTest extends TestCase
             $uploader->url('pollImage-abc.webp')
         );
     }
-
 }

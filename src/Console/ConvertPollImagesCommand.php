@@ -91,7 +91,7 @@ class ConvertPollImagesCommand extends Command
         $this->newLine();
         $this->info("Done. Converted: {$converted}, Skipped: {$skipped}, Failed: {$failed}");
 
-        if ($converted > 0 && ! $this->option('cleanup')) {
+        if ($converted > 0 && !$this->option('cleanup')) {
             $this->comment('Original PNG files were kept. Run with --cleanup to remove them.');
         }
 
@@ -113,7 +113,7 @@ class ConvertPollImagesCommand extends Command
         }
 
         // Skip if file doesn't exist on disk
-        if (! $this->disk->exists($imagePath)) {
+        if (!$this->disk->exists($imagePath)) {
             return true;
         }
 
