@@ -78,6 +78,10 @@ class PollSerializer extends AbstractSerializer
         $attributes['publishedAt'] = $this->formatDate($poll->published_at);
         $attributes['isDraft']     = $poll->isDraft();
 
+        if ($poll->getAttribute('scheduleCancelled')) {
+            $attributes['scheduleCancelled'] = true;
+        }
+
         return $attributes;
     }
 

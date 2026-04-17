@@ -67,6 +67,9 @@ class EditPollHandler
         $command->actor->assertCan('edit', $poll);
 
         $attributes = (array) Arr::get($command->data, 'attributes');
+        $isDraft = $poll->isDraft();
+        $this->validator->setDraft($isDraft);
+
         $options = collect(Arr::get($attributes, 'options', []));
 
         $this->validator->assertValid($attributes);
@@ -118,6 +121,35 @@ class EditPollHandler
 
         $poll->save();
 
+        $scheduleCancelled = false;
+
+        // Auto-cancel schedule if edits made the poll un-publishable.
+        if ($poll->isDraft() && $poll->scheduled_publish_at !== null) {
+            try {
+                $fullValidator = clone $this->validator;
+                $fullValidator->setDraft(false);
+                $fullValidator->assertValid($attributes);
+
+                foreach ($options as $opt) {
+                    $optionAttributes = [
+                        'answer'   => Arr::get($opt, 'attributes.answer'),
+                        'imageUrl' => Arr::get($opt, 'attributes.imageUrl'),
+                    ];
+                    if (!$this->settings->get('fof-polls.allowOptionImage')) {
+                        unset($optionAttributes['imageUrl']);
+                    }
+                    $this->optionValidator->assertValid($optionAttributes);
+                }
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                $poll->scheduled_publish_at = null;
+                $poll->scheduled_publish_error = null;
+                $poll->save();
+                $scheduleCancelled = true;
+            }
+        }
+
+        $poll->setAttribute('scheduleCancelled', $scheduleCancelled);
+
         // remove options not passed if 2 or more are
         if ($options->isNotEmpty() && $options->count() >= 2) {
             $ids = $options->pluck('id')->whereNotNull()->toArray();
@@ -138,7 +170,9 @@ class EditPollHandler
                 unset($optionAttributes['imageUrl']);
             }
 
-            $this->optionValidator->assertValid($optionAttributes);
+            if (!$isDraft) {
+                $this->optionValidator->assertValid($optionAttributes);
+            }
 
             $option = $poll->options()->updateOrCreate([
                 'id' => $id,
