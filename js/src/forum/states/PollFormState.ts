@@ -7,6 +7,7 @@ export default class PollFormState {
   loading: boolean;
   deleting: boolean;
   expandedGroup: string;
+  private baseline: Record<string, unknown> = {};
 
   static createNewPoll() {
     const poll = app.store.createRecord<Poll>('polls');
@@ -35,6 +36,26 @@ export default class PollFormState {
     this.deleting = false;
     this.poll = poll;
     this.expandedGroup = 'setup';
+    this.captureBaseline();
+  }
+
+  captureBaseline(): void {
+    this.baseline = {
+      question: this.poll.question(),
+      subtitle: this.poll.subtitle?.(),
+      endDate: this.poll.endDate?.()?.toISOString() ?? null,
+      publicPoll: this.poll.publicPoll?.(),
+      allowMultipleVotes: this.poll.allowMultipleVotes?.(),
+      hideVotes: this.poll.hideVotes?.(),
+      allowChangeVote: this.poll.allowChangeVote?.(),
+      maxVotes: this.poll.maxVotes?.(),
+      imageAlt: this.poll.imageAlt?.(),
+      options: (this.poll.tempOptions ?? this.poll.options()).map((o: any) => [o.answer?.(), o.imageUrl?.()]),
+    };
+  }
+
+  dirty(current: Record<string, unknown>): boolean {
+    return JSON.stringify(current) !== JSON.stringify(this.baseline);
   }
 
   isExpanded(groupKey: string) {
@@ -58,6 +79,7 @@ export default class PollFormState {
        * As we currently cannot add new PollOptions as relationships.
        */
       delete this.poll!.data!.attributes!.options;
+      this.captureBaseline();
     } finally {
       this.loading = false;
       m.redraw();
