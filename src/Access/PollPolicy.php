@@ -96,4 +96,27 @@ class PollPolicy extends AbstractPolicy
     {
         return $this->edit($actor, $poll);
     }
+
+    public function publish(User $actor, Poll $poll)
+    {
+        if (!$poll->isDraft()) {
+            return $this->deny();
+        }
+
+        // Same baseline as edit.
+        return $this->edit($actor, $poll);
+    }
+
+    public function unpublish(User $actor, Poll $poll)
+    {
+        if ($poll->isDraft()) {
+            return $this->deny();
+        }
+
+        if ($poll->vote_count > 0) {
+            return $this->deny();
+        }
+
+        return $this->edit($actor, $poll);
+    }
 }
