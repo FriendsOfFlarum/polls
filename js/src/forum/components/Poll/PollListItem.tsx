@@ -113,12 +113,44 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
   }
 
   mainView(): Mithril.Children {
+    const href = this.poll.isDraft()
+      ? `${app.route('fof.polls.composer')}?id=${this.poll.id()}`
+      : app.route('fof.polls.view', { id: this.poll.id() });
+
     return (
-      <Link href={app.route('fof.polls.view', { id: this.poll.id() })} className="PollListItem-main">
-        <h2 className="PollListItem-title">{highlight(this.pollQuestion(this.poll), this.highlightRegExp)}</h2>
+      <Link href={href} className="PollListItem-main">
+        <h2 className="PollListItem-title">
+          {highlight(this.pollQuestion(this.poll), this.highlightRegExp)}
+          {this.draftBadges()}
+        </h2>
         {this.poll.subtitle() && <p className="PollListItem-subtitle helpText">{this.pollSubtitle(this.poll)}</p>}
         <ul className="PollListItem-info">{listItems(this.infoItems().toArray())}</ul>
       </Link>
+    );
+  }
+
+  draftBadges(): Mithril.Children {
+    if (!this.poll.isDraft()) return null;
+
+    return (
+      <span className="PollListItem-draftBadges">
+        <span className="PollListItem-draftBadge" title={app.translator.trans('fof-polls.forum.poll.draft_label') as string}>
+          {icon('fas fa-pencil-alt')} {app.translator.trans('fof-polls.forum.poll.draft_label')}
+        </span>
+        {this.poll.isScheduled() && (
+          <span className="PollListItem-scheduledBadge">
+            {icon('fas fa-clock')}{' '}
+            {app.translator.trans('fof-polls.forum.poll.scheduled_label', {
+              date: this.poll.scheduledPublishAt()!.toLocaleString(),
+            })}
+            {this.poll.scheduledPublishError() && (
+              <span className="PollListItem-scheduleError" title={this.poll.scheduledPublishError() as string}>
+                {icon('fas fa-exclamation-triangle')}
+              </span>
+            )}
+          </span>
+        )}
+      </span>
     );
   }
 
