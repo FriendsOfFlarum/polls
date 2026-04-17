@@ -17,8 +17,26 @@ use Illuminate\Validation\Rule;
 
 class PollValidator extends AbstractValidator
 {
+    protected bool $draft = false;
+
+    public function setDraft(bool $draft): void
+    {
+        $this->draft = $draft;
+    }
+
+    protected function getAttributeNames()
+    {
+        return [];
+    }
+
     protected function getRules()
     {
+        if ($this->draft) {
+            return [
+                'question' => 'required',
+            ];
+        }
+
         return [
             'question'   => 'required',
             'publicPoll' => 'nullable|boolean',
