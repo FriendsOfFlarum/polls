@@ -48,85 +48,13 @@ return [
         ->post('/polls/pollOptionImage/{optionId:\d+}', 'fof.polls.upload-option-image', Controllers\UploadPollOptionImageController::class)
         ->delete('/polls/pollOptionImage/{optionId:\d+}', 'fof.polls.delete-option-image', Controllers\DeletePollOptionImageController::class),
 
-    (new Extend\Model(Post::class))
-        ->hasMany('polls', Poll::class, 'post_id', 'id'),
-
-    (new Extend\Model(Discussion::class))
-        ->hasMany('polls', Poll::class, 'post_id', 'first_post_id'),
-
     (new Extend\Event())
-        ->listen(PostSaving::class, Listeners\SavePollsToDatabase::class)
         ->listen(SettingsSaved::class, Listeners\ClearFormatterCache::class),
 
-    // Add poll-related attributes to Discussion resource
-    (new Extend\ApiResource(Resource\DiscussionResource::class))
-        ->fields(fn () => [
-            Schema\Boolean::make('hasPoll')
-                ->get(function (Discussion $discussion) {
-                    return $discussion->relationLoaded('polls')
-                        ? $discussion->polls->isNotEmpty()
-                        : $discussion->polls()->exists();
-                }),
-            Schema\Boolean::make('canStartPoll')
-                ->get(fn (Discussion $discussion, Context $context) => $context->getActor()->can('polls.start', $discussion)),
-            Schema\Arr::make('poll')
-                ->writableOnCreate()
-                ->visible(false)
-                ->set(function (Discussion $discussion, ?array $value) {
-                    // Stash poll data for SavePollsToDatabase listener.
-                    // In Flarum 2.x, DiscussionResource creates the first post internally
-                    // and only passes 'content' — the poll data is lost in transit.
-                    Listeners\SavePollsToDatabase::$pendingPollData = $value;
-                }),
-        ])
-        ->endpoint('index', function ($endpoint) {
-            return $endpoint
-                ->eagerLoadWhere('polls', function ($query) {
-                    $query->select(['id', 'post_id']);
-                })
-                ->addDefaultInclude(['firstPost.polls']);
-        })
-        ->endpoint('show', function ($endpoint) {
-            return $endpoint->addDefaultInclude([
-                'firstPost.polls', 'firstPost.polls.options', 'firstPost.polls.myVotes', 'firstPost.polls.myVotes.option',
-            ]);
-        }),
-
-    // Add poll-related attributes/relationships to Post resource
-    (new Extend\ApiResource(Resource\PostResource::class))
-        ->fields(fn () => [
-            Schema\Boolean::make('canStartPoll')
-                ->get(fn (Post $post, Context $context) => $context->getActor()->can('startPoll', $post)),
-            Schema\Arr::make('poll')
-                ->writableOnCreate()
-                ->visible(false)
-                ->set(fn () => null),
-            Schema\Relationship\ToMany::make('polls')
-                ->includable()
-                ->type('polls'),
-        ])
-        ->endpoint('create', function ($endpoint) {
-            return $endpoint->addDefaultInclude([
-                'polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option',
-            ]);
-        })
-        ->endpoint('index', function ($endpoint) {
-            return $endpoint->addDefaultInclude([
-                'polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option',
-            ]);
-        })
-        ->endpoint('show', function ($endpoint) {
-            return $endpoint->addDefaultInclude([
-                'polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option',
-            ]);
-        }),
-
-    // Add poll-related attributes to Forum resource
+    // Add poll-related attributes to Forum resource (always loaded)
     (new Extend\ApiResource(Resource\ForumResource::class))
         ->fields(function () {
             return [
-                Schema\Boolean::make('canStartPolls')
-                    ->get(fn ($forum, Context $context) => $context->getActor()->can('discussion.polls.start')),
                 Schema\Boolean::make('canStartGlobalPolls')
                     ->get(fn ($forum, Context $context) => $context->getActor()->can('startGlobalPoll')),
                 Schema\Boolean::make('canUploadPollImages')
@@ -151,17 +79,18 @@ return [
         ->command(Console\ConvertPollImagesCommand::class),
 
     (new Extend\Policy())
-        ->modelPolicy(Poll::class, Access\PollPolicy::class)
-        ->modelPolicy(Post::class, Access\PostPolicy::class),
+        ->modelPolicy(Poll::class, Access\PollPolicy::class),
 
     (new Extend\Settings())
         ->default('fof-polls.maxOptions', 10)
         ->default('fof-polls.optionsColorBlend', true)
         ->default('fof-polls.directory-default-sort', '-createdAt')
+        ->default('fof-polls.enableDiscussionPolls', true)
         ->default('fof-polls.enableGlobalPolls', false)
         ->default('fof-polls.image_height', 250)
         ->default('fof-polls.image_width', 250)
         ->default('fof-polls.maxImageUploadSize', 10240)
+        ->serializeToForum('discussionPollsEnabled', 'fof-polls.enableDiscussionPolls', 'boolval')
         ->serializeToForum('pollsDirectoryDefaultSort', 'fof-polls.directory-default-sort', 'strval')
         ->serializeToForum('globalPollsEnabled', 'fof-polls.enableGlobalPolls', 'boolval')
         ->serializeToForum('pollGroupsEnabled', 'fof-polls.enablePollGroups', 'boolval')
@@ -192,6 +121,89 @@ return [
         ->addSearcher(PollGroup::class, Filter\PollGroupSearcher::class)
         ->addFilter(Filter\PollGroupSearcher::class, Filter\PollGroupHasPollsFilter::class),
 
+    // Discussion-based polls (conditionally loaded)
+    (new Extend\Conditional())
+        ->whenSetting('fof-polls.enableDiscussionPolls', true, function () {
+            return [
+                (new Extend\Model(Post::class))
+                    ->hasMany('polls', Poll::class, 'post_id', 'id'),
+
+                (new Extend\Model(Discussion::class))
+                    ->hasMany('polls', Poll::class, 'post_id', 'first_post_id'),
+
+                (new Extend\Event())
+                    ->listen(PostSaving::class, Listeners\SavePollsToDatabase::class),
+
+                (new Extend\ApiResource(Resource\DiscussionResource::class))
+                    ->fields(fn () => [
+                        Schema\Boolean::make('hasPoll')
+                            ->get(function (Discussion $discussion) {
+                                return $discussion->relationLoaded('polls')
+                                    ? $discussion->polls->isNotEmpty()
+                                    : $discussion->polls()->exists();
+                            }),
+                        Schema\Boolean::make('canStartPoll')
+                            ->get(fn (Discussion $discussion, Context $context) => $context->getActor()->can('polls.start', $discussion)),
+                        Schema\Arr::make('poll')
+                            ->writableOnCreate()
+                            ->visible(false)
+                            ->set(function (Discussion $discussion, ?array $value) {
+                                Listeners\SavePollsToDatabase::$pendingPollData = $value;
+                            }),
+                    ])
+                    ->endpoint('index', function ($endpoint) {
+                        return $endpoint
+                            ->eagerLoadWhere('polls', function ($query) {
+                                $query->select(['id', 'post_id']);
+                            })
+                            ->addDefaultInclude(['firstPost.polls']);
+                    })
+                    ->endpoint('show', function ($endpoint) {
+                        return $endpoint->addDefaultInclude([
+                            'firstPost.polls', 'firstPost.polls.options', 'firstPost.polls.myVotes', 'firstPost.polls.myVotes.option',
+                        ]);
+                    }),
+
+                (new Extend\ApiResource(Resource\PostResource::class))
+                    ->fields(fn () => [
+                        Schema\Boolean::make('canStartPoll')
+                            ->get(fn (Post $post, Context $context) => $context->getActor()->can('startPoll', $post)),
+                        Schema\Arr::make('poll')
+                            ->writableOnCreate()
+                            ->visible(false)
+                            ->set(fn () => null),
+                        Schema\Relationship\ToMany::make('polls')
+                            ->includable()
+                            ->type('polls'),
+                    ])
+                    ->endpoint('create', function ($endpoint) {
+                        return $endpoint->addDefaultInclude([
+                            'polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option',
+                        ]);
+                    })
+                    ->endpoint('index', function ($endpoint) {
+                        return $endpoint->addDefaultInclude([
+                            'polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option',
+                        ]);
+                    })
+                    ->endpoint('show', function ($endpoint) {
+                        return $endpoint->addDefaultInclude([
+                            'polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option',
+                        ]);
+                    }),
+
+                (new Extend\ApiResource(Resource\ForumResource::class))
+                    ->fields(fn () => [
+                        Schema\Boolean::make('canStartPolls')
+                            ->get(fn ($forum, Context $context) => $context->getActor()->can('discussion.polls.start')),
+                    ]),
+
+                (new Extend\Policy())
+                    ->modelPolicy(Post::class, Access\PostPolicy::class),
+            ];
+        }),
+
+    // Poll groups (conditionally loaded)
     (new Extend\Conditional())
         ->when(new Extender\IsPollGroupEnabled(), function () {
             return [

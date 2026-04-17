@@ -4,6 +4,11 @@ fof-polls:
       general:
         heading: General Settings
         help: These settings control the basic features of the Polls extension.
+      discussion_polls:
+        heading: Discussion Polls
+        help: These settings control polls that are attached to discussion posts.
+      enable_discussion_polls: Enable discussion polls
+      enable_discussion_polls_help: When enabled, users can create polls within discussion posts. Disable this if you only want to use global polls.
       global_polls:
         heading: Global Polls
         help: These settings control the global polls feature.

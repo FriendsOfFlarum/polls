@@ -33,6 +33,15 @@ export default class PollsSettingsPage extends ExtensionPage {
     );
 
     items.add(
+      'discussionPolls',
+      <div className="Section">
+        <h3>{app.translator.trans('fof-polls.admin.settings.discussion_polls.heading')}</h3>
+        <p className="helpText">{app.translator.trans('fof-polls.admin.settings.discussion_polls.help')}</p>
+        {this.discussionPollsItems().toArray()}
+      </div>
+    );
+
+    items.add(
       'globalPolls',
       <div className="Section">
         <h3>{app.translator.trans('fof-polls.admin.settings.global_polls.heading')}</h3>
@@ -73,6 +82,22 @@ export default class PollsSettingsPage extends ExtensionPage {
         type: 'number',
         label: app.translator.trans('fof-polls.admin.settings.max_options'),
         min: 2,
+      })
+    );
+
+    return items;
+  }
+
+  discussionPollsItems(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+
+    items.add(
+      'enableDiscussionPolls',
+      this.buildSettingComponent({
+        setting: 'fof-polls.enableDiscussionPolls',
+        type: 'switch',
+        label: app.translator.trans('fof-polls.admin.settings.enable_discussion_polls'),
+        help: app.translator.trans('fof-polls.admin.settings.enable_discussion_polls_help'),
       })
     );
 
