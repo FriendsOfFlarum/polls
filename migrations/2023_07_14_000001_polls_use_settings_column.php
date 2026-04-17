@@ -22,9 +22,9 @@ return [
                 ->where('id', $poll->id)
                 ->update([
                     'settings' => json_encode([
-                        'public_poll' => (bool) $poll->public_poll,
+                        'public_poll'          => (bool) $poll->public_poll,
                         'allow_multiple_votes' => (bool) $poll->allow_multiple_votes,
-                        'max_votes' => (int) $poll->max_votes,
+                        'max_votes'            => (int) $poll->max_votes,
                     ]),
                 ]);
         }
@@ -38,9 +38,9 @@ return [
             $db->table('polls')
                 ->where('id', $poll->id)
                 ->update([
-                    'public_poll' => (bool) ($settings['public_poll'] ?? false),
+                    'public_poll'          => (bool) ($settings['public_poll'] ?? false),
                     'allow_multiple_votes' => (bool) ($settings['allow_multiple_votes'] ?? false),
-                    'max_votes' => (int) ($settings['max_votes'] ?? 0),
+                    'max_votes'            => (int) ($settings['max_votes'] ?? 0),
                 ]);
         }
     },
