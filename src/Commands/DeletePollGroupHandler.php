@@ -22,7 +22,7 @@ class DeletePollGroupHandler
     {
     }
 
-    public function handle(DeletePollGroup $command)
+    public function handle(DeletePollGroup $command): PollGroup
     {
         $actor = $command->actor;
         $group = PollGroup::findOrFail($command->groupId);

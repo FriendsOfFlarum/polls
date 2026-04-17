@@ -24,7 +24,7 @@ class EditPollGroupHandler
     {
     }
 
-    public function handle(EditPollGroup $command)
+    public function handle(EditPollGroup $command): PollGroup
     {
         $actor = $command->actor;
         $data = $command->data;

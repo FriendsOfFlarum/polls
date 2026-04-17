@@ -15,7 +15,9 @@ use Carbon\Carbon;
 use Flarum\Settings\SettingsRepositoryInterface;
 use FoF\Polls\Events\PollOptionUpdated;
 use FoF\Polls\Events\SavingPollAttributes;
+use FoF\Polls\Poll;
 use FoF\Polls\PollImageUploader;
+use FoF\Polls\PollOption;
 use FoF\Polls\PollRepository;
 use FoF\Polls\Validators\PollOptionValidator;
 use FoF\Polls\Validators\PollValidator;
@@ -37,14 +39,14 @@ class EditPollHandler
     ) {
     }
 
-    public function handle(EditPoll $command)
+    public function handle(EditPoll $command): Poll
     {
         $poll = $this->polls->findOrFail($command->pollId, $command->actor);
 
         $command->actor->assertCan('edit', $poll);
 
         $attributes = (array) Arr::get($command->data, 'attributes');
-        $options = collect(Arr::get($attributes, 'options', []));
+        $options = collect((array) Arr::get($attributes, 'options', []));
 
         $this->validator->assertValid($attributes);
 
@@ -110,6 +112,7 @@ class EditPollHandler
             $removedOptions = $poll->options()->whereNotIn('id', $ids)->get();
 
             foreach ($removedOptions as $removedOption) {
+                /** @var PollOption $removedOption */
                 if ($removedOption->image_url && !filter_var($removedOption->image_url, FILTER_VALIDATE_URL)) {
                     $this->uploader->deleteAllVariants($removedOption->image_url);
                 }
@@ -139,6 +142,7 @@ class EditPollHandler
 
             // Clean up old image if option exists and image is changing
             if ($id) {
+                /** @var PollOption|null $existingOption */
                 $existingOption = $poll->options()->find($id);
 
                 if ($existingOption && $existingOption->image_url) {
@@ -150,6 +154,7 @@ class EditPollHandler
                 }
             }
 
+            /** @var PollOption $option */
             $option = $poll->options()->updateOrCreate([
                 'id' => $id,
             ], [

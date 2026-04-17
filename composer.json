@@ -26,6 +26,11 @@
             "name": "David Sevilla Martin",
             "email": "david.s@redevs.org",
             "role": "Developer"
+        },
+        {
+            "name": "IanM",
+            "email": "ian@flarum.org",
+            "role": "Developer"
         }
     ],
     "autoload": {

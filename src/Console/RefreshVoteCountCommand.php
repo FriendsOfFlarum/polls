@@ -21,7 +21,7 @@ class RefreshVoteCountCommand extends Command
 
     protected $description = 'Re-calculate the total number of votes per option';
 
-    public function handle()
+    public function handle(): int
     {
         $progress = $this->output->createProgressBar(Poll::query()->count() + PollOption::query()->count());
 
@@ -40,5 +40,7 @@ class RefreshVoteCountCommand extends Command
         $progress->finish();
 
         $this->info('Done.');
+
+        return 0;
     }
 }

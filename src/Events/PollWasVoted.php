@@ -20,7 +20,7 @@ class PollWasVoted
     /**
      * PollWasCreated constructor.
      */
-    public function __construct(public User $actor, public Poll $poll, public PollVote $vote, public $changed = false)
+    public function __construct(public User $actor, public Poll $poll, public PollVote $vote, public bool $changed = false)
     {
     }
 }

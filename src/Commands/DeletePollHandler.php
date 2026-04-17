@@ -19,7 +19,7 @@ class DeletePollHandler
     {
     }
 
-    public function handle(DeletePoll $command)
+    public function handle(DeletePoll $command): void
     {
         $poll = $this->polls->findOrFail($command->pollId, $command->actor);
 

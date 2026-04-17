@@ -11,6 +11,7 @@
 
 namespace FoF\Polls\Filter;
 
+use Flarum\Search\Database\DatabaseSearchState;
 use Flarum\Search\Filter\FilterInterface;
 use Flarum\Search\SearchState;
 use Illuminate\Database\Query\Builder;
@@ -24,6 +25,7 @@ class PollGroupHasPollsFilter implements FilterInterface
 
     public function filter(SearchState $state, array|string $value, bool $negate): void
     {
+        /** @var DatabaseSearchState $state */
         $query = $state->getQuery();
 
         if ($negate) {

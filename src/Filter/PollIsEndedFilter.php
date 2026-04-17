@@ -12,6 +12,7 @@
 namespace FoF\Polls\Filter;
 
 use Carbon\Carbon;
+use Flarum\Search\Database\DatabaseSearchState;
 use Flarum\Search\Filter\FilterInterface;
 use Flarum\Search\SearchState;
 
@@ -24,6 +25,7 @@ class PollIsEndedFilter implements FilterInterface
 
     public function filter(SearchState $state, array|string $value, bool $negate): void
     {
+        /** @var DatabaseSearchState $state */
         if ($negate) {
             // filter[-isEnded]=1 → active polls (not ended)
             $state->getQuery()->where(function ($query) {

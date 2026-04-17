@@ -33,7 +33,7 @@ class CreatePollHandler
     {
     }
 
-    public function handle(CreatePoll $command)
+    public function handle(CreatePoll $command): mixed
     {
         if ($command->post) {
             $command->actor->assertCan('startPoll', $command->post);

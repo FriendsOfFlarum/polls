@@ -13,6 +13,7 @@ namespace FoF\Polls\Commands;
 
 use FoF\Polls\Events\SavedPollGroup;
 use FoF\Polls\Events\SavingPollGroup;
+use FoF\Polls\PollGroup;
 use FoF\Polls\PollGroupRepository;
 use FoF\Polls\Validators\PollGroupValidator;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -24,7 +25,7 @@ class CreatePollGroupHandler
     {
     }
 
-    public function handle(CreatePollGroup $command)
+    public function handle(CreatePollGroup $command): PollGroup
     {
         $actor = $command->actor;
         $data = $command->data;

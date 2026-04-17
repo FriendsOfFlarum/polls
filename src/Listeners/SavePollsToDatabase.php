@@ -31,7 +31,7 @@ class SavePollsToDatabase
     {
     }
 
-    public function handle(Saving $event)
+    public function handle(Saving $event): void
     {
         if ($event->post->exists) {
             return;

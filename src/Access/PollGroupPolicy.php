@@ -17,12 +17,12 @@ use FoF\Polls\PollGroup;
 
 class PollGroupPolicy extends AbstractPolicy
 {
-    public function edit(User $user, PollGroup $pollGroup)
+    public function edit(User $user, PollGroup $pollGroup): string|bool|null
     {
         return $user->id === $pollGroup->user_id || $user->hasPermission('polls.moderate_group');
     }
 
-    public function delete(User $user, PollGroup $pollGroup)
+    public function delete(User $user, PollGroup $pollGroup): string|bool|null
     {
         return $user->id === $pollGroup->user_id || $user->hasPermission('polls.moderate_group');
     }

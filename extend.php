@@ -139,8 +139,8 @@ return [
                         Schema\Boolean::make('hasPoll')
                             ->get(function (Discussion $discussion) {
                                 return $discussion->relationLoaded('polls')
-                                    ? $discussion->polls->isNotEmpty()
-                                    : $discussion->polls()->exists();
+                                    ? $discussion->polls->isNotEmpty() // @phpstan-ignore property.notFound
+                                    : $discussion->polls()->exists(); // @phpstan-ignore method.notFound
                             }),
                         Schema\Boolean::make('canStartPoll')
                             ->get(fn (Discussion $discussion, Context $context) => $context->getActor()->can('polls.start', $discussion)),
