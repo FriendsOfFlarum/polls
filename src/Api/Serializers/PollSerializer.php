@@ -75,8 +75,9 @@ class PollSerializer extends AbstractSerializer
             $attributes['isImageUpload'] = !filter_var($poll->image, FILTER_VALIDATE_URL);
         }
 
-        $attributes['publishedAt'] = $this->formatDate($poll->published_at);
-        $attributes['isDraft']     = $poll->isDraft();
+        $attributes['publishedAt']        = $this->formatDate($poll->published_at);
+        $attributes['isDraft']            = $poll->isDraft();
+        $attributes['scheduledPublishAt'] = $this->formatDate($poll->scheduled_publish_at);
 
         if ($poll->getAttribute('scheduleCancelled')) {
             $attributes['scheduleCancelled'] = true;
