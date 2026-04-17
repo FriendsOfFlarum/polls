@@ -57,7 +57,8 @@ class ListDraftsVisibilityTest extends TestCase
     public function test_outsider_does_not_see_draft_in_list(): void
     {
         $response = $this->send(
-            $this->request('GET', '/api/fof/polls?filter[isDraft]=1', ['authenticatedAs' => 4])
+            $this->request('GET', '/api/fof/polls', ['authenticatedAs' => 4])
+                ->withQueryParams(['filter' => ['isDraft' => '1']])
         );
         $body = json_decode($response->getBody(), true);
         $ids = array_column($body['data'] ?? [], 'id');
@@ -68,7 +69,8 @@ class ListDraftsVisibilityTest extends TestCase
     public function test_author_sees_own_draft(): void
     {
         $response = $this->send(
-            $this->request('GET', '/api/fof/polls?filter[isDraft]=1', ['authenticatedAs' => 3])
+            $this->request('GET', '/api/fof/polls', ['authenticatedAs' => 3])
+                ->withQueryParams(['filter' => ['isDraft' => '1']])
         );
         $body = json_decode($response->getBody(), true);
         $ids = array_column($body['data'] ?? [], 'id');
@@ -79,7 +81,8 @@ class ListDraftsVisibilityTest extends TestCase
     public function test_moderator_sees_draft(): void
     {
         $response = $this->send(
-            $this->request('GET', '/api/fof/polls?filter[isDraft]=1', ['authenticatedAs' => 5])
+            $this->request('GET', '/api/fof/polls', ['authenticatedAs' => 5])
+                ->withQueryParams(['filter' => ['isDraft' => '1']])
         );
         $body = json_decode($response->getBody(), true);
         $ids = array_column($body['data'] ?? [], 'id');
@@ -90,7 +93,8 @@ class ListDraftsVisibilityTest extends TestCase
     public function test_admin_sees_draft(): void
     {
         $response = $this->send(
-            $this->request('GET', '/api/fof/polls?filter[isDraft]=1', ['authenticatedAs' => 1])  // admin
+            $this->request('GET', '/api/fof/polls', ['authenticatedAs' => 1])  // admin
+                ->withQueryParams(['filter' => ['isDraft' => '1']])
         );
         $body = json_decode($response->getBody(), true);
         $ids = array_column($body['data'] ?? [], 'id');
@@ -113,7 +117,8 @@ class ListDraftsVisibilityTest extends TestCase
     public function test_isDraft_filter_returns_only_drafts(): void
     {
         $response = $this->send(
-            $this->request('GET', '/api/fof/polls?filter[isDraft]=1', ['authenticatedAs' => 3])
+            $this->request('GET', '/api/fof/polls', ['authenticatedAs' => 3])
+                ->withQueryParams(['filter' => ['isDraft' => '1']])
         );
         $body = json_decode($response->getBody(), true);
         $ids = array_column($body['data'] ?? [], 'id');

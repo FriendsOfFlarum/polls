@@ -122,8 +122,10 @@ class EditDraftPollTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
         $body = json_decode($response->getBody(), true);
-        $this->assertNull($body['data']['attributes']['scheduledPublishAt'] ?? 'notset');
-        $this->assertTrue($body['data']['attributes']['scheduleCancelled'] ?? false);
+        $attrs = $body['data']['attributes'];
+        $this->assertArrayHasKey('scheduledPublishAt', $attrs);
+        $this->assertNull($attrs['scheduledPublishAt']);
+        $this->assertTrue($attrs['scheduleCancelled'] ?? false);
     }
 
     public function test_editing_published_poll_keeps_published_at(): void

@@ -110,8 +110,11 @@ class PublishPollTest extends TestCase
         $this->assertEquals(403, $response->getStatusCode());
     }
 
-    public function test_publish_as_non_author_non_mod_returns_403(): void
+    public function test_publish_as_non_author_non_mod_returns_404(): void
     {
+        // Drafts are hidden from non-authors by ScopePollVisibility, so the
+        // repository's findOrFail yields 404 rather than 403 — Flarum's
+        // preferred info-hiding behaviour for unauthorised access.
         $response = $this->send(
             $this->request('POST', '/api/fof/polls/10/publish', [
                 'authenticatedAs' => 4,
@@ -119,7 +122,7 @@ class PublishPollTest extends TestCase
             ])
         );
 
-        $this->assertEquals(403, $response->getStatusCode());
+        $this->assertEquals(404, $response->getStatusCode());
     }
 
     public function test_publish_with_scheduledFor_future_stores_schedule(): void

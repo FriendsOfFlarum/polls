@@ -53,7 +53,12 @@ class PublishScheduledPollsTest extends TestCase
 
     protected function runCommand(): void
     {
-        $command = $this->app()->getContainer()->make(PublishScheduledPollsCommand::class);
+        $container = $this->app()->getContainer();
+        /** @var PublishScheduledPollsCommand $command */
+        $command = $container->make(PublishScheduledPollsCommand::class);
+        // Laravel's base Command::run() resolves OutputStyle via $this->laravel;
+        // when we bypass the Console kernel we must wire the container ourselves.
+        $command->setLaravel($container);
         $command->run(new ArrayInput([]), new NullOutput());
     }
 

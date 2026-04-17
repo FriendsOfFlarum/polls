@@ -12,6 +12,8 @@
 namespace FoF\Polls\Filter;
 
 use Flarum\Filter\AbstractFilterer;
+use Flarum\Query\QueryCriteria;
+use Flarum\Query\QueryResults;
 use Flarum\User\User;
 use FoF\Polls\PollRepository;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,13 +22,28 @@ class GlobalPollFilterer extends AbstractFilterer
 {
     protected $polls;
 
-    protected $filters;
+    /**
+     * Whether the current filter() call should default to published-only.
+     * Set from filter() based on request params; read from getQuery().
+     */
+    protected bool $defaultToPublished = true;
 
     public function __construct(PollRepository $polls, ?array $filters, array $filterMutators)
     {
         $this->polls = $polls;
-        $this->filters = $filters;
-        parent::__construct($filters, $filterMutators);
+        parent::__construct($filters ?? [], $filterMutators);
+    }
+
+    public function filter(QueryCriteria $criteria, int $limit = null, int $offset = 0): QueryResults
+    {
+        // If the caller explicitly asks about drafts (via `filter[isDraft]=…`
+        // or the negated `filter[-isDraft]=…`), let PollIsDraftFilter decide —
+        // otherwise the showcase/default list hides drafts.
+        $requestFilters = $criteria->query;
+        $this->defaultToPublished = !array_key_exists('isDraft', $requestFilters)
+            && !array_key_exists('-isDraft', $requestFilters);
+
+        return parent::filter($criteria, $limit, $offset);
     }
 
     protected function getQuery(User $actor): Builder
@@ -36,11 +53,7 @@ class GlobalPollFilterer extends AbstractFilterer
             ->whereNull('post_id')
             ->whereNull('poll_group_id');
 
-        // Default to published-only unless caller explicitly asked for drafts.
-        $hasIsDraftFilter = is_array($this->filters) && array_key_exists('isDraft', $this->filters);
-        $hasNegatedIsDraftFilter = is_array($this->filters) && array_key_exists('-isDraft', $this->filters);
-
-        if (!$hasIsDraftFilter && !$hasNegatedIsDraftFilter) {
+        if ($this->defaultToPublished) {
             $query->whereNotNull('polls.published_at');
         }
 

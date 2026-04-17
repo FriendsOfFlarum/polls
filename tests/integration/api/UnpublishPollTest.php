@@ -161,9 +161,9 @@ class UnpublishPollTest extends TestCase
 
         // isDraft filter (as moderator) must include poll 23
         $draftList = $this->send(
-            $this->request('GET', '/api/fof/polls?filter[isDraft]=1', [
+            $this->request('GET', '/api/fof/polls', [
                 'authenticatedAs' => 5,
-            ])
+            ])->withQueryParams(['filter' => ['isDraft' => '1']])
         );
         $this->assertEquals(200, $draftList->getStatusCode());
         $draftBody = json_decode($draftList->getBody(), true);
