@@ -36,6 +36,20 @@ class ScopePollVisibility
                 PollGroup::query()->setQuery($query)->whereVisibleTo($actor);
             });
             $query->orWhere('polls.poll_group_id', null);
+        })->where(function ($q) use ($actor) {
+            // Published polls + all discussion-scoped polls pass.
+            $q->whereNotNull('polls.published_at')
+              ->orWhereNotNull('polls.post_id');
+
+            // Author sees their own drafts.
+            if ($actor->exists) {
+                $q->orWhere('polls.user_id', $actor->id);
+            }
+
+            // Moderators see all drafts.
+            if ($actor->hasPermission('polls.moderate')) {
+                $q->orWhereNull('polls.published_at');
+            }
         });
     }
 }

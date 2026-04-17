@@ -44,6 +44,10 @@ class PollPolicy extends AbstractPolicy
 
     public function view(User $actor, Poll $poll)
     {
+        if ($poll->isDraft() && !$actor->can('edit', $poll)) {
+            return $this->deny();
+        }
+
         if ($actor->can('view', $poll->post) || $poll->isGlobal()) {
             return $this->allow();
         }
