@@ -43,6 +43,7 @@ return [
         ->get('/fof/polls/{id:\d+}', 'fof.polls.show', Controllers\ShowPollController::class)
         ->patch('/fof/polls/{id:\d+}', 'fof.polls.edit', Controllers\EditPollController::class)
         ->post('/fof/polls/{id:\d+}/publish', 'fof.polls.publish', Controllers\PublishPollController::class)
+        ->post('/fof/polls/{id:\d+}/unpublish', 'fof.polls.unpublish', Controllers\UnpublishPollController::class)
         ->delete('/fof/polls/{id:\d+}', 'fof.polls.delete', Controllers\DeletePollController::class)
         ->patch('/fof/polls/{id:\d+}/votes', 'fof.polls.votes', Controllers\MultipleVotesPollController::class)
         ->post('/fof/polls/pollImage', 'fof.polls.upload-image', Controllers\UploadPollImageController::class)
