@@ -76,8 +76,14 @@ class PollSerializer extends AbstractSerializer
         }
 
         $attributes['publishedAt']        = $this->formatDate($poll->published_at);
-        $attributes['isDraft']            = $poll->isDraft();
         $attributes['scheduledPublishAt'] = $this->formatDate($poll->scheduled_publish_at);
+        $attributes['isDraft']            = $poll->isDraft();
+        $attributes['canPublish']         = $this->actor->can('publish', $poll);
+        $attributes['canUnpublish']       = $this->actor->can('unpublish', $poll);
+
+        if ($canEdit) {
+            $attributes['scheduledPublishError'] = $poll->scheduled_publish_error;
+        }
 
         if ($poll->getAttribute('scheduleCancelled')) {
             $attributes['scheduleCancelled'] = true;
