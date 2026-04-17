@@ -36,6 +36,9 @@ use LogicException;
  * @property int|null              $post_id
  * @property int                   $user_id
  * @property \Carbon\Carbon|null   $end_date
+ * @property \Carbon\Carbon|null   $published_at
+ * @property \Carbon\Carbon|null   $scheduled_publish_at
+ * @property string|null           $scheduled_publish_error
  * @property \Carbon\Carbon        $created_at
  * @property \Carbon\Carbon        $updated_at
  * @property PollSettings          $settings
@@ -55,11 +58,15 @@ class Poll extends AbstractModel
      */
     public $timestamps = true;
 
+    protected $dateFormat = 'Y-m-d H:i:s';
+
     protected $casts = [
-        'settings'   => AsArrayObject::class,
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'end_date'   => 'datetime',
+        'settings'             => AsArrayObject::class,
+        'created_at'           => 'datetime',
+        'updated_at'           => 'datetime',
+        'end_date'             => 'datetime',
+        'published_at'         => 'datetime',
+        'scheduled_publish_at' => 'datetime',
     ];
 
     /**
@@ -96,6 +103,16 @@ class Poll extends AbstractModel
     public function isGlobal(): bool
     {
         return $this->post_id === null;
+    }
+
+    public function isDraft(): bool
+    {
+        return $this->isGlobal() && $this->published_at === null;
+    }
+
+    public function isScheduled(): bool
+    {
+        return $this->isDraft() && $this->scheduled_publish_at !== null;
     }
 
     /**
