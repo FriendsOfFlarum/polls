@@ -23,7 +23,7 @@ class PollIsDraftFilter implements FilterInterface
 
     public function filter(FilterState $filterState, string $filterValue, bool $negate)
     {
-        if ($negate || !$filterValue || $filterValue === '0') {
+        if ($negate || !$filterValue) {
             $filterState->getQuery()->whereNotNull('polls.published_at');
         } else {
             $filterState->getQuery()->whereNull('polls.published_at');
