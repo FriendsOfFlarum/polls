@@ -16,6 +16,7 @@ import Dropdown from 'flarum/common/components/Dropdown';
 
 export default class PollsPage extends AbstractPollPage {
   defaultSort?: string;
+  draftsState?: PollListState;
 
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
@@ -33,6 +34,14 @@ export default class PollsPage extends AbstractPollPage {
     });
 
     this.state.refresh();
+
+    if (app.session.user) {
+      this.draftsState = new PollListState({
+        sort: defaultSort,
+        filter: { isDraft: '1' },
+      });
+      this.draftsState.refresh();
+    }
 
     app.setTitle(extractText(app.translator.trans('fof-polls.forum.page.nav')));
   }
@@ -65,6 +74,12 @@ export default class PollsPage extends AbstractPollPage {
                 <ul className="IndexPage-toolbar-view">{listItems(this.viewItems().toArray())}</ul>
                 <ul className="IndexPage-toolbar-action">{listItems(this.actionItems().toArray())}</ul>
               </div>
+              {this.draftsState && this.draftsState.getPages().some((p: any) => p.items.length > 0) && (
+                <section className="PollsPage-drafts">
+                  <h3>{app.translator.trans('fof-polls.forum.poll.drafts_section_title')}</h3>
+                  <PollList state={this.draftsState} />
+                </section>
+              )}
               <PollList state={this.state} />
             </div>
           </div>
