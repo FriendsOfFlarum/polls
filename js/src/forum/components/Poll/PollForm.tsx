@@ -15,6 +15,7 @@ import UploadPollImageButton from '../UploadPollImageButton';
 import Poll from '../../models/Poll';
 import Tooltip from 'flarum/common/components/Tooltip';
 import RequestError from 'flarum/common/utils/RequestError';
+import SchedulePollModal from '../SchedulePollModal';
 
 interface PollFormAttrs extends ComponentAttrs {
   poll: PollModel;
@@ -254,11 +255,9 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     }
 
     items.add(
-      'submit',
+      'submit-cluster',
       <div className="Form-group">
-        <Button type="submit" className="Button Button--primary PollModal-SubmitButton" icon="fas fa-save" loading={this.state.loading}>
-          {app.translator.trans('fof-polls.forum.modal.submit')}
-        </Button>
+        {this.submitItems().toArray()}
         {this.state.poll.exists && (
           <Button
             className="Button Button--secondary PollModal-deleteButton"
@@ -274,6 +273,99 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     );
 
     return items;
+  }
+
+  submitItems(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+    const poll = this.state.poll;
+    const dirty = this.state.dirty(this.currentSnapshot());
+
+    if (!poll.exists) {
+      items.add(
+        'save-as-draft',
+        <Button
+          className="Button PollModal-SaveDraftButton"
+          icon="fas fa-save"
+          loading={this.state.loading}
+          onclick={() => this.submit({ isDraft: true })}
+        >
+          {app.translator.trans('fof-polls.forum.compose.save_as_draft')}
+        </Button>,
+        30
+      );
+
+      items.add('publish', this.publishSplitButton(), 20);
+    } else if (poll.isDraft()) {
+      items.add(
+        'update-draft',
+        <Button
+          className="Button PollModal-SaveDraftButton"
+          icon="fas fa-save"
+          loading={this.state.loading}
+          disabled={!dirty}
+          onclick={() => this.submit({ isDraft: true })}
+        >
+          {app.translator.trans(dirty ? 'fof-polls.forum.compose.update_draft' : 'fof-polls.forum.compose.saved_as_draft')}
+        </Button>,
+        30
+      );
+
+      items.add('publish', this.publishSplitButton(), 20);
+    } else {
+      items.add(
+        'save',
+        <Button type="submit" className="Button Button--primary PollModal-SubmitButton" icon="fas fa-save" loading={this.state.loading}>
+          {app.translator.trans('fof-polls.forum.modal.submit')}
+        </Button>,
+        20
+      );
+    }
+
+    return items;
+  }
+
+  publishSplitButton(): Mithril.Children {
+    const scheduleEnabled = app.forum.attribute<boolean>('pollsScheduledPublicationEnabled');
+
+    return (
+      <div className="PollForm-publishCluster">
+        <Button
+          className="Button Button--primary PollModal-PublishButton"
+          icon="fas fa-paper-plane"
+          loading={this.state.loading}
+          onclick={async () => {
+            await this.submit({});
+            await this.state.poll.publish();
+            m.route.set(app.route('fof.polls.list'));
+          }}
+        >
+          {app.translator.trans('fof-polls.forum.compose.publish')}
+        </Button>
+        {scheduleEnabled && (
+          <Button
+            className="Button Button--icon PollModal-ScheduleButton"
+            icon="fas fa-clock"
+            onclick={() => app.modal.show(SchedulePollModal, { poll: this.state.poll, form: this })}
+            title={extractText(app.translator.trans('fof-polls.forum.compose.schedule'))}
+          />
+        )}
+      </div>
+    );
+  }
+
+  currentSnapshot(): Record<string, unknown> {
+    return {
+      question: this.question(),
+      subtitle: this.subtitle(),
+      endDate: this.endDate() ?? null,
+      publicPoll: this.publicPoll(),
+      allowMultipleVotes: this.allowMultipleVotes(),
+      hideVotes: this.hideVotes(),
+      allowChangeVote: this.allowChangeVote(),
+      maxVotes: this.maxVotes(),
+      imageAlt: this.imageAlt(),
+      options: this.options.map((_, i) => [this.optionAnswers[i](), this.optionImageUrls[i]()]),
+    };
   }
 
   displayOptions(): ItemList<Mithril.Children> {
@@ -387,9 +479,12 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
   async onsubmit(event: Event) {
     event.preventDefault();
+    await this.submit({});
+  }
 
+  async submit(extra: object): Promise<void> {
     try {
-      await this.attrs.onsubmit(this.data(), this.state);
+      await this.attrs.onsubmit({ ...this.data(), ...extra }, this.state);
     } catch (error) {
       if (error instanceof FormError) {
         app.alerts.show({ type: 'error' }, error.message);
