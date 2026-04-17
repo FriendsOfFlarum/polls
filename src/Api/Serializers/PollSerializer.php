@@ -75,6 +75,9 @@ class PollSerializer extends AbstractSerializer
             $attributes['isImageUpload'] = !filter_var($poll->image, FILTER_VALIDATE_URL);
         }
 
+        $attributes['publishedAt'] = $this->formatDate($poll->published_at);
+        $attributes['isDraft']     = $poll->isDraft();
+
         return $attributes;
     }
 

@@ -77,6 +77,18 @@ class CreatePollHandler
 
         $attributes = Arr::get($command->data, 'attributes', []);
 
+        $isDraft = (bool) Arr::get($attributes, 'isDraft', false);
+
+        // Drafts are global-only.
+        if ($isDraft && $command->post !== null) {
+            throw new \Flarum\Foundation\ValidationException([
+                'isDraft' => 'Drafts are only supported for global polls.',
+            ]);
+        }
+
+        // Apply draft-mode validation when saving a draft.
+        $this->validator->setDraft($isDraft);
+
         // Ideally we would use some JSON:API relationship syntax, but it's just too complicated with Flarum to generate the correct JSON payload
         // Instead we just pass an array of option objects that are each a set of key-value pairs for the option attributes
         // This is also the same syntax that always used by EditPollHandler
@@ -94,15 +106,17 @@ class CreatePollHandler
 
         $this->validator->assertValid($attributes);
 
-        foreach ($optionsData as $optionData) {
-            // It is guaranteed all keys exist in the array because $optionData is manually created above
-            // This ensures every attribute will be validated (Flarum doesn't validate missing keys)
-            $this->optionValidator->assertValid($optionData);
+        if (!$isDraft) {
+            foreach ($optionsData as $optionData) {
+                // It is guaranteed all keys exist in the array because $optionData is manually created above
+                // This ensures every attribute will be validated (Flarum doesn't validate missing keys)
+                $this->optionValidator->assertValid($optionData);
+            }
         }
 
         $this->setPollGroupRelationData($command->actor, null, $command->data);
 
-        return ($command->savePollOn)(function () use ($optionsData, $attributes, $command) {
+        return ($command->savePollOn)(function () use ($optionsData, $attributes, $command, $isDraft) {
             $endDate = Arr::get($attributes, 'endDate');
             $carbonDate = Carbon::parse($endDate);
 
@@ -122,7 +136,8 @@ class CreatePollHandler
                 Arr::get($attributes, 'allowChangeVote'),
                 Arr::get($attributes, 'subtitle'),
                 Arr::get($attributes, 'pollImage'),
-                Arr::get($attributes, 'imageAlt')
+                Arr::get($attributes, 'imageAlt'),
+                $isDraft ? null : Carbon::now()
             );
 
             $this->setPollGroupRelationData($command->actor, $poll, $command->data);

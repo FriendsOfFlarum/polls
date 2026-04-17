@@ -78,7 +78,7 @@ class Poll extends AbstractModel
      *
      * @return static
      */
-    public static function build($question, $postId, $actorId, $endDate, $publicPoll, $allowMultipleVotes = false, $maxVotes = 0, $hideVotes = false, $allowChangeVote = true, $subtitle = null, $imageFilename = null, $imageAlt = null)
+    public static function build($question, $postId, $actorId, $endDate, $publicPoll, $allowMultipleVotes = false, $maxVotes = 0, $hideVotes = false, $allowChangeVote = true, $subtitle = null, $imageFilename = null, $imageAlt = null, $publishedAt = null)
     {
         $poll = new static();
 
@@ -89,6 +89,7 @@ class Poll extends AbstractModel
         $poll->post_id = $postId;
         $poll->user_id = $actorId;
         $poll->end_date = $endDate;
+        $poll->published_at = $publishedAt;
         $poll->settings = [
             'public_poll'          => $publicPoll,
             'allow_multiple_votes' => $allowMultipleVotes,
