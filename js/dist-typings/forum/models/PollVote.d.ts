@@ -8,5 +8,4 @@ export default class PollVote extends Model {
     user(): false | User;
     pollId(): number;
     optionId(): number;
-    apiEndpoint(): string;
 }

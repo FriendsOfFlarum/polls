@@ -20,7 +20,7 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
     uploadedImageUrl: string | undefined | false;
     fileName: string | undefined;
     $input: JQuery<HTMLElement> | undefined;
-    view(vnode: Mithril.Vnode<UploadPollImageButtonAttrs>): false | JSX.Element;
+    view(vnode: Mithril.Vnode<UploadPollImageButtonAttrs>): JSX.Element;
     /**
      * Prompt the user to upload an image.
      */

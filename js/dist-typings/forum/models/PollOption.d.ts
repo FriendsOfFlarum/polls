@@ -4,9 +4,10 @@ import PollVote from './PollVote';
 export default class PollOption extends Model {
     answer(): string;
     imageUrl(): string | null;
+    imageSrcset(): string | null;
+    /** @deprecated Use imageSrcset() presence instead */
     isImageUpload(): boolean;
     voteCount(): number;
     poll(): false | Poll;
     votes(): false | (PollVote | undefined)[];
-    apiEndpoint(): string;
 }

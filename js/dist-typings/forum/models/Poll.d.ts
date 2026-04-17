@@ -8,7 +8,9 @@ export default class Poll extends Model {
     subtitle(): string | null;
     image(): string | null;
     imageUrl(): string | null;
+    imageSrcset(): string | null;
     imageAlt(): string | null;
+    /** @deprecated Use imageSrcset() presence instead */
     isImageUpload(): boolean;
     hasEnded(): boolean;
     endDate(): Date | null | undefined;
@@ -30,5 +32,4 @@ export default class Poll extends Model {
     isGlobal(): boolean;
     isHidden(): boolean;
     isUnread(): boolean;
-    apiEndpoint(): string;
 }

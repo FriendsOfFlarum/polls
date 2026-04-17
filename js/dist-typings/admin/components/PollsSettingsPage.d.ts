@@ -5,6 +5,7 @@ export default class PollsSettingsPage extends ExtensionPage {
     content(): JSX.Element;
     settingsItems(): ItemList<Mithril.Children>;
     generalItems(): ItemList<Mithril.Children>;
+    discussionPollsItems(): ItemList<Mithril.Children>;
     globalPollsItems(): ItemList<Mithril.Children>;
     imageItems(): ItemList<Mithril.Children>;
 }

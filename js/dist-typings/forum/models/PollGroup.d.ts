@@ -6,5 +6,4 @@ export default class PollGroup extends Model {
     polls(): (Poll | undefined)[] | null;
     canEdit(): boolean;
     canDelete(): boolean;
-    apiEndpoint(): string;
 }

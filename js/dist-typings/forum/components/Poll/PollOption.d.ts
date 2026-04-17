@@ -24,11 +24,6 @@ export default class PollOption extends Component<PollOptionAttrs, PollState> {
     oninit(vnode: Mithril.Vnode<PollOptionAttrs, PollState>): void;
     percent(): number;
     view(): Mithril.Children;
-    /**
-     * Attempting to use the `tooltipVisible` attr on the Tooltip component set to 'false' when no vote count
-     * caused the tooltip to break on click. This is a workaround to hide the tooltip when no vote count is available,
-     * called on 'onremove' of the Tooltip component. It doesn't always work as intended either, but it does the job.
-     */
     hideOptionTooltip(vnode: Mithril.Vnode<TooltipAttrs, Tooltip>): void;
     optionDisplayItems(): ItemList<Mithril.Children>;
 }
