@@ -12,12 +12,11 @@
 namespace FoF\Polls\Console;
 
 use Illuminate\Console\Scheduling\Event;
-use Illuminate\Console\Scheduling\Schedule;
 
 class PublishScheduledPollsSchedule
 {
-    public function __invoke(Schedule $schedule): Event
+    public function __invoke(Event $event): void
     {
-        return $schedule->command('fof:polls:publish-scheduled')->everyMinute();
+        $event->everyMinute();
     }
 }
