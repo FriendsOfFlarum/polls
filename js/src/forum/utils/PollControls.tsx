@@ -7,6 +7,7 @@ import PollsPage from '../components/PollsPage';
 import ItemList from 'flarum/common/utils/ItemList';
 import Separator from 'flarum/common/components/Separator';
 import Button from 'flarum/common/components/Button';
+import SchedulePollModal from '../components/SchedulePollModal';
 
 /**
  * The `UserControls` utility constructs a list of buttons for a user which
@@ -55,6 +56,33 @@ export default {
       );
     }
 
+    if (poll.canPublish() && poll.isDraft()) {
+      items.add(
+        'publish',
+        <Button icon="fas fa-paper-plane" onclick={() => this.publishAction(poll)}>
+          {app.translator.trans('fof-polls.forum.poll_controls.publish_label')}
+        </Button>
+      );
+
+      if (app.forum.attribute<boolean>('pollsScheduledPublicationEnabled')) {
+        items.add(
+          'schedulePublish',
+          <Button icon="fas fa-clock" onclick={() => app.modal.show(SchedulePollModal, { poll, form: null })}>
+            {app.translator.trans('fof-polls.forum.poll_controls.schedule_publish_label')}
+          </Button>
+        );
+      }
+
+      if (poll.isScheduled()) {
+        items.add(
+          'cancelSchedule',
+          <Button icon="fas fa-times" onclick={() => this.cancelScheduleAction(poll)}>
+            {app.translator.trans('fof-polls.forum.poll_controls.cancel_schedule_label')}
+          </Button>
+        );
+      }
+    }
+
     return items;
   },
 
@@ -64,6 +92,15 @@ export default {
    */
   destructiveControls(poll: Poll, context: Component): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
+
+    if (poll.canUnpublish()) {
+      items.add(
+        'unpublish',
+        <Button icon="fas fa-undo" onclick={() => this.unpublishAction(poll)}>
+          {app.translator.trans('fof-polls.forum.poll_controls.unpublish_label')}
+        </Button>
+      );
+    }
 
     if (poll.canDelete()) {
       items.add(
@@ -115,5 +152,28 @@ export default {
    */
   editAction(poll: Poll): void {
     m.route.set(app.route('fof.polls.composer', { id: poll.id() }));
+  },
+
+  async publishAction(poll: Poll): Promise<void> {
+    await poll.publish();
+    app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.publish_success'));
+    m.redraw();
+  },
+
+  async cancelScheduleAction(poll: Poll): Promise<void> {
+    await poll.publish({ scheduledFor: null });
+    app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.cancel_schedule_success'));
+    m.redraw();
+  },
+
+  async unpublishAction(poll: Poll): Promise<void> {
+    if (!confirm(app.translator.trans('fof-polls.forum.poll_controls.unpublish_confirmation') as string)) return;
+    try {
+      await poll.unpublish();
+      app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.unpublish_success'));
+      m.redraw();
+    } catch (e: any) {
+      app.alerts.show({ type: 'error' }, app.translator.trans('fof-polls.forum.poll_controls.unpublish_error_has_votes'));
+    }
   },
 };
