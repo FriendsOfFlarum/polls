@@ -102,7 +102,9 @@ return [
         ->addOptionalInclude(['polls.votes', 'polls.votes.user', 'polls.votes.option']),
 
     (new Extend\Console())
-        ->command(Console\RefreshVoteCountCommand::class),
+        ->command(Console\RefreshVoteCountCommand::class)
+        ->command(Console\PublishScheduledPollsCommand::class)
+        ->schedule(Console\PublishScheduledPollsCommand::class, Console\PublishScheduledPollsSchedule::class),
 
     (new Extend\Policy())
         ->modelPolicy(Poll::class, Access\PollPolicy::class)
@@ -116,11 +118,13 @@ return [
         ->default('fof-polls.image_height', 250)
         ->default('fof-polls.image_width', 250)
         ->default('fof-polls.allowImageUploads', false)
+        ->default('fof-polls.enable_scheduled_publication', true)
         ->serializeToForum('pollsDirectoryDefaultSort', 'fof-polls.directory-default-sort', 'strval')
         ->serializeToForum('globalPollsEnabled', 'fof-polls.enableGlobalPolls', 'boolval')
         ->serializeToForum('pollGroupsEnabled', 'fof-polls.enablePollGroups', 'boolval')
         ->serializeToForum('allowPollOptionImage', 'fof-polls.allowOptionImage', 'boolval')
         ->serializeToForum('pollMaxOptions', 'fof-polls.maxOptions', 'intval')
+        ->serializeToForum('pollsScheduledPublicationEnabled', 'fof-polls.enable_scheduled_publication', 'boolval')
         ->registerLessConfigVar('fof-polls-options-color-blend', 'fof-polls.optionsColorBlend', function ($value) {
             return $value ? 'true' : 'false';
         }),
