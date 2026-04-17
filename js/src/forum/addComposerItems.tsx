@@ -35,7 +35,7 @@ export const addToComposer = (composerPath: string) => {
   extend(composerPath, 'headerItems', function (this: any, items) {
     const discussion = this.composer.body?.attrs?.discussion;
 
-    const canStartPoll = discussion?.canStartPoll() ?? app.forum.canStartPolls();
+    const canStartPoll = discussion?.canStartPoll() ?? app.forum.attribute<boolean>('canStartPolls');
 
     if (canStartPoll) {
       items.add(

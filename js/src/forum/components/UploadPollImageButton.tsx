@@ -26,7 +26,6 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
   fileName: string | undefined = undefined;
   $input: JQuery<HTMLElement> | undefined;
 
-  // @ts-expect-error
   view(vnode: Mithril.Vnode<UploadPollImageButtonAttrs>) {
     this.attrs.loading = this.loading;
     this.attrs.className = classList(this.attrs.className, 'Button', 'Button--inverted');
