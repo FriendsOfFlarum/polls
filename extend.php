@@ -133,7 +133,8 @@ return [
         ->disk('fof-polls', PollImageDisk::class),
 
     (new Extend\Filter(Filter\GlobalPollFilterer::class))
-        ->addFilter(Filter\PollIsEndedFilter::class),
+        ->addFilter(Filter\PollIsEndedFilter::class)
+        ->addFilter(Filter\PollIsDraftFilter::class),
 
     (new Extend\Conditional())
         ->when(new Extender\IsPollGroupEnabled(), function () {

@@ -97,4 +97,27 @@ class ListDraftsVisibilityTest extends TestCase
 
         $this->assertContains('100', $ids);
     }
+
+    public function test_default_list_excludes_drafts_even_for_author(): void
+    {
+        $response = $this->send(
+            $this->request('GET', '/api/fof/polls', ['authenticatedAs' => 3])  // no filter
+        );
+        $body = json_decode($response->getBody(), true);
+        $ids = array_column($body['data'] ?? [], 'id');
+
+        $this->assertNotContains('100', $ids, 'Default list must not include drafts (even own) — used by the showcase');
+        $this->assertContains('101', $ids);
+    }
+
+    public function test_isDraft_filter_returns_only_drafts(): void
+    {
+        $response = $this->send(
+            $this->request('GET', '/api/fof/polls?filter[isDraft]=1', ['authenticatedAs' => 3])
+        );
+        $body = json_decode($response->getBody(), true);
+        $ids = array_column($body['data'] ?? [], 'id');
+
+        $this->assertEquals(['100'], $ids);
+    }
 }

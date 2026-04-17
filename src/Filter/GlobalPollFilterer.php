@@ -20,17 +20,30 @@ class GlobalPollFilterer extends AbstractFilterer
 {
     protected $polls;
 
+    protected $filters;
+
     public function __construct(PollRepository $polls, ?array $filters, array $filterMutators)
     {
         $this->polls = $polls;
+        $this->filters = $filters;
         parent::__construct($filters, $filterMutators);
     }
 
     protected function getQuery(User $actor): Builder
     {
-        return $this->polls->queryVisibleTo($actor)
+        $query = $this->polls->queryVisibleTo($actor)
             ->select('polls.*')
             ->whereNull('post_id')
             ->whereNull('poll_group_id');
+
+        // Default to published-only unless caller explicitly asked for drafts.
+        $hasIsDraftFilter = is_array($this->filters) && array_key_exists('isDraft', $this->filters);
+        $hasNegatedIsDraftFilter = is_array($this->filters) && array_key_exists('-isDraft', $this->filters);
+
+        if (!$hasIsDraftFilter && !$hasNegatedIsDraftFilter) {
+            $query->whereNotNull('polls.published_at');
+        }
+
+        return $query;
     }
 }
