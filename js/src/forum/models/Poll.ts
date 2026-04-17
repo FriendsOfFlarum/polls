@@ -1,3 +1,4 @@
+import app from 'flarum/forum/app';
 import Model from 'flarum/common/Model';
 import PollOption from './PollOption';
 import PollVote from './PollVote';
@@ -117,5 +118,58 @@ export default class Poll extends Model {
   apiEndpoint() {
     /** @ts-ignore */
     return `/fof/polls${this.exists ? `/${this.data.id}` : ''}`;
+  }
+
+  publishedAt() {
+    return Model.attribute<Date | null, string | null>('publishedAt', Model.transformDate).call(this);
+  }
+
+  scheduledPublishAt() {
+    return Model.attribute<Date | null, string | null>('scheduledPublishAt', Model.transformDate).call(this);
+  }
+
+  scheduledPublishError() {
+    return Model.attribute<string | null>('scheduledPublishError').call(this);
+  }
+
+  isDraft(): boolean {
+    return !!Model.attribute<boolean>('isDraft').call(this);
+  }
+
+  isScheduled(): boolean {
+    return this.isDraft() && !!this.scheduledPublishAt();
+  }
+
+  canPublish() {
+    return Model.attribute<boolean>('canPublish').call(this);
+  }
+
+  canUnpublish() {
+    return Model.attribute<boolean>('canUnpublish').call(this);
+  }
+
+  publish(body: { scheduledFor?: string | null } = {}): Promise<this> {
+    return app
+      .request<any>({
+        method: 'POST',
+        url: `${app.forum.attribute('apiUrl')}/fof/polls/${this.id()}/publish`,
+        body: { data: { attributes: body } },
+      })
+      .then((payload) => {
+        app.store.pushPayload(payload);
+        return this;
+      });
+  }
+
+  unpublish(): Promise<this> {
+    return app
+      .request<any>({
+        method: 'POST',
+        url: `${app.forum.attribute('apiUrl')}/fof/polls/${this.id()}/unpublish`,
+      })
+      .then((payload) => {
+        app.store.pushPayload(payload);
+        return this;
+      });
   }
 }
