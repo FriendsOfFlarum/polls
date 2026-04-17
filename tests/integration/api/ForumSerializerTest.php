@@ -13,6 +13,8 @@ namespace FoF\Polls\Tests\integration\api;
 
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
+use Flarum\User\User;
+use PHPUnit\Framework\Attributes\Test;
 
 class ForumSerializerTest extends TestCase
 {
@@ -25,7 +27,7 @@ class ForumSerializerTest extends TestCase
         $this->extension('fof-polls');
 
         $this->prepareDatabase([
-            'users' => [
+            User::class => [
                 $this->normalUser(),
                 ['id' => 3, 'username' => 'pollsuser', 'email' => 'polls@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => 1],
             ],
@@ -38,9 +40,7 @@ class ForumSerializerTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function guest_does_not_have_discussion_polls_start_permission()
     {
         $response = $this->send(
@@ -54,9 +54,7 @@ class ForumSerializerTest extends TestCase
         $this->assertFalse($body->data->attributes->canStartPolls);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function normal_user_does_not_have_discussion_polls_start_permission()
     {
         $response = $this->send(
@@ -72,9 +70,7 @@ class ForumSerializerTest extends TestCase
         $this->assertFalse($body->data->attributes->canStartPolls);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function user_with_discussion_polls_start_permission_has_discussion_polls_start_permission()
     {
         $response = $this->send(

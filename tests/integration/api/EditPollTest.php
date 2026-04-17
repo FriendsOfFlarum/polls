@@ -11,9 +11,13 @@
 
 namespace FoF\Polls\Tests\integration\api;
 
+use Flarum\Discussion\Discussion;
+use Flarum\Post\Post;
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
+use Flarum\User\User;
 use FoF\Polls\Poll;
+use PHPUnit\Framework\Attributes\Test;
 
 class EditPollTest extends TestCase
 {
@@ -28,20 +32,20 @@ class EditPollTest extends TestCase
         $this->setting('fof-polls.enableGlobalPolls', true);
 
         $this->prepareDatabase([
-            'users' => [
+            User::class => [
                 $this->normalUser(),
                 ['id' => 3, 'username' => 'polluser', 'email' => 'polluser@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => true],
                 ['id' => 4, 'username' => 'moderator', 'email' => 'moderator@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => true],
             ],
-            'discussions' => [
+            Discussion::class => [
                 ['id' => 1, 'title' => 'Discussion 1', 'comment_count' => 1, 'participant_count' => 1, 'created_at' => '2021-01-01 00:00:00'],
             ],
-            'posts' => [
+            Post::class => [
                 ['id' => 1, 'user_id' => 1, 'discussion_id' => 1, 'number' => 1, 'created_at' => '2021-01-01 00:00:00', 'content' => 'Post 1', 'type' => 'comment'],
             ],
             'polls' => [
-                ['id' => 1, 'question' => 'Testing Poll--Global', 'subtitle' => 'Testing subtitle', 'image' => 'pollimage-abcdef.png', 'image_alt' => 'test alt', 'post_id' => null, 'user_id' => 1, 'public_poll' => 0, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'allow_multiple_votes' => 0, 'max_votes' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
-                ['id' => 2, 'question' => 'Testing Poll--Group', 'subtitle' => 'Testing subtitle', 'image' => null, 'image_alt' => null, 'user_id' => 4, 'public_poll' => 1, 'end_date' => null, 'poll_group_id' => 1, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'allow_multiple_votes' => 0, 'max_votes' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
+                ['id' => 1, 'question' => 'Testing Poll--Global', 'subtitle' => 'Testing subtitle', 'image' => 'pollimage-abcdef.png', 'image_alt' => 'test alt', 'post_id' => null, 'user_id' => 1, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
+                ['id' => 2, 'question' => 'Testing Poll--Group', 'subtitle' => 'Testing subtitle', 'image' => null, 'image_alt' => null, 'user_id' => 4, 'end_date' => null, 'poll_group_id' => 1, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
             ],
             'poll_options' => [
                 ['id' => 1, 'answer' => 'Option 1', 'poll_id' => 1, 'vote_count' => 0, 'image_url' => 'pollimage-hijklm.png', 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
@@ -66,13 +70,11 @@ class EditPollTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function user_without_permission_cannot_remove_pollimage_from_global_poll()
     {
         $response = $this->send(
-            $this->request('DELETE', '/api/fof/polls/pollImage/1', [
+            $this->request('DELETE', '/api/polls/pollImage/1', [
                 'authenticatedAs' => 2,
             ])
         );
@@ -80,13 +82,11 @@ class EditPollTest extends TestCase
         $this->assertEquals(403, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function user_with_permission_can_remove_pollimage_from_global_poll()
     {
         $response = $this->send(
-            $this->request('DELETE', '/api/fof/polls/pollImage/1', [
+            $this->request('DELETE', '/api/polls/pollImage/1', [
                 'authenticatedAs' => 4,
             ])
         );
@@ -94,13 +94,11 @@ class EditPollTest extends TestCase
         $this->assertEquals(204, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function user_without_permission_cannot_remove_pollimage_by_name_from_global_poll()
     {
         $response = $this->send(
-            $this->request('DELETE', '/api/fof/polls/pollImage/name/pollimage-abcdef.png', [
+            $this->request('DELETE', '/api/polls/pollImage/name/pollimage-abcdef.png', [
                 'authenticatedAs' => 2,
             ])
         );
@@ -108,31 +106,26 @@ class EditPollTest extends TestCase
         $this->assertEquals(403, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function user_with_permission_can_remove_pollimage_by_name_from_global_poll()
     {
         $fileName = 'pollimage-abcdef.png';
 
         $response = $this->send(
-            $this->request('DELETE', '/api/fof/polls/pollImage/name/'.$fileName, [
+            $this->request('DELETE', '/api/polls/pollImage/name/'.$fileName, [
                 'authenticatedAs' => 4,
             ])
         );
 
-        // We need to expect a 404 because the file is not found in the filesystem under test.
-        // TODO - improve this!
-        $this->assertEquals(404, $response->getStatusCode());
+        // deleteAllVariants is idempotent — succeeds even if file doesn't exist on disk
+        $this->assertEquals(204, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function user_without_permission_cannot_remove_polloption_image_from_global_poll()
     {
         $response = $this->send(
-            $this->request('DELETE', '/api/fof/polls/pollOptionImage/1', [
+            $this->request('DELETE', '/api/polls/pollOptionImage/1', [
                 'authenticatedAs' => 2,
             ])
         );
@@ -140,13 +133,11 @@ class EditPollTest extends TestCase
         $this->assertEquals(403, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function user_with_permission_can_remove_polloption_image_from_global_poll()
     {
         $response = $this->send(
-            $this->request('DELETE', '/api/fof/polls/pollOptionImage/1', [
+            $this->request('DELETE', '/api/polls/pollOptionImage/1', [
                 'authenticatedAs' => 4,
             ])
         );
@@ -154,13 +145,11 @@ class EditPollTest extends TestCase
         $this->assertEquals(204, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function user_without_permission_cannot_remove_polloption_image_by_name_from_global_poll()
     {
         $response = $this->send(
-            $this->request('DELETE', '/api/fof/polls/pollOptionImage/name/pollimage-hijklm.png', [
+            $this->request('DELETE', '/api/polls/pollOptionImage/name/pollimage-hijklm.png', [
                 'authenticatedAs' => 2,
             ])
         );
@@ -168,34 +157,29 @@ class EditPollTest extends TestCase
         $this->assertEquals(403, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function user_with_permission_can_remove_polloption_image_by_name_from_global_poll()
     {
         $fileName = 'pollimage-hijklm.png';
 
         $response = $this->send(
-            $this->request('DELETE', '/api/fof/polls/pollOptionImage/name/'.$fileName, [
+            $this->request('DELETE', '/api/polls/pollOptionImage/name/'.$fileName, [
                 'authenticatedAs' => 4,
             ])
         );
 
-        // We need to expect a 404 because the file is not found in the filesystem under test.
-        // TODO - improve this!
-        $this->assertEquals(404, $response->getStatusCode());
+        // deleteAllVariants is idempotent — succeeds even if file doesn't exist on disk
+        $this->assertEquals(204, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function poll_owner_can_add_poll_to_group()
     {
         AbstractPollGroupTestCase::enablePollGroup();
         $response = $this->send(
             $this->request(
                 'PATCH',
-                '/api/fof/polls/1',
+                '/api/polls/1',
                 [
                     'authenticatedAs' => 1,
                     'json'            => [
@@ -220,9 +204,7 @@ class EditPollTest extends TestCase
         $this->assertEquals(1, $poll->poll_group_id);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moderator_can_change_poll_group()
     {
         AbstractPollGroupTestCase::enablePollGroup();
@@ -233,7 +215,7 @@ class EditPollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'PATCH',
-                '/api/fof/polls/2',
+                '/api/polls/2',
                 [
                     'authenticatedAs' => 4,
                     'json'            => [
@@ -258,16 +240,14 @@ class EditPollTest extends TestCase
         $this->assertEquals(2, $poll->poll_group_id);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unauthorized_user_cannot_change_poll_group()
     {
         AbstractPollGroupTestCase::enablePollGroup();
         $response = $this->send(
             $this->request(
                 'PATCH',
-                '/api/fof/polls/1',
+                '/api/polls/1',
                 [
                     'authenticatedAs' => 2,
                     'json'            => [
@@ -292,16 +272,14 @@ class EditPollTest extends TestCase
         $this->assertNull($poll->poll_group_id);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function cannot_assign_poll_to_nonexistent_group()
     {
         AbstractPollGroupTestCase::enablePollGroup();
         $response = $this->send(
             $this->request(
                 'PATCH',
-                '/api/fof/polls/1',
+                '/api/polls/1',
                 [
                     'authenticatedAs' => 1,
                     'json'            => [

@@ -34,12 +34,12 @@ class PollGroup extends AbstractModel
 
     protected $fillable = ['name'];
 
-    public function polls()
+    public function polls(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Poll::class, 'poll_group_id');
     }
 
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }

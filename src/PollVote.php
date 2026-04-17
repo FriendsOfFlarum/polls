@@ -31,13 +31,7 @@ class PollVote extends AbstractModel
      */
     public $timestamps = true;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected $dates = [
-        'created_at',
-        'updated_at',
-    ];
+    protected $casts = ['created_at' => 'datetime', 'updated_at' => 'datetime'];
 
     protected $fillable = ['user_id', 'option_id'];
 
@@ -48,7 +42,7 @@ class PollVote extends AbstractModel
      *
      * @return static
      */
-    public static function build($pollId, $userId, $optionId)
+    public static function build(int $pollId, int $userId, int $optionId): static
     {
         $vote = new static();
 
@@ -59,17 +53,17 @@ class PollVote extends AbstractModel
         return $vote;
     }
 
-    public function poll()
+    public function poll(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Poll::class);
     }
 
-    public function option()
+    public function option(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(PollOption::class);
     }
 
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }

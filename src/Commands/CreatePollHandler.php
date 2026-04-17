@@ -29,41 +29,11 @@ class CreatePollHandler
 {
     use PollGroupRelationTrait;
 
-    /**
-     * @var PollValidator
-     */
-    protected $validator;
-
-    /**
-     * @var PollOptionValidator
-     */
-    protected $optionValidator;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $events;
-
-    /**
-     * @var SettingsRepositoryInterface
-     */
-    protected $settings;
-
-    /**
-     * @var PostRepository
-     */
-    protected $posts;
-
-    public function __construct(PostRepository $posts, PollValidator $validator, PollOptionValidator $optionValidator, Dispatcher $events, SettingsRepositoryInterface $settings)
+    public function __construct(protected PostRepository $posts, protected PollValidator $validator, protected PollOptionValidator $optionValidator, protected Dispatcher $events, protected SettingsRepositoryInterface $settings)
     {
-        $this->validator = $validator;
-        $this->optionValidator = $optionValidator;
-        $this->events = $events;
-        $this->settings = $settings;
-        $this->posts = $posts;
     }
 
-    public function handle(CreatePoll $command)
+    public function handle(CreatePoll $command): mixed
     {
         if ($command->post) {
             $command->actor->assertCan('startPoll', $command->post);
@@ -134,13 +104,7 @@ class CreatePollHandler
             $this->events->dispatch(new PollWasCreated($command->actor, $poll));
 
             foreach ($optionsData as $optionData) {
-                $imageUrl = Arr::get($optionData, 'imageUrl');
-
-                if (!$this->settings->get('fof-polls.allowOptionImage')) {
-                    $imageUrl = null;
-                }
-
-                $option = PollOption::build(Arr::get($optionData, 'answer'), $imageUrl);
+                $option = PollOption::build(Arr::get($optionData, 'answer'), Arr::get($optionData, 'imageUrl'));
 
                 $poll->options()->save($option);
 

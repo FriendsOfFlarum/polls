@@ -15,6 +15,9 @@ use Carbon\Carbon;
 use Flarum\Settings\SettingsRepositoryInterface;
 use FoF\Polls\Events\PollOptionUpdated;
 use FoF\Polls\Events\SavingPollAttributes;
+use FoF\Polls\Poll;
+use FoF\Polls\PollImageUploader;
+use FoF\Polls\PollOption;
 use FoF\Polls\PollRepository;
 use FoF\Polls\Validators\PollOptionValidator;
 use FoF\Polls\Validators\PollValidator;
@@ -26,48 +29,24 @@ class EditPollHandler
 {
     use PollGroupRelationTrait;
 
-    /**
-     * @var PollValidator
-     */
-    protected $validator;
-
-    /**
-     * @var PollOptionValidator
-     */
-    protected $optionValidator;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $events;
-
-    /**
-     * @var SettingsRepositoryInterface
-     */
-    protected $settings;
-
-    /**
-     * @var PollRepository
-     */
-    protected $polls;
-
-    public function __construct(PollRepository $polls, PollValidator $validator, PollOptionValidator $optionValidator, Dispatcher $events, SettingsRepositoryInterface $settings)
-    {
-        $this->validator = $validator;
-        $this->optionValidator = $optionValidator;
-        $this->events = $events;
-        $this->settings = $settings;
-        $this->polls = $polls;
+    public function __construct(
+        protected PollRepository $polls,
+        protected PollValidator $validator,
+        protected PollOptionValidator $optionValidator,
+        protected Dispatcher $events,
+        protected SettingsRepositoryInterface $settings,
+        protected PollImageUploader $uploader,
+    ) {
     }
 
-    public function handle(EditPoll $command)
+    public function handle(EditPoll $command): Poll
     {
         $poll = $this->polls->findOrFail($command->pollId, $command->actor);
 
         $command->actor->assertCan('edit', $poll);
 
         $attributes = (array) Arr::get($command->data, 'attributes');
-        $options = collect(Arr::get($attributes, 'options', []));
+        $options = collect((array) Arr::get($attributes, 'options', []));
 
         $this->validator->assertValid($attributes);
 
@@ -80,7 +59,14 @@ class EditPollHandler
         }
 
         if (isset($attributes['pollImage'])) {
-            $poll->image = empty($attributes['pollImage']) ? null : $attributes['pollImage'];
+            $newImage = empty($attributes['pollImage']) ? null : $attributes['pollImage'];
+
+            // Clean up old image files if the image is changing
+            if ($poll->image && $poll->image !== $newImage && !filter_var($poll->image, FILTER_VALIDATE_URL)) {
+                $this->uploader->deleteAllVariants($poll->image);
+            }
+
+            $poll->image = $newImage;
         }
 
         if (isset($attributes['imageAlt'])) {
@@ -122,6 +108,16 @@ class EditPollHandler
         if ($options->isNotEmpty() && $options->count() >= 2) {
             $ids = $options->pluck('id')->whereNotNull()->toArray();
 
+            // Clean up image files for options being removed
+            $removedOptions = $poll->options()->whereNotIn('id', $ids)->get();
+
+            foreach ($removedOptions as $removedOption) {
+                /** @var PollOption $removedOption */
+                if ($removedOption->image_url && !filter_var($removedOption->image_url, FILTER_VALIDATE_URL)) {
+                    $this->uploader->deleteAllVariants($removedOption->image_url);
+                }
+            }
+
             $poll->options()->whereNotIn('id', $ids)->delete();
         }
 
@@ -129,17 +125,36 @@ class EditPollHandler
         foreach ($options as $key => $opt) {
             $id = Arr::get($opt, 'id');
 
+            $rawImageUrl = Arr::get($opt, 'attributes.imageUrl');
+
+            // The frontend may send a full URL (from the computed imageUrl attribute)
+            // instead of just the filename. Normalize to filename only.
+            if ($rawImageUrl && filter_var($rawImageUrl, FILTER_VALIDATE_URL)) {
+                $rawImageUrl = basename(parse_url($rawImageUrl, PHP_URL_PATH));
+            }
+
             $optionAttributes = [
                 'answer'   => Arr::get($opt, 'attributes.answer'),
-                'imageUrl' => Arr::get($opt, 'attributes.imageUrl'),
+                'imageUrl' => $rawImageUrl,
             ];
-
-            if (!$this->settings->get('fof-polls.allowOptionImage')) {
-                unset($optionAttributes['imageUrl']);
-            }
 
             $this->optionValidator->assertValid($optionAttributes);
 
+            // Clean up old image if option exists and image is changing
+            if ($id) {
+                /** @var PollOption|null $existingOption */
+                $existingOption = $poll->options()->find($id);
+
+                if ($existingOption && $existingOption->image_url) {
+                    $newImageUrl = Arr::get($optionAttributes, 'imageUrl');
+
+                    if ($existingOption->image_url !== $newImageUrl && !filter_var($existingOption->image_url, FILTER_VALIDATE_URL)) {
+                        $this->uploader->deleteAllVariants($existingOption->image_url);
+                    }
+                }
+            }
+
+            /** @var PollOption $option */
             $option = $poll->options()->updateOrCreate([
                 'id' => $id,
             ], [

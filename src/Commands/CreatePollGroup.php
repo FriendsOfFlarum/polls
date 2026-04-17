@@ -15,12 +15,7 @@ use Flarum\User\User;
 
 class CreatePollGroup
 {
-    public $actor;
-    public $data;
-
-    public function __construct(User $actor, array $data)
+    public function __construct(public User $actor, public array $data)
     {
-        $this->actor = $actor;
-        $this->data = $data;
     }
 }

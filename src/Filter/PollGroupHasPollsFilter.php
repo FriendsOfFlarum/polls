@@ -11,8 +11,9 @@
 
 namespace FoF\Polls\Filter;
 
-use Flarum\Filter\FilterInterface;
-use Flarum\Filter\FilterState;
+use Flarum\Search\Database\DatabaseSearchState;
+use Flarum\Search\Filter\FilterInterface;
+use Flarum\Search\SearchState;
 use Illuminate\Database\Query\Builder;
 
 class PollGroupHasPollsFilter implements FilterInterface
@@ -22,19 +23,22 @@ class PollGroupHasPollsFilter implements FilterInterface
         return 'hasPolls';
     }
 
-    public function filter(FilterState $filterState, string $filterValue, bool $negate)
+    public function filter(SearchState $state, array|string $value, bool $negate): void
     {
-        $query = $filterState->getQuery();
+        /** @var DatabaseSearchState $state */
+        $query = $state->getQuery();
 
         if ($negate) {
             // If negating, we want to find groups that do not have polls
-            return $query->whereNotExists(function ($query) {
+            $query->whereNotExists(function ($query) {
                 $this->selectPolls($query);
             });
+
+            return;
         }
 
         // Otherwise, we want to find groups that have at least one poll
-        return $query->whereExists(function ($query) {
+        $query->whereExists(function ($query) {
             $this->selectPolls($query);
         });
     }

@@ -1,16 +1,13 @@
 import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import Page from 'flarum/common/components/Page';
-import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
+import PageStructure from 'flarum/forum/components/PageStructure';
+import IndexSidebar from 'flarum/forum/components/IndexSidebar';
+import ItemList from 'flarum/common/utils/ItemList';
 import PollGroup from '../models/PollGroup';
 import PollGroupForm from './PollGroup/PollGroupForm';
 import PollGroupFormState from '../states/PollGroupFormState';
-import Button from 'flarum/common/components/Button';
-import listItems from 'flarum/common/helpers/listItems';
-import ItemList from 'flarum/common/utils/ItemList';
-import SelectDropdown from 'flarum/common/components/SelectDropdown';
-import IndexPage from 'flarum/forum/components/IndexPage';
-import ComposePollGroupHero from './ComposePollGroupHero';
+import ComposeHero from './ComposeHero';
 
 export default class ComposePollGroupPage extends Page {
   pollGroup: PollGroup | null | undefined = null;
@@ -19,7 +16,6 @@ export default class ComposePollGroupPage extends Page {
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
 
-    // Permission check (adjust attribute names as needed)
     if (!app.forum.attribute<boolean>('pollGroupsEnabled') || !app.forum.attribute<boolean>('canStartPollGroup')) {
       m.route.set('/');
       return;
@@ -28,9 +24,9 @@ export default class ComposePollGroupPage extends Page {
     this.bodyClass = 'App--compose-poll-group';
 
     const editId = m.route.param('id');
-    const pollGroupPromise = editId ? this.loadEditingPollGroup(editId) : Promise.resolve(PollGroupFormState.createNewPollGroup());
+    const promise = editId ? this.loadEditingPollGroup(editId) : Promise.resolve(PollGroupFormState.createNewPollGroup());
 
-    pollGroupPromise.then((pollGroup: PollGroup | null | undefined) => {
+    promise.then((pollGroup: PollGroup | null | undefined) => {
       this.pollGroup = pollGroup;
 
       if (pollGroup?.exists && !pollGroup.canEdit()) {
@@ -38,100 +34,78 @@ export default class ComposePollGroupPage extends Page {
         return;
       }
 
-      app.history.push(
-        'compose-poll-group',
-        app.translator.trans(`fof-polls.forum.poll_groups.composer.${!!this.pollGroup?.id() ? 'edit' : 'add'}_title`) as string
-      );
-      app.setTitle(app.translator.trans(`fof-polls.forum.poll_groups.composer.${!!this.pollGroup?.id() ? 'edit' : 'add'}_title`) as string);
+      const titleKey = `fof-polls.forum.poll_groups.composer.${this.pollGroup?.id() ? 'edit' : 'add'}_title`;
+      app.history.push('compose-poll-group', app.translator.trans(titleKey) as string);
+      app.setTitle(app.translator.trans(titleKey) as string);
 
       m.redraw();
     });
   }
 
-  async loadEditingPollGroup(editId: string) {
-    const alreadyLoaded = app.store.getById<PollGroup>('poll_groups', editId);
-    if (alreadyLoaded) return alreadyLoaded;
+  async loadEditingPollGroup(editId: string): Promise<PollGroup> {
+    const cached = app.store.getById<PollGroup>('poll_groups', editId);
+    if (cached) return cached;
 
     this.loading = true;
-    const pollGroup = await app.store.find<PollGroup>('fof/polls/groups', editId);
+    const pollGroup = await app.store.find<PollGroup>('poll_groups', editId);
     this.loading = false;
     return pollGroup;
   }
 
   view(): Mithril.Children {
-    if (this.loading || !this.pollGroup) {
-      return <LoadingIndicator />;
-    }
+    return (
+      <PageStructure
+        className="ComposePollGroupPage"
+        hero={this.hero.bind(this)}
+        sidebar={this.sidebar.bind(this)}
+        loading={this.loading || !this.pollGroup}
+      >
+        {this.contentItems().toArray()}
+      </PageStructure>
+    );
+  }
+
+  hero(): Mithril.Children {
+    if (!this.pollGroup) return null;
 
     return (
-      <div className="ComposePollGroupPage">
-        <ComposePollGroupHero pollGroup={this.pollGroup} />
-        <div className="container">
-          <div className="sideNavContainer">
-            <nav className="PollsPage-nav sideNav">
-              <ul>{listItems(this.sidebarItems().toArray())}</ul>
-            </nav>
-            <div className="sideNavOffset">
-              <PollGroupForm pollGroup={this.pollGroup} onsubmit={this.onsubmit.bind(this)} />
-            </div>
-          </div>
-        </div>
-      </div>
+      <ComposeHero
+        item={this.pollGroup}
+        className="ComposePollGroupHero"
+        translationPrefix="fof-polls.forum.poll_groups.composer"
+        managerRoute="fof.polls.groups.list"
+        managerIcon="fas fa-layer-group"
+        managerLabel={app.translator.trans('fof-polls.forum.poll_groups.composer.groups_manager')}
+        viewRoute="fof.polls.groups.view"
+        viewIcon="far fa-arrow-up-right-from-square"
+        viewLabel={app.translator.trans('fof-polls.forum.poll_groups.composer.view_group')}
+      />
     );
+  }
+
+  sidebar(): Mithril.Children {
+    return <IndexSidebar />;
+  }
+
+  contentItems(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+
+    if (this.pollGroup) {
+      items.add('form', <PollGroupForm pollGroup={this.pollGroup} onsubmit={this.onsubmit.bind(this)} />);
+    }
+
+    return items;
   }
 
   async onsubmit(data: Object, state: PollGroupFormState) {
     const isNew = state.pollGroup.id() === undefined;
     await state.save(data);
 
-    const alertAttrs = isNew
-      ? {
-          type: 'success',
-          controls: [
-            <Button
-              className="Button Button--link"
-              onclick={() =>
-                m.route.set(
-                  app.route('fof.polls.groups.composer', {
-                    id: state.pollGroup.id(),
-                  })
-                )
-              }
-            >
-              {app.translator.trans('fof-polls.forum.compose.continue_editing')}
-            </Button>,
-          ],
-        }
-      : {
-          type: 'success',
-        };
-
-    const alertId = app.alerts.show(alertAttrs, app.translator.trans('fof-polls.forum.poll_groups.composer.success'));
+    const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_groups.composer.success'));
     setTimeout(() => app.alerts.dismiss(alertId), 10000);
 
     if (isNew) {
       m.route.set(app.route('fof.polls.groups.list'));
     }
-  }
-
-  sidebarItems(): ItemList<Mithril.Children> {
-    const items = new ItemList<Mithril.Children>();
-
-    items.add(
-      'nav',
-      <SelectDropdown
-        buttonClassName="Button"
-        className="App-titleControl"
-        accessibleToggleLabel={app.translator.trans('core.forum.index.toggle_sidenav_dropdown_accessible_label')}
-      >
-        {this.navItems().toArray()}
-      </SelectDropdown>
-    );
-
-    return items;
-  }
-
-  navItems() {
-    return IndexPage.prototype.navItems();
   }
 }

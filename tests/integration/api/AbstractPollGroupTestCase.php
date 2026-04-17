@@ -54,17 +54,17 @@ abstract class AbstractPollGroupTestCase extends TestCase
 
     protected function getNormalUser(): array
     {
-        return ['id' => 4, 'username' => 'normal', 'email' => 'normal@machine.local', 'is_email_confirmed' => 1];
+        return ['id' => 4, 'username' => 'normal', 'email' => 'normal@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => 1];
     }
 
     protected function getUnauthorizedUser(): array
     {
-        return ['id' => 2, 'username' => 'unauthorized', 'email' => 'unauthorized@machine.local', 'is_email_confirmed' => 1];
+        return ['id' => 2, 'username' => 'unauthorized', 'email' => 'unauthorized@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => 1];
     }
 
     protected function getModeratorUser(): array
     {
-        return ['id' => 3, 'username' => 'moderator', 'email' => 'moderator@machine.local', 'is_email_confirmed' => 1];
+        return ['id' => 3, 'username' => 'moderator', 'email' => 'moderator@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => 1];
     }
 
     protected function getDefaultPollGroup(): array

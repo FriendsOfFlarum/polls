@@ -17,11 +17,15 @@ use Flarum\User\User;
 
 class PostPolicy extends AbstractPolicy
 {
-    public static $ALLOWED_POST_TYPES = ['comment'];
+    /** @var array<string> */
+    public static array $ALLOWED_POST_TYPES = ['comment'];
 
-    public function startPoll(User $actor, Post $post)
+    public function startPoll(User $actor, Post $post): string|bool|null
     {
-        if (!in_array($post->type, static::$ALLOWED_POST_TYPES)) {
+        // During post creation, $post->type is not yet set (it's assigned in the
+        // Eloquent `creating` event which fires after the Flarum `Saving` event).
+        // Only check the post type for existing posts.
+        if ($post->exists && !in_array($post->type, static::$ALLOWED_POST_TYPES)) {
             return $this->deny();
         }
 
@@ -31,5 +35,7 @@ class PostPolicy extends AbstractPolicy
         if ($actor->can('polls.start', $post->discussion) && (!$post->exists || $actor->can('edit', $post))) {
             return $this->allow();
         }
+
+        return null;
     }
 }

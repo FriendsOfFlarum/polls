@@ -13,6 +13,7 @@ namespace FoF\Polls\Tests\integration\api;
 
 use FoF\Polls\Poll;
 use FoF\Polls\PollGroup;
+use PHPUnit\Framework\Attributes\Test;
 
 class DeletePollGroupTest extends AbstractPollGroupTestCase
 {
@@ -28,15 +29,13 @@ class DeletePollGroupTest extends AbstractPollGroupTestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function authorized_user_can_delete_poll_group()
     {
         $response = $this->send(
             $this->request(
                 'DELETE',
-                '/api/fof/polls/groups/1',
+                '/api/poll_groups/1',
                 [
                     'authenticatedAs' => 3,
                 ]
@@ -47,15 +46,13 @@ class DeletePollGroupTest extends AbstractPollGroupTestCase
         $this->assertNull(PollGroup::find(1));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unauthorized_user_cannot_delete_poll_group()
     {
         $response = $this->send(
             $this->request(
                 'DELETE',
-                '/api/fof/polls/groups/1',
+                '/api/poll_groups/1',
                 [
                     'authenticatedAs' => 2,
                 ]
@@ -66,15 +63,13 @@ class DeletePollGroupTest extends AbstractPollGroupTestCase
         $this->assertNotNull(PollGroup::find(1));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function deleting_poll_group_cascades_to_polls()
     {
         $response = $this->send(
             $this->request(
                 'DELETE',
-                '/api/fof/polls/groups/1',
+                '/api/poll_groups/1',
                 [
                     'authenticatedAs' => 3,
                 ]

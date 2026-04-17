@@ -4,7 +4,7 @@ import Component, { ComponentAttrs } from 'flarum/common/Component';
 import PollOptionModel from '../../models/PollOption';
 import PollState from '../../states/PollState';
 import Tooltip, { TooltipAttrs } from 'flarum/common/components/Tooltip';
-import icon from 'flarum/common/helpers/icon';
+import Icon from 'flarum/common/components/Icon';
 import classList from 'flarum/common/utils/classList';
 import ItemList from 'flarum/common/utils/ItemList';
 import Poll from '../../models/Poll';
@@ -54,29 +54,32 @@ export default class PollOption extends Component<PollOptionAttrs, PollState> {
     const isDisabled = this.state.loadingOptions || (this.hasVoted && !this.poll.canChangeVote());
     const width = this.canSeeVoteCount ? this.percent() : (Number(this.voted) / (this.poll.myVotes()?.length || 1)) * 100;
 
+    const onBarClick = (e: MouseEvent) => {
+      if (isDisabled || !this.state.showCheckMarks) return;
+      e.preventDefault();
+      this.state.changeVote(this.option, e);
+    };
+
     const bar = (
-      <label className="PollBar" data-selected={!!this.voted} style={`--poll-option-width: ${width}%`}>
+      <div className="PollBar" data-selected={!!this.voted} style={`--poll-option-width: ${width}%`} onclick={onBarClick}>
         {this.state.showCheckMarks && (
           <div className="PollAnswer-checkbox">
-            <input
-              className="PollAnswer-input sr-only"
-              type="checkbox"
-              id={this.option.id()}
-              name={this.name}
-              value={this.answer}
-              checked={this.voted}
-              disabled={isDisabled}
-              aria-labelledby={`${this.name}-${this.option.id()}-label`}
-              onchange={this.state.changeVote.bind(this.state, this.option)}
-            />
             <span className="checkmark" />
           </div>
         )}
 
         <div className="PollAnswer-text">{this.optionDisplayItems().toArray()}</div>
 
-        {this.option.imageUrl() ? <img className="PollAnswer-image" src={this.option.imageUrl()} alt={this.option.answer()} loading="lazy" /> : null}
-      </label>
+        {this.option.imageUrl() ? (
+          <img
+            className="PollAnswer-image"
+            src={this.option.imageUrl()}
+            srcset={this.option.imageSrcset() ?? undefined}
+            alt={this.option.answer()}
+            loading="lazy"
+          />
+        ) : null}
+      </div>
     );
 
     return (
@@ -95,11 +98,6 @@ export default class PollOption extends Component<PollOptionAttrs, PollState> {
     );
   }
 
-  /**
-   * Attempting to use the `tooltipVisible` attr on the Tooltip component set to 'false' when no vote count
-   * caused the tooltip to break on click. This is a workaround to hide the tooltip when no vote count is available,
-   * called on 'onremove' of the Tooltip component. It doesn't always work as intended either, but it does the job.
-   */
   hideOptionTooltip(vnode: Mithril.Vnode<TooltipAttrs, Tooltip>) {
     vnode.attrs.tooltipVisible = false;
 
@@ -117,7 +115,7 @@ export default class PollOption extends Component<PollOptionAttrs, PollState> {
       </span>
     );
 
-    this.voted && !this.state.showCheckMarks && items.add('check', icon('fas fa-check-circle', { className: 'PollAnswer-check' }));
+    this.voted && !this.state.showCheckMarks && items.add('check', <Icon name="fas fa-check-circle" className="PollAnswer-check" />);
 
     this.canSeeVoteCount &&
       items.add('percent', <span className={classList('PollPercent', this.percent() !== 100 && 'PollPercent--option')}>{this.percent()}%</span>);

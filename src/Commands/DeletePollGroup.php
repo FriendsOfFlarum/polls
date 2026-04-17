@@ -15,12 +15,7 @@ use Flarum\User\User;
 
 class DeletePollGroup
 {
-    public $actor;
-    public $groupId;
-
-    public function __construct(User $actor, int $groupId)
+    public function __construct(public User $actor, public int $groupId)
     {
-        $this->actor = $actor;
-        $this->groupId = $groupId;
     }
 }

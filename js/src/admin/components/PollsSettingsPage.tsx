@@ -1,3 +1,4 @@
+import Form from 'flarum/common/components/Form';
 import app from 'flarum/admin/app';
 import ExtensionPage from 'flarum/admin/components/ExtensionPage';
 import ItemList from 'flarum/common/utils/ItemList';
@@ -9,10 +10,10 @@ export default class PollsSettingsPage extends ExtensionPage {
       <div className="PollsSettingsPage">
         <div className="container">
           <div className="PollsSettingsTabPage PollsSettingsPage--settings">
-            <div className="Form">
+            <Form>
               {this.settingsItems().toArray()}
               <div className="Form-group">{this.submitButton()}</div>
-            </div>
+            </Form>
           </div>
         </div>
       </div>
@@ -28,6 +29,15 @@ export default class PollsSettingsPage extends ExtensionPage {
         <h3>{app.translator.trans('fof-polls.admin.settings.general.heading')}</h3>
         <p className="helpText">{app.translator.trans('fof-polls.admin.settings.general.help')}</p>
         {this.generalItems().toArray()}
+      </div>
+    );
+
+    items.add(
+      'discussionPolls',
+      <div className="Section">
+        <h3>{app.translator.trans('fof-polls.admin.settings.discussion_polls.heading')}</h3>
+        <p className="helpText">{app.translator.trans('fof-polls.admin.settings.discussion_polls.help')}</p>
+        {this.discussionPollsItems().toArray()}
       </div>
     );
 
@@ -72,6 +82,22 @@ export default class PollsSettingsPage extends ExtensionPage {
         type: 'number',
         label: app.translator.trans('fof-polls.admin.settings.max_options'),
         min: 2,
+      })
+    );
+
+    return items;
+  }
+
+  discussionPollsItems(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+
+    items.add(
+      'enableDiscussionPolls',
+      this.buildSettingComponent({
+        setting: 'fof-polls.enableDiscussionPolls',
+        type: 'switch',
+        label: app.translator.trans('fof-polls.admin.settings.enable_discussion_polls'),
+        help: app.translator.trans('fof-polls.admin.settings.enable_discussion_polls_help'),
       })
     );
 
@@ -128,21 +154,13 @@ export default class PollsSettingsPage extends ExtensionPage {
     const items = new ItemList<Mithril.Children>();
 
     items.add(
-      'allowOptionImage',
+      'maxImageUploadSize',
       this.buildSettingComponent({
-        setting: 'fof-polls.allowOptionImage',
-        type: 'switch',
-        label: app.translator.trans('fof-polls.admin.settings.allow_option_image'),
-      })
-    );
-
-    items.add(
-      'allowImageUploads',
-      this.buildSettingComponent({
-        setting: 'fof-polls.allowImageUploads',
-        type: 'switch',
-        label: app.translator.trans('fof-polls.admin.settings.allow_image_uploads'),
-        help: app.translator.trans('fof-polls.admin.settings.allow_image_uploads_help'),
+        setting: 'fof-polls.maxImageUploadSize',
+        type: 'number',
+        label: app.translator.trans('fof-polls.admin.settings.max_image_upload_size'),
+        help: app.translator.trans('fof-polls.admin.settings.max_image_upload_size_help'),
+        min: 1,
       })
     );
 
@@ -152,6 +170,7 @@ export default class PollsSettingsPage extends ExtensionPage {
         setting: 'fof-polls.image_height',
         type: 'number',
         label: app.translator.trans('fof-polls.admin.settings.image_height'),
+        help: app.translator.trans('fof-polls.admin.settings.image_dimensions_help'),
       })
     );
 

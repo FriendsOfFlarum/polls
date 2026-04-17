@@ -1,96 +1,126 @@
 # Polls by FriendsOfFlarum
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg) [![Latest Stable Version](https://img.shields.io/packagist/v/fof/polls.svg)](https://packagist.org/packages/fof/polls) [![OpenCollective](https://img.shields.io/badge/opencollective-fof-blue.svg)](https://opencollective.com/fof/donate) [![Patreon](https://img.shields.io/badge/patreon-datitisev-f96854.svg?logo=patreon)](https://patreon.com/datitisev)
+![License](https://img.shields.io/badge/license-MIT-blue.svg) [![Latest Stable Version](https://img.shields.io/packagist/v/fof/polls.svg)](https://packagist.org/packages/fof/polls) [![OpenCollective](https://img.shields.io/badge/opencollective-fof-blue.svg)](https://opencollective.com/fof/donate)
 
-A [Flarum](http://flarum.org) extension. A Flarum extension that adds polls to your discussions.
+A [Flarum](https://flarum.org) extension that adds polls to your discussions.
 
-### Installation
+## Installation
 
 ```sh
 composer require fof/polls:"*"
 ```
 
-#### Migrating from ReFlar Polls
-
-Make sure you've updated to the latest `reflar/polls` version and run `php flarum migrate` BEFORE installing `fof/polls`.
-You will not be able to install this extension if you have a version of ReFlar Polls older than v1.3.4 as well.
-
-```sh
-$ composer require reflar/polls
-$ php flarum migrate
-$ composer require fof/polls
-```
-
-### Updating
+## Updating
 
 ```sh
 composer update fof/polls
+php flarum migrate
+php flarum cache:clear
 ```
 
-### Metadata update
+## Features
+
+- Create polls in discussions or as standalone global polls
+- Single and multiple choice voting
+- Public/private vote visibility
+- Poll end dates
+- Poll images with WebP conversion and HiDPI (srcset) support
+- Poll option images
+- Poll groups for organizing global polls
+- Granular permissions for poll creation, voting, and moderation
+
+## Image Handling
+
+### WebP Conversion & srcset
+
+Uploaded images are automatically converted to WebP format (or preserved as GIF for animated images) and stored with responsive variants:
+
+- **Base (1x)** - sized to admin-configured dimensions (default 250x250)
+- **@2x** - double resolution for HiDPI displays
+- **@3x** - triple resolution for ultra-high DPI displays
+
+Variants are only generated when the source image is large enough — images are never upscaled.
+
+The API response includes an `imageSrcset` field that browsers use to select the appropriate resolution automatically.
+
+### Converting Existing Images
+
+If you're upgrading from a previous version, existing PNG images can be converted to the new WebP format with srcset variants:
+
+```sh
+php flarum fof:polls:convert-images
+```
+
+This is optional — existing PNG images will continue to work without conversion. Add `--cleanup` to remove original PNG files after successful conversion:
+
+```sh
+php flarum fof:polls:convert-images --cleanup
+```
+
+### Image Settings
+
+Configure in the admin panel under the Polls extension settings:
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| Allow image uploads | Off | Enable the image upload feature |
+| Allow option images | Off | Enable images on individual poll options |
+| Image width | 250 | Base width in pixels (2x and 3x derived automatically) |
+| Image height | 250 | Base height in pixels |
+
+### Metadata Refresh
 
 To improve performance, Polls calculates and stores the number of votes when it changes.
 
-As long as the extension is active, Polls will automatically keep those numbers up to date and you don't need to do anything.
-
-If you are updating from a version prior to 0.3.3, if you disabled the extension for a while or if you made manual changes to the database you should run the following command to refresh the numbers:
+If you made manual changes to the database you can refresh the numbers:
 
 ```sh
 php flarum fof:polls:refresh
 ```
 
-You can only run the command when the extension is enabled in the admin panel.
+## Deprecations
 
+### External Image URLs (Deprecated in 2.0)
 
-## Poll Groups Feature
+**Will be removed in the next major version.**
 
-### What Are Poll Groups?
+Previous versions allowed pasting external image URLs directly. This is now deprecated in favour of the built-in upload system which provides:
 
-Poll Groups are a feature that allows you to organize multiple polls under a single topic or subject. You can create a group and add related polls to it, making it easier to manage and present a collection of questions about the same theme.
+- Proper image validation and security checks
+- Automatic WebP conversion for better performance
+- srcset variants for HiDPI displays
+- Consistent storage and CDN support
 
-### What Can You Use Poll Groups For?
+**What this means:**
 
-- **Surveys:** Bundle several polls together to conduct multi-question surveys on a particular subject.
-- **Topic-Based Polling:** Group polls by topics, such as feedback on different features, event planning, or research.
-- **Community Engagement:** Facilitate deeper discussions by presenting sets of related questions.
+- Existing polls with external URL images will continue to display normally
+- The URL paste input has been removed from the poll creation form
+- When editing an existing poll with a URL image, a deprecation notice is shown encouraging re-upload
+- Extensions that relied on `isImageUpload` should transition to checking `imageSrcset` presence instead
 
-### How to Use Poll Groups
+### For Extension Developers
 
-1. **Enable Poll Groups:**  
-   Make sure the extension setting `Enable poll groups` is enabled in your admin panel.
+If your extension integrates with fof/polls images:
 
-2. **Permissions:**  
-   Poll groups use the following permissions:
-    - *View poll groups (`canViewPollGroups`)* : Controls who can see poll groups
-    - *Create poll groups*: Controls who can create new poll groups
-    - *Moderate poll groups (`polls.moderate_group`)*: Allows moderators to edit and delete any poll groups
-    - Individual users can always edit and delete their own poll groups
+- **`isImageUpload` field** — Deprecated on both `PollResource` and `PollOptionResource`. Use the presence of `imageSrcset` to determine if an image has responsive variants.
+- **`PollImageWillBeResized` event** — Constructor signature updated to include `isAnimated` parameter. Update any listeners.
+- **`PollImageUploader` service** — New service class for image operations. Use this instead of direct filesystem access for uploading, deleting, or generating srcset strings.
+- **Frontend `<img>` tags** — Use the `imageSrcset()` model accessor and pass it as the `srcset` attribute.
 
-3. **Creating a Poll Group:**
-    - Navigate to the Poll Groups page through the site navigation
-    - Click "Start a Poll Group" and provide a name for your group
+## Poll Groups
 
-4. **Adding Polls to Groups:**
-    - Go to the poll group detail view
-    - Use the "Add Poll" button to create new polls within the group
-    - The polls will be automatically associated with and displayed in the group
+Poll Groups allow you to organize multiple polls under a single topic. Enable via the admin setting "Enable poll groups".
 
-5. **Managing Poll Groups:**
-    - Group creators can edit their group details and delete their own groups
-    - Moderators with appropriate permissions can manage any poll groups
-    - Deleting a group will remove the group but preserve its associated polls
+**Permissions:**
+- *View poll groups* — Controls who can see poll groups
+- *Create poll groups* — Controls who can create new poll groups
+- *Moderate poll groups* — Allows moderators to edit and delete any poll groups
 
-### Example Use Case
+## Links
 
-For example, to gather comprehensive feedback about a new feature, create a poll group named "Feature Feedback" and add multiple polls asking about different aspects (usability, design, performance, etc.). Users will find all related polls conveniently grouped together for easy participation.
-
-### Links
-
-[<img src="https://opencollective.com/fof/donate/button@2x.png?color=blue" height="25" />](https://opencollective.com/fof/donate)
-[<img src="https://c5.patreon.com/external/logo/become_a_patron_button.png" height="25" />](https://patreon.com/datitisev)
-
-- [Packagist](https://packagist.org/packages/fof/polls)
-- [GitHub](https://github.com/packages/FriendsOfFlarum/polls)
 - [Discuss](https://discuss.flarum.org/d/20586)
+- [GitHub](https://github.com/FriendsOfFlarum/polls)
+- [Packagist](https://packagist.org/packages/fof/polls)
+- [Open Collective](https://opencollective.com/fof/donate)
 
 An extension by [FriendsOfFlarum](https://github.com/FriendsOfFlarum).

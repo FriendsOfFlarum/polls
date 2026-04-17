@@ -17,24 +17,9 @@ use FoF\Polls\Poll;
 class PollWasCreated
 {
     /**
-     * @var User
-     */
-    public $actor;
-
-    /**
-     * @var Poll
-     */
-    public $poll;
-
-    /**
      * PollWasCreated constructor.
-     *
-     * @param User $actor
-     * @param Poll $poll
      */
-    public function __construct(User $actor, Poll $poll)
+    public function __construct(public User $actor, public Poll $poll)
     {
-        $this->actor = $actor;
-        $this->poll = $poll;
     }
 }

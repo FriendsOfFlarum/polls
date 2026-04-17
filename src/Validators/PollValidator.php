@@ -17,12 +17,12 @@ use Illuminate\Validation\Rule;
 
 class PollValidator extends AbstractValidator
 {
-    protected function getRules()
+    protected function getRules(): array
     {
         return [
             'question'   => 'required',
             'publicPoll' => 'nullable|boolean',
-            'image'      => 'nullable|url',
+            'image'      => 'nullable|string|max:255',
             'endDate'    => [
                 'nullable',
                 // max of 'timestamp' SQL column is 2038-01-18

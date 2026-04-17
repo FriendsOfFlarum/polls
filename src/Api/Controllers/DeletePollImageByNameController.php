@@ -13,14 +13,22 @@ namespace FoF\Polls\Api\Controllers;
 
 use Flarum\Http\RequestUtil;
 use FoF\Polls\Events\PollImageDeleting;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use FoF\Polls\PollImageUploader;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class DeletePollImageByNameController extends DeletePollImageController
+class DeletePollImageByNameController implements RequestHandlerInterface
 {
+    public function __construct(
+        protected PollImageUploader $uploader,
+        protected Dispatcher $events,
+    ) {
+    }
+
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $actor = RequestUtil::getActor($request);
@@ -28,16 +36,15 @@ class DeletePollImageByNameController extends DeletePollImageController
 
         $actor->assertCan('uploadPollImages');
 
-        if ($this->uploadDir->exists($fileName)) {
-            $this->events->dispatch(
-                new PollImageDeleting($fileName, $actor)
-            );
+        // Check if the base file exists (any variant implies it was uploaded)
+        $basePath = $fileName;
 
-            $this->uploadDir->delete($fileName);
+        $this->events->dispatch(
+            new PollImageDeleting($basePath, $actor)
+        );
 
-            return new EmptyResponse(204);
-        }
+        $this->uploader->deleteAllVariants($basePath);
 
-        throw new ModelNotFoundException();
+        return new EmptyResponse(204);
     }
 }

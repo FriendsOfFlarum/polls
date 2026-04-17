@@ -32,10 +32,7 @@ class PollOption extends AbstractModel
      */
     public $timestamps = true;
 
-    protected $dates = [
-        'created_at',
-        'updated_at',
-    ];
+    protected $casts = ['created_at' => 'datetime', 'updated_at' => 'datetime'];
 
     protected $fillable = ['answer', 'image_url'];
 
@@ -44,7 +41,7 @@ class PollOption extends AbstractModel
      *
      * @return static
      */
-    public static function build($answer, $imageUrl = null)
+    public static function build(string $answer, ?string $imageUrl = null): static
     {
         $option = new static();
 

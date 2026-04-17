@@ -52,12 +52,12 @@ class PollGroupRepository
     /**
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function findOrFail($id, ?User $actor = null): PollGroup
+    public function findOrFail(int|string $id, ?User $actor = null): PollGroup
     {
         return $this->queryVisibleTo($actor)->findOrFail($id);
     }
 
-    public function find($id, ?User $actor = null): ?PollGroup
+    public function find(int|string $id, ?User $actor = null): ?PollGroup
     {
         return $this->queryVisibleTo($actor)->find($id);
     }

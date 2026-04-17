@@ -13,10 +13,9 @@ namespace FoF\Polls\Api\Controllers;
 
 use Flarum\Http\RequestUtil;
 use FoF\Polls\Events\PollImageDeleting;
+use FoF\Polls\PollImageUploader;
 use FoF\Polls\PollOption;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Filesystem\Cloud;
-use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Support\Arr;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Psr\Http\Message\ResponseInterface;
@@ -25,20 +24,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class DeletePollOptionImageController implements RequestHandlerInterface
 {
-    /**
-     * @var Cloud
-     */
-    protected $uploadDir;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $events;
-
-    public function __construct(Factory $filesystemFactory, Dispatcher $events)
-    {
-        $this->uploadDir = $filesystemFactory->disk('fof-polls');
-        $this->events = $events;
+    public function __construct(
+        protected PollImageUploader $uploader,
+        protected Dispatcher $events,
+    ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -51,15 +40,20 @@ class DeletePollOptionImageController implements RequestHandlerInterface
 
         $actor->assertCan('uploadPollImages');
 
-        // if the image_url is a fully qualified URL, we just set it to null
-        if (filter_var($option->image_url, FILTER_VALIDATE_URL)) {
-        } else {
-            $this->events->dispatch(
-                new PollImageDeleting($option->image_url, $actor)
-            );
+        if ($option->image_url) {
+            /**
+             * @deprecated External URL images are deprecated. In a future version,
+             * only uploaded images will be supported.
+             */
+            if (filter_var($option->image_url, FILTER_VALIDATE_URL)) {
+                // External URL — just clear the field, no file to delete.
+            } else {
+                $this->events->dispatch(
+                    new PollImageDeleting($option->image_url, $actor)
+                );
 
-            // otherwise we check and delete it from the filesystem
-            $this->uploadDir->delete($option->image_url);
+                $this->uploader->deleteAllVariants($option->image_url);
+            }
         }
 
         $option->image_url = null;

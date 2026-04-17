@@ -18,67 +18,27 @@ use Flarum\User\Exception\PermissionDeniedException;
 use FoF\Polls\Events\PollVotesChanged;
 use FoF\Polls\Events\PollWasVoted;
 use FoF\Polls\Poll;
+use FoF\Polls\PollOption;
 use FoF\Polls\PollRepository;
+use FoF\Polls\PollVote;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Factory;
-use Pusher;
 
 class MultipleVotesPollHandler
 {
-    /**
-     * @var Dispatcher
-     */
-    private $events;
-
-    /**
-     * @var SettingsRepositoryInterface
-     */
-    private $settings;
-
-    /**
-     * @var Container
-     */
-    private $container;
-
-    /**
-     * @var Factory
-     */
-    private $validation;
-
-    /**
-     * @var DatabaseManager
-     */
-    private $db;
-
-    /**
-     * @var PollRepository
-     */
-    private $polls;
-
-    /**
-     * @param Dispatcher                  $events
-     * @param SettingsRepositoryInterface $settings
-     * @param Container                   $container
-     */
-    public function __construct(PollRepository $polls, Dispatcher $events, SettingsRepositoryInterface $settings, Container $container, Factory $validation, DatabaseManager $db)
+    public function __construct(private PollRepository $polls, private Dispatcher $events, private SettingsRepositoryInterface $settings, private Container $container, private Factory $validation, private DatabaseManager $db)
     {
-        $this->polls = $polls;
-        $this->events = $events;
-        $this->settings = $settings;
-        $this->container = $container;
-        $this->validation = $validation;
-        $this->db = $db;
     }
 
     /**
      * @throws PermissionDeniedException
      * @throws ValidationException
      */
-    public function handle(MultipleVotesPoll $command)
+    public function handle(MultipleVotesPoll $command): Poll
     {
         $actor = $command->actor;
         $data = $command->data;
@@ -104,13 +64,13 @@ class MultipleVotesPollHandler
         }
 
         $deletedVotes = $myVotes->filter(function ($vote) use ($optionIds) {
-            return !in_array((string) $vote->option_id, $optionIds);
+            return $vote instanceof PollVote && !in_array((string) $vote->option_id, $optionIds);
         });
-        $newOptionIds = collect($optionIds)->filter(function ($optionId) use ($myVotes) {
+        $newOptionIds = collect((array) $optionIds)->filter(function ($optionId) use ($myVotes) {
             return !$myVotes->contains('option_id', $optionId);
         });
 
-        $this->db->transaction(function () use ($myVotes, $options, $newOptionIds, $deletedVotes, $poll, $actor) {
+        $this->db->transaction(function () use ($myVotes, $newOptionIds, $deletedVotes, $poll, $actor) {
             // Unvote options
             if ($deletedVotes->isNotEmpty()) {
                 $poll->myVotes($actor)->whereIn('id', $deletedVotes->pluck('id'))->delete();
@@ -130,10 +90,16 @@ class MultipleVotesPollHandler
             });
 
             // Update vote counts of options & poll
-            $changedOptions = $options->whereIn('id', $deletedVotes->pluck('option_id')->toArray())
-                ->concat($options->whereIn('id', $newOptionIds->toArray()));
+            $changedOptionIds = array_merge(
+                $deletedVotes->pluck('option_id')->toArray(),
+                $newOptionIds->toArray()
+            );
 
-            $changedOptions->each->refreshVoteCount()->each->save();
+            foreach ($poll->options()->whereIn('id', $changedOptionIds)->get() as $opt) {
+                if ($opt instanceof PollOption) {
+                    $opt->refreshVoteCount()->save();
+                }
+            }
 
             if ($deletedVotes->isNotEmpty() || $newOptionIds->isNotEmpty()) {
                 $poll->refreshVoteCount()->save();
@@ -144,8 +110,10 @@ class MultipleVotesPollHandler
         $deletedVoteOptions = $options->whereIn('id', $deletedVotes->pluck('option_id'));
 
         // Legacy event for backward compatibility with single-vote polls. Can be removed in breaking release.
-        if (!$poll->allow_multiple_votes && !$myVotes->isEmpty()) {
-            $this->events->dispatch(new PollWasVoted($actor, $poll, $myVotes->first(), !$deletedVotes->isEmpty() && !$newOptionIds->isEmpty()));
+        $firstVote = $myVotes->first();
+
+        if (!$poll->allow_multiple_votes && $firstVote instanceof PollVote) {
+            $this->events->dispatch(new PollWasVoted($actor, $poll, $firstVote, !$deletedVotes->isEmpty() && !$newOptionIds->isEmpty()));
         }
 
         $this->events->dispatch(new PollVotesChanged($actor, $poll, $deletedVoteOptions->pluck('option.id'), $newOptionIds));
@@ -172,7 +140,7 @@ class MultipleVotesPollHandler
      *
      * @param \Illuminate\Support\Collection $options
      */
-    public function pushUpdatedOptions(Poll $poll, $options)
+    public function pushUpdatedOptions(Poll $poll, $options): void
     {
         if ($pusher = $this->getPusher()) {
             $pusher->trigger('public', 'updatedPollOptions', [
@@ -183,22 +151,19 @@ class MultipleVotesPollHandler
         }
     }
 
-    private function getPusher()
+    private function getPusher(): object|false
     {
         return self::pusher($this->container, $this->settings);
     }
 
-    /**
-     * @return bool|\Illuminate\Foundation\Application|mixed|Pusher
-     */
-    public static function pusher(Container $container, SettingsRepositoryInterface $settings)
+    public static function pusher(Container $container, SettingsRepositoryInterface $settings): object|false
     {
-        if (!class_exists(Pusher::class)) {
+        if (!class_exists(\Pusher::class)) {
             return false;
         }
 
-        if ($container->bound(Pusher::class)) {
-            return $container->make(Pusher::class);
+        if ($container->bound(\Pusher::class)) {
+            return $container->make(\Pusher::class);
         } else {
             $options = [];
 
@@ -217,7 +182,7 @@ class MultipleVotesPollHandler
                 return false;
             }
 
-            return new Pusher(
+            return new \Pusher(
                 $appKey,
                 $appSecret,
                 $appId,

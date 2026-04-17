@@ -12,6 +12,7 @@
 namespace FoF\Polls\Tests\integration\api;
 
 use FoF\Polls\PollGroup;
+use PHPUnit\Framework\Attributes\Test;
 
 class EditPollGroupTest extends AbstractPollGroupTestCase
 {
@@ -24,15 +25,13 @@ class EditPollGroupTest extends AbstractPollGroupTestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function authorized_user_can_edit_own_poll_group()
     {
         $response = $this->send(
             $this->request(
                 'PATCH',
-                '/api/fof/polls/groups/1',
+                '/api/poll_groups/1',
                 [
                     'authenticatedAs' => 4,
                     'json'            => [
@@ -57,15 +56,13 @@ class EditPollGroupTest extends AbstractPollGroupTestCase
         $this->assertEquals('Updated Group Name', $pollGroup->name);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function authorized_moderator_user_can_edit_other_poll_group()
     {
         $response = $this->send(
             $this->request(
                 'PATCH',
-                '/api/fof/polls/groups/1',
+                '/api/poll_groups/1',
                 [
                     'authenticatedAs' => 3,
                     'json'            => [
@@ -90,15 +87,13 @@ class EditPollGroupTest extends AbstractPollGroupTestCase
         $this->assertEquals('Updated Group Name by User 3', $pollGroup->name);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unauthorized_user_cannot_edit_poll_group()
     {
         $response = $this->send(
             $this->request(
                 'PATCH',
-                '/api/fof/polls/groups/1',
+                '/api/poll_groups/1',
                 [
                     'authenticatedAs' => 2,
                     'json'            => [

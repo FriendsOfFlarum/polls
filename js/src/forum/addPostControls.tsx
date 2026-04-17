@@ -2,14 +2,13 @@ import app from 'flarum/forum/app';
 
 import { extend } from 'flarum/common/extend';
 import PostControls from 'flarum/forum/utils/PostControls';
-import CreatePollModal from './components/CreatePollModal';
 import Button from 'flarum/common/components/Button';
 import Post from 'flarum/common/models/Post';
 import PollModelAttributes from './models/PollModelAttributes';
 
 export default () => {
   const createPoll = (post: Post) =>
-    app.modal.show(CreatePollModal, {
+    app.modal.show(() => import('./components/CreatePollModal'), {
       onsubmit: (data: PollModelAttributes) =>
         app.store
           .createRecord('polls')

@@ -15,7 +15,7 @@ use Flarum\Foundation\AbstractValidator;
 
 class PollOptionValidator extends AbstractValidator
 {
-    protected function getRules()
+    protected function getRules(): array
     {
         return [
             'answer'   => ['required', 'string', 'max:255'],

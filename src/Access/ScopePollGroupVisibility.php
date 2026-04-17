@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ScopePollGroupVisibility
 {
-    public function __invoke(User $actor, Builder $query)
+    public function __invoke(User $actor, Builder $query): void
     {
         if (!$actor->hasPermission('viewPollGroups')) {
             $query->whereRaw('1=0');

@@ -8,7 +8,7 @@ import Dropdown from 'flarum/common/components/Dropdown';
 import Link from 'flarum/common/components/Link';
 import highlight from 'flarum/common/helpers/highlight';
 import slidable from 'flarum/forum/utils/slidable';
-import icon from 'flarum/common/helpers/icon';
+import Icon from 'flarum/common/components/Icon';
 import abbreviateNumber from 'flarum/common/utils/abbreviateNumber';
 import Poll from '../../models/Poll';
 import PollControls from '../../utils/PollControls';
@@ -97,7 +97,7 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
         className={classList('Slidable-underneath Slidable-underneath--left Slidable-underneath--elastic', { disabled: !isUnread })}
         onclick={this.markAsRead.bind(this)}
       >
-        {icon('fas fa-check')}
+        <Icon name="fas fa-check" />
       </span>
     );
   }
@@ -177,13 +177,13 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
     const active = !this.poll.hasEnded();
     const activeView = this.poll.endDate()
       ? [
-          icon('fas fa-clock'),
+          <Icon name="fas fa-clock" />,
           ' ',
           active
             ? app.translator.trans('fof-polls.forum.days_remaining', { time: dayjs(this.poll.endDate()).fromNow() })
             : app.translator.trans('fof-polls.forum.poll_ended'),
         ]
-      : [icon('fas fa-infinity'), ' ', app.translator.trans('fof-polls.forum.poll_never_ends')];
+      : [<Icon name="fas fa-infinity" />, ' ', app.translator.trans('fof-polls.forum.poll_never_ends')];
 
     items.add('active', <span className={classList('PollListItem-endStatus', { active })}>{activeView}</span>);
 
@@ -192,7 +192,7 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
       items.add(
         'voteCount',
         <span>
-          {icon('fas fa-poll fa-fw')}
+          <Icon name="fas fa-poll fa-fw" />
           {[
             ' ',
             app.translator.trans('fof-polls.forum.polls_count', {

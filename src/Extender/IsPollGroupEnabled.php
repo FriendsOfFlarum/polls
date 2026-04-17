@@ -15,7 +15,7 @@ use Flarum\Settings\SettingsRepositoryInterface;
 
 class IsPollGroupEnabled
 {
-    public function __invoke(SettingsRepositoryInterface $settings)
+    public function __invoke(SettingsRepositoryInterface $settings): bool
     {
         if (defined('FOF_POLLS_TESTS_POLL_GROUP_ENABLED')) {
             return true;

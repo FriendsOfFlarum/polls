@@ -19,15 +19,17 @@
         }
     ],
     "require": {
-        "flarum/core": "^1.8.0"
-    },
-    "conflict": {
-        "reflar/polls": "*"
+        "flarum/core": "^2.0.0"
     },
     "authors": [
         {
             "name": "David Sevilla Martin",
             "email": "david.s@redevs.org",
+            "role": "Developer"
+        },
+        {
+            "name": "IanM",
+            "email": "ian@flarum.org",
             "role": "Developer"
         }
     ],
@@ -58,8 +60,8 @@
         }
     },
     "require-dev": {
-        "flarum/phpstan": "*",
-        "flarum/testing": "^1.0.0"
+        "flarum/phpstan": "^2.0.0",
+        "flarum/testing": "^2.0.0"
     },
     "scripts": {
         "analyse:phpstan": "phpstan analyse",
@@ -83,5 +85,7 @@
         "psr-4": {
             "FoF\\Polls\\Tests\\": "tests/"
         }
-    }
+    },
+    "minimum-stability": "beta",
+    "prefer-stable": true
 }

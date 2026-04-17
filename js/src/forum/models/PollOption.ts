@@ -11,6 +11,11 @@ export default class PollOption extends Model {
     return Model.attribute<string | null>('imageUrl').call(this);
   }
 
+  imageSrcset() {
+    return Model.attribute<string | null>('imageSrcset').call(this);
+  }
+
+  /** @deprecated Use imageSrcset() presence instead */
   isImageUpload() {
     return Model.attribute<boolean>('isImageUpload').call(this);
   }
@@ -25,10 +30,5 @@ export default class PollOption extends Model {
 
   votes() {
     return Model.hasMany<PollVote>('votes').call(this);
-  }
-
-  apiEndpoint() {
-    /** @ts-ignore */
-    return `/fof/polls/answers${this.exists ? `/${this.data.id}` : ''}`;
   }
 }

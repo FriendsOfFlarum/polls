@@ -11,9 +11,14 @@
 
 namespace FoF\Polls\Tests\integration\api;
 
+use Flarum\Discussion\Discussion;
+use Flarum\Post\Post;
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
+use Flarum\User\User;
 use FoF\Polls\Poll;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 class CreatePollTest extends TestCase
 {
@@ -28,14 +33,14 @@ class CreatePollTest extends TestCase
         $this->setting('fof-polls.enableGlobalPolls', true);
 
         $this->prepareDatabase([
-            'users' => [
+            User::class => [
                 $this->normalUser(),
                 ['id' => 3, 'username' => 'polluser', 'email' => 'polluser@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => true],
             ],
-            'discussions' => [
+            Discussion::class => [
                 ['id' => 1, 'title' => 'Discussion 1', 'comment_count' => 1, 'participant_count' => 1, 'created_at' => '2021-01-01 00:00:00'],
             ],
-            'posts' => [
+            Post::class => [
                 ['id' => 1, 'user_id' => 1, 'discussion_id' => 1, 'number' => 1, 'created_at' => '2021-01-01 00:00:00', 'content' => 'Post 1', 'type' => 'comment'],
             ],
             'poll_groups' => [
@@ -55,7 +60,7 @@ class CreatePollTest extends TestCase
         ]);
     }
 
-    public function authorizedUserProvider(): array
+    public static function authorizedUserProvider(): array
     {
         return [
             [1],
@@ -63,18 +68,15 @@ class CreatePollTest extends TestCase
         ];
     }
 
-    public function unauthorizedUserProvider(): array
+    public static function unauthorizedUserProvider(): array
     {
         return [
             [2],
         ];
     }
 
-    /**
-     * @dataProvider authorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('authorizedUserProvider')]
     public function authorized_user_can_create_poll_in_post(int $userId)
     {
         $response = $this->send(
@@ -142,7 +144,7 @@ class CreatePollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'GET',
-                '/api/fof/polls/'.$pollId,
+                '/api/polls/'.$pollId,
                 [
                     'authenticatedAs' => $userId,
                 ]
@@ -156,11 +158,8 @@ class CreatePollTest extends TestCase
         $this->assertFalse($json['data']['attributes']['isGlobal']);
     }
 
-    /**
-     * @dataProvider unauthorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('unauthorizedUserProvider')]
     public function unauthorized_user_cannot_create_poll_in_post(int $userId)
     {
         $response = $this->send(
@@ -215,17 +214,14 @@ class CreatePollTest extends TestCase
         $this->assertEquals('/data/attributes/poll', $errors[0]['source']['pointer']);
     }
 
-    /**
-     * @dataProvider authorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('authorizedUserProvider')]
     public function authorized_user_can_create_post_poll_on_api(int $userId)
     {
         $response = $this->send(
             $this->request(
                 'POST',
-                '/api/fof/polls',
+                '/api/polls',
                 [
                     'authenticatedAs' => $userId,
                     'json'            => [
@@ -278,17 +274,14 @@ class CreatePollTest extends TestCase
         $this->assertEquals(1, $poll->post_id);
     }
 
-    /**
-     * @dataProvider unauthorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('unauthorizedUserProvider')]
     public function unauthorized_user_cannot_create_post_poll_on_api(int $userId)
     {
         $response = $this->send(
             $this->request(
                 'POST',
-                '/api/fof/polls',
+                '/api/polls',
                 [
                     'authenticatedAs' => $userId,
                     'json'            => [
@@ -327,17 +320,14 @@ class CreatePollTest extends TestCase
         $this->assertEquals(403, $response->getStatusCode());
     }
 
-    /**
-     * @dataProvider authorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('authorizedUserProvider')]
     public function authorized_user_cannot_create_post_poll_with_invalid_postId(int $userId)
     {
         $response = $this->send(
             $this->request(
                 'POST',
-                '/api/fof/polls',
+                '/api/polls',
                 [
                     'authenticatedAs' => $userId,
                     'json'            => [
@@ -376,17 +366,14 @@ class CreatePollTest extends TestCase
         $this->assertEquals(404, $response->getStatusCode());
     }
 
-    /**
-     * @dataProvider authorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('authorizedUserProvider')]
     public function authorized_user_can_create_global_poll_on_api(int $userId)
     {
         $response = $this->send(
             $this->request(
                 'POST',
-                '/api/fof/polls',
+                '/api/polls',
                 [
                     'authenticatedAs' => $userId,
                     'json'            => [
@@ -434,7 +421,7 @@ class CreatePollTest extends TestCase
         $response = $this->send(
             $this->request(
                 'GET',
-                '/api/fof/polls/'.$pollId,
+                '/api/polls/'.$pollId,
                 [
                     'authenticatedAs' => $userId,
                 ]
@@ -448,17 +435,14 @@ class CreatePollTest extends TestCase
         $this->assertTrue($json['data']['attributes']['isGlobal']);
     }
 
-    /**
-     * @dataProvider unauthorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('unauthorizedUserProvider')]
     public function unauthorized_user_cannot_create_global_poll_on_api(int $userId)
     {
         $response = $this->send(
             $this->request(
                 'POST',
-                '/api/fof/polls',
+                '/api/polls',
                 [
                     'authenticatedAs' => $userId,
                     'json'            => [
@@ -489,17 +473,14 @@ class CreatePollTest extends TestCase
         $this->assertEquals(403, $response->getStatusCode());
     }
 
-    /**
-     * @dataProvider authorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('authorizedUserProvider')]
     public function authorized_user_can_create_a_poll_with_a_subtitle_via_api(int $userId)
     {
         $response = $this->send(
             $this->request(
                 'POST',
-                '/api/fof/polls',
+                '/api/polls',
                 [
                     'authenticatedAs' => $userId,
                     'json'            => [
@@ -539,11 +520,8 @@ class CreatePollTest extends TestCase
         $this->assertEquals('This is a subtitle', $attributes['subtitle']);
     }
 
-    /**
-     * @dataProvider authorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('authorizedUserProvider')]
     public function authorized_user_can_create_a_poll_with_a_subtitle_via_post(int $userId)
     {
         $response = $this->send(
@@ -610,18 +588,123 @@ class CreatePollTest extends TestCase
         $this->assertEquals('This is a subtitle', $poll->subtitle);
     }
 
-    /**
-     * @dataProvider authorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('authorizedUserProvider')]
+    public function authorized_user_can_create_poll_via_discussion(int $userId)
+    {
+        $response = $this->send(
+            $this->request(
+                'POST',
+                '/api/discussions',
+                [
+                    'authenticatedAs' => $userId,
+                    'json'            => [
+                        'data' => [
+                            'type'       => 'discussions',
+                            'attributes' => [
+                                'title'   => 'Discussion with poll',
+                                'content' => 'Here is my poll via discussion creation',
+                                'poll'    => [
+                                    'question'           => 'Best programming language?',
+                                    'publicPoll'         => false,
+                                    'hideVotes'          => false,
+                                    'allowChangeVote'    => true,
+                                    'allowMultipleVotes' => false,
+                                    'maxVotes'           => 0,
+                                    'endDate'            => false,
+                                    'options'            => [
+                                        ['answer' => 'PHP'],
+                                        ['answer' => 'TypeScript'],
+                                        ['answer' => 'Rust'],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        $this->assertEquals(201, $response->getStatusCode());
+
+        $json = json_decode($response->getBody()->getContents(), true);
+        $data = $json['data'];
+
+        // The discussion's first post should have polls included
+        $firstPostId = $data['relationships']['firstPost']['data']['id'] ?? null;
+        $this->assertNotNull($firstPostId);
+
+        // Find the poll in the included resources or via the post
+        $post = \Flarum\Post\Post::find($firstPostId);
+        $this->assertNotNull($post);
+
+        $poll = $post->polls()->first();
+        $this->assertNotNull($poll, 'Poll should be created on the first post of the discussion');
+        $this->assertEquals('Best programming language?', $poll->question);
+        $this->assertEquals(3, $poll->options()->count());
+    }
+
+    #[Test]
+    #[DataProvider('unauthorizedUserProvider')]
+    public function unauthorized_user_cannot_create_poll_via_discussion(int $userId)
+    {
+        $response = $this->send(
+            $this->request(
+                'POST',
+                '/api/discussions',
+                [
+                    'authenticatedAs' => $userId,
+                    'json'            => [
+                        'data' => [
+                            'type'       => 'discussions',
+                            'attributes' => [
+                                'title'   => 'Discussion with poll',
+                                'content' => 'Unauthorized poll attempt',
+                                'poll'    => [
+                                    'question'           => 'Should not work',
+                                    'publicPoll'         => false,
+                                    'hideVotes'          => false,
+                                    'allowChangeVote'    => true,
+                                    'allowMultipleVotes' => false,
+                                    'maxVotes'           => 0,
+                                    'endDate'            => false,
+                                    'options'            => [
+                                        ['answer' => 'Yes'],
+                                        ['answer' => 'No'],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        // Discussion should still be created (201), but the poll should not
+        // The unauthorized user cannot start polls, so the poll is silently skipped
+        // or a validation error is returned
+        $this->assertContains($response->getStatusCode(), [201, 422]);
+
+        if ($response->getStatusCode() === 201) {
+            $json = json_decode($response->getBody()->getContents(), true);
+            $firstPostId = $json['data']['relationships']['firstPost']['data']['id'] ?? null;
+
+            if ($firstPostId) {
+                $post = \Flarum\Post\Post::find($firstPostId);
+                $this->assertTrue($post->polls()->count() === 0, 'Unauthorized user should not create a poll');
+            }
+        }
+    }
+
+    #[Test]
+    #[DataProvider('authorizedUserProvider')]
     public function authorized_user_can_create_poll_with_poll_group(int $userId)
     {
         AbstractPollGroupTestCase::enablePollGroup();
         $response = $this->send(
             $this->request(
                 'POST',
-                '/api/fof/polls',
+                '/api/polls',
                 [
                     'authenticatedAs' => $userId,
                     'json'            => [
@@ -667,18 +750,15 @@ class CreatePollTest extends TestCase
         $this->assertEquals(2, $poll->poll_group_id);
     }
 
-    /**
-     * @dataProvider unauthorizedUserProvider
-     *
-     * @test
-     */
+    #[Test]
+    #[DataProvider('unauthorizedUserProvider')]
     public function unauthorized_user_cannot_create_poll_with_poll_group(int $userId)
     {
         AbstractPollGroupTestCase::enablePollGroup();
         $response = $this->send(
             $this->request(
                 'POST',
-                '/api/fof/polls',
+                '/api/polls',
                 [
                     'authenticatedAs' => $userId,
                     'json'            => [
@@ -717,16 +797,14 @@ class CreatePollTest extends TestCase
         $this->assertEquals(403, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function cannot_create_poll_with_nonexistent_poll_group()
     {
         AbstractPollGroupTestCase::enablePollGroup();
         $response = $this->send(
             $this->request(
                 'POST',
-                '/api/fof/polls',
+                '/api/polls',
                 [
                     'authenticatedAs' => 1,
                     'json'            => [

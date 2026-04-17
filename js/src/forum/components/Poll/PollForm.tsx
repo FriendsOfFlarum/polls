@@ -150,7 +150,12 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
         {this.displayOptions().toArray()}
 
         <Tooltip text={app.translator.trans('fof-polls.forum.modal.tooltip.options.add-button')}>
-          <Button className="Button PollModal--button Button--icon PollModal--add-button" icon="fas fa-plus" onclick={this.addOption.bind(this)} />
+          <Button
+            className="Button PollModal--button Button--icon PollModal--add-button"
+            icon="fas fa-plus"
+            onclick={this.addOption.bind(this)}
+            aria-label={extractText(app.translator.trans('fof-polls.forum.modal.tooltip.options.add-button'))}
+          />
         </Tooltip>
       </div>,
       80
@@ -173,6 +178,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
           {Button.component({
             className: 'Button PollModal--button Button--icon',
             icon: 'fas fa-times',
+            'aria-label': extractText(app.translator.trans('fof-polls.forum.modal.date_clear')),
             onclick: this.endDate.bind(this, null),
           })}
         </div>
@@ -294,35 +300,34 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
               bidi={this.optionAnswers[i]}
               placeholder={app.translator.trans('fof-polls.forum.modal.option_placeholder') + ' #' + (i + 1)}
             />
-            {app.forum.attribute<boolean>('allowPollOptionImage') && (
-              <div className="Poll-answer-image">
-                {this.uploadConditional(
-                  !!imgFunc(),
-                  option?.isImageUpload(),
-                  <>
-                    <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_option_image.label')}</label>
-                    <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_option_image.help')}</p>
-                    <input type="hidden" name={'answerImage' + (i + 1)} value={imgFunc()} />
-                  </>,
+            <div className="Poll-answer-image">
+              {this.uploadConditional(
+                !!imgFunc(),
+                option?.isImageUpload(),
+                <>
+                  <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_option_image.label')}</label>
+                  <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_option_image.help')}</p>
+                  <input type="hidden" name={'answerImage' + (i + 1)} value={imgFunc()} />
+                </>,
 
-                  <UploadPollImageButton name="pollOptionImage" option={option} onUpload={this.pollOptionImageUploadSuccess.bind(this, i)} />,
+                <UploadPollImageButton name="pollOptionImage" option={option} onUpload={this.pollOptionImageUploadSuccess.bind(this, i)} />,
 
-                  <input
-                    type="text"
-                    name={'answerImage' + (i + 1)}
-                    className="FormControl"
-                    bidi={imgFunc}
-                    placeholder={app.translator.trans('fof-polls.forum.modal.image_option_placeholder')}
-                  />
-                )}
-              </div>
-            )}
+                <input
+                  type="text"
+                  name={'answerImage' + (i + 1)}
+                  className="FormControl"
+                  bidi={imgFunc}
+                  placeholder={app.translator.trans('fof-polls.forum.modal.image_option_placeholder')}
+                />
+              )}
+            </div>
           </fieldset>
           {i >= 2
             ? Button.component({
                 type: 'button',
                 className: 'Button PollModal--button Button--icon',
                 icon: 'fas fa-minus',
+                'aria-label': extractText(app.translator.trans('fof-polls.forum.modal.tooltip.options.remove-button')),
                 onclick: i >= 2 ? this.removeOption.bind(this, i) : '',
               })
             : ''}
@@ -436,32 +441,24 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
   }
 
   uploadConditional(hasImage: boolean, isUpload: boolean, ifCanUpload: JSX.Element, uploadButton: JSX.Element, imageUrlInput: JSX.Element) {
-    const canUpload = app.forum.attribute<boolean>('canUploadPollImages');
-    const canUploadNow = this.state.poll?.exists || (app.forum.attribute('canStartPolls') && app.forum.attribute('canStartGlobalPolls'));
+    const isExistingUrlImage = hasImage && !isUpload;
 
-    // if can upload OR image is already uploaded
-    if (canUpload || isUpload) {
-      // may not have enough permissions to upload before creating poll
-      if (!canUploadNow && !isUpload) {
-        return (
-          <>
-            {imageUrlInput}
-            <p class="helpText">{app.translator.trans('fof-polls.forum.modal.poll_image.later_help')}</p>
-          </>
-        );
-      }
-
+    // Existing poll with an external URL image — show deprecation notice
+    if (isExistingUrlImage) {
       return (
         <>
           {ifCanUpload}
-          <div class="Poll-image-inputs">
-            {!hasImage && imageUrlInput}
-            {uploadButton}
-          </div>
+          <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_image.url_deprecated')}</p>
+          {uploadButton}
         </>
       );
     }
 
-    return imageUrlInput;
+    return (
+      <>
+        {ifCanUpload}
+        {uploadButton}
+      </>
+    );
   }
 }

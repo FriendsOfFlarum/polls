@@ -18,7 +18,7 @@ use Illuminate\Support\Arr;
 
 class PollPolicy extends AbstractPolicy
 {
-    public function seeVoteCount(User $actor, Poll $poll)
+    public function seeVoteCount(User $actor, Poll $poll): string|bool|null
     {
         $isPollAuthor = $actor->id === $poll->user_id;
 
@@ -29,9 +29,11 @@ class PollPolicy extends AbstractPolicy
         if ($poll->myVotes($actor)->count() || $actor->can('polls.viewResultsWithoutVoting', $poll->post !== null ? $poll->post->discussion : null) || $poll->isGlobal() || $isPollAuthor) {
             return $this->allow();
         }
+
+        return null;
     }
 
-    public function seeVoters(User $actor, Poll $poll)
+    public function seeVoters(User $actor, Poll $poll): string|bool|null
     {
         if (!$actor->can('seeVoteCount', $poll)) {
             return $this->deny();
@@ -40,16 +42,20 @@ class PollPolicy extends AbstractPolicy
         if ($poll->public_poll) {
             return $this->allow();
         }
+
+        return null;
     }
 
-    public function view(User $actor, Poll $poll)
+    public function view(User $actor, Poll $poll): string|bool|null
     {
         if ($actor->can('view', $poll->post) || $poll->isGlobal()) {
             return $this->allow();
         }
+
+        return null;
     }
 
-    public function vote(User $actor, Poll $poll)
+    public function vote(User $actor, Poll $poll): string|bool|null
     {
         $discussion = $poll->post !== null ? $poll->post->discussion : null;
         $can = $discussion ? $actor->can('polls.vote', $discussion) : $actor->can('discussion.polls.vote', $discussion);
@@ -57,9 +63,11 @@ class PollPolicy extends AbstractPolicy
         if (($can || $poll->isGlobal()) && !$poll->hasEnded()) {
             return $this->allow();
         }
+
+        return null;
     }
 
-    public function changeVote(User $actor, Poll $poll)
+    public function changeVote(User $actor, Poll $poll): string|bool|null
     {
         if ($actor->hasPermission('polls.changeVote')) {
             return $this->allow();
@@ -68,7 +76,7 @@ class PollPolicy extends AbstractPolicy
         return (bool) Arr::get($poll->settings, 'allow_change_vote', false);
     }
 
-    public function edit(User $actor, Poll $poll)
+    public function edit(User $actor, Poll $poll): string|bool|null
     {
         if ($actor->can('polls.moderate', $poll->post !== null ? $poll->post->discussion : null)) {
             return $this->allow();
@@ -86,9 +94,11 @@ class PollPolicy extends AbstractPolicy
         if ($poll->isGlobal()) {
             return $actor->id === $poll->user_id && $actor->hasPermission('polls.selfEdit');
         }
+
+        return null;
     }
 
-    public function delete(User $actor, Poll $poll)
+    public function delete(User $actor, Poll $poll): string|bool|null
     {
         return $this->edit($actor, $poll);
     }

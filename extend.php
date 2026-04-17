@@ -11,10 +11,9 @@
 
 namespace FoF\Polls;
 
-use Flarum\Api\Controller;
-use Flarum\Api\Serializer\DiscussionSerializer;
-use Flarum\Api\Serializer\ForumSerializer;
-use Flarum\Api\Serializer\PostSerializer;
+use Flarum\Api\Context;
+use Flarum\Api\Resource;
+use Flarum\Api\Schema;
 use Flarum\Discussion\Discussion;
 use Flarum\Extend;
 use Flarum\Post\Event\Saving as PostSaving;
@@ -29,7 +28,8 @@ return [
         ->route('/polls', 'fof.polls.showcase')
         ->route('/polls/all', 'fof.polls.list', Content\PollsDirectory::class)
         ->route('/polls/view/{id}', 'fof.poll.view')
-        ->route('/polls/composer', 'fof.polls.composer'),
+        ->route('/polls/composer', 'fof.polls.composer')
+        ->jsDirectory(__DIR__.'/js/dist/forum'),
 
     (new Extend\Frontend('admin'))
         ->js(__DIR__.'/js/dist/admin.js')
@@ -37,87 +37,63 @@ return [
 
     new Extend\Locales(__DIR__.'/resources/locale'),
 
+    // Image upload/delete routes (non-JSON:API endpoints)
     (new Extend\Routes('api'))
-        ->post('/fof/polls', 'fof.polls.create', Controllers\CreatePollController::class)
-        ->get('/fof/polls', 'fof.polls.index', Controllers\ListGlobalPollsController::class)
-        ->get('/fof/polls/{id:\d+}', 'fof.polls.show', Controllers\ShowPollController::class)
-        ->patch('/fof/polls/{id:\d+}', 'fof.polls.edit', Controllers\EditPollController::class)
-        ->delete('/fof/polls/{id:\d+}', 'fof.polls.delete', Controllers\DeletePollController::class)
-        ->patch('/fof/polls/{id:\d+}/votes', 'fof.polls.votes', Controllers\MultipleVotesPollController::class)
-        ->post('/fof/polls/pollImage', 'fof.polls.upload-image', Controllers\UploadPollImageController::class)
-        ->delete('/fof/polls/pollImage/name/{fileName}', 'fof.polls.delete-image-name', Controllers\DeletePollImageByNameController::class)
-        ->post('/fof/polls/pollImage/{pollId:\d+}', 'fof.polls.upload-image-poll', Controllers\UploadPollImageController::class)
-        ->delete('/fof/polls/pollImage/{pollId:\d+}', 'fof.polls.delete-image-poll', Controllers\DeletePollImageController::class)
-        ->post('/fof/polls/pollOptionImage', 'fof.polls.upload-option-image-option', Controllers\UploadPollOptionImageController::class)
-        ->delete('/fof/polls/pollOptionImage/name/{fileName}', 'fof.polls.delete-option-image-name', Controllers\DeletePollImageByNameController::class)
-        ->post('/fof/polls/pollOptionImage/{optionId:\d+}', 'fof.polls.upload-option-image', Controllers\UploadPollOptionImageController::class)
-        ->delete('/fof/polls/pollOptionImage/{optionId:\d+}', 'fof.polls.delete-option-image', Controllers\DeletePollOptionImageController::class),
-
-    (new Extend\Model(Post::class))
-        ->hasMany('polls', Poll::class, 'post_id', 'id'),
-
-    (new Extend\Model(Discussion::class))
-        ->hasMany('polls', Poll::class, 'post_id', 'first_post_id'),
+        ->post('/polls/pollImage', 'fof.polls.upload-image', Controllers\UploadPollImageController::class)
+        ->delete('/polls/pollImage/name/{fileName}', 'fof.polls.delete-image-name', Controllers\DeletePollImageByNameController::class)
+        ->post('/polls/pollImage/{pollId:\d+}', 'fof.polls.upload-image-poll', Controllers\UploadPollImageController::class)
+        ->delete('/polls/pollImage/{pollId:\d+}', 'fof.polls.delete-image-poll', Controllers\DeletePollImageController::class)
+        ->post('/polls/pollOptionImage', 'fof.polls.upload-option-image-option', Controllers\UploadPollOptionImageController::class)
+        ->delete('/polls/pollOptionImage/name/{fileName}', 'fof.polls.delete-option-image-name', Controllers\DeletePollImageByNameController::class)
+        ->post('/polls/pollOptionImage/{optionId:\d+}', 'fof.polls.upload-option-image', Controllers\UploadPollOptionImageController::class)
+        ->delete('/polls/pollOptionImage/{optionId:\d+}', 'fof.polls.delete-option-image', Controllers\DeletePollOptionImageController::class),
 
     (new Extend\Event())
-        ->listen(PostSaving::class, Listeners\SavePollsToDatabase::class)
         ->listen(SettingsSaved::class, Listeners\ClearFormatterCache::class),
 
-    (new Extend\ApiSerializer(DiscussionSerializer::class))
-        ->attributes(Api\AddDiscussionAttributes::class),
+    // Add poll-related attributes to Forum resource (always loaded)
+    (new Extend\ApiResource(Resource\ForumResource::class))
+        ->fields(function () {
+            return [
+                Schema\Boolean::make('canStartGlobalPolls')
+                    ->get(fn ($forum, Context $context) => $context->getActor()->can('startGlobalPoll')),
+                Schema\Boolean::make('canUploadPollImages')
+                    ->get(fn ($forum, Context $context) => $context->getActor()->can('uploadPollImages')),
+                Schema\Boolean::make('canStartPollGroup')
+                    ->get(function ($forum, Context $context) {
+                        $settings = resolve(\Flarum\Settings\SettingsRepositoryInterface::class);
 
-    (new Extend\ApiSerializer(PostSerializer::class))
-        ->hasMany('polls', Api\Serializers\PollSerializer::class)
-        ->attributes(Api\AddPostAttributes::class),
+                        return (bool) $settings->get('fof-polls.enablePollGroups', false) && $context->getActor()->can('startPollGroup');
+                    }),
+                Schema\Boolean::make('canViewPollGroups')
+                    ->get(function ($forum, Context $context) {
+                        $settings = resolve(\Flarum\Settings\SettingsRepositoryInterface::class);
 
-    (new Extend\ApiSerializer(ForumSerializer::class))
-        ->attributes(Api\AddForumAttributes::class),
-
-    (new Extend\ApiController(Controller\ListDiscussionsController::class))
-        ->loadWhere('polls', function ($query) {
-            $query->select(['id', 'post_id']);
-        })
-        ->addOptionalInclude(['firstPost.polls']),
-
-    (new Extend\ApiController(Controller\ShowDiscussionController::class))
-        ->addInclude(['posts.polls', 'posts.polls.options', 'posts.polls.myVotes', 'posts.polls.myVotes.option'])
-        ->addOptionalInclude(['posts.polls.votes', 'posts.polls.votes.user', 'posts.polls.votes.option']),
-
-    (new Extend\ApiController(Controller\CreateDiscussionController::class))
-        ->addInclude(['firstPost.polls', 'firstPost.polls.options', 'firstPost.polls.myVotes', 'firstPost.polls.myVotes.option'])
-        ->addOptionalInclude(['firstPost.polls.votes', 'firstPost.polls.votes.user', 'firstPost.polls.votes.option']),
-
-    (new Extend\ApiController(Controller\CreatePostController::class))
-        ->addInclude(['polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option'])
-        ->addOptionalInclude(['polls.votes', 'polls.votes.user', 'polls.votes.option']),
-
-    (new Extend\ApiController(Controller\ListPostsController::class))
-        ->addInclude(['polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option'])
-        ->addOptionalInclude(['polls.votes', 'polls.votes.user', 'polls.votes.option']),
-
-    (new Extend\ApiController(Controller\ShowPostController::class))
-        ->addInclude(['polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option'])
-        ->addOptionalInclude(['polls.votes', 'polls.votes.user', 'polls.votes.option']),
+                        return (bool) $settings->get('fof-polls.enablePollGroups', false) && $context->getActor()->can('viewPollGroups');
+                    }),
+            ];
+        }),
 
     (new Extend\Console())
-        ->command(Console\RefreshVoteCountCommand::class),
+        ->command(Console\RefreshVoteCountCommand::class)
+        ->command(Console\ConvertPollImagesCommand::class),
 
     (new Extend\Policy())
-        ->modelPolicy(Poll::class, Access\PollPolicy::class)
-        ->modelPolicy(Post::class, Access\PostPolicy::class),
+        ->modelPolicy(Poll::class, Access\PollPolicy::class),
 
     (new Extend\Settings())
         ->default('fof-polls.maxOptions', 10)
         ->default('fof-polls.optionsColorBlend', true)
         ->default('fof-polls.directory-default-sort', '-createdAt')
+        ->default('fof-polls.enableDiscussionPolls', true)
         ->default('fof-polls.enableGlobalPolls', false)
         ->default('fof-polls.image_height', 250)
         ->default('fof-polls.image_width', 250)
-        ->default('fof-polls.allowImageUploads', false)
+        ->default('fof-polls.maxImageUploadSize', 10240)
+        ->serializeToForum('discussionPollsEnabled', 'fof-polls.enableDiscussionPolls', 'boolval')
         ->serializeToForum('pollsDirectoryDefaultSort', 'fof-polls.directory-default-sort', 'strval')
         ->serializeToForum('globalPollsEnabled', 'fof-polls.enableGlobalPolls', 'boolval')
         ->serializeToForum('pollGroupsEnabled', 'fof-polls.enablePollGroups', 'boolval')
-        ->serializeToForum('allowPollOptionImage', 'fof-polls.allowOptionImage', 'boolval')
         ->serializeToForum('pollMaxOptions', 'fof-polls.maxOptions', 'intval')
         ->registerLessConfigVar('fof-polls-options-color-blend', 'fof-polls.optionsColorBlend', function ($value) {
             return $value ? 'true' : 'false';
@@ -132,9 +108,102 @@ return [
     (new Extend\Filesystem())
         ->disk('fof-polls', PollImageDisk::class),
 
-    (new Extend\Filter(Filter\GlobalPollFilterer::class))
-        ->addFilter(Filter\PollIsEndedFilter::class),
+    // Resources (always registered — endpoints within handle their own access control)
+    new Extend\ApiResource(Api\Resource\PollResource::class),
+    new Extend\ApiResource(Api\Resource\PollOptionResource::class),
+    new Extend\ApiResource(Api\Resource\PollVoteResource::class),
+    new Extend\ApiResource(Api\Resource\PollGroupResource::class),
 
+    // Search drivers
+    (new Extend\SearchDriver(\Flarum\Search\Database\DatabaseSearchDriver::class))
+        ->addSearcher(Poll::class, Filter\GlobalPollSearcher::class)
+        ->addFilter(Filter\GlobalPollSearcher::class, Filter\PollIsEndedFilter::class)
+        ->addSearcher(PollGroup::class, Filter\PollGroupSearcher::class)
+        ->addFilter(Filter\PollGroupSearcher::class, Filter\PollGroupHasPollsFilter::class),
+
+    // Discussion-based polls (conditionally loaded)
+    (new Extend\Conditional())
+        ->whenSetting('fof-polls.enableDiscussionPolls', true, function () {
+            return [
+                (new Extend\Model(Post::class))
+                    ->hasMany('polls', Poll::class, 'post_id', 'id'),
+
+                (new Extend\Model(Discussion::class))
+                    ->hasMany('polls', Poll::class, 'post_id', 'first_post_id'),
+
+                (new Extend\Event())
+                    ->listen(PostSaving::class, Listeners\SavePollsToDatabase::class),
+
+                (new Extend\ApiResource(Resource\DiscussionResource::class))
+                    ->fields(fn () => [
+                        Schema\Boolean::make('hasPoll')
+                            ->get(function (Discussion $discussion) {
+                                return $discussion->relationLoaded('polls')
+                                    ? $discussion->polls->isNotEmpty() // @phpstan-ignore property.notFound
+                                    : $discussion->polls()->exists(); // @phpstan-ignore method.notFound
+                            }),
+                        Schema\Boolean::make('canStartPoll')
+                            ->get(fn (Discussion $discussion, Context $context) => $context->getActor()->can('polls.start', $discussion)),
+                        Schema\Arr::make('poll')
+                            ->writableOnCreate()
+                            ->visible(false)
+                            ->set(function (Discussion $discussion, ?array $value) {
+                                Listeners\SavePollsToDatabase::$pendingPollData = $value;
+                            }),
+                    ])
+                    ->endpoint('index', function ($endpoint) {
+                        return $endpoint
+                            ->eagerLoadWhere('polls', function ($query) {
+                                $query->select(['id', 'post_id']);
+                            })
+                            ->addDefaultInclude(['firstPost.polls']);
+                    })
+                    ->endpoint('show', function ($endpoint) {
+                        return $endpoint->addDefaultInclude([
+                            'firstPost.polls', 'firstPost.polls.options', 'firstPost.polls.myVotes', 'firstPost.polls.myVotes.option',
+                        ]);
+                    }),
+
+                (new Extend\ApiResource(Resource\PostResource::class))
+                    ->fields(fn () => [
+                        Schema\Boolean::make('canStartPoll')
+                            ->get(fn (Post $post, Context $context) => $context->getActor()->can('startPoll', $post)),
+                        Schema\Arr::make('poll')
+                            ->writableOnCreate()
+                            ->visible(false)
+                            ->set(fn () => null),
+                        Schema\Relationship\ToMany::make('polls')
+                            ->includable()
+                            ->type('polls'),
+                    ])
+                    ->endpoint('create', function ($endpoint) {
+                        return $endpoint->addDefaultInclude([
+                            'polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option',
+                        ]);
+                    })
+                    ->endpoint('index', function ($endpoint) {
+                        return $endpoint->addDefaultInclude([
+                            'polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option',
+                        ]);
+                    })
+                    ->endpoint('show', function ($endpoint) {
+                        return $endpoint->addDefaultInclude([
+                            'polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option',
+                        ]);
+                    }),
+
+                (new Extend\ApiResource(Resource\ForumResource::class))
+                    ->fields(fn () => [
+                        Schema\Boolean::make('canStartPolls')
+                            ->get(fn ($forum, Context $context) => $context->getActor()->can('discussion.polls.start')),
+                    ]),
+
+                (new Extend\Policy())
+                    ->modelPolicy(Post::class, Access\PostPolicy::class),
+            ];
+        }),
+
+    // Poll groups (conditionally loaded)
     (new Extend\Conditional())
         ->when(new Extender\IsPollGroupEnabled(), function () {
             return [
@@ -145,19 +214,6 @@ return [
                     ->route('/polls/groups/composer', 'fof.polls.groups.composer')
                     ->route('/polls/groups', 'fof.polls.groups.list')
                     ->route('/polls/groups/{id}', 'fof.polls.groups.view'),
-
-                (new Extend\Routes('api'))
-                    ->get('/fof/polls/groups', 'fof.polls.groups.index', Controllers\ListPollGroupsController::class)
-                    ->get('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.show', Controllers\ShowPollGroupController::class)
-                    ->post('/fof/polls/groups', 'fof.polls.groups.create', Controllers\CreatePollGroupController::class)
-                    ->patch('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.edit', Controllers\EditPollGroupController::class)
-                    ->delete('/fof/polls/groups/{id:\d+}', 'fof.polls.groups.delete', Controllers\DeletePollGroupController::class),
-
-                (new Extend\Filter(Filter\PollGroupFilterer::class))
-                    ->addFilter(Filter\PollGroupHasPollsFilter::class),
-
-                (new Extend\ModelVisibility(PollGroup::class))
-                    ->scope(Access\ScopePollGroupVisibility::class),
             ];
         }),
 ];

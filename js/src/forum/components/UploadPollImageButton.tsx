@@ -26,13 +26,11 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
   fileName: string | undefined = undefined;
   $input: JQuery<HTMLElement> | undefined;
 
-  // @ts-expect-error
   view(vnode: Mithril.Vnode<UploadPollImageButtonAttrs>) {
     this.attrs.loading = this.loading;
     this.attrs.className = classList(this.attrs.className, 'Button', 'Button--inverted');
 
     const imageUrl = this.getImageUrl();
-    const canUpload = app.forum.attribute<boolean>('canUploadPollImages');
 
     if (imageUrl) {
       this.attrs.onclick = this.remove.bind(this);
@@ -54,7 +52,7 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
       this.attrs.onclick = this.upload.bind(this);
     }
 
-    return canUpload && super.view({ ...vnode, poll: undefined, children: app.translator.trans('fof-polls.forum.upload_image.upload_button') });
+    return super.view({ ...vnode, poll: undefined, children: app.translator.trans('fof-polls.forum.upload_image.upload_button') });
   }
 
   /**
@@ -121,7 +119,7 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
   }
 
   resourceUrl(fileName: string | undefined = undefined) {
-    let url = app.forum.attribute('apiUrl') + '/fof/polls/' + this.attrs.name;
+    let url = app.forum.attribute('apiUrl') + '/polls/' + this.attrs.name;
     const poll = this.attrs.poll;
     const option = this.attrs.option;
 
@@ -153,6 +151,18 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
     this.loading = false;
     this.uploadedImageUrl = response?.fileUrl;
     this.fileName = response?.fileName;
+
+    // Update the store model so other components (PollImage, PostPoll) reflect the change immediately.
+    // Push the filename (not the full URL) so it matches what the API persists.
+    if (response?.fileName) {
+      if (this.attrs.poll?.exists) {
+        this.attrs.poll.pushAttributes({ image: response.fileName, imageUrl: response.fileUrl, isImageUpload: true });
+      }
+
+      if (this.attrs.option?.exists) {
+        this.attrs.option.pushAttributes({ imageUrl: response.fileUrl, image_url: response.fileName, isImageUpload: true });
+      }
+    }
 
     this.attrs.onUpload?.(response?.fileName);
     m.redraw();

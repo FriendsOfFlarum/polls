@@ -13,57 +13,29 @@ namespace FoF\Polls\Api\Controllers;
 
 use Flarum\Http\RequestUtil;
 use Flarum\Settings\SettingsRepositoryInterface;
-use Flarum\User\Exception\PermissionDeniedException;
 use FoF\Polls\Events\PollImageWillBeResized;
 use FoF\Polls\Poll;
+use FoF\Polls\PollImageUploader;
+use FoF\Polls\Validators\PollImageValidator;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Filesystem\Cloud;
-use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Intervention\Image\Constraint;
-use Intervention\Image\Image;
 use Intervention\Image\ImageManager;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 class UploadPollImageController implements RequestHandlerInterface
 {
-    protected $filenamePrefix = 'pollImage';
-
-    /**
-     * @var Cloud
-     */
-    protected $uploadDir;
-
-    /**
-     * @var ImageManager
-     */
-    protected $imageManager;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $events;
-
-    /**
-     * @var SettingsRepositoryInterface
-     */
-    protected $settings;
+    protected string $filenamePrefix = 'pollImage';
 
     public function __construct(
-        Factory $filesystemFactory,
-        ImageManager $imageManager,
-        Dispatcher $events,
-        SettingsRepositoryInterface $settings
+        protected PollImageUploader $uploader,
+        protected PollImageValidator $validator,
+        protected ImageManager $imageManager,
+        protected Dispatcher $events,
+        protected SettingsRepositoryInterface $settings,
     ) {
-        $this->imageManager = $imageManager;
-        $this->uploadDir = $filesystemFactory->disk('fof-polls');
-        $this->events = $events;
-        $this->settings = $settings;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -71,74 +43,48 @@ class UploadPollImageController implements RequestHandlerInterface
         $actor = RequestUtil::getActor($request);
         $pollId = Arr::get($request->getQueryParams(), 'pollId');
 
-        $areUploadsAllowed = (bool) $this->settings->get('fof-polls.allowImageUploads');
-
-        if (!$areUploadsAllowed) {
-            throw new PermissionDeniedException();
-        }
-
         $actor->assertCan('uploadPollImages');
 
-        // if a poll ID is given, check that the user can edit that poll (and thus upload images!)
         if ($pollId) {
             $poll = Poll::findOrFail($pollId);
-
             $actor->assertCan('edit', $poll);
         } else {
             $poll = null;
-
-            // we don't know whether this image is for a global or a regular poll -- image upload can be done before poll creation
             $actor->assertCan('startPoll');
             $actor->assertCan('startGlobalPoll');
         }
 
         $file = Arr::get($request->getUploadedFiles(), $this->filenamePrefix);
 
-        $uploadName = $this->uploadName();
+        $this->validator->assertValid([$this->filenamePrefix => $file]);
 
-        $encodedImage = $this->makeImage($file, $uploadName);
+        $image = $this->imageManager->read($file->getStream()->getMetadata('uri'));
 
-        $this->uploadDir->put($uploadName, $encodedImage);
+        $baseWidth = (int) ($this->settings->get('fof-polls.image_width') ?: 250);
+        $baseHeight = (int) ($this->settings->get('fof-polls.image_height') ?: 250);
+
+        $this->events->dispatch(new PollImageWillBeResized(
+            $image,
+            $this->filenamePrefix,
+            $baseHeight,
+            $baseWidth,
+            $image->isAnimated(),
+        ));
+
+        $uploadName = $this->uploader->upload($this->filenamePrefix, $image);
 
         if ($poll) {
+            // Delete old image variants if replacing
+            if ($poll->image && !filter_var($poll->image, FILTER_VALIDATE_URL)) {
+                $this->uploader->deleteAllVariants($poll->image);
+            }
+
             $poll->image = $uploadName;
             $poll->save();
         }
 
-        return $this->jsonResponse($uploadName);
-    }
-
-    protected function makeImage(UploadedFileInterface $file, string $uploadName): Image
-    {
-        $image = $this->imageManager->make($file->getStream()->getMetadata('uri'));
-
-        $height = $this->settings->get('fof-polls.image_height');
-        $width = $this->settings->get('fof-polls.image_width');
-
-        $this->events->dispatch(new PollImageWillBeResized($image, $uploadName, $height, $width));
-
-        $encodedImage = $this->resizeImage($image, $height, $width);
-
-        return $encodedImage;
-    }
-
-    protected function resizeImage(Image $image, int $height = 250, int $width = 250, string $encoding = 'png'): Image
-    {
-        return $image->resize($height, $width, function (Constraint $constraint) {
-            $constraint->aspectRatio();
-            $constraint->upsize();
-        })->encode($encoding);
-    }
-
-    protected function uploadName(): string
-    {
-        return $this->filenamePrefix.'-'.Str::lower(Str::random(8)).'.png';
-    }
-
-    protected function jsonResponse(string $uploadName): JsonResponse
-    {
         return new JsonResponse([
-            'fileUrl'  => $this->uploadDir->url($uploadName),
+            'fileUrl'  => $this->uploader->url($uploadName),
             'fileName' => $uploadName,
         ]);
     }

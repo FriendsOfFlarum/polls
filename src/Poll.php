@@ -15,12 +15,9 @@ use Flarum\Database\AbstractModel;
 use Flarum\Database\ScopeVisibilityTrait;
 use Flarum\Post\Post;
 use Flarum\User\User;
-use Illuminate\Contracts\Filesystem\Cloud;
-use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
-use LogicException;
 
 /**
  * @property int         $id
@@ -71,7 +68,7 @@ class Poll extends AbstractModel
      *
      * @return static
      */
-    public static function build($question, $postId, $actorId, $endDate, $publicPoll, $allowMultipleVotes = false, $maxVotes = 0, $hideVotes = false, $allowChangeVote = true, $subtitle = null, $imageFilename = null, $imageAlt = null)
+    public static function build(string $question, ?int $postId, int $actorId, ?\Carbon\Carbon $endDate, mixed $publicPoll, mixed $allowMultipleVotes = false, mixed $maxVotes = 0, mixed $hideVotes = false, mixed $allowChangeVote = true, ?string $subtitle = null, ?string $imageFilename = null, ?string $imageAlt = null): static
     {
         $poll = new static();
 
@@ -153,31 +150,31 @@ class Poll extends AbstractModel
         return $this;
     }
 
-    protected static $stateUser;
+    protected static ?User $stateUser = null;
 
-    public function myVotes(?User $user = null)
+    public function myVotes(?User $user = null): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         $user = $user ?: static::$stateUser;
 
         return $this->votes()->where('user_id', $user ? $user->id : null);
     }
 
-    public static function setStateUser(User $user)
+    public static function setStateUser(User $user): void
     {
         static::$stateUser = $user;
     }
 
-    protected function getPublicPollAttribute()
+    protected function getPublicPollAttribute(): bool
     {
         return (bool) Arr::get($this->settings, 'public_poll');
     }
 
-    protected function getAllowMultipleVotesAttribute()
+    protected function getAllowMultipleVotesAttribute(): bool
     {
         return (bool) Arr::get($this->settings, 'allow_multiple_votes');
     }
 
-    protected function getMaxVotesAttribute()
+    protected function getMaxVotesAttribute(): int
     {
         return (int) Arr::get($this->settings, 'max_votes');
     }
@@ -194,14 +191,8 @@ class Poll extends AbstractModel
 
     public function delete()
     {
-        if ($this->image) {
-            /** @var Cloud $pollUploadDir */
-            $pollUploadDir = resolve(Factory::class)->disk('fof-polls');
-            if ($pollUploadDir->exists($this->image)) {
-                $pollUploadDir->delete($this->image);
-            } else {
-                throw new LogicException('Poll image file not found: '.$this->image);
-            }
+        if ($this->image && !filter_var($this->image, FILTER_VALIDATE_URL)) {
+            resolve(PollImageUploader::class)->deleteAllVariants($this->image);
         }
 
         return parent::delete();

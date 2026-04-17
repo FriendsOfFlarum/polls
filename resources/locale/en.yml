@@ -4,15 +4,17 @@ fof-polls:
       general:
         heading: General Settings
         help: These settings control the basic features of the Polls extension.
+      discussion_polls:
+        heading: Discussion Polls
+        help: These settings control polls that are attached to discussion posts.
+      enable_discussion_polls: Enable discussion polls
+      enable_discussion_polls_help: When enabled, users can create polls within discussion posts. Disable this if you only want to use global polls.
       global_polls:
         heading: Global Polls
         help: These settings control the global polls feature.
       image:
         heading: Image Settings
-        help: These settings control the image settings for polls.
-      allow_option_image: Allow an image URL to be provided for each poll option
-      allow_image_uploads: Allow image uploads for polls and their options
-      allow_image_uploads_help: If enabled, users will be able to upload images alongside also providing an image URL (if enabled for options, always enabled for the poll itself).
+        help: Configure image upload limits and dimensions. Images are automatically converted to WebP and responsive variants are generated.
       enable_global_polls: Enable global polls
       enable_global_polls_help: Global polls are not tied to a specific post, and may be accessed from a dedicated polls page.
       enabled_poll_groups: Enable poll groups
@@ -20,8 +22,11 @@ fof-polls:
       max_options: Maximum number of options per poll
       options_color_blend: Color blend text in poll options
       options_color_blend_help: Use this to use color mixing to make the poll options more readable. Disable if this feature causes issues with your forum's appearance, reducing readability.
-      image_height: Resize image height
-      image_width: Resize image width
+      max_image_upload_size: Maximum image upload size (KB)
+      max_image_upload_size_help: The maximum file size for image uploads in kilobytes. Images are automatically converted to WebP and resized after upload, so the final stored size will typically be much smaller. Default is 10240 KB (10 MB).
+      image_height: Resize image height (px)
+      image_width: Resize image width (px)
+      image_dimensions_help: The base dimensions for stored images. HiDPI variants (@2x, @3x) are generated automatically when the source image is large enough.
     permissions:
       view_results_without_voting: View results without voting
       start: Start a poll
@@ -54,6 +59,7 @@ fof-polls:
       total_votes: "{count, plural, one {# vote was given} other {# votes were given}}"
 
     poll_controls:
+      toggle_dropdown_accessible_label: Toggle poll controls menu
       edit_label: => core.ref.edit
       delete_label: => core.ref.delete
       view_label: => core.ref.view
@@ -148,13 +154,15 @@ fof-polls:
         help: Upload an image to be displayed alongside the poll (optional).
         alt_label: Image Alt Text
         alt_help_text: This text is required when an image is set, it will be displayed if the image fails to load.
-        later_help: You will be able to upload an image after creating the poll.
+        url_deprecated: This poll uses an external image URL. External URLs are deprecated and will be removed in a future version. Please re-upload the image using the upload button.
       poll_option_image:
         label: Poll Answer Image
         help: Upload an image to be displayed alongside the poll answer (optional).
+      date_clear: Clear end date
       tooltip:
         options:
           add-button: Add Answer
+          remove-button: Remove Answer
 
     moderation:
       add: Add Poll

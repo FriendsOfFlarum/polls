@@ -11,22 +11,22 @@
 
 namespace FoF\Polls\Filter;
 
-use Flarum\Filter\AbstractFilterer;
+use Flarum\Search\Database\AbstractSearcher;
 use Flarum\User\User;
 use FoF\Polls\PollGroupRepository;
 use Illuminate\Database\Eloquent\Builder;
 
-class PollGroupFilterer extends AbstractFilterer
+class PollGroupSearcher extends AbstractSearcher
 {
-    protected $pollGroups;
-
-    public function __construct(PollGroupRepository $pollGroups, array $filters, array $filterMutators)
-    {
-        $this->pollGroups = $pollGroups;
-        parent::__construct($filters, $filterMutators);
+    public function __construct(
+        protected PollGroupRepository $pollGroups,
+        \Flarum\Search\Filter\FilterManager $filters,
+        array $mutators
+    ) {
+        parent::__construct($filters, $mutators);
     }
 
-    protected function getQuery(User $actor): Builder
+    public function getQuery(User $actor): Builder
     {
         return $this->pollGroups->queryVisibleTo($actor);
     }

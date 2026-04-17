@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ScopePollVisibility
 {
-    public function __invoke(User $actor, Builder $query)
+    public function __invoke(User $actor, Builder $query): void
     {
         $query->where(function ($query) use ($actor) {
             $query->whereExists(function ($query) use ($actor) {

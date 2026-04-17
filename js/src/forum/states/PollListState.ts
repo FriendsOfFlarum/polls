@@ -21,7 +21,7 @@ export default class PollListState<P extends PollListParams = PollListParams> ex
   }
 
   get type(): string {
-    return 'fof/polls';
+    return 'polls';
   }
 
   getSort(): string {

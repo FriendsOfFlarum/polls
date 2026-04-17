@@ -1,7 +1,7 @@
-import { NestedStringArray } from '@askvortsov/rich-icu-message-formatter';
+import type Mithril from 'mithril';
 
 export default class FormError extends Error {
-  constructor(props: NestedStringArray | string) {
-    super(props + '');
+  constructor(message: Mithril.Children | string) {
+    super(String(message));
   }
 }
