@@ -278,7 +278,6 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
   submitItems(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
     const poll = this.state.poll;
-    const dirty = this.state.dirty(this.currentSnapshot());
 
     if (!poll.exists) {
       items.add(
@@ -287,7 +286,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
           className="Button PollModal-SaveDraftButton"
           icon="fas fa-save"
           loading={this.state.loading}
-          onclick={() => this.submit({ isDraft: true })}
+          onclick={() => this.saveDraft()}
         >
           {app.translator.trans('fof-polls.forum.compose.save_as_draft')}
         </Button>,
@@ -302,10 +301,9 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
           className="Button PollModal-SaveDraftButton"
           icon="fas fa-save"
           loading={this.state.loading}
-          disabled={!dirty}
-          onclick={() => this.submit({ isDraft: true })}
+          onclick={() => this.saveDraft()}
         >
-          {app.translator.trans(dirty ? 'fof-polls.forum.compose.update_draft' : 'fof-polls.forum.compose.saved_as_draft')}
+          {app.translator.trans('fof-polls.forum.compose.update_draft')}
         </Button>,
         30
       );
@@ -333,11 +331,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
           className="Button Button--primary PollModal-PublishButton"
           icon="fas fa-paper-plane"
           loading={this.state.loading}
-          onclick={async () => {
-            await this.submit({});
-            await this.state.poll.publish();
-            m.route.set(app.route('fof.polls.list'));
-          }}
+          onclick={() => this.publish()}
         >
           {app.translator.trans('fof-polls.forum.compose.publish')}
         </Button>
@@ -351,21 +345,6 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
         )}
       </div>
     );
-  }
-
-  currentSnapshot(): Record<string, unknown> {
-    return {
-      question: this.question(),
-      subtitle: this.subtitle(),
-      endDate: this.endDate() ?? null,
-      publicPoll: this.publicPoll(),
-      allowMultipleVotes: this.allowMultipleVotes(),
-      hideVotes: this.hideVotes(),
-      allowChangeVote: this.allowChangeVote(),
-      maxVotes: this.maxVotes(),
-      imageAlt: this.imageAlt(),
-      options: this.options.map((_, i) => [this.optionAnswers[i](), this.optionImageUrls[i]()]),
-    };
   }
 
   displayOptions(): ItemList<Mithril.Children> {
@@ -479,12 +458,33 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
   async onsubmit(event: Event) {
     event.preventDefault();
-    await this.submit({});
+    if (await this.submit({})) {
+      app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.compose.success'));
+    }
   }
 
-  async submit(extra: object): Promise<void> {
+  async saveDraft(): Promise<void> {
+    if (await this.submit({ isDraft: true })) {
+      app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.compose.draft_saved'));
+    }
+  }
+
+  async publish(): Promise<void> {
+    if (!(await this.submit({}))) return;
+    try {
+      await this.state.poll.publish();
+      app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.publish_success'));
+      m.route.set(app.route('fof.polls.list'));
+    } catch (error) {
+      console.error(error);
+      app.alerts.show({ type: 'error' }, app.translator.trans('fof-polls.forum.modal.error'));
+    }
+  }
+
+  async submit(extra: object): Promise<boolean> {
     try {
       await this.attrs.onsubmit({ ...this.data(), ...extra }, this.state);
+      return true;
     } catch (error) {
       if (error instanceof FormError) {
         app.alerts.show({ type: 'error' }, error.message);
@@ -492,6 +492,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
         console.error(error);
         app.alerts.show({ type: 'error' }, app.translator.trans('fof-polls.forum.modal.error'));
       }
+      return false;
     }
   }
 

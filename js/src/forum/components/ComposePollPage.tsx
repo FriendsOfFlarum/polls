@@ -6,7 +6,6 @@ import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import PollForm from './Poll/PollForm';
 import PollFormState from '../states/PollFormState';
 import ComposePollHero from './ComposePollHero';
-import Button from 'flarum/common/components/Button';
 import listItems from 'flarum/common/helpers/listItems';
 import ItemList from 'flarum/common/utils/ItemList';
 import SelectDropdown from 'flarum/common/components/SelectDropdown';
@@ -91,34 +90,9 @@ export default class ComposePollPage extends Page {
     const isNew = state.poll.id() === undefined;
     await state.save(data);
 
-    const alertAttrs = isNew
-      ? {
-          type: 'success',
-          controls: [
-            <Button
-              className="Button Button--link"
-              onclick={() =>
-                m.route.set(
-                  app.route('fof.polls.compose', {
-                    id: state.poll.id(),
-                  })
-                )
-              }
-            >
-              {app.translator.trans('fof-polls.forum.compose.continue_editing')}
-            </Button>,
-          ],
-        }
-      : {
-          type: 'success',
-        };
-
-    // Show success alert
-    const alertId = app.alerts.show(alertAttrs, app.translator.trans('fof-polls.forum.compose.success'));
-
-    // Hide alert after 10 seconds
-    setTimeout(() => app.alerts.dismiss(alertId), 10000);
-
+    // Per-flow success alerts ("Draft saved" / "Poll published" /
+    // "Poll saved successfully") are fired by PollForm based on which
+    // button was clicked. This handler only persists + redirects.
     if (isNew) {
       m.route.set(app.route('fof.polls.list'));
     }

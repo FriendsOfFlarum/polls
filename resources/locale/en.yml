@@ -134,8 +134,8 @@ fof-polls:
       success: Poll saved successfully.
       submit: Submit
       save_as_draft: Save as draft
-      saved_as_draft: Saved as draft
       update_draft: Update draft
+      draft_saved: Draft saved
       publish: Publish
       schedule_publication: Schedule publication
       schedule_datetime_label: Publish at
