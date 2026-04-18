@@ -78,7 +78,7 @@ export default class ComposePollPage extends Page {
               <ul>{listItems(this.sidebarItems().toArray())}</ul>
             </nav>
             <div className="sideNavOffset">
-              <PollForm poll={this.poll} onsubmit={this.onsubmit.bind(this)} />
+              <PollForm poll={this.poll} onsubmit={this.onsubmit.bind(this)} allowDrafts={true} />
             </div>
           </div>
         </div>

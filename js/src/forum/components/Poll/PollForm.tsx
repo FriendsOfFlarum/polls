@@ -20,6 +20,13 @@ import SchedulePollModal from '../SchedulePollModal';
 interface PollFormAttrs extends ComponentAttrs {
   poll: PollModel;
   onsubmit: (data: object, state: PollFormState) => Promise<void>;
+  /**
+   * Whether the draft / publish / schedule controls should be offered.
+   * Drafts are only supported for global polls, so post-bound and
+   * poll-group flows must leave this off (default). The compose page
+   * opts in explicitly.
+   */
+  allowDrafts?: boolean;
 }
 
 export default class PollForm extends Component<PollFormAttrs, PollFormState> {
@@ -279,7 +286,12 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     const items = new ItemList<Mithril.Children>();
     const poll = this.state.poll;
 
-    if (!poll.exists) {
+    // Drafts are global-only. For existing polls we can trust `isGlobal()`;
+    // for new polls the caller's `allowDrafts` flag is the source of truth
+    // since the poll hasn't been attached to anything yet.
+    const draftsAvailable = this.attrs.allowDrafts === true && (!poll.exists || poll.isGlobal());
+
+    if (draftsAvailable && !poll.exists) {
       items.add(
         'save-as-draft',
         <Button
@@ -294,7 +306,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
       );
 
       items.add('publish', this.publishSplitButton(), 20);
-    } else if (poll.isDraft()) {
+    } else if (draftsAvailable && poll.isDraft()) {
       items.add(
         'update-draft',
         <Button
