@@ -149,13 +149,22 @@ class CreatePollHandler
             $this->events->dispatch(new PollWasCreated($command->actor, $poll));
 
             foreach ($optionsData as $optionData) {
+                $answer = Arr::get($optionData, 'answer');
+
+                // In draft mode the option validator is skipped, so rows with
+                // empty/null `answer` would otherwise hit the NOT NULL column
+                // constraint. Skip blanks — the user will fill them in later.
+                if ($isDraft && ($answer === null || trim((string) $answer) === '')) {
+                    continue;
+                }
+
                 $imageUrl = Arr::get($optionData, 'imageUrl');
 
                 if (!$this->settings->get('fof-polls.allowOptionImage')) {
                     $imageUrl = null;
                 }
 
-                $option = PollOption::build(Arr::get($optionData, 'answer'), $imageUrl);
+                $option = PollOption::build($answer, $imageUrl);
 
                 $poll->options()->save($option);
 

@@ -172,6 +172,13 @@ class EditPollHandler
 
             if (!$isDraft) {
                 $this->optionValidator->assertValid($optionAttributes);
+            } else {
+                // In draft mode the option validator is skipped. Skip blank
+                // options so they don't hit the NOT NULL `answer` constraint.
+                $answer = Arr::get($optionAttributes, 'answer');
+                if ($answer === null || trim((string) $answer) === '') {
+                    continue;
+                }
             }
 
             $option = $poll->options()->updateOrCreate([

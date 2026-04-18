@@ -40,10 +40,16 @@ export default class PollFormState {
   }
 
   captureBaseline(): void {
+    const rawEndDate = this.poll.endDate?.();
+    // Flarum's `transformDate` turns empty strings into `new Date('')`
+    // which is Invalid — `toISOString()` on Invalid throws RangeError.
+    const endDate =
+      rawEndDate instanceof Date && !isNaN(rawEndDate.getTime()) ? rawEndDate.toISOString() : null;
+
     this.baseline = {
       question: this.poll.question(),
       subtitle: this.poll.subtitle?.(),
-      endDate: this.poll.endDate?.()?.toISOString() ?? null,
+      endDate,
       publicPoll: this.poll.publicPoll?.(),
       allowMultipleVotes: this.poll.allowMultipleVotes?.(),
       hideVotes: this.poll.hideVotes?.(),
