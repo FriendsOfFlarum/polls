@@ -66,8 +66,8 @@ export default class PollsPage extends AbstractPollPage {
   setStatus(status: PollStatus): void {
     if (this.status === status) return;
     this.status = status;
-    this.state.params.filter = { isDraft: STATUS_FILTER_VALUE[status] };
-    this.state.refresh();
+
+    this.state.refreshParams({ ...this.state.getParams(), filter: { isDraft: STATUS_FILTER_VALUE[status] } }, 1);
   }
 
   view(): Mithril.Children {
