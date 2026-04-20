@@ -19,7 +19,7 @@ use FoF\Polls\Poll;
 use FoF\Polls\Validators\PollValidator;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\ConnectionInterface;
 
 class PublishScheduledPollsCommand extends Command
 {
@@ -29,7 +29,8 @@ class PublishScheduledPollsCommand extends Command
     public function handle(
         SettingsRepositoryInterface $settings,
         PollValidator $validator,
-        Dispatcher $events
+        Dispatcher $events,
+        ConnectionInterface $db
     ): int {
         if (!(bool) $settings->get('fof-polls.enable_scheduled_publication', true)) {
             return 0;
@@ -41,7 +42,10 @@ class PublishScheduledPollsCommand extends Command
         // blocks task B until A commits; by the time B resumes, the rows
         // either have `published_at` set or `scheduled_publish_error` set, so
         // they no longer match the WHERE clause and B's result set is empty.
-        DB::transaction(function () use ($validator, $events) {
+        //
+        // We inject ConnectionInterface rather than using the DB facade because
+        // Flarum's console bootstrap doesn't set facade roots.
+        $db->transaction(function () use ($validator, $events) {
             $due = Poll::query()
                 ->whereNull('post_id')
                 ->whereNull('published_at')
