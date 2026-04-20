@@ -74,7 +74,7 @@ class EditDraftPollTest extends TestCase
         $response = $this->send(
             $this->request('PATCH', '/api/fof/polls/10', [
                 'authenticatedAs' => 4,
-                'json' => [
+                'json'            => [
                     'data' => [
                         'attributes' => ['question' => 'Edited draft'],
                     ],
@@ -94,7 +94,7 @@ class EditDraftPollTest extends TestCase
         $response = $this->send(
             $this->request('PATCH', '/api/fof/polls/10', [
                 'authenticatedAs' => 4,
-                'json' => [
+                'json'            => [
                     'data' => [
                         'attributes' => ['endDate' => '2000-01-01 00:00:00'],
                     ],
@@ -112,7 +112,7 @@ class EditDraftPollTest extends TestCase
         $response = $this->send(
             $this->request('PATCH', '/api/fof/polls/11', [
                 'authenticatedAs' => 4,
-                'json' => [
+                'json'            => [
                     'data' => [
                         'attributes' => ['endDate' => '2000-01-01 00:00:00'],
                     ],
@@ -133,7 +133,7 @@ class EditDraftPollTest extends TestCase
         $response = $this->send(
             $this->request('PATCH', '/api/fof/polls/12', [
                 'authenticatedAs' => 4,
-                'json' => [
+                'json'            => [
                     'data' => [
                         'attributes' => ['question' => 'Edited published'],
                     ],

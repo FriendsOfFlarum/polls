@@ -87,7 +87,7 @@ class PublishPollTest extends TestCase
         $response = $this->send(
             $this->request('POST', '/api/fof/polls/10/publish', [
                 'authenticatedAs' => 3,
-                'json' => [],
+                'json'            => [],
             ])
         );
 
@@ -103,7 +103,7 @@ class PublishPollTest extends TestCase
         $response = $this->send(
             $this->request('POST', '/api/fof/polls/11/publish', [
                 'authenticatedAs' => 3,
-                'json' => [],
+                'json'            => [],
             ])
         );
 
@@ -118,7 +118,7 @@ class PublishPollTest extends TestCase
         $response = $this->send(
             $this->request('POST', '/api/fof/polls/10/publish', [
                 'authenticatedAs' => 4,
-                'json' => [],
+                'json'            => [],
             ])
         );
 
@@ -132,7 +132,7 @@ class PublishPollTest extends TestCase
         $response = $this->send(
             $this->request('POST', '/api/fof/polls/10/publish', [
                 'authenticatedAs' => 3,
-                'json' => [
+                'json'            => [
                     'data' => [
                         'attributes' => [
                             'scheduledFor' => $future,
@@ -157,7 +157,7 @@ class PublishPollTest extends TestCase
         $response = $this->send(
             $this->request('POST', '/api/fof/polls/10/publish', [
                 'authenticatedAs' => 3,
-                'json' => [
+                'json'            => [
                     'data' => [
                         'attributes' => [
                             'scheduledFor' => '2000-01-01T00:00:00+00:00',
@@ -178,7 +178,7 @@ class PublishPollTest extends TestCase
         $response = $this->send(
             $this->request('POST', '/api/fof/polls/10/publish', [
                 'authenticatedAs' => 3,
-                'json' => [
+                'json'            => [
                     'data' => [
                         'attributes' => [
                             'scheduledFor' => '2099-01-01T00:00:00',
@@ -203,7 +203,7 @@ class PublishPollTest extends TestCase
         $response = $this->send(
             $this->request('POST', '/api/fof/polls/10/publish', [
                 'authenticatedAs' => 3,
-                'json' => [
+                'json'            => [
                     'data' => [
                         'attributes' => [
                             'scheduledFor' => 'not-a-dateZ',
@@ -222,7 +222,7 @@ class PublishPollTest extends TestCase
         $response = $this->send(
             $this->request('POST', '/api/fof/polls/10/publish', [
                 'authenticatedAs' => 3,
-                'json' => [
+                'json'            => [
                     'data' => [
                         'attributes' => [
                             'scheduledFor' => '2099-05-01T10:00:00+02:00',
@@ -246,7 +246,7 @@ class PublishPollTest extends TestCase
         $response = $this->send(
             $this->request('POST', '/api/fof/polls/13/publish', [
                 'authenticatedAs' => 3,
-                'json' => [
+                'json'            => [
                     'data' => [
                         'attributes' => [
                             'scheduledFor' => '2031-01-01T00:00:00+00:00',
@@ -265,7 +265,7 @@ class PublishPollTest extends TestCase
         $response = $this->send(
             $this->request('POST', '/api/fof/polls/12/publish', [
                 'authenticatedAs' => 3,
-                'json' => [
+                'json'            => [
                     'data' => [
                         'attributes' => [
                             'scheduledFor' => null,
@@ -287,7 +287,7 @@ class PublishPollTest extends TestCase
         $response = $this->send(
             $this->request('POST', '/api/fof/polls/14/publish', [
                 'authenticatedAs' => 3,
-                'json' => [],
+                'json'            => [],
             ])
         );
 

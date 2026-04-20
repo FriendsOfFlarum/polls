@@ -13,7 +13,6 @@ namespace FoF\Polls\Tests\integration\api;
 
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
-use FoF\Polls\Poll;
 
 class CreatePollDraftTest extends TestCase
 {
@@ -60,7 +59,7 @@ class CreatePollDraftTest extends TestCase
         $response = $this->send(
             $this->request('POST', '/api/fof/polls', [
                 'authenticatedAs' => 3,
-                'json' => [
+                'json'            => [
                     'data' => [
                         'attributes' => [
                             'question' => 'Draft question',
@@ -84,7 +83,7 @@ class CreatePollDraftTest extends TestCase
         $response = $this->send(
             $this->request('POST', '/api/fof/polls', [
                 'authenticatedAs' => 3,
-                'json' => [
+                'json'            => [
                     'data' => [
                         'attributes' => [
                             'question' => 'Bare draft',
@@ -103,7 +102,7 @@ class CreatePollDraftTest extends TestCase
         $response = $this->send(
             $this->request('POST', '/api/fof/polls', [
                 'authenticatedAs' => 3,
-                'json' => [
+                'json'            => [
                     'data' => [
                         'attributes' => [
                             'question' => 'Published from the start',
@@ -126,7 +125,7 @@ class CreatePollDraftTest extends TestCase
         $response = $this->send(
             $this->request('POST', '/api/fof/polls', [
                 'authenticatedAs' => 3,
-                'json' => [
+                'json'            => [
                     'data' => [
                         'attributes' => [
                             'question' => 'Discussion draft?',

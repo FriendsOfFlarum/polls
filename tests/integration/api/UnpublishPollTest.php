@@ -84,7 +84,7 @@ class UnpublishPollTest extends TestCase
         $response = $this->send(
             $this->request('POST', '/api/fof/polls/20/unpublish', [
                 'authenticatedAs' => 3,
-                'json' => [],
+                'json'            => [],
             ])
         );
 
@@ -106,7 +106,7 @@ class UnpublishPollTest extends TestCase
         $response = $this->send(
             $this->request('POST', '/api/fof/polls/21/unpublish', [
                 'authenticatedAs' => 3,
-                'json' => [],
+                'json'            => [],
             ])
         );
 
@@ -118,7 +118,7 @@ class UnpublishPollTest extends TestCase
         $response = $this->send(
             $this->request('POST', '/api/fof/polls/22/unpublish', [
                 'authenticatedAs' => 3,
-                'json' => [],
+                'json'            => [],
             ])
         );
 
@@ -130,7 +130,7 @@ class UnpublishPollTest extends TestCase
         $response = $this->send(
             $this->request('POST', '/api/fof/polls/20/unpublish', [
                 'authenticatedAs' => 4,
-                'json' => [],
+                'json'            => [],
             ])
         );
 
@@ -143,7 +143,7 @@ class UnpublishPollTest extends TestCase
         $unpublish = $this->send(
             $this->request('POST', '/api/fof/polls/23/unpublish', [
                 'authenticatedAs' => 3,
-                'json' => [],
+                'json'            => [],
             ])
         );
         $this->assertEquals(200, $unpublish->getStatusCode());

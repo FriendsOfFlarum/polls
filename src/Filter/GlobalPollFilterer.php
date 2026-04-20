@@ -34,7 +34,7 @@ class GlobalPollFilterer extends AbstractFilterer
         parent::__construct($filters ?? [], $filterMutators);
     }
 
-    public function filter(QueryCriteria $criteria, int $limit = null, int $offset = 0): QueryResults
+    public function filter(QueryCriteria $criteria, ?int $limit = null, int $offset = 0): QueryResults
     {
         // If the caller explicitly asks about drafts (via `filter[isDraft]=…`
         // or the negated `filter[-isDraft]=…`), let PollIsDraftFilter decide —
