@@ -96,13 +96,19 @@ Global polls can be saved as drafts, published manually, or scheduled to go live
 
 #### Cron setup (required for scheduled publication)
 
-Scheduled drafts are published by a console command that must be run on a schedule (every minute is recommended). Add to your system cron:
+Scheduled drafts are published by Flarum's built-in task scheduler. If you don't already run it, open your crontab:
 
-```cron
-* * * * * cd /path/to/flarum && php flarum fof:polls:publish-scheduled >> /dev/null 2>&1
+```sh
+crontab -e
 ```
 
-The command is safe to run concurrently — it takes row-level locks so multiple workers (e.g. an ECS deployment with `N > 1` tasks) won't double-publish the same poll.
+And add:
+
+```cron
+* * * * * cd /path/to/flarum && php flarum schedule:run
+```
+
+A single `schedule:run` entry covers scheduled polls and any other extension that registers scheduled tasks — you don't need a polls-specific line. Our task runs every minute and takes row-level locks, so multiple workers (e.g. an ECS deployment with `N > 1` tasks) won't double-publish the same poll.
 
 If a scheduled draft fails validation at publish time (missing question, fewer than two options, etc.), the error is recorded on the poll and future runs skip it until the author fixes the issue and re-schedules.
 
