@@ -44,6 +44,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
   protected allowChangeVote: Stream<boolean>;
   protected maxVotes: Stream<number>;
   protected datepickerMinDate: string = '';
+  protected pendingAction: 'draft' | 'publish' | null = null;
 
   oninit(vnode: Mithril.Vnode): void {
     super.oninit(vnode);
@@ -297,7 +298,8 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
         <Button
           className="Button PollModal-SaveDraftButton"
           icon="fas fa-save"
-          loading={this.state.loading}
+          loading={this.state.loading && this.pendingAction === 'draft'}
+          disabled={this.state.loading && this.pendingAction !== 'draft'}
           onclick={() => this.saveDraft()}
         >
           {app.translator.trans('fof-polls.forum.compose.save_as_draft')}
@@ -312,7 +314,8 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
         <Button
           className="Button PollModal-SaveDraftButton"
           icon="fas fa-save"
-          loading={this.state.loading}
+          loading={this.state.loading && this.pendingAction === 'draft'}
+          disabled={this.state.loading && this.pendingAction !== 'draft'}
           onclick={() => this.saveDraft()}
         >
           {app.translator.trans('fof-polls.forum.compose.update_draft')}
@@ -342,7 +345,8 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
         <Button
           className="Button Button--primary PollModal-PublishButton"
           icon="fas fa-paper-plane"
-          loading={this.state.loading}
+          loading={this.state.loading && this.pendingAction === 'publish'}
+          disabled={this.state.loading && this.pendingAction !== 'publish'}
           onclick={() => this.publish()}
         >
           {app.translator.trans('fof-polls.forum.compose.publish')}
@@ -510,20 +514,32 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
   }
 
   async saveDraft(): Promise<void> {
-    if (await this.submit({ isDraft: true })) {
-      app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.compose.draft_saved'));
+    this.pendingAction = 'draft';
+    try {
+      if (await this.submit({ isDraft: true })) {
+        app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.compose.draft_saved'));
+      }
+    } finally {
+      this.pendingAction = null;
+      m.redraw();
     }
   }
 
   async publish(): Promise<void> {
-    if (!(await this.submit({}))) return;
+    this.pendingAction = 'publish';
     try {
-      await this.state.poll.publish();
-      app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.publish_success'));
-      m.route.set(app.route('fof.polls.list'));
-    } catch (error) {
-      console.error(error);
-      app.alerts.show({ type: 'error' }, app.translator.trans('fof-polls.forum.modal.error'));
+      if (!(await this.submit({}))) return;
+      try {
+        await this.state.poll.publish();
+        app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.publish_success'));
+        m.route.set(app.route('fof.polls.list'));
+      } catch (error) {
+        console.error(error);
+        app.alerts.show({ type: 'error' }, app.translator.trans('fof-polls.forum.modal.error'));
+      }
+    } finally {
+      this.pendingAction = null;
+      m.redraw();
     }
   }
 
