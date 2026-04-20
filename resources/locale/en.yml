@@ -151,6 +151,7 @@ fof-polls:
       include_question: You must include a question
       max: You can have a maximum of {max} answers
       min: You must include a minimum of 2 answers
+      empty_answers: "{count, plural, one {# answer is empty — please fill it in or remove it.} other {# answers are empty — please fill them in or remove them.}}"
       no_voters: No Votes
       option_placeholder: Answer
       image_option_placeholder: Image URL (optional)

@@ -439,8 +439,28 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
       throw new FormError(app.translator.trans('fof-polls.forum.modal.include_question'));
     }
 
-    if (this.options.length < 2) {
+    // Count options with a non-empty answer. Checking `this.options.length`
+    // would be misleading — the UI keeps at least two rows on screen at all
+    // times (removeOption only allows `i >= 2`), so a row count of 2 doesn't
+    // imply two answers have been typed.
+    const filledCount = this.optionAnswers.filter((s) => {
+      const v = s();
+      return v != null && v.trim() !== '';
+    }).length;
+
+    if (filledCount < 2) {
       throw new FormError(app.translator.trans('fof-polls.forum.modal.min'));
+    }
+
+    // Above 2 filled, any remaining blank rows are still a problem — they'd
+    // trip the server's per-row `answer: required` rule. Tell the user how
+    // many empties there are so they can fill or remove them.
+    const emptyCount = this.optionAnswers.length - filledCount;
+    if (emptyCount > 0) {
+      // extractText flattens the translator's rich-array output — FormError
+      // stringifies via `+ ''`, which would otherwise join array chunks with
+      // commas (e.g. "1, answer is empty…").
+      throw new FormError(extractText(app.translator.trans('fof-polls.forum.modal.empty_answers', { count: emptyCount })));
     }
 
     const pollExists = this.state.poll.exists;

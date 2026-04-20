@@ -106,12 +106,10 @@ class CreatePollHandler
 
         $this->validator->assertValid($attributes);
 
-        if (!$isDraft) {
-            foreach ($optionsData as $optionData) {
-                // It is guaranteed all keys exist in the array because $optionData is manually created above
-                // This ensures every attribute will be validated (Flarum doesn't validate missing keys)
-                $this->optionValidator->assertValid($optionData);
-            }
+        foreach ($optionsData as $optionData) {
+            // It is guaranteed all keys exist in the array because $optionData is manually created above
+            // This ensures every attribute will be validated (Flarum doesn't validate missing keys)
+            $this->optionValidator->assertValid($optionData);
         }
 
         $this->setPollGroupRelationData($command->actor, null, $command->data);
@@ -150,14 +148,6 @@ class CreatePollHandler
 
             foreach ($optionsData as $optionData) {
                 $answer = Arr::get($optionData, 'answer');
-
-                // In draft mode the option validator is skipped, so rows with
-                // empty/null `answer` would otherwise hit the NOT NULL column
-                // constraint. Skip blanks — the user will fill them in later.
-                if ($isDraft && ($answer === null || trim((string) $answer) === '')) {
-                    continue;
-                }
-
                 $imageUrl = Arr::get($optionData, 'imageUrl');
 
                 if (!$this->settings->get('fof-polls.allowOptionImage')) {
