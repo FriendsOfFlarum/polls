@@ -170,6 +170,76 @@ class PublishPollTest extends TestCase
         $this->assertEquals(422, $response->getStatusCode());
     }
 
+    public function test_publish_with_scheduledFor_naive_timestamp_returns_422(): void
+    {
+        // Naive ISO 8601 (no `Z`, no `+HH:MM`) would otherwise be parsed in
+        // the server's PHP timezone — silently wrong. PollValidator must
+        // reject before business-rule checks run.
+        $response = $this->send(
+            $this->request('POST', '/api/fof/polls/10/publish', [
+                'authenticatedAs' => 3,
+                'json' => [
+                    'data' => [
+                        'attributes' => [
+                            'scheduledFor' => '2099-01-01T00:00:00',
+                        ],
+                    ],
+                ],
+            ])
+        );
+
+        $this->assertEquals(422, $response->getStatusCode());
+
+        $body = json_decode($response->getBody(), true);
+        $pointers = array_map(fn ($err) => $err['source']['pointer'] ?? null, $body['errors']);
+        $this->assertContains('/data/attributes/scheduledFor', $pointers);
+    }
+
+    public function test_publish_with_scheduledFor_nonsense_string_returns_422(): void
+    {
+        // A string that happens to end in `Z` but isn't a valid ISO 8601
+        // datetime must fail strict-format parsing (not silently slip
+        // through a permissive regex).
+        $response = $this->send(
+            $this->request('POST', '/api/fof/polls/10/publish', [
+                'authenticatedAs' => 3,
+                'json' => [
+                    'data' => [
+                        'attributes' => [
+                            'scheduledFor' => 'not-a-dateZ',
+                        ],
+                    ],
+                ],
+            ])
+        );
+
+        $this->assertEquals(422, $response->getStatusCode());
+    }
+
+    public function test_publish_with_scheduledFor_numeric_offset_is_normalized_to_utc(): void
+    {
+        // 10:00 at `+02:00` must be stored as 08:00 UTC.
+        $response = $this->send(
+            $this->request('POST', '/api/fof/polls/10/publish', [
+                'authenticatedAs' => 3,
+                'json' => [
+                    'data' => [
+                        'attributes' => [
+                            'scheduledFor' => '2099-05-01T10:00:00+02:00',
+                        ],
+                    ],
+                ],
+            ])
+        );
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $body = json_decode($response->getBody(), true);
+        // Flarum's JSON:API date formatter emits ISO 8601 UTC (`...+00:00`).
+        // 10:00 at +02:00 → 08:00 UTC.
+        $this->assertStringStartsWith('2099-05-01T08:00:00', $body['data']['attributes']['scheduledPublishAt']);
+    }
+
     public function test_publish_with_scheduledFor_after_end_date_returns_422(): void
     {
         // Poll 13 has end_date 2030-01-01. Schedule after that.

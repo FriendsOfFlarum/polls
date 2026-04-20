@@ -74,9 +74,11 @@ class PublishPollHandler
             throw new ValidationException(['options' => 'Poll must have at least 2 options to publish.']);
         }
 
-        // Schedule path
+        // Schedule path. Input parsing + timezone rules live in the
+        // validator; the handler only enforces business rules (future,
+        // before end date) and persists.
         if ($scheduledFor !== null) {
-            $scheduled = Carbon::parse($scheduledFor);
+            $scheduled = $this->validator->parseScheduledFor($scheduledFor);
 
             if (!$scheduled->isFuture()) {
                 throw new ValidationException(['scheduledFor' => 'Scheduled time must be in the future.']);
@@ -86,7 +88,7 @@ class PublishPollHandler
                 throw new ValidationException(['scheduledFor' => 'Scheduled time must be before the poll end date.']);
             }
 
-            $poll->scheduled_publish_at = $scheduled->utc();
+            $poll->scheduled_publish_at = $scheduled;
             $poll->scheduled_publish_error = null;
             $poll->save();
 
