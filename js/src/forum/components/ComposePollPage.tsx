@@ -87,15 +87,12 @@ export default class ComposePollPage extends Page {
   }
 
   async onsubmit(data: Object, state: PollFormState) {
-    const isNew = state.poll.id() === undefined;
     await state.save(data);
+    this.poll = state.poll;
 
-    // Per-flow success alerts ("Draft saved" / "Poll published" /
-    // "Poll saved successfully") are fired by PollForm based on which
-    // button was clicked. This handler only persists + redirects.
-    if (isNew) {
-      m.route.set(app.route('fof.polls.list'));
-    }
+    // Per-flow success alerts and navigation are owned by the caller
+    // (save draft / publish / schedule / plain save). This handler only
+    // persists and keeps the page bound to the latest saved model.
   }
 
   sidebarItems(): ItemList<Mithril.Children> {

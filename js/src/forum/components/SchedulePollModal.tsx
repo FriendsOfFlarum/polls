@@ -3,6 +3,7 @@ import Modal, { IInternalModalAttrs } from 'flarum/common/components/Modal';
 import Button from 'flarum/common/components/Button';
 import Stream from 'flarum/common/utils/Stream';
 import Poll from '../models/Poll';
+import PollFormState from '../states/PollFormState';
 import type Mithril from 'mithril';
 
 interface SchedulePollModalAttrs extends IInternalModalAttrs {
@@ -12,7 +13,7 @@ interface SchedulePollModalAttrs extends IInternalModalAttrs {
    * the modal for an already-saved poll (e.g. from the controls menu),
    * in which case we skip straight to scheduling.
    */
-  form: { submit: (extra: object) => Promise<boolean> } | null;
+  form: { submit: (extra: object) => Promise<boolean>; state: PollFormState } | null;
 }
 
 export default class SchedulePollModal extends Modal<SchedulePollModalAttrs> {
@@ -65,13 +66,18 @@ export default class SchedulePollModal extends Modal<SchedulePollModalAttrs> {
       if (this.attrs.form) {
         const ok = await this.attrs.form.submit({ isDraft: true });
         if (!ok) {
-          this.loading = false;
-          this.hide();
           return;
         }
       }
+
+      const poll = this.attrs.form ? this.attrs.form.state.poll : this.attrs.poll;
+
+      if (!poll.id()) {
+        throw new Error('Cannot schedule an unsaved poll.');
+      }
+
       // Then schedule.
-      await this.attrs.poll.publish({ scheduledFor: new Date(this.datetime()).toISOString() });
+      await poll.publish({ scheduledFor: new Date(this.datetime()).toISOString() });
       this.hide();
       m.route.set(app.route('fof.polls.list'));
     } catch (e: any) {

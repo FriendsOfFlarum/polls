@@ -149,10 +149,16 @@ export default class Poll extends Model {
   }
 
   publish(body: { scheduledFor?: string | null } = {}): Promise<this> {
+    const id = this.id();
+
+    if (!id) {
+      return Promise.reject(new Error('Cannot publish an unsaved poll.'));
+    }
+
     return app
       .request<any>({
         method: 'POST',
-        url: `${app.forum.attribute('apiUrl')}/fof/polls/${this.id()}/publish`,
+        url: `${app.forum.attribute('apiUrl')}/fof/polls/${id}/publish`,
         body: { data: { attributes: body } },
       })
       .then((payload) => {
@@ -162,10 +168,16 @@ export default class Poll extends Model {
   }
 
   unpublish(): Promise<this> {
+    const id = this.id();
+
+    if (!id) {
+      return Promise.reject(new Error('Cannot unpublish an unsaved poll.'));
+    }
+
     return app
       .request<any>({
         method: 'POST',
-        url: `${app.forum.attribute('apiUrl')}/fof/polls/${this.id()}/unpublish`,
+        url: `${app.forum.attribute('apiUrl')}/fof/polls/${id}/unpublish`,
       })
       .then((payload) => {
         app.store.pushPayload(payload);

@@ -520,6 +520,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
       if (await this.submit({ isDraft: true })) {
         const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.compose.draft_saved'));
         setTimeout(() => app.alerts.dismiss(alertId), 10000);
+        m.route.set(app.route('fof.polls.list'));
       }
     } finally {
       this.pendingAction = null;
@@ -532,6 +533,10 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     try {
       if (!(await this.submit({}))) return;
       try {
+        if (!this.state.poll.id()) {
+          throw new Error('Cannot publish an unsaved poll.');
+        }
+
         await this.state.poll.publish();
         const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.publish_success'));
         setTimeout(() => app.alerts.dismiss(alertId), 10000);
