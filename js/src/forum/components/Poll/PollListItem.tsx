@@ -15,6 +15,7 @@ import PollControls from '../../utils/PollControls';
 import ItemList from 'flarum/common/utils/ItemList';
 import listItems from 'flarum/common/helpers/listItems';
 import PollViewPage from '../PollViewPage';
+import PollDraftBadges from './PollDraftBadges';
 
 export interface IPollListItemAttrs extends ComponentAttrs {
   poll: Poll;
@@ -113,9 +114,7 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
   }
 
   mainView(): Mithril.Children {
-    const href = this.poll.isDraft()
-      ? `${app.route('fof.polls.composer')}?id=${this.poll.id()}`
-      : app.route('fof.polls.view', { id: this.poll.id() });
+    const href = app.route('fof.polls.view', { id: this.poll.id() });
 
     return (
       <Link href={href} className="PollListItem-main">
@@ -130,28 +129,7 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
   }
 
   draftBadges(): Mithril.Children {
-    if (!this.poll.isDraft()) return null;
-
-    return (
-      <span className="PollListItem-draftBadges">
-        <span className="PollListItem-draftBadge" title={app.translator.trans('fof-polls.forum.poll.draft_label') as string}>
-          {icon('fas fa-pencil-alt')} {app.translator.trans('fof-polls.forum.poll.draft_label')}
-        </span>
-        {this.poll.isScheduled() && (
-          <span className="PollListItem-scheduledBadge">
-            {icon('fas fa-clock')}{' '}
-            {app.translator.trans('fof-polls.forum.poll.scheduled_label', {
-              date: dayjs(this.poll.scheduledPublishAt()!).format('lll'),
-            })}
-            {this.poll.scheduledPublishError() && (
-              <span className="PollListItem-scheduleError" title={this.poll.scheduledPublishError() as string}>
-                {icon('fas fa-exclamation-triangle')}
-              </span>
-            )}
-          </span>
-        )}
-      </span>
-    );
+    return <PollDraftBadges poll={this.poll} />;
   }
 
   /**

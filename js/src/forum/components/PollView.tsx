@@ -14,6 +14,7 @@ import { slug } from 'flarum/common/utils/string';
 import classList from 'flarum/common/utils/classList';
 import PollTitle from './Poll/PollTitle';
 import PollSubtitle from './Poll/PollSubtitle';
+import PollDraftBadges from './Poll/PollDraftBadges';
 
 interface PollAttrs extends ComponentAttrs {
   poll: PollModel;
@@ -76,6 +77,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
     const items = new ItemList<Mithril.Children>();
     const poll = this.attrs.poll;
 
+    if (poll.isDraft()) items.add('draftBadges', <PollDraftBadges poll={poll} />, 20);
     items.add('title', <PollTitle poll={poll} />);
     if (poll.subtitle()) items.add('subtitle', <PollSubtitle poll={poll} />);
 
