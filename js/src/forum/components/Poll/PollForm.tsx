@@ -264,7 +264,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     items.add(
       'submit-cluster',
-      <div className="Form-group">
+      <div className="PollModal--submitCluster PollForm-group">
         {this.submitItems().toArray()}
         {this.state.poll.exists && (
           <Button
@@ -304,10 +304,10 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
         >
           {app.translator.trans('fof-polls.forum.compose.save_as_draft')}
         </Button>,
-        30
+        20
       );
 
-      items.add('publish', this.publishSplitButton(), 20);
+      items.add('publish', this.publishSplitButton(), 30);
     } else if (draftsAvailable && poll.isDraft()) {
       items.add(
         'update-draft',
@@ -320,10 +320,10 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
         >
           {app.translator.trans('fof-polls.forum.compose.update_draft')}
         </Button>,
-        30
+        20
       );
 
-      items.add('publish', this.publishSplitButton(), 20);
+      items.add('publish', this.publishSplitButton(), 30);
     } else {
       items.add(
         'save',
