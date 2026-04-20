@@ -7,7 +7,12 @@ import type Mithril from 'mithril';
 
 interface SchedulePollModalAttrs extends IInternalModalAttrs {
   poll: Poll;
-  form: any;
+  /**
+   * Parent PollForm to persist-before-schedule. Pass `null` when opening
+   * the modal for an already-saved poll (e.g. from the controls menu),
+   * in which case we skip straight to scheduling.
+   */
+  form: { submit: (extra: object) => Promise<boolean> } | null;
 }
 
 export default class SchedulePollModal extends Modal<SchedulePollModalAttrs> {
@@ -51,15 +56,19 @@ export default class SchedulePollModal extends Modal<SchedulePollModalAttrs> {
     this.error = null;
 
     try {
-      // Persist the user's current edits as a draft first. If validation
-      // fails, PollForm.submit shows an alert and returns false — we must
-      // NOT fall through to publish, otherwise we'd schedule against stale
-      // DB state while the user's on-screen form is invalid.
-      const ok = await this.attrs.form.submit({ isDraft: true });
-      if (!ok) {
-        this.loading = false;
-        this.hide();
-        return;
+      // When invoked from a compose form, persist the user's current edits
+      // as a draft first. If validation fails, PollForm.submit shows an
+      // alert and returns false — we must NOT fall through to publish,
+      // otherwise we'd schedule against stale DB state while the on-screen
+      // form is invalid. When invoked from the controls menu there's no
+      // form (poll already persisted), so we skip straight to scheduling.
+      if (this.attrs.form) {
+        const ok = await this.attrs.form.submit({ isDraft: true });
+        if (!ok) {
+          this.loading = false;
+          this.hide();
+          return;
+        }
       }
       // Then schedule.
       await this.attrs.poll.publish({ scheduledFor: new Date(this.datetime()).toISOString() });

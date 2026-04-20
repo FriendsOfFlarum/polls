@@ -141,7 +141,7 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
           <span className="PollListItem-scheduledBadge">
             {icon('fas fa-clock')}{' '}
             {app.translator.trans('fof-polls.forum.poll.scheduled_label', {
-              date: this.poll.scheduledPublishAt()!.toLocaleString(),
+              date: dayjs(this.poll.scheduledPublishAt()!).format('lll'),
             })}
             {this.poll.scheduledPublishError() && (
               <span className="PollListItem-scheduleError" title={this.poll.scheduledPublishError() as string}>
