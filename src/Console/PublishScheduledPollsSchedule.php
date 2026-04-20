@@ -17,6 +17,16 @@ class PublishScheduledPollsSchedule
 {
     public function __invoke(Event $event): void
     {
-        $event->everyMinute();
+        $event
+            ->everyMinute()
+            // Best-effort guard against same-host re-entrancy (long batch
+            // overlapping the next minute's run). Relies on the Laravel
+            // cache; no-ops on single-server file cache, which is fine —
+            // the command's own DB-level lockForUpdate is the real guard.
+            ->withoutOverlapping()
+            // Best-effort guard against multi-node dispatch (e.g. 2-4 ECS
+            // tasks each firing cron). Only effective when the cache driver
+            // is shared across nodes (Redis/Valkey, DynamoDB, database).
+            ->onOneServer();
     }
 }

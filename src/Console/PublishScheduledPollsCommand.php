@@ -19,6 +19,7 @@ use FoF\Polls\Poll;
 use FoF\Polls\Validators\PollValidator;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Support\Facades\DB;
 
 class PublishScheduledPollsCommand extends Command
 {
@@ -34,40 +35,49 @@ class PublishScheduledPollsCommand extends Command
             return 0;
         }
 
-        $due = Poll::query()
-            ->whereNull('post_id')
-            ->whereNull('published_at')
-            ->whereNotNull('scheduled_publish_at')
-            ->whereNull('scheduled_publish_error')
-            ->where('scheduled_publish_at', '<=', Carbon::now())
-            ->get();
+        // Wrap the select + update in a single transaction with row-level
+        // locks so concurrent runs (multiple ECS tasks, manual CLI while cron
+        // fires, etc.) don't double-publish. Task A's SELECT ... FOR UPDATE
+        // blocks task B until A commits; by the time B resumes, the rows
+        // either have `published_at` set or `scheduled_publish_error` set, so
+        // they no longer match the WHERE clause and B's result set is empty.
+        DB::transaction(function () use ($validator, $events) {
+            $due = Poll::query()
+                ->whereNull('post_id')
+                ->whereNull('published_at')
+                ->whereNotNull('scheduled_publish_at')
+                ->whereNull('scheduled_publish_error')
+                ->where('scheduled_publish_at', '<=', Carbon::now())
+                ->lockForUpdate()
+                ->get();
 
-        foreach ($due as $poll) {
-            try {
-                $validator->setDraft(false);
-                $validator->assertValid([
-                    'question' => $poll->question,
-                    'endDate'  => $poll->end_date?->toDateTimeString(),
-                ]);
+            foreach ($due as $poll) {
+                try {
+                    $validator->setDraft(false);
+                    $validator->assertValid([
+                        'question' => $poll->question,
+                        'endDate'  => $poll->end_date?->toDateTimeString(),
+                    ]);
 
-                if ($poll->options()->count() < 2) {
-                    throw new ValidationException(['options' => 'Poll must have at least 2 options to publish.']);
+                    if ($poll->options()->count() < 2) {
+                        throw new ValidationException(['options' => 'Poll must have at least 2 options to publish.']);
+                    }
+
+                    $poll->published_at = Carbon::now();
+                    $poll->scheduled_publish_at = null;
+                    $poll->scheduled_publish_error = null;
+                    $poll->save();
+
+                    $events->dispatch(new PollWasPublished($poll, null));
+
+                    $this->info("Published poll {$poll->id}");
+                } catch (\Throwable $e) {
+                    $poll->scheduled_publish_error = $e->getMessage();
+                    $poll->save();
+                    $this->warn("Failed to publish poll {$poll->id}: {$e->getMessage()}");
                 }
-
-                $poll->published_at = Carbon::now();
-                $poll->scheduled_publish_at = null;
-                $poll->scheduled_publish_error = null;
-                $poll->save();
-
-                $events->dispatch(new PollWasPublished($poll, null));
-
-                $this->info("Published poll {$poll->id}");
-            } catch (\Throwable $e) {
-                $poll->scheduled_publish_error = $e->getMessage();
-                $poll->save();
-                $this->warn("Failed to publish poll {$poll->id}: {$e->getMessage()}");
             }
-        }
+        });
 
         return 0;
     }
