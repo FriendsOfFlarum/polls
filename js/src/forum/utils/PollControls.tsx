@@ -144,7 +144,12 @@ export default {
       error: `fof-polls.forum.poll_controls.delete_error_message`,
     }[type]!;
 
-    app.alerts.show({ type }, app.translator.trans(message, { poll: poll }));
+    const content = app.translator.trans(message, { poll: poll });
+    const alertId = app.alerts.show({ type }, content);
+    // Errors stay sticky so the user can read them; successes auto-dismiss.
+    if (type === 'success') {
+      setTimeout(() => app.alerts.dismiss(alertId), 10000);
+    }
   },
 
   /**
@@ -156,13 +161,15 @@ export default {
 
   async publishAction(poll: Poll): Promise<void> {
     await poll.publish();
-    app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.publish_success'));
+    const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.publish_success'));
+    setTimeout(() => app.alerts.dismiss(alertId), 10000);
     m.redraw();
   },
 
   async cancelScheduleAction(poll: Poll): Promise<void> {
     await poll.publish({ scheduledFor: null });
-    app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.cancel_schedule_success'));
+    const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.cancel_schedule_success'));
+    setTimeout(() => app.alerts.dismiss(alertId), 10000);
     m.redraw();
   },
 
@@ -170,7 +177,8 @@ export default {
     if (!confirm(app.translator.trans('fof-polls.forum.poll_controls.unpublish_confirmation') as string)) return;
     try {
       await poll.unpublish();
-      app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.unpublish_success'));
+      const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.unpublish_success'));
+      setTimeout(() => app.alerts.dismiss(alertId), 10000);
       m.redraw();
     } catch (e: any) {
       app.alerts.show({ type: 'error' }, app.translator.trans('fof-polls.forum.poll_controls.unpublish_error_has_votes'));

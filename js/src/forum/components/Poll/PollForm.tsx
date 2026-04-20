@@ -509,7 +509,8 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
   async onsubmit(event: Event) {
     event.preventDefault();
     if (await this.submit({})) {
-      app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.compose.success'));
+      const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.compose.success'));
+      setTimeout(() => app.alerts.dismiss(alertId), 10000);
     }
   }
 
@@ -517,7 +518,8 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     this.pendingAction = 'draft';
     try {
       if (await this.submit({ isDraft: true })) {
-        app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.compose.draft_saved'));
+        const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.compose.draft_saved'));
+        setTimeout(() => app.alerts.dismiss(alertId), 10000);
       }
     } finally {
       this.pendingAction = null;
@@ -531,7 +533,8 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
       if (!(await this.submit({}))) return;
       try {
         await this.state.poll.publish();
-        app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.publish_success'));
+        const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.publish_success'));
+        setTimeout(() => app.alerts.dismiss(alertId), 10000);
         m.route.set(app.route('fof.polls.list'));
       } catch (error) {
         console.error(error);
