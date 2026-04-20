@@ -351,7 +351,21 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
           <Button
             className="Button Button--icon PollModal-ScheduleButton"
             icon="fas fa-clock"
-            onclick={() => app.modal.show(SchedulePollModal, { poll: this.state.poll, form: this })}
+            onclick={() => {
+              // Pre-validate so we never open the schedule modal over an
+              // invalid form. Without this, the modal would persist a draft
+              // (failing silently), then schedule against stale DB state.
+              try {
+                this.data();
+              } catch (error) {
+                if (error instanceof FormError) {
+                  app.alerts.show({ type: 'error' }, error.message);
+                  return;
+                }
+                throw error;
+              }
+              app.modal.show(SchedulePollModal, { poll: this.state.poll, form: this });
+            }}
             title={extractText(app.translator.trans('fof-polls.forum.compose.schedule'))}
           />
         )}

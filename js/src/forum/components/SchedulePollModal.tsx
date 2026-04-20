@@ -51,8 +51,16 @@ export default class SchedulePollModal extends Modal<SchedulePollModalAttrs> {
     this.error = null;
 
     try {
-      // First ensure the poll is persisted (draft).
-      await this.attrs.form.submit({ isDraft: true });
+      // Persist the user's current edits as a draft first. If validation
+      // fails, PollForm.submit shows an alert and returns false — we must
+      // NOT fall through to publish, otherwise we'd schedule against stale
+      // DB state while the user's on-screen form is invalid.
+      const ok = await this.attrs.form.submit({ isDraft: true });
+      if (!ok) {
+        this.loading = false;
+        this.hide();
+        return;
+      }
       // Then schedule.
       await this.attrs.poll.publish({ scheduledFor: new Date(this.datetime()).toISOString() });
       this.hide();
