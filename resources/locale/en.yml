@@ -54,7 +54,6 @@ fof-polls:
       cannot_start_poll_button: Cannot Start Poll
       total_votes: "{count, plural, one {# vote was given} other {# votes were given}}"
       draft_label: Draft
-      drafts_section_title: My drafts
       scheduled_label: "Scheduled for {date}"
       scheduled_error_tooltip: This scheduled publication failed. Open the poll to see why.
 
@@ -119,6 +118,10 @@ fof-polls:
         most_voted: Most Voted
         least_voted: Least Voted
         sort_dropdown.default: => fof-polls.forum.polls_list.sort_dropdown.newest
+      status_filter:
+        all: All
+        published: Published
+        draft: Drafts
 
     composer_discussion:
       add_poll: => fof-polls.forum.moderation.add

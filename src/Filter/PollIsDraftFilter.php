@@ -23,6 +23,14 @@ class PollIsDraftFilter implements FilterInterface
 
     public function filter(FilterState $filterState, string $filterValue, bool $negate)
     {
+        // `any` means the caller wants no published/draft constraint — used
+        // by the listing UI's "All" status filter. The mere presence of the
+        // `isDraft` key also tells GlobalPollFilterer to drop its default
+        // hide-drafts guard, so together these give us a true "show both".
+        if (strtolower($filterValue) === 'any') {
+            return;
+        }
+
         if ($negate || !$filterValue) {
             $filterState->getQuery()->whereNotNull('polls.published_at');
         } else {
