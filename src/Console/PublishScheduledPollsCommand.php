@@ -19,6 +19,7 @@ use FoF\Polls\Validators\PollValidator;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Validation\ValidationException as LaravelValidationException;
 
 class PublishScheduledPollsCommand extends Command
 {
@@ -69,8 +70,29 @@ class PublishScheduledPollsCommand extends Command
                     $events->dispatch(new PollWasPublished($poll, null));
 
                     $this->info("Published poll {$poll->id}");
+                } catch (ValidationException $e) {
+                    // Flarum's ValidationException carries attribute messages
+                    // we authored ourselves (e.g. "options" below). Surface them
+                    // verbatim — these are the signal the admin needs to fix
+                    // the poll.
+                    $poll->scheduled_publish_error = trim($e->getMessage());
+                    $poll->save();
+                    $this->warn("Failed to publish poll {$poll->id}: {$e->getMessage()}");
+                } catch (LaravelValidationException $e) {
+                    // AbstractValidator::assertValid throws Laravel's
+                    // ValidationException. `getMessage()` here is a generic
+                    // "The given data was invalid." — pull the first concrete
+                    // message out of the bag instead.
+                    $first = collect($e->errors())->flatten()->first();
+                    $poll->scheduled_publish_error = is_string($first) && $first !== '' ? $first : 'Validation failed.';
+                    $poll->save();
+                    $this->warn("Failed to publish poll {$poll->id}: {$e->getMessage()}");
                 } catch (\Throwable $e) {
-                    $poll->scheduled_publish_error = $e->getMessage();
+                    // Unexpected failure (DB, filesystem, etc.). The raw message
+                    // may contain stack-trace fragments or internal paths, so
+                    // store a generic marker for the UI and keep the real
+                    // message in the CLI output for the operator.
+                    $poll->scheduled_publish_error = 'An unexpected error occurred while publishing this poll.';
                     $poll->save();
                     $this->warn("Failed to publish poll {$poll->id}: {$e->getMessage()}");
                 }
