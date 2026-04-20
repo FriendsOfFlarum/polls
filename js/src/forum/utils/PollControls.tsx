@@ -64,14 +64,12 @@ export default {
         </Button>
       );
 
-      if (app.forum.attribute<boolean>('pollsScheduledPublicationEnabled')) {
-        items.add(
-          'schedulePublish',
-          <Button icon="fas fa-clock" onclick={() => app.modal.show(SchedulePollModal, { poll, form: null })}>
-            {app.translator.trans('fof-polls.forum.poll_controls.schedule_publish_label')}
-          </Button>
-        );
-      }
+      items.add(
+        'schedulePublish',
+        <Button icon="fas fa-clock" onclick={() => app.modal.show(SchedulePollModal, { poll, form: null })}>
+          {app.translator.trans('fof-polls.forum.poll_controls.schedule_publish_label')}
+        </Button>
+      );
 
       if (poll.isScheduled()) {
         items.add(

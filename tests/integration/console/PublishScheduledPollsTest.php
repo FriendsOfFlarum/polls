@@ -91,16 +91,4 @@ class PublishScheduledPollsTest extends TestCase
         $this->assertNotNull($poll->scheduled_publish_at);
         $this->assertEquals('whatever', $poll->scheduled_publish_error);
     }
-
-    public function test_command_is_noop_when_admin_setting_disabled(): void
-    {
-        $this->setting('fof-polls.enable_scheduled_publication', false);
-
-        $this->runCommand();
-
-        $poll = Poll::find(20);
-        $this->assertNull($poll->published_at);
-        $this->assertNotNull($poll->scheduled_publish_at);
-        $this->assertNull($poll->scheduled_publish_error);
-    }
 }

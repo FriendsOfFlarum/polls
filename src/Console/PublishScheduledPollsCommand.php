@@ -13,7 +13,6 @@ namespace FoF\Polls\Console;
 
 use Carbon\Carbon;
 use Flarum\Foundation\ValidationException;
-use Flarum\Settings\SettingsRepositoryInterface;
 use FoF\Polls\Events\PollWasPublished;
 use FoF\Polls\Poll;
 use FoF\Polls\Validators\PollValidator;
@@ -27,15 +26,10 @@ class PublishScheduledPollsCommand extends Command
     protected $description = 'Publish any global poll drafts whose scheduled_publish_at has arrived.';
 
     public function handle(
-        SettingsRepositoryInterface $settings,
         PollValidator $validator,
         Dispatcher $events,
         ConnectionInterface $db
     ): int {
-        if (!(bool) $settings->get('fof-polls.enable_scheduled_publication', true)) {
-            return 0;
-        }
-
         // Wrap the select + update in a single transaction with row-level
         // locks so concurrent runs (multiple ECS tasks, manual CLI while cron
         // fires, etc.) don't double-publish. Task A's SELECT ... FOR UPDATE

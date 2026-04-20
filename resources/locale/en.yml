@@ -22,7 +22,6 @@ fof-polls:
       options_color_blend_help: Use this to use color mixing to make the poll options more readable. Disable if this feature causes issues with your forum's appearance, reducing readability.
       image_height: Resize image height
       image_width: Resize image width
-      enable_scheduled_publication_label: Enable scheduled publication for global polls
     permissions:
       view_results_without_voting: View results without voting
       start: Start a poll
