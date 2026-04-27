@@ -4,6 +4,7 @@ import Mithril from 'mithril';
 import PollListState from '../states/PollListState';
 import { AbstractPollPage } from './AbstractPollPage';
 export default class PollsShowcasePage extends AbstractPollPage {
+    endedState: PollListState;
     oninit(vnode: Mithril.Vnode<IPageAttrs, PollListState>): void;
     includeParams(): string[];
     contentItems(): ItemList<Mithril.Children>;
