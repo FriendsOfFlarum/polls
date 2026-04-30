@@ -19,8 +19,9 @@ class PollImageDisk
     public function __invoke(Paths $paths, UrlGenerator $url): array
     {
         return [
-            'root'   => "$paths->public/assets/polls",
-            'url'    => $url->to('forum')->path('assets/polls'),
+            'root'       => "$paths->public/assets/polls",
+            'url'        => $url->to('forum')->path('assets/polls'),
+            'visibility' => 'public',
         ];
     }
 }
