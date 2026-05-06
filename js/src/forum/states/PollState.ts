@@ -81,13 +81,18 @@ export default class PollState {
     this.pendingSubmit = !!this.pendingOptions;
 
     if (this.useSubmitUI) {
-      this.pendingOptions = optionIds.size ? optionIds : null;
-      this.pendingSubmit = !!this.pendingOptions;
       m.redraw();
       return;
     }
 
-    this.submit(optionIds, null, () => (target.checked = isUnvoting));
+    this.submit(
+      optionIds,
+      () => {
+        this.pendingOptions = null;
+        this.pendingSubmit = false;
+      },
+      () => (target.checked = isUnvoting)
+    );
   }
 
   hasSelectedOptions(): boolean {

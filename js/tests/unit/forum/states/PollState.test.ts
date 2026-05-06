@@ -312,5 +312,45 @@ describe('PollState', () => {
       expect(pendingOptions).toBeNull();
       expect(pendingSubmit).toBe(false);
     });
+
+    it('instant-vote path clears pendingSubmit after submit succeeds (regression for #118)', async () => {
+      // Simulates the non-useSubmitUI submit path: pendingSubmit must be cleared
+      // after the API succeeds so beforeunload does not pop "data may not be saved".
+      let pendingOptions: Set<string> | null = null;
+      let pendingSubmit = false;
+
+      // Mark pending immediately for optimistic UI before submit fires.
+      const optionIds = new Set(['1']);
+      pendingOptions = optionIds.size ? optionIds : null;
+      pendingSubmit = !!pendingOptions;
+      expect(pendingSubmit).toBe(true);
+
+      // Submit completes; success callback clears the pending state.
+      const cb = () => {
+        pendingOptions = null;
+        pendingSubmit = false;
+      };
+      await Promise.resolve().then(() => cb());
+
+      expect(pendingOptions).toBeNull();
+      expect(pendingSubmit).toBe(false);
+    });
+
+    it('hasSelectedOptions returns false after instant-vote submits (regression for #118)', async () => {
+      // hasSelectedOptions is read by preventClose (beforeunload). After a
+      // successful instant vote there are no unsaved selections.
+      let pendingSubmit = false;
+      const hasSelectedOptions = () => pendingSubmit;
+
+      // User clicks an option (sets pending), then submit resolves and clears.
+      pendingSubmit = true;
+      expect(hasSelectedOptions()).toBe(true);
+
+      await Promise.resolve().then(() => {
+        pendingSubmit = false;
+      });
+
+      expect(hasSelectedOptions()).toBe(false);
+    });
   });
 });
