@@ -72,7 +72,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     this.datepickerMinDate = this.formatDate() as string;
 
     // Replace minimum of 'today' for poll end date only if the poll is not already closed
-    if (this.endDate() && dayjs(poll.endDate).isAfter(dayjs())) {
+    if (this.endDate() && dayjs(poll.endDate()).isAfter(dayjs())) {
       // We know that endDate is set, so we can safely cast the result to string
       this.datepickerMinDate = this.formatDate(poll.endDate()) as string;
     }
