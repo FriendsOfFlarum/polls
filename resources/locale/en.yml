@@ -143,7 +143,6 @@ fof-polls:
       schedule_datetime_label: Publish at
       schedule_submit: Schedule
       schedule: Schedule
-      schedule_cancelled_alert: Your scheduled publication was cancelled because the poll is no longer ready to publish.
 
     modal:
       add_title: Add a Poll

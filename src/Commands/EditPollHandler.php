@@ -119,38 +119,6 @@ class EditPollHandler
 
         $poll->save();
 
-        $scheduleCancelled = false;
-
-        // Defensive auto-cancel: if edits somehow leave the scheduled
-        // draft un-publishable, clear the schedule so the cron doesn't
-        // keep failing. With unified validation rules the top-level
-        // assertValid above already enforces poll-level publishability,
-        // so this catches only:
-        //   - per-option validation failures (the option validator runs
-        //     here but not in the main save path), and
-        //   - any future loosening that lets invalid state through above.
-        if ($poll->isDraft() && $poll->scheduled_publish_at !== null) {
-            try {
-                foreach ($options as $opt) {
-                    $optionAttributes = [
-                        'answer'   => Arr::get($opt, 'attributes.answer'),
-                        'imageUrl' => Arr::get($opt, 'attributes.imageUrl'),
-                    ];
-                    if (!$this->settings->get('fof-polls.allowOptionImage')) {
-                        unset($optionAttributes['imageUrl']);
-                    }
-                    $this->optionValidator->assertValid($optionAttributes);
-                }
-            } catch (\Illuminate\Validation\ValidationException $e) {
-                $poll->scheduled_publish_at = null;
-                $poll->scheduled_publish_error = null;
-                $poll->save();
-                $scheduleCancelled = true;
-            }
-        }
-
-        $poll->setAttribute('scheduleCancelled', $scheduleCancelled);
-
         // remove options not passed if 2 or more are
         if ($options->isNotEmpty() && $options->count() >= 2) {
             $ids = $options->pluck('id')->whereNotNull()->toArray();

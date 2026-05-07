@@ -85,10 +85,6 @@ class PollSerializer extends AbstractSerializer
             $attributes['scheduledPublishError'] = $poll->scheduled_publish_error;
         }
 
-        if ($poll->getAttribute('scheduleCancelled')) {
-            $attributes['scheduleCancelled'] = true;
-        }
-
         return $attributes;
     }
 
