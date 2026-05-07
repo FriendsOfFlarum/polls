@@ -65,7 +65,8 @@ fof-polls:
       delete_error_message: There went something wrong while deleting the poll.
       publish_label: Publish now
       publish_success: Poll published.
-      schedule_publish_label: "Schedule publication…"
+      schedule_publish_label: Schedule publication
+      edit_schedule_publish_label: Edit scheduled publication
       cancel_schedule_label: Cancel scheduled publication
       cancel_schedule_success: Scheduled publication cancelled.
       unpublish_label: Move back to draft
@@ -140,6 +141,7 @@ fof-polls:
       draft_saved: Draft saved
       publish: Publish
       schedule_publication: Schedule publication
+      schedule_publication_edit: Edit scheduled publication
       schedule_datetime_label: Publish at
       schedule_submit: Schedule
       schedule: Schedule

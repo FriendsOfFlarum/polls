@@ -2,9 +2,13 @@ import app from 'flarum/forum/app';
 import Modal, { IInternalModalAttrs } from 'flarum/common/components/Modal';
 import Button from 'flarum/common/components/Button';
 import Stream from 'flarum/common/utils/Stream';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import Poll from '../models/Poll';
 import PollFormState from '../states/PollFormState';
 import type Mithril from 'mithril';
+
+dayjs.extend(utc);
 
 interface SchedulePollModalAttrs extends IInternalModalAttrs {
   poll: Poll;
@@ -20,12 +24,26 @@ export default class SchedulePollModal extends Modal<SchedulePollModalAttrs> {
   datetime: Stream<string> = Stream('');
   error: string | null = null;
 
+  oninit(vnode: Mithril.Vnode) {
+    super.oninit(vnode);
+
+    // Prefill the picker when reopening for an already-scheduled draft.
+    // The model returns UTC; <input type="datetime-local"> wants the
+    // local-zone equivalent in YYYY-MM-DDTHH:mm format.
+    const scheduled = this.attrs.poll?.scheduledPublishAt?.();
+    if (scheduled) {
+      this.datetime(dayjs(scheduled).local().format('YYYY-MM-DDTHH:mm'));
+    }
+  }
+
   className() {
     return 'SchedulePollModal Modal--small';
   }
 
   title(): Mithril.Children {
-    return app.translator.trans('fof-polls.forum.compose.schedule_publication');
+    const isEditing = !!this.attrs.poll?.scheduledPublishAt?.();
+
+    return app.translator.trans(isEditing ? 'fof-polls.forum.compose.schedule_publication_edit' : 'fof-polls.forum.compose.schedule_publication');
   }
 
   content(): Mithril.Children {
