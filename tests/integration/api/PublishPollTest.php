@@ -282,6 +282,42 @@ class PublishPollTest extends TestCase
         $this->assertNull($poll->published_at);
     }
 
+    public function test_create_draft_then_publish_via_returned_id(): void
+    {
+        $createResponse = $this->send(
+            $this->request('POST', '/api/fof/polls', [
+                'authenticatedAs' => 3,
+                'json'            => [
+                    'data' => [
+                        'attributes' => [
+                            'question' => 'Fresh draft',
+                            'isDraft'  => true,
+                            'options'  => [['answer' => 'Yes'], ['answer' => 'No']],
+                        ],
+                    ],
+                ],
+            ])
+        );
+
+        $this->assertEquals(201, $createResponse->getStatusCode());
+
+        $body = json_decode($createResponse->getBody(), true);
+        $pollId = $body['data']['id'];
+
+        $publishResponse = $this->send(
+            $this->request('POST', "/api/fof/polls/{$pollId}/publish", [
+                'authenticatedAs' => 3,
+                'json'            => [],
+            ])
+        );
+
+        $this->assertEquals(200, $publishResponse->getStatusCode());
+
+        $body = json_decode($publishResponse->getBody(), true);
+        $this->assertNotNull($body['data']['attributes']['publishedAt']);
+        $this->assertFalse($body['data']['attributes']['isDraft']);
+    }
+
     public function test_publish_missing_options_returns_422(): void
     {
         $response = $this->send(

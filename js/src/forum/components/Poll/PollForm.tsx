@@ -527,7 +527,11 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
   async publish(): Promise<void> {
     this.pendingAction = 'publish';
     try {
-      if (!(await this.submit({}))) return;
+      // Save as draft first, then flip live via /publish. Submitting
+      // without isDraft would let CreatePollHandler stamp published_at
+      // immediately, and the subsequent POST /publish would 403
+      // (PollPolicy::publish denies once the poll is no longer a draft).
+      if (!(await this.submit({ isDraft: true }))) return;
       try {
         if (!this.state.poll.id()) {
           throw new Error('Cannot publish an unsaved poll.');
