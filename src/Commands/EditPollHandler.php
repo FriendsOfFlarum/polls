@@ -67,8 +67,6 @@ class EditPollHandler
         $command->actor->assertCan('edit', $poll);
 
         $attributes = (array) Arr::get($command->data, 'attributes');
-        $isDraft = $poll->isDraft();
-        $this->validator->setDraft($isDraft);
 
         $options = collect(Arr::get($attributes, 'options', []));
 
@@ -123,13 +121,16 @@ class EditPollHandler
 
         $scheduleCancelled = false;
 
-        // Auto-cancel schedule if edits made the poll un-publishable.
+        // Defensive auto-cancel: if edits somehow leave the scheduled
+        // draft un-publishable, clear the schedule so the cron doesn't
+        // keep failing. With unified validation rules the top-level
+        // assertValid above already enforces poll-level publishability,
+        // so this catches only:
+        //   - per-option validation failures (the option validator runs
+        //     here but not in the main save path), and
+        //   - any future loosening that lets invalid state through above.
         if ($poll->isDraft() && $poll->scheduled_publish_at !== null) {
             try {
-                $fullValidator = clone $this->validator;
-                $fullValidator->setDraft(false);
-                $fullValidator->assertValid($attributes);
-
                 foreach ($options as $opt) {
                     $optionAttributes = [
                         'answer'   => Arr::get($opt, 'attributes.answer'),

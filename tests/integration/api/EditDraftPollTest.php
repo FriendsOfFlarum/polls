@@ -13,6 +13,7 @@ namespace FoF\Polls\Tests\integration\api;
 
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
+use FoF\Polls\Poll;
 
 class EditDraftPollTest extends TestCase
 {
@@ -88,9 +89,11 @@ class EditDraftPollTest extends TestCase
         $this->assertTrue($body['data']['attributes']['isDraft']);
     }
 
-    public function test_editing_draft_allows_past_end_date(): void
+    public function test_editing_draft_rejects_past_end_date(): void
     {
-        // In full mode, endDate "before:now" fails. In draft mode it must pass.
+        // Drafts go through the same rule set as published polls — saving a
+        // past endDate fails fast at the API gate rather than persisting an
+        // un-publishable value that surfaces later as a publish error.
         $response = $this->send(
             $this->request('PATCH', '/api/fof/polls/10', [
                 'authenticatedAs' => 4,
@@ -102,13 +105,14 @@ class EditDraftPollTest extends TestCase
             ])
         );
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(422, $response->getStatusCode());
     }
 
-    public function test_editing_scheduled_draft_into_invalid_state_cancels_schedule(): void
+    public function test_editing_scheduled_draft_with_invalid_data_is_rejected_and_schedule_kept(): void
     {
-        // Write a past endDate: in full-mode validation that would fail `after:now`,
-        // so the scheduler guard cancels the schedule.
+        // Under unified validation, the API rejects the edit before any
+        // persistence happens — the schedule cannot be silently cancelled
+        // because invalid data never reaches the model.
         $response = $this->send(
             $this->request('PATCH', '/api/fof/polls/11', [
                 'authenticatedAs' => 4,
@@ -120,12 +124,12 @@ class EditDraftPollTest extends TestCase
             ])
         );
 
-        $this->assertEquals(200, $response->getStatusCode());
-        $body = json_decode($response->getBody(), true);
-        $attrs = $body['data']['attributes'];
-        $this->assertArrayHasKey('scheduledPublishAt', $attrs);
-        $this->assertNull($attrs['scheduledPublishAt']);
-        $this->assertTrue($attrs['scheduleCancelled'] ?? false);
+        $this->assertEquals(422, $response->getStatusCode());
+
+        // Schedule is still intact because the edit never landed.
+        $poll = Poll::find(11);
+        $this->assertNotNull($poll->scheduled_publish_at);
+        $this->assertNull($poll->published_at);
     }
 
     public function test_editing_published_poll_keeps_published_at(): void

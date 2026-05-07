@@ -63,8 +63,8 @@ class PublishPollHandler
             return $poll;
         }
 
-        // Full publish validation against current poll state
-        $this->validator->setDraft(false);
+        // Re-validate against current poll state (the unified rule set
+        // applies — same rules drafts already passed at save time).
         $this->validator->assertValid([
             'question' => $poll->question,
             'endDate'  => $poll->end_date?->toDateTimeString(),

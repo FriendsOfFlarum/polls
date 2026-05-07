@@ -52,7 +52,6 @@ class PublishScheduledPollsCommand extends Command
 
             foreach ($due as $poll) {
                 try {
-                    $validator->setDraft(false);
                     $validator->assertValid([
                         'question' => $poll->question,
                         'endDate'  => $poll->end_date?->toDateTimeString(),

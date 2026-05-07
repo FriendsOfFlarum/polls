@@ -19,13 +19,6 @@ use Illuminate\Validation\Rule;
 
 class PollValidator extends AbstractValidator
 {
-    protected bool $draft = false;
-
-    public function setDraft(bool $draft): void
-    {
-        $this->draft = $draft;
-    }
-
     /**
      * Parse and normalize a client-supplied `scheduledFor` timestamp.
      *
@@ -74,12 +67,12 @@ class PollValidator extends AbstractValidator
 
     protected function getRules()
     {
-        if ($this->draft) {
-            return [
-                'question' => 'required',
-            ];
-        }
-
+        // Single rule set applied to every save, including drafts. Drafts
+        // are "publishable but not yet public", not WIP — saving as draft
+        // requires the same valid data as publishing immediately. Avoids
+        // letting an out-of-range endDate or malformed image URL persist
+        // in a draft, only to surface as a publish failure (UI alert or
+        // scheduled_publish_error) downstream.
         return [
             'question'   => 'required',
             'publicPoll' => 'nullable|boolean',

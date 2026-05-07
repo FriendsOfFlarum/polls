@@ -86,9 +86,6 @@ class CreatePollHandler
             ]);
         }
 
-        // Apply draft-mode validation when saving a draft.
-        $this->validator->setDraft($isDraft);
-
         // Ideally we would use some JSON:API relationship syntax, but it's just too complicated with Flarum to generate the correct JSON payload
         // Instead we just pass an array of option objects that are each a set of key-value pairs for the option attributes
         // This is also the same syntax that always used by EditPollHandler
