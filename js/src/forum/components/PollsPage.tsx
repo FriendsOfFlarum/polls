@@ -67,7 +67,14 @@ export default class PollsPage extends AbstractPollPage {
     if (this.status === status) return;
     this.status = status;
 
-    this.state.refreshParams({ ...this.state.getParams(), filter: { isDraft: STATUS_FILTER_VALUE[status] } }, 1);
+    const params = this.state.getParams();
+    this.state.refreshParams(
+      {
+        ...params,
+        filter: { ...(params.filter || {}), isDraft: STATUS_FILTER_VALUE[status] },
+      },
+      1
+    );
   }
 
   view(): Mithril.Children {
