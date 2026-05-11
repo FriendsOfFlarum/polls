@@ -14,7 +14,6 @@ import PollOption from '../../models/PollOption';
 import UploadPollImageButton from '../UploadPollImageButton';
 import Poll from '../../models/Poll';
 import Tooltip from 'flarum/common/components/Tooltip';
-import RequestError from 'flarum/common/utils/RequestError';
 import SchedulePollModal from '../SchedulePollModal';
 
 interface PollFormAttrs extends ComponentAttrs {
@@ -45,6 +44,10 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
   protected maxVotes: Stream<number>;
   protected datepickerMinDate: string = '';
   protected pendingAction: 'draft' | 'publish' | null = null;
+  // Snapshot of the form payload at load (and after each successful save).
+  // `state.dirty` is recomputed on every render by comparing this against
+  // the live serialized form — avoids hooking every `bidi` input.
+  protected snapshot: string = '';
 
   oninit(vnode: Mithril.Vnode): void {
     super.oninit(vnode);
@@ -76,9 +79,40 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
       // We know that endDate is set, so we can safely cast the result to string
       this.datepickerMinDate = this.formatDate(poll.endDate()) as string;
     }
+
+    this.snapshot = this.serializeFormState();
+  }
+
+  /**
+   * Stable JSON of every user-editable field, used to detect dirty state
+   * by comparison against `this.snapshot`. Order matters — keep it stable.
+   */
+  protected serializeFormState(): string {
+    return JSON.stringify({
+      question: this.question(),
+      subtitle: this.subtitle(),
+      image: this.image(),
+      imageAlt: this.imageAlt(),
+      endDate: this.endDate(),
+      publicPoll: this.publicPoll(),
+      allowMultipleVotes: this.allowMultipleVotes(),
+      hideVotes: this.hideVotes(),
+      allowChangeVote: this.allowChangeVote(),
+      maxVotes: this.maxVotes(),
+      answers: this.optionAnswers.map((s) => s()),
+      images: this.optionImageUrls.map((s) => s()),
+    });
+  }
+
+  protected refreshDirty(): void {
+    this.state.markDirty(this.serializeFormState() !== this.snapshot);
   }
 
   view(): Mithril.Children {
+    // Recompute dirty before each render so disabled state stays accurate
+    // without wrapping every `bidi` input in an oninput hook.
+    this.refreshDirty();
+
     return (
       <form onsubmit={this.onsubmit.bind(this)}>
         <div className="PollDiscussionModal-form">{this.fields().toArray()}</div>
@@ -286,48 +320,47 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
   submitItems(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
     const poll = this.state.poll;
+    const state = this.state;
 
     // Drafts are global-only. For existing polls we can trust `isGlobal()`;
     // for new polls the caller's `allowDrafts` flag is the source of truth
     // since the poll hasn't been attached to anything yet.
     const draftsAvailable = this.attrs.allowDrafts === true && (!poll.exists || poll.isGlobal());
+    const isNew = state.isNew();
+    const isDraft = state.isDraft();
+    const dirty = state.dirty;
 
-    if (draftsAvailable && !poll.exists) {
+    if (draftsAvailable && (isNew || isDraft)) {
+      // Publish first so the primary action sits leftmost in the cluster.
+      items.add('publish', this.publishSplitButton(), 30);
+
+      // Distinct keys preserve the public ItemList API: third-party
+      // extensions can target either button by its original key.
       items.add(
-        'save-as-draft',
+        isDraft ? 'update-draft' : 'save-as-draft',
         <Button
+          type="button"
           className="Button PollModal-SaveDraftButton"
           icon="fas fa-save"
-          loading={this.state.loading && this.pendingAction === 'draft'}
-          disabled={this.state.loading && this.pendingAction !== 'draft'}
+          loading={state.loading && this.pendingAction === 'draft'}
+          disabled={(state.loading && this.pendingAction !== 'draft') || (isDraft && !dirty)}
           onclick={() => this.saveDraft()}
         >
-          {app.translator.trans('fof-polls.forum.compose.save_as_draft')}
+          {app.translator.trans(isDraft ? 'fof-polls.forum.compose.update_draft' : 'fof-polls.forum.compose.save_as_draft')}
         </Button>,
         20
       );
-
-      items.add('publish', this.publishSplitButton(), 30);
-    } else if (draftsAvailable && poll.isDraft()) {
-      items.add(
-        'update-draft',
-        <Button
-          className="Button PollModal-SaveDraftButton"
-          icon="fas fa-save"
-          loading={this.state.loading && this.pendingAction === 'draft'}
-          disabled={this.state.loading && this.pendingAction !== 'draft'}
-          onclick={() => this.saveDraft()}
-        >
-          {app.translator.trans('fof-polls.forum.compose.update_draft')}
-        </Button>,
-        20
-      );
-
-      items.add('publish', this.publishSplitButton(), 30);
     } else {
       items.add(
         'save',
-        <Button type="submit" className="Button Button--primary PollModal-SubmitButton" icon="fas fa-save" loading={this.state.loading}>
+        <Button
+          type="button"
+          className="Button Button--primary PollModal-SubmitButton"
+          icon="fas fa-save"
+          loading={state.loading}
+          disabled={!dirty}
+          onclick={() => this.onSaveChanges()}
+        >
           {app.translator.trans('fof-polls.forum.modal.submit')}
         </Button>,
         20
@@ -339,7 +372,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
   publishSplitButton(): Mithril.Children {
     return (
-      <div className="PollForm-publishCluster">
+      <div className="ButtonGroup PollForm-publishCluster">
         <Button
           className="Button Button--primary PollModal-PublishButton"
           icon="fas fa-paper-plane"
@@ -350,7 +383,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
           {app.translator.trans('fof-polls.forum.compose.publish')}
         </Button>
         <Button
-          className="Button Button--icon PollModal-ScheduleButton"
+          className="Button Button--icon Button--primary PollModal-ScheduleButton"
           icon="fas fa-clock"
           onclick={() => {
             // Pre-validate so we never open the schedule modal over an
@@ -504,6 +537,15 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
   async onsubmit(event: Event) {
     event.preventDefault();
+    // Buttons are all type="button"; this only fires on Enter inside an
+    // input. Route to the action that matches the cluster's current shape.
+    if (this.attrs.allowDrafts === true && (this.state.isNew() || this.state.isDraft())) {
+      return this.saveDraft();
+    }
+    return this.onSaveChanges();
+  }
+
+  async onSaveChanges(): Promise<void> {
     if (await this.submit({})) {
       const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.compose.success'));
       setTimeout(() => app.alerts.dismiss(alertId), 10000);
@@ -532,23 +574,20 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
       // follow-up /publish call would 403 — the policy only permits
       // publishing drafts.
       if (!(await this.submit({ isDraft: true }))) return;
-      try {
-        // Defensive: submit() hands off to attrs.onsubmit, which must
-        // assign the saved Poll to state.poll so id() is populated for
-        // /publish. Fail loudly here if a future onsubmit forgets that
-        // — better than POSTing to /polls/undefined/publish.
-        if (!this.state.poll.id()) {
-          throw new Error('Cannot publish an unsaved poll.');
-        }
-
-        await this.state.poll.publish();
-        const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.publish_success'));
-        setTimeout(() => app.alerts.dismiss(alertId), 10000);
-        m.route.set(app.route('fof.polls.list'));
-      } catch (error) {
-        console.error(error);
-        app.alerts.show({ type: 'error' }, app.translator.trans('fof-polls.forum.modal.error'));
+      // Defensive: submit() hands off to attrs.onsubmit, which must
+      // assign the saved Poll to state.poll so id() is populated for
+      // /publish. Fail loudly here if a future onsubmit forgets that
+      // — better than POSTing to /polls/undefined/publish.
+      if (!this.state.poll.id()) {
+        throw new Error('Cannot publish an unsaved poll.');
       }
+
+      await this.state.poll.publish();
+      const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.publish_success'));
+      setTimeout(() => app.alerts.dismiss(alertId), 10000);
+      m.route.set(app.route('fof.polls.list'));
+    } catch (error) {
+      this.handleError(error);
     } finally {
       this.pendingAction = null;
       m.redraw();
@@ -558,16 +597,24 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
   async submit(extra: object): Promise<boolean> {
     try {
       await this.attrs.onsubmit({ ...this.data(), ...extra }, this.state);
+      // Successful save: re-baseline so the form is no longer dirty
+      // until the user edits again.
+      this.snapshot = this.serializeFormState();
+      this.state.markDirty(false);
       return true;
     } catch (error) {
-      if (error instanceof FormError) {
-        app.alerts.show({ type: 'error' }, error.message);
-      } else if (error instanceof RequestError) {
-        console.error(error);
-        app.alerts.show({ type: 'error' }, app.translator.trans('fof-polls.forum.modal.error'));
-      }
+      this.handleError(error);
       return false;
     }
+  }
+
+  protected handleError(error: unknown): void {
+    if (error instanceof FormError) {
+      app.alerts.show({ type: 'error' }, error.message);
+      return;
+    }
+    console.error(error);
+    app.alerts.show({ type: 'error' }, app.translator.trans('fof-polls.forum.modal.error'));
   }
 
   async delete(): Promise<void> {
