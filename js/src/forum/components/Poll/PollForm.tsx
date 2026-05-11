@@ -417,7 +417,11 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
               }
               throw error;
             }
-            app.modal.show(SchedulePollModal, { poll: this.state.poll, form: this });
+            app.modal.show(SchedulePollModal, {
+              poll: this.state.poll,
+              form: this,
+              onSuccess: () => m.route.set(app.route('fof.polls.list')),
+            });
           }}
           title={extractText(app.translator.trans('fof-polls.forum.compose.schedule'))}
         />

@@ -66,7 +66,16 @@ export default {
 
       items.add(
         'schedulePublish',
-        <Button icon="fas fa-clock" onclick={() => app.modal.show(SchedulePollModal, { poll, form: null })}>
+        <Button
+          icon="fas fa-clock"
+          onclick={() =>
+            app.modal.show(SchedulePollModal, {
+              poll,
+              form: null,
+              onSuccess: app.current.matches(PollsPage) ? () => m.redraw() : () => m.route.set(app.route('fof.polls.view', { id: poll.id() })),
+            })
+          }
+        >
           {app.translator.trans(
             poll.isScheduled?.()
               ? 'fof-polls.forum.poll_controls.edit_schedule_publish_label'

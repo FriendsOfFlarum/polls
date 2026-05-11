@@ -18,6 +18,7 @@ interface SchedulePollModalAttrs extends IInternalModalAttrs {
    * in which case we skip straight to scheduling.
    */
   form: { submit: (extra: object) => Promise<boolean>; state: PollFormState } | null;
+  onSuccess?: (poll: Poll) => void;
 }
 
 export default class SchedulePollModal extends Modal<SchedulePollModalAttrs> {
@@ -61,7 +62,7 @@ export default class SchedulePollModal extends Modal<SchedulePollModalAttrs> {
           </div>
           {this.error && <div className="Form-group helpText text-error">{this.error}</div>}
           <div className="Form-group">
-            <Button className="Button Button--primary" loading={this.loading} onclick={() => this.submit()}>
+            <Button className="Button Button--primary" loading={this.loading} onclick={() => this.onSchedule()}>
               {app.translator.trans('fof-polls.forum.compose.schedule_submit')}
             </Button>
           </div>
@@ -70,7 +71,7 @@ export default class SchedulePollModal extends Modal<SchedulePollModalAttrs> {
     );
   }
 
-  async submit() {
+  async onSchedule() {
     this.loading = true;
     this.error = null;
 
@@ -97,7 +98,7 @@ export default class SchedulePollModal extends Modal<SchedulePollModalAttrs> {
       // Then schedule.
       await poll.publish({ scheduledFor: new Date(this.datetime()).toISOString() });
       this.hide();
-      m.route.set(app.route('fof.polls.list'));
+      this.attrs.onSuccess?.(poll);
     } catch (e: any) {
       this.error = e?.response?.errors?.[0]?.detail ?? e.message ?? 'Unknown error';
     } finally {
