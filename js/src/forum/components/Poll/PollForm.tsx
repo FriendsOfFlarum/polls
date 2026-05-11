@@ -363,7 +363,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
           icon="fas fa-save"
           loading={state.loading && this.pendingAction === 'draft'}
           disabled={(state.loading && this.pendingAction !== 'draft') || (isDraft && !dirty)}
-          onclick={() => this.saveDraft()}
+          onclick={() => this.onSaveDraft()}
         >
           {app.translator.trans(isDraft ? 'fof-polls.forum.compose.update_draft' : 'fof-polls.forum.compose.save_as_draft')}
         </Button>,
@@ -559,7 +559,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     // Buttons are all type="button"; this only fires on Enter inside an
     // input. Route to the action that matches the cluster's current shape.
     if (this.attrs.allowDrafts === true && (this.state.isNew() || this.state.isDraft())) {
-      return this.saveDraft();
+      return this.onSaveDraft();
     }
     return this.onSaveChanges();
   }
@@ -571,13 +571,16 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     }
   }
 
-  async saveDraft(): Promise<void> {
+  async onSaveDraft(): Promise<void> {
     this.pendingAction = 'draft';
+    const wasNew = this.state.isNew();
     try {
       if (await this.submit({ isDraft: true })) {
         const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.compose.draft_saved'));
         setTimeout(() => app.alerts.dismiss(alertId), 10000);
-        m.route.set(app.route('fof.polls.list'));
+        if (wasNew) {
+          window.history.replaceState({}, '', app.route('fof.polls.composer', { id: this.state.poll.id() }));
+        }
       }
     } finally {
       this.pendingAction = null;
