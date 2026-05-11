@@ -4,10 +4,12 @@ import Poll from '../models/Poll';
 import Component from 'flarum/common/Component';
 import ComposePollPage from '../components/ComposePollPage';
 import PollsPage from '../components/PollsPage';
+import PollListState from '../states/PollListState';
 import ItemList from 'flarum/common/utils/ItemList';
 import Separator from 'flarum/common/components/Separator';
 import Button from 'flarum/common/components/Button';
 import SchedulePollModal from '../components/SchedulePollModal';
+import PollViewPage from '../components/PollViewPage';
 
 /**
  * The `UserControls` utility constructs a list of buttons for a user which
@@ -137,10 +139,10 @@ export default {
       .delete()
       .then(() => {
         this.showDeletionAlert(poll, 'success');
-        if (app.current.matches(ComposePollPage, { id: poll.id() }) || app.current.matches(PollsPage, { id: poll.id() })) {
-          app.history.back();
+        if (app.current.matches(ComposePollPage) || app.current.matches(PollViewPage)) {
+          m.route.set(app.route('fof.polls.list'));
         } else {
-          window.location.reload();
+          PollListState.notifyDeleted(poll);
         }
       })
       .catch(() => this.showDeletionAlert(poll, 'error'));
