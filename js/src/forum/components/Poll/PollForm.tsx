@@ -49,6 +49,15 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
   // the live serialized form — avoids hooking every `bidi` input.
   protected snapshot: string = '';
 
+  // Browser-level guard: prompts on tab close / refresh / typed-URL when
+  // the form is dirty.
+  private beforeUnloadHandler = (e: BeforeUnloadEvent): void => {
+    if (this.state?.dirty) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  };
+
   oninit(vnode: Mithril.Vnode): void {
     super.oninit(vnode);
     this.state = new PollFormState(this.attrs.poll);
@@ -81,6 +90,16 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     }
 
     this.snapshot = this.serializeFormState();
+  }
+
+  oncreate(vnode: Mithril.VnodeDOM): void {
+    super.oncreate(vnode);
+    window.addEventListener('beforeunload', this.beforeUnloadHandler);
+  }
+
+  onremove(vnode: Mithril.VnodeDOM): void {
+    super.onremove(vnode);
+    window.removeEventListener('beforeunload', this.beforeUnloadHandler);
   }
 
   /**
