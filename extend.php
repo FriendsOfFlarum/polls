@@ -118,6 +118,7 @@ return [
     (new Extend\SearchDriver(\Flarum\Search\Database\DatabaseSearchDriver::class))
         ->addSearcher(Poll::class, Filter\GlobalPollSearcher::class)
         ->addFilter(Filter\GlobalPollSearcher::class, Filter\PollIsEndedFilter::class)
+        ->addFilter(Filter\GlobalPollSearcher::class, Filter\PollIsDraftFilter::class)
         ->addSearcher(PollGroup::class, Filter\PollGroupSearcher::class)
         ->addFilter(Filter\PollGroupSearcher::class, Filter\PollGroupHasPollsFilter::class),
 

@@ -105,7 +105,16 @@ export default class PollListState<P extends PollListParams = PollListParams> ex
   }
 
   removePoll(poll: Poll): void {
-    this.eventEmitter.emit('poll.deleted', poll);
+    PollListState.notifyDeleted(poll);
+  }
+
+  /**
+   * Notify all live PollListState instances that a poll was deleted (or moved
+   * out of the active view, e.g. published-only ↔ drafts) so they splice it
+   * out of their pages without a full reload.
+   */
+  static notifyDeleted(poll: Poll): void {
+    globalEventEmitter.emit('poll.deleted', poll);
   }
 
   deletePoll(poll: Poll): void {
