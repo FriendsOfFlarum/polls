@@ -82,7 +82,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     items.add(
       'question',
-      <div className="Form-group">
+      <div className="Form-group Form-group--input">
         <label className="label">{app.translator.trans('fof-polls.forum.modal.question_placeholder')}</label>
 
         <input type="text" name="question" className="FormControl" bidi={this.question} />
@@ -92,7 +92,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     items.add(
       'subtitle',
-      <div className="Form-group">
+      <div className="Form-group Form-group--input">
         <label className="label">{app.translator.trans('fof-polls.forum.modal.subtitle_placeholder')}</label>
 
         <input type="text" name="subtitle" className="FormControl" bidi={this.subtitle} />
@@ -104,7 +104,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     items.add(
       'poll_image',
-      <div className="Form-group">
+      <div className="Form-group Form-group--upload">
         <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_image.label')}</label>
         {this.uploadConditional(
           hasImage,
@@ -113,14 +113,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
             <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_image.help')}</p>
             <input type="hidden" name="pollImage" bidi={this.image} />
           </>,
-          <UploadPollImageButton name="pollImage" poll={this.state.poll} onUpload={this.pollImageUploadSuccess.bind(this)} />,
-          <input
-            type="text"
-            name="pollImage"
-            className="FormControl"
-            bidi={this.image}
-            placeholder={app.translator.trans('fof-polls.forum.modal.image_option_placeholder')}
-          />
+          <UploadPollImageButton name="pollImage" poll={this.state.poll} onUpload={this.pollImageUploadSuccess.bind(this)} />
         )}
       </div>,
       90
@@ -129,7 +122,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     if (hasImage) {
       items.add(
         'poll_image_alt',
-        <div className="Form-group">
+        <div className="Form-group Form-group--input">
           <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_image.alt_label')}</label>
 
           <input type="text" required name="imageAlt" className="FormControl" bidi={this.imageAlt} />
@@ -142,11 +135,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     items.add(
       'answers',
-      <div className="PollModal--answers Form-group">
-        <label className="label PollModal--answers-title">
-          <span>{app.translator.trans('fof-polls.forum.modal.options_label')}</span>
-        </label>
-
+      <div className="PollModal--answers Form-group Form-group--input">
         {this.displayOptions().toArray()}
 
         <Tooltip text={app.translator.trans('fof-polls.forum.modal.tooltip.options.add-button')}>
@@ -163,7 +152,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     items.add(
       'date',
-      <div className="Form-group">
+      <div className="Form-group Form-group--input">
         <label className="label">{app.translator.trans('fof-polls.forum.modal.date_placeholder')}</label>
 
         <div className="PollModal--date">
@@ -198,7 +187,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     items.add(
       'public',
-      <div className="Form-group">
+      <div className="Form-group Form-group--switch">
         {Switch.component(
           {
             state: this.publicPoll() || false,
@@ -212,7 +201,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     items.add(
       'hide-votes',
-      <div className="Form-group">
+      <div className="Form-group Form-group--switch">
         <Switch state={this.endDate() && this.hideVotes()} onchange={this.hideVotes} disabled={!this.endDate()}>
           {app.translator.trans('fof-polls.forum.modal.hide_votes_label')}
         </Switch>
@@ -223,7 +212,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     items.add(
       'allow-change-vote',
-      <div className="Form-group">
+      <div className="Form-group Form-group--switch">
         <Switch state={this.allowChangeVote()} onchange={this.allowChangeVote}>
           {app.translator.trans('fof-polls.forum.modal.allow_change_vote_label')}
         </Switch>
@@ -233,7 +222,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     items.add(
       'allow-multiple-votes',
-      <div className="Form-group">
+      <div className="Form-group Form-group--switch">
         {Switch.component(
           {
             state: this.allowMultipleVotes() || false,
@@ -261,13 +250,13 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     items.add(
       'submit',
-      <div className="Form-group">
+      <div className="Form-group Form-group--actions">
         <Button type="submit" className="Button Button--primary PollModal-SubmitButton" icon="fas fa-save" loading={this.state.loading}>
           {app.translator.trans('fof-polls.forum.modal.submit')}
         </Button>
         {this.state.poll.exists && (
           <Button
-            className="Button Button--secondary PollModal-deleteButton"
+            className="Button Button--secondary PollModal-DeleteButton"
             icon="fas fa-trash-alt"
             loading={this.state.deleting}
             onclick={this.delete.bind(this)}
@@ -291,34 +280,23 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
       items.add(
         'option-' + i,
-        <div className="Form-group">
+        <div className="Form-group Form-group--answer">
           <fieldset className="Poll-answer-input">
-            <input
-              className="FormControl"
-              type="text"
-              name={'answer' + (i + 1)}
-              bidi={this.optionAnswers[i]}
-              placeholder={app.translator.trans('fof-polls.forum.modal.option_placeholder') + ' #' + (i + 1)}
-            />
+            <label className="FieldSet-label PollModal--answers-title">
+              {app.translator.trans('fof-polls.forum.modal.options_label') + ' ' + (i + 1)}
+            </label>
+            <input className="FormControl" type="text" name={'answer' + (i + 1)} bidi={this.optionAnswers[i]} />
             <div className="Poll-answer-image">
               {this.uploadConditional(
                 !!imgFunc(),
                 option?.isImageUpload(),
-                <>
+                <div className="Poll-answer-imageInfo">
                   <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_option_image.label')}</label>
                   <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_option_image.help')}</p>
                   <input type="hidden" name={'answerImage' + (i + 1)} value={imgFunc()} />
-                </>,
+                </div>,
 
-                <UploadPollImageButton name="pollOptionImage" option={option} onUpload={this.pollOptionImageUploadSuccess.bind(this, i)} />,
-
-                <input
-                  type="text"
-                  name={'answerImage' + (i + 1)}
-                  className="FormControl"
-                  bidi={imgFunc}
-                  placeholder={app.translator.trans('fof-polls.forum.modal.image_option_placeholder')}
-                />
+                <UploadPollImageButton name="pollOptionImage" option={option} onUpload={this.pollOptionImageUploadSuccess.bind(this, i)} />
               )}
             </div>
           </fieldset>
@@ -442,7 +420,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     this.options[index]?.pushAttributes({ isImageUpload: !!fileName });
   }
 
-  uploadConditional(hasImage: boolean, isUpload: boolean, ifCanUpload: JSX.Element, uploadButton: JSX.Element, imageUrlInput: JSX.Element) {
+  uploadConditional(hasImage: boolean, isUpload: boolean, ifCanUpload: JSX.Element, uploadButton: JSX.Element) {
     const isExistingUrlImage = hasImage && !isUpload;
 
     // Existing poll with an external URL image — show deprecation notice

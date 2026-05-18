@@ -27,12 +27,21 @@
 }
 
 .PollDiscussionModal-form {
-  .Form-group {
-    margin-top: 5px;
+  .Form-group.hide {
+    display: none;
+  }
 
-    &.hide {
-      display: none;
-    }
+  .Form-group--input,
+  .Form-group--upload {
+    margin-bottom: 25px;
+  }
+
+  .Form-group--switch {
+    margin-bottom: 10px;
+  }
+
+  .Form-group--actions {
+    flex-direction: row;
   }
 
   input.FormControl {
@@ -55,17 +64,37 @@
   .PollModal--answers {
     margin-bottom: 20px;
 
+    .PollModal--answers-title {
+      margin-bottom: 10px;
+    }
+
     .Form-group {
       display: flex;
+      flex-direction: row;
       margin-top: 2.5px;
       margin-bottom: 18px;
+      width: 100%;
+    }
+
+    .Form-group--answer {
+      .PollModal--button {
+        margin-top: 31px;
+      }
     }
 
     fieldset {
       flex-grow: 1;
+      width: 100%;
+    }
+
+    .Poll-answer-input input {
+      margin-bottom: 10px;
     }
 
     .Poll-answer-image {
+      display: flex;
+      justify-content: space-between;
+
       img {
         max-width: 100%;
       }
@@ -108,7 +137,7 @@
     margin-top: 10px;
   }
 
-  .PollModal-deleteButton {
+  .PollModal-DeleteButton {
     margin-top: 10px;
     margin-left: 10px;
   }
