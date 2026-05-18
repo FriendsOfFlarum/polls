@@ -2,7 +2,6 @@ import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import Page, { IPageAttrs } from 'flarum/common/components/Page';
 import PageStructure from 'flarum/forum/components/PageStructure';
-import IndexSidebar from 'flarum/forum/components/IndexSidebar';
 import ItemList from 'flarum/common/utils/ItemList';
 import listItems from 'flarum/common/helpers/listItems';
 import extractText from 'flarum/common/utils/extractText';
@@ -11,6 +10,7 @@ import Dropdown from 'flarum/common/components/Dropdown';
 import PollList from './Poll/PollList';
 import PollListState from '../states/PollListState';
 import PollPageHero from './PollPageHero';
+import PollsIndexSidebar from './PollsIndexSidebar';
 
 export default class PollsPage extends Page<IPageAttrs, PollListState> {
   state!: PollListState;
@@ -48,7 +48,7 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
   }
 
   sidebar(): Mithril.Children {
-    return <IndexSidebar />;
+    return <PollsIndexSidebar />;
   }
 
   contentItems(): ItemList<Mithril.Children> {
@@ -110,7 +110,7 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
     items.add(
       'refresh',
       <Button
-        aria-label={extractText(app.translator.trans('fof-polls.forum.page.refresh_tooltip'))}
+        aria-label={extractText(app.translator.trans('core.forum.index.refresh_tooltip'))}
         icon="fas fa-sync"
         className="Button Button--icon"
         onclick={() => this.state.refresh()}
@@ -118,14 +118,5 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
     );
 
     return items;
-  }
-
-  newPollAction(): void {
-    if (!app.session.user) {
-      app.modal.show(() => import('flarum/forum/components/LogInModal'));
-      return;
-    }
-
-    m.route.set(app.route('fof.polls.composer'));
   }
 }

@@ -2,13 +2,12 @@ import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import Page from 'flarum/common/components/Page';
 import PageStructure from 'flarum/forum/components/PageStructure';
-import IndexSidebar from 'flarum/forum/components/IndexSidebar';
-import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import ItemList from 'flarum/common/utils/ItemList';
 import Poll from '../models/Poll';
 import PollForm from './Poll/PollForm';
 import PollFormState from '../states/PollFormState';
 import ComposeHero from './ComposeHero';
+import PollsIndexSidebar from './PollsIndexSidebar';
 
 export default class ComposePollPage extends Page {
   poll: Poll | null | undefined = null;
@@ -81,7 +80,7 @@ export default class ComposePollPage extends Page {
   }
 
   sidebar(): Mithril.Children {
-    return <IndexSidebar />;
+    return <PollsIndexSidebar />;
   }
 
   contentItems(): ItemList<Mithril.Children> {

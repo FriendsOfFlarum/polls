@@ -1,13 +1,13 @@
 import app from 'flarum/forum/app';
 import Page, { IPageAttrs } from 'flarum/common/components/Page';
 import PageStructure from 'flarum/forum/components/PageStructure';
-import IndexSidebar from 'flarum/forum/components/IndexSidebar';
 import ItemList from 'flarum/common/utils/ItemList';
 import extractText from 'flarum/common/utils/extractText';
 import type Mithril from 'mithril';
 import PollListState from '../states/PollListState';
 import PollShowcase from './Poll/PollShowcase';
 import PollPageHero from './PollPageHero';
+import PollsIndexSidebar from './PollsIndexSidebar';
 
 export default class PollsShowcasePage extends Page<IPageAttrs, PollListState> {
   state!: PollListState;
@@ -56,7 +56,7 @@ export default class PollsShowcasePage extends Page<IPageAttrs, PollListState> {
   }
 
   sidebar(): Mithril.Children {
-    return <IndexSidebar />;
+    return <PollsIndexSidebar />;
   }
 
   contentItems(): ItemList<Mithril.Children> {
@@ -65,14 +65,5 @@ export default class PollsShowcasePage extends Page<IPageAttrs, PollListState> {
     items.add('poll-showcase', <PollShowcase activeState={this.state} endedState={this.endedState} />);
 
     return items;
-  }
-
-  newPollAction(): void {
-    if (!app.session.user) {
-      app.modal.show(() => import('flarum/forum/components/LogInModal'));
-      return;
-    }
-
-    m.route.set(app.route('fof.polls.composer'));
   }
 }

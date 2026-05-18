@@ -740,6 +740,42 @@
 
 // Layout is now handled by PageStructure's .Page styles.
 
+@media @desktop-up {
+  .PollsShowcasePage,
+  .PollGroupViewPage {
+    .Page-container {
+      display: block;
+    }
+
+    .Page-sidebar {
+      width: unset;
+    }
+
+    .sideNav {
+      .sideNav--horizontal();
+      float: none;
+      width: auto;
+      margin-right: 0;
+      padding-top: 0;
+
+      &:after {
+        display: none;
+      }
+
+      .App-primaryControl {
+        margin-bottom: 0;
+      }
+
+      > ul > li:first-child {
+        width: 190px;
+      }
+    }
+    .Page-content {
+      margin-top: 15px;
+    }
+  }
+}
+
 .PollShowcase {
   &--item {
     background-color: var(--control-bg);
