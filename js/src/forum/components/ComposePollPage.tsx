@@ -87,21 +87,18 @@ export default class ComposePollPage extends Page {
     const items = new ItemList<Mithril.Children>();
 
     if (this.poll) {
-      items.add('form', <PollForm poll={this.poll} onsubmit={this.onsubmit.bind(this)} />);
+      items.add('form', <PollForm poll={this.poll} onsubmit={this.onsubmit.bind(this)} allowDrafts={true} />);
     }
 
     return items;
   }
 
   async onsubmit(data: Object, state: PollFormState) {
-    const isNew = state.poll.id() === undefined;
     await state.save(data);
+    this.poll = state.poll;
 
-    const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.compose.success'));
-    setTimeout(() => app.alerts.dismiss(alertId), 10000);
-
-    if (isNew) {
-      m.route.set(app.route('fof.polls.list'));
-    }
+    // Per-flow success alerts and navigation are owned by the caller
+    // (save draft / publish / schedule / plain save). This handler only
+    // persists and keeps the page bound to the latest saved model.
   }
 }

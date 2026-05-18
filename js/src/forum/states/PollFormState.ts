@@ -7,6 +7,7 @@ export default class PollFormState {
   loading: boolean;
   deleting: boolean;
   expandedGroup: string;
+  dirty: boolean = false;
 
   static createNewPoll() {
     const poll = app.store.createRecord<Poll>('polls');
@@ -35,6 +36,18 @@ export default class PollFormState {
     this.deleting = false;
     this.poll = poll;
     this.expandedGroup = 'setup';
+  }
+
+  isNew(): boolean {
+    return !this.poll.exists;
+  }
+
+  isDraft(): boolean {
+    return this.poll.exists && this.poll.isDraft();
+  }
+
+  markDirty(value: boolean = true): void {
+    this.dirty = value;
   }
 
   isExpanded(groupKey: string) {
