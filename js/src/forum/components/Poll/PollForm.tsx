@@ -434,10 +434,12 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
   pollImageUploadSuccess(fileName: string | null | undefined): void {
     this.image(fileName);
+    this.state.poll?.pushAttributes({ isImageUpload: !!fileName });
   }
 
   pollOptionImageUploadSuccess(index: number, fileName: string | null | undefined): void {
     this.optionImageUrls[index] = Stream(fileName);
+    this.options[index]?.pushAttributes({ isImageUpload: !!fileName });
   }
 
   uploadConditional(hasImage: boolean, isUpload: boolean, ifCanUpload: JSX.Element, uploadButton: JSX.Element, imageUrlInput: JSX.Element) {
