@@ -76,7 +76,9 @@ return [
 
     (new Extend\Console())
         ->command(Console\RefreshVoteCountCommand::class)
-        ->command(Console\ConvertPollImagesCommand::class),
+        ->command(Console\ConvertPollImagesCommand::class)
+        ->command(Console\PublishScheduledPollsCommand::class)
+        ->schedule(Console\PublishScheduledPollsCommand::class, Console\PublishScheduledPollsSchedule::class),
 
     (new Extend\Policy())
         ->modelPolicy(Poll::class, Access\PollPolicy::class),

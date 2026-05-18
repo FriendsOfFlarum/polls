@@ -43,9 +43,19 @@ class PollsDirectory
         $q = Arr::pull($queryParams, 'q');
         $page = max(1, intval(Arr::pull($queryParams, 'page')));
 
+        $filters = Arr::pull($queryParams, 'filter', []);
+
+        // The listing UI defaults to "All" (published + visible drafts). Match
+        // that server-side so the preloaded apiDocument doesn't fall back to
+        // the searcher's default hide-drafts guard on fresh page loads.
+        // Callers can still narrow explicitly via `filter[isDraft]=0` or `=1`.
+        if (!array_key_exists('isDraft', $filters) && !array_key_exists('-isDraft', $filters)) {
+            $filters['isDraft'] = 'any';
+        }
+
         $params = [
             'sort'   => isset($this->sortMap[$sort]) ? $this->sortMap[$sort] : '-createdAt',
-            'filter' => Arr::pull($queryParams, 'filter', []),
+            'filter' => $filters,
             'page'   => ['number' => $page],
         ];
 
