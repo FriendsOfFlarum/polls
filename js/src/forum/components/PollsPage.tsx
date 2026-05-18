@@ -12,8 +12,29 @@ import PollListState from '../states/PollListState';
 import PollPageHero from './PollPageHero';
 import PollsIndexSidebar from './PollsIndexSidebar';
 
+type PollStatus = 'all' | 'published' | 'draft';
+
+const STATUS_FILTER_VALUE: Record<PollStatus, string> = {
+  all: 'any',
+  published: '0',
+  draft: '1',
+};
+
+/**
+ * Reverse lookup: `filter[isDraft]` URL value → status dropdown key. Anything
+ * else (including missing) falls back to "all", matching the server-side
+ * default in PollsDirectory.
+ */
+function statusFromUrl(): PollStatus {
+  const raw = new URLSearchParams(window.location.search).get('filter[isDraft]');
+  if (raw === '1' || raw === 'true') return 'draft';
+  if (raw === '0' || raw === 'false') return 'published';
+  return 'all';
+}
+
 export default class PollsPage extends Page<IPageAttrs, PollListState> {
   state!: PollListState;
+  status: PollStatus = 'all';
 
   oninit(vnode: Mithril.Vnode) {
     super.oninit(vnode);
@@ -25,14 +46,33 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
 
     const defaultSort = String(app.forum.attribute('pollsDirectoryDefaultSort')) || 'newest';
 
+    // Keep the dropdown label honest when landing via a share link like
+    // /polls/all?filter[isDraft]=1 — otherwise the UI would read "All" while
+    // the list is actually drafts-only.
+    this.status = statusFromUrl();
+
     this.state = new PollListState({
       sort: defaultSort,
-      filter: m.route.param('filter'),
+      filter: { isDraft: STATUS_FILTER_VALUE[this.status] },
     });
 
     this.state.refresh();
 
     app.setTitle(extractText(app.translator.trans('fof-polls.forum.page.nav')));
+  }
+
+  setStatus(status: PollStatus): void {
+    if (this.status === status) return;
+    this.status = status;
+
+    const params = this.state.getParams();
+    this.state.refreshParams(
+      {
+        ...params,
+        filter: { ...(params.filter || {}), isDraft: STATUS_FILTER_VALUE[status] },
+      },
+      1
+    );
   }
 
   view(): Mithril.Children {
@@ -83,6 +123,28 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
       return acc;
     }, {});
 
+    const statusKeys: PollStatus[] = ['all', 'published', 'draft'];
+    const statusLabels: Record<PollStatus, Mithril.Children> = {
+      all: app.translator.trans('fof-polls.forum.polls_list.status_filter.all'),
+      published: app.translator.trans('fof-polls.forum.polls_list.status_filter.published'),
+      draft: app.translator.trans('fof-polls.forum.polls_list.status_filter.draft'),
+    };
+
+    items.add(
+      'status',
+      <Dropdown buttonClassName="Button" label={statusLabels[this.status]}>
+        {statusKeys.map((key) => {
+          const active = this.status === key;
+          return (
+            <Button icon={active ? 'fas fa-check' : true} active={active} onclick={() => this.setStatus(key)}>
+              {statusLabels[key]}
+            </Button>
+          );
+        })}
+      </Dropdown>,
+      10
+    );
+
     items.add(
       'sort',
       <Dropdown
@@ -98,7 +160,8 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
             {sortOptions[value]}
           </Button>
         ))}
-      </Dropdown>
+      </Dropdown>,
+      0
     );
 
     return items;
