@@ -21,6 +21,8 @@ use Flarum\Settings\SettingsRepositoryInterface;
 use FoF\Polls\Commands\CreatePoll;
 use FoF\Polls\Commands\EditPoll;
 use FoF\Polls\Commands\MultipleVotesPoll;
+use FoF\Polls\Commands\PublishPoll;
+use FoF\Polls\Commands\UnpublishPoll;
 use FoF\Polls\Poll;
 use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Database\Eloquent\Builder;
@@ -188,7 +190,65 @@ class PollResource extends Resource\AbstractDatabaseResource
 
                     return \Tobyz\JsonApiServer\json_api_response($document);
                 }),
+            Endpoint\Endpoint::make('publish')
+                ->route('POST', '/{id}/publish')
+                ->authenticated()
+                ->action(function (Context $context) {
+                    return $this->bus->dispatch(
+                        new PublishPoll(
+                            (int) $context->modelId,
+                            $context->getActor(),
+                            $context->body()['data'] ?? []
+                        )
+                    );
+                })
+                ->response(fn (Context $context, Poll $poll) => $this->respondWithPoll($context, $poll)),
+            Endpoint\Endpoint::make('unpublish')
+                ->route('POST', '/{id}/unpublish')
+                ->authenticated()
+                ->action(function (Context $context) {
+                    return $this->bus->dispatch(
+                        new UnpublishPoll(
+                            (int) $context->modelId,
+                            $context->getActor(),
+                            $context->body()['data'] ?? []
+                        )
+                    );
+                })
+                ->response(fn (Context $context, Poll $poll) => $this->respondWithPoll($context, $poll)),
         ];
+    }
+
+    protected function respondWithPoll(Context $context, Poll $poll): \Psr\Http\Message\ResponseInterface
+    {
+        $poll->unsetRelation('options');
+        $poll->load('options');
+
+        Poll::setStateUser($context->getActor());
+        $poll->unsetRelation('myVotes');
+
+        $serializer = new \Flarum\Api\Serializer($context);
+
+        $serializer->addPrimary(
+            $context->resource($context->collection->resource($poll, $context)),
+            $poll,
+            [
+                'options' => [],
+                'myVotes' => [
+                    'option' => [],
+                ],
+            ],
+        );
+
+        [$primary, $included] = $serializer->serialize();
+
+        $document = ['data' => $primary[0]];
+
+        if (count($included)) {
+            $document['included'] = $included;
+        }
+
+        return \Tobyz\JsonApiServer\json_api_response($document);
     }
 
     public function fields(): array
@@ -247,6 +307,19 @@ class PollResource extends Resource\AbstractDatabaseResource
             Schema\Boolean::make('isImageUpload')
                 ->visible(fn (Poll $poll) => $poll->image !== null)
                 ->get(fn (Poll $poll) => !filter_var($poll->image, FILTER_VALIDATE_URL)),
+            Schema\Boolean::make('isDraft')
+                ->get(fn (Poll $poll) => $poll->isDraft()),
+            Schema\DateTime::make('publishedAt')
+                ->get(fn (Poll $poll) => $poll->published_at),
+            Schema\DateTime::make('scheduledPublishAt')
+                ->get(fn (Poll $poll) => $poll->scheduled_publish_at),
+            Schema\Str::make('scheduledPublishError')
+                ->visible(fn (Poll $poll, Context $context) => $context->getActor()->can('edit', $poll))
+                ->get(fn (Poll $poll) => $poll->scheduled_publish_error),
+            Schema\Boolean::make('canPublish')
+                ->get(fn (Poll $poll, Context $context) => $context->getActor()->can('publish', $poll)),
+            Schema\Boolean::make('canUnpublish')
+                ->get(fn (Poll $poll, Context $context) => $context->getActor()->can('unpublish', $poll)),
 
             Schema\Relationship\ToMany::make('options')
                 ->includable()
