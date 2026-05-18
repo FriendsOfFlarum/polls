@@ -15,6 +15,7 @@ import PollControls from '../../utils/PollControls';
 import ItemList from 'flarum/common/utils/ItemList';
 import listItems from 'flarum/common/helpers/listItems';
 import PollViewPage from '../PollViewPage';
+import PollDraftBadges from './PollDraftBadges';
 
 export interface IPollListItemAttrs extends ComponentAttrs {
   poll: Poll;
@@ -115,11 +116,18 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
   mainView(): Mithril.Children {
     return (
       <Link href={app.route('fof.polls.view', { id: this.poll.id() })} className="PollListItem-main">
-        <h2 className="PollListItem-title">{highlight(this.pollQuestion(this.poll), this.highlightRegExp)}</h2>
+        <h2 className="PollListItem-title">
+          {highlight(this.pollQuestion(this.poll), this.highlightRegExp)}
+          {this.draftBadges()}
+        </h2>
         {this.poll.subtitle() && <p className="PollListItem-subtitle helpText">{this.pollSubtitle(this.poll)}</p>}
         <ul className="PollListItem-info">{listItems(this.infoItems().toArray())}</ul>
       </Link>
     );
+  }
+
+  draftBadges(): Mithril.Children {
+    return <PollDraftBadges poll={this.poll} />;
   }
 
   /**

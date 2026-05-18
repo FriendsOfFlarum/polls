@@ -57,6 +57,9 @@ fof-polls:
       start_poll_button: Start Global Poll
       cannot_start_poll_button: Cannot Start Poll
       total_votes: "{count, plural, one {# vote was given} other {# votes were given}}"
+      draft_label: Draft
+      scheduled_label: "Scheduled for {date}"
+      scheduled_error_tooltip: This scheduled publication failed. Open the poll to see why.
 
     poll_controls:
       toggle_dropdown_accessible_label: Toggle poll controls menu
