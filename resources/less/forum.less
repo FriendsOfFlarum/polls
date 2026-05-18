@@ -840,6 +840,50 @@
   margin-right: 10px;
 }
 
+// Submit cluster (draft / publish / schedule / save)
+.PollModal--submitCluster {
+  display: flex;
+  gap: 10px;
+  padding-top: 10px;
+
+  .PollModal-SubmitButton {
+    margin-top: 0;
+  }
+
+  .Button--primary .Button-icon {
+    display: inline-block;
+  }
+}
+
+// Draft & schedule badges (shared between poll list rows and the poll view)
+.PollDraftBadges {
+  display: inline-flex;
+  gap: 6px;
+  vertical-align: middle;
+}
+.PollDraftBadges-draft {
+  background: #fde68a;
+  color: #92400e;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+.PollDraftBadges-scheduled {
+  background: #bfdbfe;
+  color: #1e3a8a;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+.PollDraftBadges-scheduleError {
+  color: #b91c1c;
+  margin-left: 4px;
+}
+
+.PollListItem .PollDraftBadges {
+  margin-left: 8px;
+}
+
 [data-theme^=light] {
   --control-bg-darken-5: darken(@control-bg-light, 5%);
 }
