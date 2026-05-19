@@ -33,7 +33,7 @@ class PollIsDraftFilter implements FilterInterface
             return;
         }
 
-        $wantsDrafts = !$negate && $value !== '' && $value !== '0' && $value !== false;
+        $wantsDrafts = !$negate && $value !== '' && $value !== '0';
 
         $state->getQuery()->{$wantsDrafts ? 'whereNull' : 'whereNotNull'}('polls.published_at');
     }
