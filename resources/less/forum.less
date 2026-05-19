@@ -856,27 +856,42 @@
 }
 
 // Draft & schedule badges (shared between poll list rows and the poll view)
+:root {
+  --poll-draft-bg: #fde68a;
+  --poll-draft-color: #92400e;
+  --poll-scheduled-bg: #bfdbfe;
+  --poll-scheduled-color: #1e3a8a;
+  --poll-schedule-error-color: #b91c1c;
+}
+[data-theme^=dark] {
+  --poll-draft-bg: #3f2e0a;
+  --poll-draft-color: #fde68a;
+  --poll-scheduled-bg: #1e3a8a;
+  --poll-scheduled-color: #bfdbfe;
+  --poll-schedule-error-color: #fca5a5;
+}
+
 .PollDraftBadges {
   display: inline-flex;
   gap: 6px;
   vertical-align: middle;
 }
 .PollDraftBadges-draft {
-  background: #fde68a;
-  color: #92400e;
+  background: var(--poll-draft-bg);
+  color: var(--poll-draft-color);
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 12px;
 }
 .PollDraftBadges-scheduled {
-  background: #bfdbfe;
-  color: #1e3a8a;
+  background: var(--poll-scheduled-bg);
+  color: var(--poll-scheduled-color);
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 12px;
 }
 .PollDraftBadges-scheduleError {
-  color: #b91c1c;
+  color: var(--poll-schedule-error-color);
   margin-left: 4px;
 }
 
