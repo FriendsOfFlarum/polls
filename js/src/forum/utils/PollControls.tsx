@@ -173,17 +173,27 @@ export default {
   },
 
   async publishAction(poll: Poll): Promise<void> {
-    await poll.publish();
-    const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.publish_success'));
-    setTimeout(() => app.alerts.dismiss(alertId), 10000);
-    m.redraw();
+    try {
+      await poll.publish();
+      const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.publish_success'));
+      setTimeout(() => app.alerts.dismiss(alertId), 10000);
+      m.redraw();
+    } catch (e: any) {
+      const detail = e?.response?.errors?.[0]?.detail;
+      app.alerts.show({ type: 'error' }, detail ?? app.translator.trans('fof-polls.forum.poll_form.error'));
+    }
   },
 
   async cancelScheduleAction(poll: Poll): Promise<void> {
-    await poll.publish({ scheduledFor: null });
-    const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.cancel_schedule_success'));
-    setTimeout(() => app.alerts.dismiss(alertId), 10000);
-    m.redraw();
+    try {
+      await poll.publish({ scheduledFor: null });
+      const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.cancel_schedule_success'));
+      setTimeout(() => app.alerts.dismiss(alertId), 10000);
+      m.redraw();
+    } catch (e: any) {
+      const detail = e?.response?.errors?.[0]?.detail;
+      app.alerts.show({ type: 'error' }, detail ?? app.translator.trans('fof-polls.forum.poll_form.error'));
+    }
   },
 
   async unpublishAction(poll: Poll): Promise<void> {
