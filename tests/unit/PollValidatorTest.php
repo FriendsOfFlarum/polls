@@ -11,14 +11,14 @@
 
 namespace FoF\Polls\Tests\unit;
 
+use Flarum\Locale\Translator as FlarumTranslator;
 use FoF\Polls\Validators\PollValidator;
 use Illuminate\Translation\ArrayLoader;
-use Illuminate\Translation\Translator;
+use Illuminate\Translation\Translator as IlluminateTranslator;
 use Illuminate\Validation\Factory;
 use Illuminate\Validation\ValidationException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Translation\IdentityTranslator;
 
 /**
  * The validator applies one rule set to every save path. Drafts are
@@ -29,11 +29,14 @@ class PollValidatorTest extends TestCase
 {
     private function makeValidator(): PollValidator
     {
-        $illuminateTranslator = new Translator(new ArrayLoader(), 'en');
-        $factory = new Factory($illuminateTranslator);
-        $symfonyTranslator = new IdentityTranslator();
+        // Illuminate Factory needs an Illuminate translator (uses the
+        // `Illuminate\Contracts\Translation\Translator` contract).
+        $factory = new Factory(new IlluminateTranslator(new ArrayLoader(), 'en'));
 
-        return new PollValidator($factory, $symfonyTranslator);
+        // Flarum's AbstractValidator requires a Flarum\Locale\TranslatorInterface
+        // (not Symfony's bare IdentityTranslator). `Flarum\Locale\Translator`
+        // extends Symfony's Translator and implements the Flarum contract.
+        return new PollValidator($factory, new FlarumTranslator('en'));
     }
 
     #[Test]
@@ -78,13 +81,16 @@ class PollValidatorTest extends TestCase
     }
 
     #[Test]
-    public function rejectsMalformedImageUrl(): void
+    public function rejectsImageStringLongerThan255Chars(): void
     {
+        // The image rule is `nullable|string|max:255` — it locks in length and
+        // type, not URL format. (PR #120's test asserted URL validation, but
+        // the rule has never included a `url` constraint.)
         $v = $this->makeValidator();
         $this->expectException(ValidationException::class);
         $v->assertValid([
             'question' => 'Q',
-            'image'    => 'not-a-url',
+            'image'    => str_repeat('a', 256),
         ]);
     }
 
