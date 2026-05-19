@@ -39,12 +39,15 @@ class PublishScheduledPollsTest extends TestCase
                 ['id' => 20, 'question' => 'Due Valid', 'post_id' => null, 'user_id' => 3, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => null, 'scheduled_publish_at' => $past, 'scheduled_publish_error' => null],
                 ['id' => 21, 'question' => 'Due Empty', 'post_id' => null, 'user_id' => 3, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => null, 'scheduled_publish_at' => $past, 'scheduled_publish_error' => null],
                 ['id' => 22, 'question' => 'Previously Errored', 'post_id' => null, 'user_id' => 3, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => null, 'scheduled_publish_at' => $past, 'scheduled_publish_error' => 'whatever'],
+                ['id' => 23, 'question' => 'Due with past end date', 'post_id' => null, 'user_id' => 3, 'end_date' => '2020-01-01 00:00:00', 'created_at' => '2019-12-01 00:00:00', 'updated_at' => '2019-12-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => null, 'scheduled_publish_at' => $past, 'scheduled_publish_error' => null],
             ],
             'poll_options' => [
                 ['id' => 200, 'answer' => 'A', 'poll_id' => 20, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
                 ['id' => 201, 'answer' => 'B', 'poll_id' => 20, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
                 ['id' => 202, 'answer' => 'A', 'poll_id' => 22, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
                 ['id' => 203, 'answer' => 'B', 'poll_id' => 22, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
+                ['id' => 204, 'answer' => 'A', 'poll_id' => 23, 'vote_count' => 0, 'created_at' => '2019-12-01 00:00:00', 'updated_at' => '2019-12-01 00:00:00'],
+                ['id' => 205, 'answer' => 'B', 'poll_id' => 23, 'vote_count' => 0, 'created_at' => '2019-12-01 00:00:00', 'updated_at' => '2019-12-01 00:00:00'],
             ],
         ]);
     }
@@ -89,5 +92,16 @@ class PublishScheduledPollsTest extends TestCase
         $this->assertNull($poll->published_at);
         $this->assertNotNull($poll->scheduled_publish_at);
         $this->assertEquals('whatever', $poll->scheduled_publish_error);
+    }
+
+    #[Test]
+    public function scheduledDraftWithPastEndDateGoesToErrorWithActionableMessage(): void
+    {
+        $this->runCommand();
+
+        $poll = Poll::find(23);
+        $this->assertNull($poll->published_at);
+        $this->assertNotNull($poll->scheduled_publish_error);
+        $this->assertStringContainsString('Poll end date has already passed', $poll->scheduled_publish_error);
     }
 }

@@ -63,6 +63,7 @@ class PublishPollTest extends TestCase
                 ['id' => 12, 'question' => 'Scheduled Draft', 'post_id' => null, 'user_id' => 3, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => null, 'scheduled_publish_at' => '2099-01-01 00:00:00'],
                 ['id' => 13, 'question' => 'Draft with end date', 'post_id' => null, 'user_id' => 3, 'end_date' => '2030-01-01 00:00:00', 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => null],
                 ['id' => 14, 'question' => 'Empty Draft', 'post_id' => null, 'user_id' => 3, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => null],
+                ['id' => 15, 'question' => 'Draft with past end date', 'post_id' => null, 'user_id' => 3, 'end_date' => '2020-01-01 00:00:00', 'created_at' => '2019-12-01 00:00:00', 'updated_at' => '2019-12-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => null],
             ],
             'poll_options' => [
                 ['id' => 100, 'answer' => 'A', 'poll_id' => 10, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
@@ -73,6 +74,8 @@ class PublishPollTest extends TestCase
                 ['id' => 105, 'answer' => 'B', 'poll_id' => 12, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
                 ['id' => 106, 'answer' => 'A', 'poll_id' => 13, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
                 ['id' => 107, 'answer' => 'B', 'poll_id' => 13, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
+                ['id' => 108, 'answer' => 'A', 'poll_id' => 15, 'vote_count' => 0, 'created_at' => '2019-12-01 00:00:00', 'updated_at' => '2019-12-01 00:00:00'],
+                ['id' => 109, 'answer' => 'B', 'poll_id' => 15, 'vote_count' => 0, 'created_at' => '2019-12-01 00:00:00', 'updated_at' => '2019-12-01 00:00:00'],
             ],
         ]);
     }
@@ -321,5 +324,25 @@ class PublishPollTest extends TestCase
         );
 
         $this->assertEquals(422, $response->getStatusCode());
+    }
+
+    #[Test]
+    public function publishOfDraftWithPastEndDateReturns422WithActionableMessage(): void
+    {
+        $response = $this->send(
+            $this->request('POST', '/api/polls/15/publish', [
+                'authenticatedAs' => 3,
+                'json'            => [],
+            ])
+        );
+
+        $this->assertEquals(422, $response->getStatusCode());
+
+        $body = json_decode($response->getBody(), true);
+        $pointers = array_map(fn ($err) => $err['source']['pointer'] ?? null, $body['errors']);
+        $this->assertContains('/data/attributes/endDate', $pointers);
+
+        $details = array_map(fn ($err) => $err['detail'] ?? null, $body['errors']);
+        $this->assertContains('Poll end date has already passed; update or clear it before publishing.', $details);
     }
 }
