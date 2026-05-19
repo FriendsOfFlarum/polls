@@ -112,15 +112,16 @@ class ListDraftsVisibilityTest extends TestCase
     }
 
     #[Test]
-    public function defaultListExcludesDraftsEvenForAuthor(): void
+    public function publishedOnlyFilterExcludesAuthorOwnDrafts(): void
     {
         $response = $this->send(
             $this->request('GET', '/api/polls', ['authenticatedAs' => 3])
+                ->withQueryParams(['filter' => ['isDraft' => '0']])
         );
         $body = json_decode($response->getBody(), true);
         $ids = array_column($body['data'] ?? [], 'id');
 
-        $this->assertNotContains('100', $ids, 'Default list must not include drafts (even own) — used by the showcase');
+        $this->assertNotContains('100', $ids, 'filter[isDraft]=0 must exclude drafts (even author own) — used by the showcase');
         $this->assertContains('101', $ids);
     }
 

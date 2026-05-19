@@ -135,7 +135,7 @@ class UnpublishPollTest extends TestCase
     }
 
     #[Test]
-    public function unpublishRemovesFromDefaultListAndAddsToIsDraftFilter(): void
+    public function unpublishMovesPollFromPublishedFilterToDraftFilter(): void
     {
         $unpublish = $this->send(
             $this->request('POST', '/api/polls/23/unpublish', [
@@ -145,15 +145,15 @@ class UnpublishPollTest extends TestCase
         );
         $this->assertEquals(200, $unpublish->getStatusCode());
 
-        $defaultList = $this->send(
+        $publishedList = $this->send(
             $this->request('GET', '/api/polls', [
                 'authenticatedAs' => 3,
-            ])
+            ])->withQueryParams(['filter' => ['isDraft' => '0']])
         );
-        $this->assertEquals(200, $defaultList->getStatusCode());
-        $defaultBody = json_decode($defaultList->getBody(), true);
-        $ids = array_map(fn ($row) => (int) $row['id'], $defaultBody['data']);
-        $this->assertNotContains(23, $ids, 'Unpublished poll should be excluded from default list');
+        $this->assertEquals(200, $publishedList->getStatusCode());
+        $publishedBody = json_decode($publishedList->getBody(), true);
+        $ids = array_map(fn ($row) => (int) $row['id'], $publishedBody['data']);
+        $this->assertNotContains(23, $ids, 'Unpublished poll should be excluded from the published-only list');
 
         $draftList = $this->send(
             $this->request('GET', '/api/polls', [

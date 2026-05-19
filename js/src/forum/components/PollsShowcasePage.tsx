@@ -23,13 +23,13 @@ export default class PollsShowcasePage extends Page<IPageAttrs, PollListState> {
 
     this.state = new PollListState({
       sort: m.route.param('sort'),
-      filter: { '-isEnded': '1' },
+      filter: { '-isEnded': '1', isDraft: '0' },
       include: this.includeParams(),
     });
 
     this.endedState = new PollListState({
       sort: m.route.param('sort'),
-      filter: { isEnded: '1' },
+      filter: { isEnded: '1', isDraft: '0' },
       include: this.includeParams(),
     });
 
