@@ -158,7 +158,7 @@ export default class Poll extends Model {
     return app
       .request<any>({
         method: 'POST',
-        url: `${app.forum.attribute('apiUrl')}/fof/polls/${id}/publish`,
+        url: `${app.forum.attribute('apiUrl')}/polls/${id}/publish`,
         body: { data: { attributes: body } },
       })
       .then((payload) => {
@@ -177,7 +177,7 @@ export default class Poll extends Model {
     return app
       .request<any>({
         method: 'POST',
-        url: `${app.forum.attribute('apiUrl')}/fof/polls/${id}/unpublish`,
+        url: `${app.forum.attribute('apiUrl')}/polls/${id}/unpublish`,
       })
       .then((payload) => {
         app.store.pushPayload(payload);
