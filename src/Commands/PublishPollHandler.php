@@ -57,12 +57,21 @@ class PublishPollHandler
                 return $poll;
             }
 
-            // Re-validate against current poll state (the unified rule set
-            // applies — same rules drafts already passed at save time).
+            // Re-validate against current poll state. endDate is deliberately
+            // omitted from the validator input: the `after:now` rule is a
+            // CREATE-time guard (preventing past dates at save), but a draft
+            // saved months ago with a then-future endDate can legitimately
+            // have a now-past endDate without being invalid data — it just
+            // can't be published as-is. We surface that separately below
+            // with an actionable message instead of the validator's generic
+            // "must be after now" error.
             $this->validator->assertValid([
                 'question' => $poll->question,
-                'endDate'  => $poll->end_date?->toDateTimeString(),
             ]);
+
+            if ($poll->end_date !== null && $poll->end_date->isPast()) {
+                throw new ValidationException(['endDate' => 'Poll end date has already passed; update or clear it before publishing.']);
+            }
 
             if ($poll->options()->count() < 2) {
                 throw new ValidationException(['options' => 'Poll must have at least 2 options to publish.']);

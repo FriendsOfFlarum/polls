@@ -52,10 +52,18 @@ class PublishScheduledPollsCommand extends Command
 
             foreach ($due as $poll) {
                 try {
+                    // See PublishPollHandler for why endDate is omitted from
+                    // the re-validate input. Past endDate is surfaced as a
+                    // distinct error below so admins see an actionable
+                    // message in scheduled_publish_error rather than the
+                    // validator's generic "must be after now".
                     $validator->assertValid([
                         'question' => $poll->question,
-                        'endDate'  => $poll->end_date?->toDateTimeString(),
                     ]);
+
+                    if ($poll->end_date !== null && $poll->end_date->isPast()) {
+                        throw new ValidationException(['endDate' => 'Poll end date has already passed; update or clear it before publishing.']);
+                    }
 
                     if ($poll->options()->count() < 2) {
                         throw new ValidationException(['options' => 'Poll must have at least 2 options to publish.']);
