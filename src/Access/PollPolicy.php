@@ -119,6 +119,10 @@ class PollPolicy extends AbstractPolicy
 
     public function unpublish(User $actor, Poll $poll): string|bool|null
     {
+        if (!$poll->isGlobal()) {
+            return $this->deny();
+        }
+
         if ($poll->isDraft()) {
             return $this->deny();
         }
