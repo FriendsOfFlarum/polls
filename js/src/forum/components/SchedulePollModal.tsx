@@ -1,5 +1,5 @@
 import app from 'flarum/forum/app';
-import Modal, { IInternalModalAttrs } from 'flarum/common/components/Modal';
+import FormModal, { IFormModalAttrs } from 'flarum/common/components/FormModal';
 import Button from 'flarum/common/components/Button';
 import Stream from 'flarum/common/utils/Stream';
 import dayjs from 'dayjs';
@@ -10,7 +10,7 @@ import type Mithril from 'mithril';
 
 dayjs.extend(utc);
 
-interface SchedulePollModalAttrs extends IInternalModalAttrs {
+interface SchedulePollModalAttrs extends IFormModalAttrs {
   poll: Poll;
   /**
    * Parent PollForm to persist-before-schedule. Pass `null` when opening
@@ -21,20 +21,18 @@ interface SchedulePollModalAttrs extends IInternalModalAttrs {
   onSuccess?: (poll: Poll) => void;
 }
 
-export default class SchedulePollModal extends Modal<SchedulePollModalAttrs> {
-  datetime: Stream<string> = Stream('');
+export default class SchedulePollModal extends FormModal<SchedulePollModalAttrs> {
+  datetime!: Stream<string>;
   error: string | null = null;
 
-  oninit(vnode: Mithril.Vnode) {
+  oninit(vnode: Mithril.Vnode<SchedulePollModalAttrs, this>) {
     super.oninit(vnode);
 
     // Prefill the picker when reopening for an already-scheduled draft.
     // The model returns UTC; <input type="datetime-local"> wants the
     // local-zone equivalent in YYYY-MM-DDTHH:mm format.
-    const scheduled = this.attrs.poll?.scheduledPublishAt?.();
-    if (scheduled) {
-      this.datetime(dayjs(scheduled).local().format('YYYY-MM-DDTHH:mm'));
-    }
+    const scheduled = this.attrs.poll.scheduledPublishAt();
+    this.datetime = Stream(scheduled ? dayjs(scheduled).local().format('YYYY-MM-DDTHH:mm') : '');
   }
 
   className() {
@@ -42,7 +40,7 @@ export default class SchedulePollModal extends Modal<SchedulePollModalAttrs> {
   }
 
   title(): Mithril.Children {
-    const isEditing = !!this.attrs.poll?.scheduledPublishAt?.();
+    const isEditing = !!this.attrs.poll.scheduledPublishAt();
 
     return app.translator.trans(isEditing ? 'fof-polls.forum.compose.schedule_publication_edit' : 'fof-polls.forum.compose.schedule_publication');
   }
@@ -50,28 +48,23 @@ export default class SchedulePollModal extends Modal<SchedulePollModalAttrs> {
   content(): Mithril.Children {
     return (
       <div className="Modal-body">
-        <div className="Form">
-          <div className="Form-group">
-            <label>{app.translator.trans('fof-polls.forum.compose.schedule_datetime_label')}</label>
-            <input
-              type="datetime-local"
-              className="FormControl"
-              value={this.datetime()}
-              oninput={(e: InputEvent) => this.datetime((e.target as HTMLInputElement).value)}
-            />
-          </div>
-          {this.error && <div className="Form-group helpText text-error">{this.error}</div>}
-          <div className="Form-group">
-            <Button className="Button Button--primary" loading={this.loading} onclick={() => this.onSchedule()}>
-              {app.translator.trans('fof-polls.forum.compose.schedule_submit')}
-            </Button>
-          </div>
+        <div className="Form-group">
+          <label>{app.translator.trans('fof-polls.forum.compose.schedule_datetime_label')}</label>
+          <input type="datetime-local" className="FormControl" bidi={this.datetime} />
+        </div>
+        {this.error && <div className="Form-group helpText text-error">{this.error}</div>}
+        <div className="Form-group">
+          <Button type="submit" className="Button Button--primary" loading={this.loading}>
+            {app.translator.trans('fof-polls.forum.compose.schedule_submit')}
+          </Button>
         </div>
       </div>
     );
   }
 
-  async onSchedule() {
+  async onsubmit(e: SubmitEvent): Promise<void> {
+    e.preventDefault();
+
     this.loading = true;
     this.error = null;
 
@@ -95,7 +88,6 @@ export default class SchedulePollModal extends Modal<SchedulePollModalAttrs> {
         throw new Error('Cannot schedule an unsaved poll.');
       }
 
-      // Then schedule.
       await poll.publish({ scheduledFor: new Date(this.datetime()).toISOString() });
       this.hide();
       this.attrs.onSuccess?.(poll);
