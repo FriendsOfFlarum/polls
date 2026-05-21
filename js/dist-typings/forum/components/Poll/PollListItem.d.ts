@@ -29,6 +29,7 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
     slidableUnderneathView(): Mithril.Children;
     contentView(): Mithril.Children;
     mainView(): Mithril.Children;
+    draftBadges(): Mithril.Children;
     /**
      * Allow extensions to revise the question string.
      */

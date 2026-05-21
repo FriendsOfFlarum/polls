@@ -11,5 +11,4 @@ export default class PollsShowcasePage extends Page<IPageAttrs, PollListState> {
     hero(): Mithril.Children;
     sidebar(): Mithril.Children;
     contentItems(): ItemList<Mithril.Children>;
-    newPollAction(): void;
 }
