@@ -27,6 +27,11 @@ export default class PollListState<P extends PollListParams = PollListParams> ex
      */
     isSearchResults(): boolean;
     removePoll(poll: Poll): void;
+    /**
+     * Notify all live PollListState instances that a poll was deleted so they
+     * splice it out of their pages without a full page reload.
+     */
+    static notifyDeleted(poll: Poll): void;
     deletePoll(poll: Poll): void;
     /**
      * Add a poll to the top of the list.

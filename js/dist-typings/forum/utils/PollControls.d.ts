@@ -36,5 +36,8 @@ declare const _default: {
      * Edit the poll.
      */
     editAction(poll: Poll): void;
+    publishAction(poll: Poll): Promise<void>;
+    cancelScheduleAction(poll: Poll): Promise<void>;
+    unpublishAction(poll: Poll): Promise<void>;
 };
 export default _default;

@@ -8,6 +8,9 @@ export declare const utils: {
         deleteAction(poll: import("../models/Poll").default): Promise<void>;
         showDeletionAlert(poll: import("../models/Poll").default, type: string): void;
         editAction(poll: import("../models/Poll").default): void;
+        publishAction(poll: import("../models/Poll").default): Promise<void>;
+        cancelScheduleAction(poll: import("../models/Poll").default): Promise<void>;
+        unpublishAction(poll: import("../models/Poll").default): Promise<void>;
     };
     PollGroupControls: {
         controls(pollGroup: import("../models/PollGroup").default, context: import("flarum/common/Component").default<import("flarum/common/Component").ComponentAttrs, undefined>): import("flarum/common/utils/ItemList").default<import("mithril").Children>;

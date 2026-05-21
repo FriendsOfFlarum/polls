@@ -31,4 +31,15 @@ export default class Poll extends Model {
     isHidden(): boolean;
     isUnread(): boolean;
     apiEndpoint(): string;
+    publishedAt(): Date | null;
+    scheduledPublishAt(): Date | null;
+    scheduledPublishError(): string | null;
+    isDraft(): boolean;
+    isScheduled(): boolean;
+    canPublish(): boolean;
+    canUnpublish(): boolean;
+    publish(body?: {
+        scheduledFor?: string | null;
+    }): Promise<this>;
+    unpublish(): Promise<this>;
 }
