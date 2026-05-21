@@ -6,7 +6,6 @@ import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import PollForm from './Poll/PollForm';
 import PollFormState from '../states/PollFormState';
 import ComposePollHero from './ComposePollHero';
-import Button from 'flarum/common/components/Button';
 import listItems from 'flarum/common/helpers/listItems';
 import ItemList from 'flarum/common/utils/ItemList';
 import SelectDropdown from 'flarum/common/components/SelectDropdown';
@@ -79,7 +78,7 @@ export default class ComposePollPage extends Page {
               <ul>{listItems(this.sidebarItems().toArray())}</ul>
             </nav>
             <div className="sideNavOffset">
-              <PollForm poll={this.poll} onsubmit={this.onsubmit.bind(this)} />
+              <PollForm poll={this.poll} onsubmit={this.onsubmit.bind(this)} allowDrafts={true} />
             </div>
           </div>
         </div>
@@ -88,40 +87,12 @@ export default class ComposePollPage extends Page {
   }
 
   async onsubmit(data: Object, state: PollFormState) {
-    const isNew = state.poll.id() === undefined;
     await state.save(data);
+    this.poll = state.poll;
 
-    const alertAttrs = isNew
-      ? {
-          type: 'success',
-          controls: [
-            <Button
-              className="Button Button--link"
-              onclick={() =>
-                m.route.set(
-                  app.route('fof.polls.compose', {
-                    id: state.poll.id(),
-                  })
-                )
-              }
-            >
-              {app.translator.trans('fof-polls.forum.compose.continue_editing')}
-            </Button>,
-          ],
-        }
-      : {
-          type: 'success',
-        };
-
-    // Show success alert
-    const alertId = app.alerts.show(alertAttrs, app.translator.trans('fof-polls.forum.compose.success'));
-
-    // Hide alert after 10 seconds
-    setTimeout(() => app.alerts.dismiss(alertId), 10000);
-
-    if (isNew) {
-      m.route.set(app.route('fof.polls.list'));
-    }
+    // Per-flow success alerts and navigation are owned by the caller
+    // (save draft / publish / schedule / plain save). This handler only
+    // persists and keeps the page bound to the latest saved model.
   }
 
   sidebarItems(): ItemList<Mithril.Children> {

@@ -107,11 +107,6 @@
     margin-top: 10px;
   }
 
-  .PollModal-deleteButton {
-    margin-top: 10px;
-    margin-left: 10px;
-  }
-
   .PollModal-Button {
     margin-bottom: 15px;
   }
@@ -127,6 +122,12 @@
     }
 
     opacity: 0.5;
+  }
+
+  .PollModal--submitCluster {
+    display: flex;
+    gap: 10px;
+    padding-top: 10px;
   }
 }
 
@@ -222,6 +223,16 @@
     .Button {
       margin-right: 1em;
     }
+  }
+}
+
+.PollModal--submitCluster {
+  .PollModal-SubmitButton {
+    margin-top: 0;
+  }
+
+  .Button--primary .Button-icon {
+    display: inline-block;
   }
 }
 
@@ -636,6 +647,10 @@
   text-overflow: ellipsis;
 }
 
+.PollListItem .PollDraftBadges {
+  margin-left: 8px;
+}
+
 @media @phone {
   .PollListItem-controls {
     display: none;
@@ -791,4 +806,29 @@
 // Poll Groups Composer
 .PollGroupModal-SubmitButton {
   margin-right: 10px;
+}
+
+// Draft & schedule badges (shared between poll list rows and the poll view)
+.PollDraftBadges {
+  display: inline-flex;
+  gap: 6px;
+  vertical-align: middle;
+}
+.PollDraftBadges-draft {
+  background: #fde68a;
+  color: #92400e;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+.PollDraftBadges-scheduled {
+  background: #bfdbfe;
+  color: #1e3a8a;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+.PollDraftBadges-scheduleError {
+  color: #b91c1c;
+  margin-left: 4px;
 }

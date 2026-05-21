@@ -42,6 +42,77 @@ php flarum fof:polls:refresh
 You can only run the command when the extension is enabled in the admin panel.
 
 
+## Global Polls
+
+### What Are Global Polls?
+
+Global polls are polls that exist on their own, independent of any discussion. Instead of being attached to a post, they appear on a dedicated **Polls** page accessible from the main navigation, where members can browse and vote on them as standalone items.
+
+### What Can You Use Global Polls For?
+
+- **Community-wide votes:** feature requests, governance decisions, or general-interest questions that shouldn't be buried inside a thread.
+- **Announcements & surveys:** recurring satisfaction surveys, event planning, or quick "pulse" polls.
+- **Long-running questions:** polls with end dates that stay discoverable on the page until they close.
+
+### Enabling Global Polls
+
+1. In the admin panel, open the **Polls** extension settings and enable **Allow global polls**.
+2. Grant the **Start a global poll** permission (`startGlobalPoll`) to the groups you want to be able to create global polls.
+3. A **Polls** link appears in the forum navigation, pointing at the page of published global polls.
+
+### How to Use
+
+1. **Create a global poll:**
+   Navigate to the Polls page and click **New poll**. Fill in the question, options, and any optional settings (end date, image, multiple votes, etc.), then publish.
+
+2. **Browse & filter:**
+   The page supports sorting (newest, most voted, ending soon) and a status filter (All / Published / Drafts). Drafts are only visible to their author, moderators, and administrators.
+
+3. **Vote:**
+   Open a poll to cast your vote and see the results.
+
+### Permissions
+
+- *Start a global poll (`startGlobalPoll`)*: who can create global polls. In practice this is usually limited to administrators and moderators.
+- *Moderate polls (`discussion.polls.moderate`)*: moderators can edit, delete, publish, and unpublish any global poll.
+
+### Drafts & Scheduled Publication
+
+Global polls can be saved as drafts, published manually, or scheduled to go live at a specific time. This lets you prepare a poll in advance and have it appear on the Polls page automatically when the scheduled moment arrives.
+
+#### How to Use
+
+1. **Create a draft:**
+   On the global poll compose page, click **Save as draft**. The poll is stored with `published_at = NULL` and does not appear on the public Polls page.
+
+2. **Publish manually:**
+   From either the compose page or the poll controls menu, click **Publish** to mark the draft as published immediately.
+
+3. **Schedule publication:**
+   Click the clock icon next to the **Publish** button (or **Schedule publication** in the controls menu) and pick a datetime. The poll stays in draft state until a cron-driven command publishes it.
+
+4. **Cancel a schedule:**
+   Use **Cancel schedule** in the controls menu to clear the scheduled time and keep the poll as a draft.
+
+#### Cron setup (required for scheduled publication)
+
+Scheduled drafts are published by Flarum's built-in task scheduler. If you don't already run it, open your crontab:
+
+```sh
+crontab -e
+```
+
+And add:
+
+```cron
+* * * * * cd /path/to/flarum && php flarum schedule:run
+```
+
+A single `schedule:run` entry covers scheduled polls and any other extension that registers scheduled tasks — you don't need a polls-specific line. Our task runs every minute and takes row-level locks, so multiple workers (e.g. an ECS deployment with `N > 1` tasks) won't double-publish the same poll.
+
+If a scheduled draft fails validation at publish time (missing question, fewer than two options, etc.), the error is recorded on the poll and future runs skip it until the author fixes the issue and re-schedules.
+
+
 ## Poll Groups Feature
 
 ### What Are Poll Groups?

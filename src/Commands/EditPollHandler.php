@@ -67,6 +67,7 @@ class EditPollHandler
         $command->actor->assertCan('edit', $poll);
 
         $attributes = (array) Arr::get($command->data, 'attributes');
+
         $options = collect(Arr::get($attributes, 'options', []));
 
         $this->validator->assertValid($attributes);
