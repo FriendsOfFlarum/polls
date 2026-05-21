@@ -2,13 +2,12 @@ import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import Page from 'flarum/common/components/Page';
 import PageStructure from 'flarum/forum/components/PageStructure';
-import IndexSidebar from 'flarum/forum/components/IndexSidebar';
-import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import ItemList from 'flarum/common/utils/ItemList';
 import Poll from '../models/Poll';
 import PollForm from './Poll/PollForm';
 import PollFormState from '../states/PollFormState';
 import ComposeHero from './ComposeHero';
+import PollsIndexSidebar from './PollsIndexSidebar';
 
 export default class ComposePollPage extends Page {
   poll: Poll | null | undefined = null;
@@ -81,28 +80,25 @@ export default class ComposePollPage extends Page {
   }
 
   sidebar(): Mithril.Children {
-    return <IndexSidebar />;
+    return <PollsIndexSidebar />;
   }
 
   contentItems(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
 
     if (this.poll) {
-      items.add('form', <PollForm poll={this.poll} onsubmit={this.onsubmit.bind(this)} />);
+      items.add('form', <PollForm poll={this.poll} onsubmit={this.onsubmit.bind(this)} allowDrafts={true} />);
     }
 
     return items;
   }
 
   async onsubmit(data: Object, state: PollFormState) {
-    const isNew = state.poll.id() === undefined;
     await state.save(data);
+    this.poll = state.poll;
 
-    const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.compose.success'));
-    setTimeout(() => app.alerts.dismiss(alertId), 10000);
-
-    if (isNew) {
-      m.route.set(app.route('fof.polls.list'));
-    }
+    // Per-flow success alerts and navigation are owned by the caller
+    // (save draft / publish / schedule / plain save). This handler only
+    // persists and keeps the page bound to the latest saved model.
   }
 }

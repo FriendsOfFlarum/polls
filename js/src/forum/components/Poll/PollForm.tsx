@@ -14,11 +14,18 @@ import PollOption from '../../models/PollOption';
 import UploadPollImageButton from '../UploadPollImageButton';
 import Poll from '../../models/Poll';
 import Tooltip from 'flarum/common/components/Tooltip';
-import RequestError from 'flarum/common/utils/RequestError';
+import SchedulePollModal from '../SchedulePollModal';
 
 interface PollFormAttrs extends ComponentAttrs {
   poll: PollModel;
   onsubmit: (data: object, state: PollFormState) => Promise<void>;
+  /**
+   * Whether the draft / publish / schedule controls should be offered.
+   * Drafts are only supported for global polls, so post-bound and
+   * poll-group flows must leave this off (default). The compose page
+   * opts in explicitly.
+   */
+  allowDrafts?: boolean;
 }
 
 export default class PollForm extends Component<PollFormAttrs, PollFormState> {
@@ -36,6 +43,20 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
   protected allowChangeVote: Stream<boolean>;
   protected maxVotes: Stream<number>;
   protected datepickerMinDate: string = '';
+  protected pendingAction: 'draft' | 'publish' | null = null;
+  // Snapshot of the form payload at load (and after each successful save).
+  // `state.dirty` is recomputed on every render by comparing this against
+  // the live serialized form — avoids hooking every `bidi` input.
+  protected snapshot: string = '';
+
+  // Browser-level guard: prompts on tab close / refresh / typed-URL when
+  // the form is dirty.
+  private beforeUnloadHandler = (e: BeforeUnloadEvent): void => {
+    if (this.state?.dirty) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  };
 
   oninit(vnode: Mithril.Vnode): void {
     super.oninit(vnode);
@@ -63,13 +84,54 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     this.datepickerMinDate = this.formatDate() as string;
 
     // Replace minimum of 'today' for poll end date only if the poll is not already closed
-    if (this.endDate() && dayjs(poll.endDate).isAfter(dayjs())) {
+    if (this.endDate() && dayjs(poll.endDate()).isAfter(dayjs())) {
       // We know that endDate is set, so we can safely cast the result to string
       this.datepickerMinDate = this.formatDate(poll.endDate()) as string;
     }
+
+    this.snapshot = this.serializeFormState();
+  }
+
+  oncreate(vnode: Mithril.VnodeDOM): void {
+    super.oncreate(vnode);
+    window.addEventListener('beforeunload', this.beforeUnloadHandler);
+  }
+
+  onremove(vnode: Mithril.VnodeDOM): void {
+    super.onremove(vnode);
+    window.removeEventListener('beforeunload', this.beforeUnloadHandler);
+  }
+
+  /**
+   * Stable JSON of every user-editable field, used to detect dirty state by
+   * comparison against `this.snapshot`. Order matters — keep it stable.
+   */
+  protected serializeFormState(): string {
+    return JSON.stringify({
+      question: this.question(),
+      subtitle: this.subtitle(),
+      image: this.image(),
+      imageAlt: this.imageAlt(),
+      endDate: this.endDate(),
+      publicPoll: this.publicPoll(),
+      allowMultipleVotes: this.allowMultipleVotes(),
+      hideVotes: this.hideVotes(),
+      allowChangeVote: this.allowChangeVote(),
+      maxVotes: this.maxVotes(),
+      answers: this.optionAnswers.map((s) => s()),
+      images: this.optionImageUrls.map((s) => s()),
+    });
+  }
+
+  protected refreshDirty(): void {
+    this.state.markDirty(this.serializeFormState() !== this.snapshot);
   }
 
   view(): Mithril.Children {
+    // Recompute dirty before each render so disabled state stays accurate
+    // without wrapping every `bidi` input in an oninput hook.
+    this.refreshDirty();
+
     return (
       <form onsubmit={this.onsubmit.bind(this)}>
         <div className="PollDiscussionModal-form">{this.fields().toArray()}</div>
@@ -82,7 +144,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     items.add(
       'question',
-      <div className="Form-group">
+      <div className="Form-group Form-group--input">
         <label className="label">{app.translator.trans('fof-polls.forum.modal.question_placeholder')}</label>
 
         <input type="text" name="question" className="FormControl" bidi={this.question} />
@@ -92,7 +154,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     items.add(
       'subtitle',
-      <div className="Form-group">
+      <div className="Form-group Form-group--input">
         <label className="label">{app.translator.trans('fof-polls.forum.modal.subtitle_placeholder')}</label>
 
         <input type="text" name="subtitle" className="FormControl" bidi={this.subtitle} />
@@ -104,7 +166,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     items.add(
       'poll_image',
-      <div className="Form-group">
+      <div className="Form-group Form-group--upload">
         <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_image.label')}</label>
         {this.uploadConditional(
           hasImage,
@@ -113,14 +175,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
             <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_image.help')}</p>
             <input type="hidden" name="pollImage" bidi={this.image} />
           </>,
-          <UploadPollImageButton name="pollImage" poll={this.state.poll} onUpload={this.pollImageUploadSuccess.bind(this)} />,
-          <input
-            type="text"
-            name="pollImage"
-            className="FormControl"
-            bidi={this.image}
-            placeholder={app.translator.trans('fof-polls.forum.modal.image_option_placeholder')}
-          />
+          <UploadPollImageButton name="pollImage" poll={this.state.poll} onUpload={this.pollImageUploadSuccess.bind(this)} />
         )}
       </div>,
       90
@@ -129,7 +184,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     if (hasImage) {
       items.add(
         'poll_image_alt',
-        <div className="Form-group">
+        <div className="Form-group Form-group--input">
           <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_image.alt_label')}</label>
 
           <input type="text" required name="imageAlt" className="FormControl" bidi={this.imageAlt} />
@@ -142,11 +197,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     items.add(
       'answers',
-      <div className="PollModal--answers Form-group">
-        <label className="label PollModal--answers-title">
-          <span>{app.translator.trans('fof-polls.forum.modal.options_label')}</span>
-        </label>
-
+      <div className="PollModal--answers Form-group Form-group--input">
         {this.displayOptions().toArray()}
 
         <Tooltip text={app.translator.trans('fof-polls.forum.modal.tooltip.options.add-button')}>
@@ -163,7 +214,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     items.add(
       'date',
-      <div className="Form-group">
+      <div className="Form-group Form-group--input">
         <label className="label">{app.translator.trans('fof-polls.forum.modal.date_placeholder')}</label>
 
         <div className="PollModal--date">
@@ -198,7 +249,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     items.add(
       'public',
-      <div className="Form-group">
+      <div className="Form-group Form-group--switch">
         {Switch.component(
           {
             state: this.publicPoll() || false,
@@ -212,7 +263,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     items.add(
       'hide-votes',
-      <div className="Form-group">
+      <div className="Form-group Form-group--switch">
         <Switch state={this.endDate() && this.hideVotes()} onchange={this.hideVotes} disabled={!this.endDate()}>
           {app.translator.trans('fof-polls.forum.modal.hide_votes_label')}
         </Switch>
@@ -223,7 +274,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     items.add(
       'allow-change-vote',
-      <div className="Form-group">
+      <div className="Form-group Form-group--switch">
         <Switch state={this.allowChangeVote()} onchange={this.allowChangeVote}>
           {app.translator.trans('fof-polls.forum.modal.allow_change_vote_label')}
         </Switch>
@@ -233,7 +284,7 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
     items.add(
       'allow-multiple-votes',
-      <div className="Form-group">
+      <div className="Form-group Form-group--switch">
         {Switch.component(
           {
             state: this.allowMultipleVotes() || false,
@@ -260,14 +311,12 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     }
 
     items.add(
-      'submit',
-      <div className="Form-group">
-        <Button type="submit" className="Button Button--primary PollModal-SubmitButton" icon="fas fa-save" loading={this.state.loading}>
-          {app.translator.trans('fof-polls.forum.modal.submit')}
-        </Button>
+      'submit-cluster',
+      <div className="PollModal--submitCluster PollForm-group">
+        {this.submitItems().toArray()}
         {this.state.poll.exists && (
           <Button
-            className="Button Button--secondary PollModal-deleteButton"
+            className="Button Button--secondary PollModal-DeleteButton"
             icon="fas fa-trash-alt"
             loading={this.state.deleting}
             onclick={this.delete.bind(this)}
@@ -282,6 +331,99 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     return items;
   }
 
+  submitItems(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+    const poll = this.state.poll;
+    const state = this.state;
+
+    // Drafts are global-only. For existing polls we can trust `isGlobal()`;
+    // for new polls the caller's `allowDrafts` flag is the source of truth
+    // since the poll hasn't been attached to anything yet.
+    const draftsAvailable = this.attrs.allowDrafts === true && (!poll.exists || poll.isGlobal());
+    const isNew = state.isNew();
+    const isDraft = state.isDraft();
+    const dirty = state.dirty;
+
+    if (draftsAvailable && (isNew || isDraft)) {
+      // Publish first so the primary action sits leftmost in the cluster.
+      items.add('publish', this.publishSplitButton(), 30);
+
+      // Distinct keys preserve the public ItemList API: third-party
+      // extensions can target either button by its original key.
+      items.add(
+        isDraft ? 'update-draft' : 'save-as-draft',
+        <Button
+          type="button"
+          className="Button PollModal-SaveDraftButton"
+          icon="fas fa-save"
+          loading={state.loading && this.pendingAction === 'draft'}
+          disabled={(state.loading && this.pendingAction !== 'draft') || (isDraft && !dirty)}
+          onclick={() => this.onSaveDraft()}
+        >
+          {app.translator.trans(isDraft ? 'fof-polls.forum.compose.update_draft' : 'fof-polls.forum.compose.save_as_draft')}
+        </Button>,
+        20
+      );
+    } else {
+      items.add(
+        'save',
+        <Button
+          type="button"
+          className="Button Button--primary PollModal-SubmitButton"
+          icon="fas fa-save"
+          loading={state.loading}
+          disabled={!dirty}
+          onclick={() => this.onSaveChanges()}
+        >
+          {app.translator.trans('fof-polls.forum.modal.submit')}
+        </Button>,
+        20
+      );
+    }
+
+    return items;
+  }
+
+  publishSplitButton(): Mithril.Children {
+    return (
+      <div className="ButtonGroup PollForm-publishCluster">
+        <Button
+          className="Button Button--primary PollModal-PublishButton"
+          icon="fas fa-paper-plane"
+          loading={this.state.loading && this.pendingAction === 'publish'}
+          disabled={this.state.loading && this.pendingAction !== 'publish'}
+          onclick={() => this.publish()}
+        >
+          {app.translator.trans('fof-polls.forum.compose.publish')}
+        </Button>
+        <Button
+          className="Button Button--icon Button--primary PollModal-ScheduleButton"
+          icon="fas fa-clock"
+          onclick={() => {
+            // Pre-validate so we never open the schedule modal over an
+            // invalid form. Without this, the modal would persist a draft
+            // (failing silently), then schedule against stale DB state.
+            try {
+              this.data();
+            } catch (error) {
+              if (error instanceof FormError) {
+                app.alerts.show({ type: 'error' }, error.message);
+                return;
+              }
+              throw error;
+            }
+            app.modal.show(SchedulePollModal, {
+              poll: this.state.poll,
+              form: this,
+              onSuccess: () => m.route.set(app.route('fof.polls.list')),
+            });
+          }}
+          title={extractText(app.translator.trans('fof-polls.forum.compose.schedule'))}
+        />
+      </div>
+    );
+  }
+
   displayOptions(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
     const canUpload = app.forum.attribute<boolean>('canUploadPollImages');
@@ -291,34 +433,23 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
       items.add(
         'option-' + i,
-        <div className="Form-group">
+        <div className="Form-group Form-group--answer">
           <fieldset className="Poll-answer-input">
-            <input
-              className="FormControl"
-              type="text"
-              name={'answer' + (i + 1)}
-              bidi={this.optionAnswers[i]}
-              placeholder={app.translator.trans('fof-polls.forum.modal.option_placeholder') + ' #' + (i + 1)}
-            />
+            <label className="FieldSet-label PollModal--answers-title">
+              {app.translator.trans('fof-polls.forum.modal.options_label') + ' ' + (i + 1)}
+            </label>
+            <input className="FormControl" type="text" name={'answer' + (i + 1)} bidi={this.optionAnswers[i]} />
             <div className="Poll-answer-image">
               {this.uploadConditional(
                 !!imgFunc(),
                 option?.isImageUpload(),
-                <>
+                <div className="Poll-answer-imageInfo">
                   <label className="label">{app.translator.trans('fof-polls.forum.modal.poll_option_image.label')}</label>
                   <p className="helpText">{app.translator.trans('fof-polls.forum.modal.poll_option_image.help')}</p>
                   <input type="hidden" name={'answerImage' + (i + 1)} value={imgFunc()} />
-                </>,
+                </div>,
 
-                <UploadPollImageButton name="pollOptionImage" option={option} onUpload={this.pollOptionImageUploadSuccess.bind(this, i)} />,
-
-                <input
-                  type="text"
-                  name={'answerImage' + (i + 1)}
-                  className="FormControl"
-                  bidi={imgFunc}
-                  placeholder={app.translator.trans('fof-polls.forum.modal.image_option_placeholder')}
-                />
+                <UploadPollImageButton name="pollOptionImage" option={option} onUpload={this.pollOptionImageUploadSuccess.bind(this, i)} />
               )}
             </div>
           </fieldset>
@@ -361,8 +492,28 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
       throw new FormError(app.translator.trans('fof-polls.forum.modal.include_question'));
     }
 
-    if (this.options.length < 2) {
+    // Count options with a non-empty answer. Checking `this.options.length`
+    // would be misleading — the UI keeps at least two rows on screen at all
+    // times (removeOption only allows `i >= 2`), so a row count of 2 doesn't
+    // imply two answers have been typed.
+    const filledCount = this.optionAnswers.filter((s) => {
+      const v = s();
+      return v != null && v.trim() !== '';
+    }).length;
+
+    if (filledCount < 2) {
       throw new FormError(app.translator.trans('fof-polls.forum.modal.min'));
+    }
+
+    // Above 2 filled, any remaining blank rows are still a problem — they'd
+    // trip the server's per-row `answer: required` rule. Tell the user how
+    // many empties there are so they can fill or remove them.
+    const emptyCount = this.optionAnswers.length - filledCount;
+    if (emptyCount > 0) {
+      // extractText flattens the translator's rich-array output — FormError
+      // stringifies via `+ ''`, which would otherwise join array chunks with
+      // commas (e.g. "1, answer is empty…").
+      throw new FormError(extractText(app.translator.trans('fof-polls.forum.modal.empty_answers', { count: emptyCount })));
     }
 
     const pollExists = this.state.poll.exists;
@@ -392,17 +543,87 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
   async onsubmit(event: Event) {
     event.preventDefault();
-
-    try {
-      await this.attrs.onsubmit(this.data(), this.state);
-    } catch (error) {
-      if (error instanceof FormError) {
-        app.alerts.show({ type: 'error' }, error.message);
-      } else if (error instanceof RequestError) {
-        console.error(error);
-        app.alerts.show({ type: 'error' }, app.translator.trans('fof-polls.forum.modal.error'));
-      }
+    // Buttons are all type="button"; this only fires on Enter inside an
+    // input. Route to the action that matches the cluster's current shape.
+    if (this.attrs.allowDrafts === true && (this.state.isNew() || this.state.isDraft())) {
+      return this.onSaveDraft();
     }
+    return this.onSaveChanges();
+  }
+
+  async onSaveChanges(): Promise<void> {
+    if (await this.submit({})) {
+      const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.compose.success'));
+      setTimeout(() => app.alerts.dismiss(alertId), 10000);
+    }
+  }
+
+  async onSaveDraft(): Promise<void> {
+    this.pendingAction = 'draft';
+    const wasNew = this.state.isNew();
+    try {
+      if (await this.submit({ isDraft: true })) {
+        const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.compose.draft_saved'));
+        setTimeout(() => app.alerts.dismiss(alertId), 10000);
+        if (wasNew) {
+          window.history.replaceState({}, '', app.route('fof.polls.composer', { id: this.state.poll.id() }));
+        }
+      }
+    } finally {
+      this.pendingAction = null;
+      m.redraw();
+    }
+  }
+
+  async publish(): Promise<void> {
+    this.pendingAction = 'publish';
+    try {
+      // New polls only: create as a draft first so /publish below succeeds.
+      // Submitting without isDraft would publish immediately, and the
+      // follow-up /publish call would 403 — the policy only permits
+      // publishing drafts.
+      if (!(await this.submit({ isDraft: true }))) return;
+      // Defensive: submit() hands off to attrs.onsubmit, which must
+      // assign the saved Poll to state.poll so id() is populated for
+      // /publish. Fail loudly here if a future onsubmit forgets that
+      // — better than POSTing to /polls/undefined/publish.
+      if (!this.state.poll.id()) {
+        throw new Error('Cannot publish an unsaved poll.');
+      }
+
+      await this.state.poll.publish();
+      const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.publish_success'));
+      setTimeout(() => app.alerts.dismiss(alertId), 10000);
+      m.route.set(app.route('fof.polls.list'));
+    } catch (error) {
+      this.handleError(error);
+    } finally {
+      this.pendingAction = null;
+      m.redraw();
+    }
+  }
+
+  async submit(extra: object): Promise<boolean> {
+    try {
+      await this.attrs.onsubmit({ ...this.data(), ...extra }, this.state);
+      // Successful save: re-baseline so the form is no longer dirty
+      // until the user edits again.
+      this.snapshot = this.serializeFormState();
+      this.state.markDirty(false);
+      return true;
+    } catch (error) {
+      this.handleError(error);
+      return false;
+    }
+  }
+
+  protected handleError(error: unknown): void {
+    if (error instanceof FormError) {
+      app.alerts.show({ type: 'error' }, error.message);
+      return;
+    }
+    console.error(error);
+    app.alerts.show({ type: 'error' }, app.translator.trans('fof-polls.forum.modal.error'));
   }
 
   async delete(): Promise<void> {
@@ -434,13 +655,15 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
 
   pollImageUploadSuccess(fileName: string | null | undefined): void {
     this.image(fileName);
+    this.state.poll?.pushAttributes({ isImageUpload: !!fileName });
   }
 
   pollOptionImageUploadSuccess(index: number, fileName: string | null | undefined): void {
     this.optionImageUrls[index] = Stream(fileName);
+    this.options[index]?.pushAttributes({ isImageUpload: !!fileName });
   }
 
-  uploadConditional(hasImage: boolean, isUpload: boolean, ifCanUpload: JSX.Element, uploadButton: JSX.Element, imageUrlInput: JSX.Element) {
+  uploadConditional(hasImage: boolean, isUpload: boolean, ifCanUpload: JSX.Element, uploadButton: JSX.Element) {
     const isExistingUrlImage = hasImage && !isUpload;
 
     // Existing poll with an external URL image — show deprecation notice

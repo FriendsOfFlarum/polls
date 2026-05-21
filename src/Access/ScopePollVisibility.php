@@ -36,6 +36,27 @@ class ScopePollVisibility
                 PollGroup::query()->setQuery($query)->whereVisibleTo($actor);
             });
             $query->orWhere('polls.poll_group_id', null);
+        })->where(function ($query) use ($actor) {
+            // Published polls + all discussion-scoped polls pass.
+            $query->whereNotNull('polls.published_at')
+                ->orWhereNotNull('polls.post_id');
+
+            // Author sees their own drafts.
+            if ($actor->exists) {
+                $query->orWhere('polls.user_id', $actor->id);
+            }
+
+            // Moderators see all drafts. We use the global `hasPermission`
+            // check (not the per-discussion `can(...)` used in
+            // PollPolicy::edit) because drafts are global-only by
+            // definition — `Poll::isDraft()` requires `isGlobal()`, so no
+            // poll has a parent discussion whose tags would scope the
+            // permission. If isDraft() is ever loosened to discussion-bound
+            // polls, this check needs to become per-discussion to honour
+            // tag-scoped polls.moderate restrictions.
+            if ($actor->hasPermission('polls.moderate')) {
+                $query->orWhereNull('polls.published_at');
+            }
         });
     }
 }

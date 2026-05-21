@@ -48,6 +48,10 @@ class PollPolicy extends AbstractPolicy
 
     public function view(User $actor, Poll $poll): string|bool|null
     {
+        if ($poll->isDraft() && !$actor->can('edit', $poll)) {
+            return $this->deny();
+        }
+
         if ($actor->can('view', $poll->post) || $poll->isGlobal()) {
             return $this->allow();
         }
@@ -100,6 +104,33 @@ class PollPolicy extends AbstractPolicy
 
     public function delete(User $actor, Poll $poll): string|bool|null
     {
+        return $this->edit($actor, $poll);
+    }
+
+    public function publish(User $actor, Poll $poll): string|bool|null
+    {
+        if (!$poll->isDraft()) {
+            return $this->deny();
+        }
+
+        // Same baseline as edit.
+        return $this->edit($actor, $poll);
+    }
+
+    public function unpublish(User $actor, Poll $poll): string|bool|null
+    {
+        if (!$poll->isGlobal()) {
+            return $this->deny();
+        }
+
+        if ($poll->isDraft()) {
+            return $this->deny();
+        }
+
+        if ($poll->vote_count > 0) {
+            return $this->deny();
+        }
+
         return $this->edit($actor, $poll);
     }
 }

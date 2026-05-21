@@ -28,7 +28,7 @@ export default class UploadPollImageButton extends Button<UploadPollImageButtonA
 
   view(vnode: Mithril.Vnode<UploadPollImageButtonAttrs>) {
     this.attrs.loading = this.loading;
-    this.attrs.className = classList(this.attrs.className, 'Button', 'Button--inverted');
+    this.attrs.className = classList(this.attrs.className, 'Button');
 
     const imageUrl = this.getImageUrl();
 

@@ -76,7 +76,9 @@ return [
 
     (new Extend\Console())
         ->command(Console\RefreshVoteCountCommand::class)
-        ->command(Console\ConvertPollImagesCommand::class),
+        ->command(Console\ConvertPollImagesCommand::class)
+        ->command(Console\PublishScheduledPollsCommand::class)
+        ->schedule(Console\PublishScheduledPollsCommand::class, Console\PublishScheduledPollsSchedule::class),
 
     (new Extend\Policy())
         ->modelPolicy(Poll::class, Access\PollPolicy::class),
@@ -118,6 +120,7 @@ return [
     (new Extend\SearchDriver(\Flarum\Search\Database\DatabaseSearchDriver::class))
         ->addSearcher(Poll::class, Filter\GlobalPollSearcher::class)
         ->addFilter(Filter\GlobalPollSearcher::class, Filter\PollIsEndedFilter::class)
+        ->addFilter(Filter\GlobalPollSearcher::class, Filter\PollIsDraftFilter::class)
         ->addSearcher(PollGroup::class, Filter\PollGroupSearcher::class)
         ->addFilter(Filter\PollGroupSearcher::class, Filter\PollGroupHasPollsFilter::class),
 

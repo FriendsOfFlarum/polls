@@ -4,9 +4,12 @@ import Poll from '../models/Poll';
 import Component from 'flarum/common/Component';
 import ComposePollPage from '../components/ComposePollPage';
 import PollsPage from '../components/PollsPage';
+import PollViewPage from '../components/PollViewPage';
+import PollListState from '../states/PollListState';
 import ItemList from 'flarum/common/utils/ItemList';
 import Separator from 'flarum/common/components/Separator';
 import Button from 'flarum/common/components/Button';
+import SchedulePollModal from '../components/SchedulePollModal';
 
 /**
  * The `UserControls` utility constructs a list of buttons for a user which
@@ -55,6 +58,44 @@ export default {
       );
     }
 
+    if (poll.canPublish() && poll.isDraft()) {
+      items.add(
+        'publish',
+        <Button icon="fas fa-paper-plane" onclick={() => this.publishAction(poll)}>
+          {app.translator.trans('fof-polls.forum.poll_controls.publish_label')}
+        </Button>
+      );
+
+      items.add(
+        'schedulePublish',
+        <Button
+          icon="fas fa-clock"
+          onclick={() =>
+            app.modal.show(SchedulePollModal, {
+              poll,
+              form: null,
+              onSuccess: app.current.matches(PollsPage) ? () => m.redraw() : () => m.route.set(app.route('fof.polls.view', { id: poll.id() })),
+            })
+          }
+        >
+          {app.translator.trans(
+            poll.isScheduled?.()
+              ? 'fof-polls.forum.poll_controls.edit_schedule_publish_label'
+              : 'fof-polls.forum.poll_controls.schedule_publish_label'
+          )}
+        </Button>
+      );
+
+      if (poll.isScheduled()) {
+        items.add(
+          'cancelSchedule',
+          <Button icon="fas fa-times" onclick={() => this.cancelScheduleAction(poll)}>
+            {app.translator.trans('fof-polls.forum.poll_controls.cancel_schedule_label')}
+          </Button>
+        );
+      }
+    }
+
     return items;
   },
 
@@ -64,6 +105,15 @@ export default {
    */
   destructiveControls(poll: Poll, context: Component): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
+
+    if (poll.canUnpublish()) {
+      items.add(
+        'unpublish',
+        <Button icon="fas fa-undo" onclick={() => this.unpublishAction(poll)}>
+          {app.translator.trans('fof-polls.forum.poll_controls.unpublish_label')}
+        </Button>
+      );
+    }
 
     if (poll.canDelete()) {
       items.add(
@@ -89,10 +139,10 @@ export default {
       .delete()
       .then(() => {
         this.showDeletionAlert(poll, 'success');
-        if (app.current.matches(ComposePollPage, { id: poll.id() }) || app.current.matches(PollsPage, { id: poll.id() })) {
-          app.history.back();
+        if (app.current.matches(ComposePollPage) || app.current.matches(PollViewPage)) {
+          m.route.set(app.route('fof.polls.list'));
         } else {
-          window.location.reload();
+          PollListState.notifyDeleted(poll);
         }
       })
       .catch(() => this.showDeletionAlert(poll, 'error'));
@@ -107,7 +157,12 @@ export default {
       error: `fof-polls.forum.poll_controls.delete_error_message`,
     }[type]!;
 
-    app.alerts.show({ type }, app.translator.trans(message, { poll: poll }));
+    const content = app.translator.trans(message, { poll: poll });
+    const alertId = app.alerts.show({ type }, content);
+    // Errors stay sticky so the user can read them; successes auto-dismiss.
+    if (type === 'success') {
+      setTimeout(() => app.alerts.dismiss(alertId), 10000);
+    }
   },
 
   /**
@@ -115,5 +170,41 @@ export default {
    */
   editAction(poll: Poll): void {
     m.route.set(app.route('fof.polls.composer', { id: poll.id() }));
+  },
+
+  async publishAction(poll: Poll): Promise<void> {
+    try {
+      await poll.publish();
+      const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.publish_success'));
+      setTimeout(() => app.alerts.dismiss(alertId), 10000);
+      m.redraw();
+    } catch (e: any) {
+      const detail = e?.response?.errors?.[0]?.detail;
+      app.alerts.show({ type: 'error' }, detail ?? app.translator.trans('fof-polls.forum.poll_form.error'));
+    }
+  },
+
+  async cancelScheduleAction(poll: Poll): Promise<void> {
+    try {
+      await poll.publish({ scheduledFor: null });
+      const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.cancel_schedule_success'));
+      setTimeout(() => app.alerts.dismiss(alertId), 10000);
+      m.redraw();
+    } catch (e: any) {
+      const detail = e?.response?.errors?.[0]?.detail;
+      app.alerts.show({ type: 'error' }, detail ?? app.translator.trans('fof-polls.forum.poll_form.error'));
+    }
+  },
+
+  async unpublishAction(poll: Poll): Promise<void> {
+    if (!confirm(app.translator.trans('fof-polls.forum.poll_controls.unpublish_confirmation') as string)) return;
+    try {
+      await poll.unpublish();
+      const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.unpublish_success'));
+      setTimeout(() => app.alerts.dismiss(alertId), 10000);
+      m.redraw();
+    } catch (e: any) {
+      app.alerts.show({ type: 'error' }, app.translator.trans('fof-polls.forum.poll_controls.unpublish_error_has_votes'));
+    }
   },
 };

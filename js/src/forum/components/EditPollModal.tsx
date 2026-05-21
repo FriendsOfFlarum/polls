@@ -10,10 +10,8 @@ export default class EditPollModal extends CreatePollModal {
 
   async onFormSubmit(data: object, state: PollFormState): Promise<void> {
     await state.save(data);
-
     this.hide();
-
-    const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.compose.success'));
-    setTimeout(() => app.alerts.dismiss(alertId), 10000);
+    // Success alert is fired by PollForm.onsubmit (the form-level
+    // handler) now, matching the per-flow pattern in ComposePollPage.
   }
 }

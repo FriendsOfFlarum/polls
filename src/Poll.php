@@ -33,6 +33,9 @@ use Illuminate\Support\Arr;
  * @property int|null              $post_id
  * @property int                   $user_id
  * @property \Carbon\Carbon|null   $end_date
+ * @property \Carbon\Carbon|null   $published_at
+ * @property \Carbon\Carbon|null   $scheduled_publish_at
+ * @property string|null           $scheduled_publish_error
  * @property \Carbon\Carbon        $created_at
  * @property \Carbon\Carbon        $updated_at
  * @property PollSettings          $settings
@@ -52,11 +55,15 @@ class Poll extends AbstractModel
      */
     public $timestamps = true;
 
+    protected $dateFormat = 'Y-m-d H:i:s';
+
     protected $casts = [
-        'settings'   => AsArrayObject::class,
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'end_date'   => 'datetime',
+        'settings'             => AsArrayObject::class,
+        'created_at'           => 'datetime',
+        'updated_at'           => 'datetime',
+        'end_date'             => 'datetime',
+        'published_at'         => 'datetime',
+        'scheduled_publish_at' => 'datetime',
     ];
 
     /**
@@ -68,7 +75,7 @@ class Poll extends AbstractModel
      *
      * @return static
      */
-    public static function build(string $question, ?int $postId, int $actorId, ?\Carbon\Carbon $endDate, mixed $publicPoll, mixed $allowMultipleVotes = false, mixed $maxVotes = 0, mixed $hideVotes = false, mixed $allowChangeVote = true, ?string $subtitle = null, ?string $imageFilename = null, ?string $imageAlt = null): static
+    public static function build(string $question, ?int $postId, int $actorId, ?\Carbon\Carbon $endDate, mixed $publicPoll, mixed $allowMultipleVotes = false, mixed $maxVotes = 0, mixed $hideVotes = false, mixed $allowChangeVote = true, ?string $subtitle = null, ?string $imageFilename = null, ?string $imageAlt = null, ?\Carbon\Carbon $publishedAt = null): static
     {
         $poll = new static();
 
@@ -79,6 +86,7 @@ class Poll extends AbstractModel
         $poll->post_id = $postId;
         $poll->user_id = $actorId;
         $poll->end_date = $endDate;
+        $poll->published_at = $publishedAt;
         $poll->settings = [
             'public_poll'          => $publicPoll,
             'allow_multiple_votes' => $allowMultipleVotes,
@@ -93,6 +101,16 @@ class Poll extends AbstractModel
     public function isGlobal(): bool
     {
         return $this->post_id === null;
+    }
+
+    public function isDraft(): bool
+    {
+        return $this->isGlobal() && $this->published_at === null;
+    }
+
+    public function isScheduled(): bool
+    {
+        return $this->isDraft() && $this->scheduled_publish_at !== null;
     }
 
     /**

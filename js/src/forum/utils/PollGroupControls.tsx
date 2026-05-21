@@ -112,7 +112,12 @@ export default {
       error: `fof-polls.forum.poll_groups.controls.delete_error_message`,
     }[type]!;
 
-    app.alerts.show({ type }, app.translator.trans(message, { pollGroup: pollGroup }));
+    const content = app.translator.trans(message, { pollGroup: pollGroup });
+    const alertId = app.alerts.show({ type }, content);
+    // Errors stay sticky so the user can read them; successes auto-dismiss.
+    if (type === 'success') {
+      setTimeout(() => app.alerts.dismiss(alertId), 10000);
+    }
   },
 
   /**

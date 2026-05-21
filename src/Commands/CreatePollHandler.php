@@ -12,6 +12,7 @@
 namespace FoF\Polls\Commands;
 
 use Carbon\Carbon;
+use Flarum\Foundation\ValidationException;
 use Flarum\Post\PostRepository;
 use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\User\Exception\PermissionDeniedException;
@@ -47,6 +48,15 @@ class CreatePollHandler
 
         $attributes = Arr::get($command->data, 'attributes', []);
 
+        $isDraft = (bool) Arr::get($attributes, 'isDraft', false);
+
+        // Drafts are global-only.
+        if ($isDraft && $command->post !== null) {
+            throw new ValidationException([
+                'isDraft' => 'Drafts are only supported for global polls.',
+            ]);
+        }
+
         // Ideally we would use some JSON:API relationship syntax, but it's just too complicated with Flarum to generate the correct JSON payload
         // Instead we just pass an array of option objects that are each a set of key-value pairs for the option attributes
         // This is also the same syntax that always used by EditPollHandler
@@ -72,7 +82,7 @@ class CreatePollHandler
 
         $this->setPollGroupRelationData($command->actor, null, $command->data);
 
-        return ($command->savePollOn)(function () use ($optionsData, $attributes, $command) {
+        return ($command->savePollOn)(function () use ($optionsData, $attributes, $command, $isDraft) {
             $endDate = Arr::get($attributes, 'endDate');
             $carbonDate = Carbon::parse($endDate);
 
@@ -92,7 +102,8 @@ class CreatePollHandler
                 Arr::get($attributes, 'allowChangeVote'),
                 Arr::get($attributes, 'subtitle'),
                 Arr::get($attributes, 'pollImage'),
-                Arr::get($attributes, 'imageAlt')
+                Arr::get($attributes, 'imageAlt'),
+                $isDraft ? null : Carbon::now()
             );
 
             $this->setPollGroupRelationData($command->actor, $poll, $command->data);

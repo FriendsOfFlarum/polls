@@ -27,12 +27,21 @@
 }
 
 .PollDiscussionModal-form {
-  .Form-group {
-    margin-top: 5px;
+  .Form-group.hide {
+    display: none;
+  }
 
-    &.hide {
-      display: none;
-    }
+  .Form-group--input,
+  .Form-group--upload {
+    margin-bottom: 25px;
+  }
+
+  .Form-group--switch {
+    margin-bottom: 10px;
+  }
+
+  .Form-group--actions {
+    flex-direction: row;
   }
 
   input.FormControl {
@@ -55,17 +64,37 @@
   .PollModal--answers {
     margin-bottom: 20px;
 
+    .PollModal--answers-title {
+      margin-bottom: 10px;
+    }
+
     .Form-group {
       display: flex;
+      flex-direction: row;
       margin-top: 2.5px;
       margin-bottom: 18px;
+      width: 100%;
+    }
+
+    .Form-group--answer {
+      .PollModal--button {
+        margin-top: 31px;
+      }
     }
 
     fieldset {
       flex-grow: 1;
+      width: 100%;
+    }
+
+    .Poll-answer-input input {
+      margin-bottom: 10px;
     }
 
     .Poll-answer-image {
+      display: flex;
+      justify-content: space-between;
+
       img {
         max-width: 100%;
       }
@@ -108,7 +137,7 @@
     margin-top: 10px;
   }
 
-  .PollModal-deleteButton {
+  .PollModal-DeleteButton {
     margin-top: 10px;
     margin-left: 10px;
   }
@@ -711,6 +740,42 @@
 
 // Layout is now handled by PageStructure's .Page styles.
 
+@media @desktop-up {
+  .PollsShowcasePage,
+  .PollGroupViewPage {
+    .Page-container {
+      display: block;
+    }
+
+    .Page-sidebar {
+      width: unset;
+    }
+
+    .sideNav {
+      .sideNav--horizontal();
+      float: none;
+      width: auto;
+      margin-right: 0;
+      padding-top: 0;
+
+      &:after {
+        display: none;
+      }
+
+      .App-primaryControl {
+        margin-bottom: 0;
+      }
+
+      > ul > li:first-child {
+        width: 190px;
+      }
+    }
+    .Page-content {
+      margin-top: 15px;
+    }
+  }
+}
+
 .PollShowcase {
   &--item {
     background-color: var(--control-bg);
@@ -773,6 +838,65 @@
 // Poll Groups Composer
 .PollGroupModal-SubmitButton {
   margin-right: 10px;
+}
+
+// Submit cluster (draft / publish / schedule / save)
+.PollModal--submitCluster {
+  display: flex;
+  gap: 10px;
+  padding-top: 10px;
+
+  .PollModal-SubmitButton {
+    margin-top: 0;
+  }
+
+  .Button--primary .Button-icon {
+    display: inline-block;
+  }
+}
+
+// Draft & schedule badges (shared between poll list rows and the poll view)
+:root {
+  --poll-draft-bg: #fde68a;
+  --poll-draft-color: #92400e;
+  --poll-scheduled-bg: #bfdbfe;
+  --poll-scheduled-color: #1e3a8a;
+  --poll-schedule-error-color: #b91c1c;
+}
+[data-theme^=dark] {
+  --poll-draft-bg: #3f2e0a;
+  --poll-draft-color: #fde68a;
+  --poll-scheduled-bg: #1e3a8a;
+  --poll-scheduled-color: #bfdbfe;
+  --poll-schedule-error-color: #fca5a5;
+}
+
+.PollDraftBadges {
+  display: inline-flex;
+  gap: 6px;
+  vertical-align: middle;
+}
+.PollDraftBadges-draft {
+  background: var(--poll-draft-bg);
+  color: var(--poll-draft-color);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+.PollDraftBadges-scheduled {
+  background: var(--poll-scheduled-bg);
+  color: var(--poll-scheduled-color);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+.PollDraftBadges-scheduleError {
+  color: var(--poll-schedule-error-color);
+  margin-left: 4px;
+}
+
+.PollListItem .PollDraftBadges {
+  margin-left: 8px;
 }
 
 [data-theme^=light] {
