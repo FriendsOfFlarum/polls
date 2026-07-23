@@ -103,7 +103,7 @@ class ListDiscussionsPollsQueryCountTest extends TestCase
     {
         $request = $this->request('GET', '/api/discussions', ['authenticatedAs' => 1]);
 
-        if (! empty($queryParams)) {
+        if (!empty($queryParams)) {
             $request = $request->withQueryParams($queryParams);
         }
 
