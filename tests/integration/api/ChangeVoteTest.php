@@ -31,6 +31,7 @@ class ChangeVoteTest extends TestCase
                 $this->normalUser(),
                 ['id' => 3, 'username' => 'polluser', 'email' => 'polluser@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => true],
                 ['id' => 4, 'username' => 'moderator', 'email' => 'moderator@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => true],
+                ['id' => 5, 'username' => 'noperms', 'email' => 'noperms@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => false],
             ],
             'discussions' => [
                 ['id' => 1, 'title' => 'Discussion 1', 'comment_count' => 1, 'participant_count' => 1, 'created_at' => '2021-01-01 00:00:00'],
@@ -52,8 +53,10 @@ class ChangeVoteTest extends TestCase
                 ['user_id' => 4, 'group_id' => 4],
             ],
             'group_permission' => [
+                ['permission' => 'discussion.polls.vote', 'group_id' => 3],
                 ['permission' => 'discussion.polls.start', 'group_id' => 4],
                 ['permission' => 'startGlobalPoll', 'group_id' => 4],
+                ['permission' => 'discussion.polls.vote', 'group_id' => 4],
                 ['permission' => 'uploadPollImages', 'group_id' => 4],
                 ['permission' => 'polls.changeVote', 'group_id' => 4],
             ],
@@ -198,5 +201,27 @@ class ChangeVoteTest extends TestCase
         $vote = PollVote::where('user_id', 2)->where('poll_id', 2)->first();
 
         $this->assertEquals(4, $vote->option_id);
+    }
+
+    /**
+     * @test
+     */
+    public function user_without_vote_permission_cannot_vote_on_global_poll()
+    {
+        $response = $this->send(
+            $this->request('PATCH', '/api/fof/polls/2/votes', [
+                'authenticatedAs' => 5,
+                'json'            => [
+                    'data' => [
+                        'optionIds' => [
+                            3,
+                        ],
+                    ],
+                ],
+            ])
+        );
+
+        $this->assertEquals(403, $response->getStatusCode());
+        $this->assertFalse(PollVote::where('user_id', 5)->where('poll_id', 2)->exists());
     }
 }
