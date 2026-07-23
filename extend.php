@@ -156,6 +156,19 @@ return [
                     ])
                     ->endpoint('index', function ($endpoint) {
                         return $endpoint
+                            // Batch-load the first post's polls for every discussion in the
+                            // page in a single query. Without this, serializing the
+                            // `firstPost.polls` include resolves the relation one post at a
+                            // time, producing an N+1 on the discussion list (issue #124).
+                            // Poll visibility is still enforced: the discussion list only
+                            // contains discussions (and therefore first posts) the actor can
+                            // already see, and discussion-scoped polls inherit that post's
+                            // visibility (see Access\ScopePollVisibility).
+                            ->eagerLoadWhere('firstPost.polls', function ($query) {
+                                $query->select(['id', 'post_id']);
+                            })
+                            // Powers the `hasPoll` attribute without a per-discussion
+                            // `exists()` query.
                             ->eagerLoadWhere('polls', function ($query) {
                                 $query->select(['id', 'post_id']);
                             })
