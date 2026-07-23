@@ -62,9 +62,10 @@ class PollPolicy extends AbstractPolicy
     public function vote(User $actor, Poll $poll): string|bool|null
     {
         $discussion = $poll->post !== null ? $poll->post->discussion : null;
-        $can = $discussion ? $actor->can('polls.vote', $discussion) : $actor->can('discussion.polls.vote', $discussion);
+        $can = $discussion ? $actor->can('polls.vote', $discussion) : false;
+        $canVoteGlobalPoll = $poll->isGlobal() && $actor->hasPermission('discussion.polls.vote');
 
-        if (($can || $poll->isGlobal()) && !$poll->hasEnded()) {
+        if (($can || $canVoteGlobalPoll) && !$poll->hasEnded()) {
             return $this->allow();
         }
 
