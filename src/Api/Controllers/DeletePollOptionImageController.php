@@ -36,9 +36,13 @@ class DeletePollOptionImageController implements RequestHandlerInterface
         $optionId = Arr::get($request->getQueryParams(), 'optionId');
 
         /** @var PollOption $option */
-        $option = PollOption::find($optionId);
+        $option = PollOption::findOrFail($optionId);
 
         $actor->assertCan('uploadPollImages');
+        // Same per-poll check the option upload endpoint already performs —
+        // otherwise `uploadPollImages` alone was enough to clear the image of
+        // any option on any poll.
+        $actor->assertCan('edit', $option->poll);
 
         if ($option->image_url) {
             /**
