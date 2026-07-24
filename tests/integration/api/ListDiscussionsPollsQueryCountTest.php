@@ -23,11 +23,14 @@ use PHPUnit\Framework\Attributes\Test;
  * Regression test for the N+1 polls queries on the discussion list described in
  * https://github.com/FriendsOfFlarum/polls/issues/124.
  *
- * The discussion index serializes `firstPost.polls`. Before the fix each
- * discussion's first-post polls were resolved with an individual query, so the
- * query count grew linearly with the number of discussions in the payload.
- * After the fix the polls must be resolved in a single batched query (or none
- * at all when the include is not requested).
+ * Powering the `hasPoll` badge previously fell back to a per-discussion
+ * `exists()` query, so the query count grew linearly with the number of
+ * discussions in the payload. It must instead be satisfied by a single batched
+ * eager-load of the polls relation.
+ *
+ * This fork additionally does not default-include `firstPost.polls` on the list
+ * (the list renders only the boolean badge), so the poll bodies must not be
+ * serialized into the discussion-list payload.
  */
 class ListDiscussionsPollsQueryCountTest extends TestCase
 {
@@ -187,25 +190,23 @@ class ListDiscussionsPollsQueryCountTest extends TestCase
     }
 
     #[Test]
-    public function discussion_list_still_includes_first_post_polls()
+    public function discussion_list_does_not_over_include_first_post_polls()
     {
         $data = $this->listDiscussions();
 
-        $included = $data['included'] ?? [];
+        $includedPolls = array_values(array_filter(
+            $data['included'] ?? [],
+            fn ($resource) => $resource['type'] === 'polls'
+        ));
 
-        $includedPollIds = array_column(
-            array_values(array_filter($included, fn ($resource) => $resource['type'] === 'polls')),
-            'id'
+        // The discussion list renders only the boolean `hasPoll` badge, never the
+        // poll bodies, so `firstPost.polls` is intentionally NOT default-included
+        // here (poll data is default-included on the `show` endpoint instead).
+        // Serializing every first post's polls onto the list is wasted payload and
+        // load — guard against it silently coming back.
+        $this->assertEmpty(
+            $includedPolls,
+            'The discussion list must not default-include firstPost.polls; the list only needs the hasPoll attribute.'
         );
-
-        // The batched eager-load must not drop the include — every fixture poll
-        // (ids 200..207) should still be serialized on the discussion list.
-        for ($i = 0; $i < self::DISCUSSION_COUNT; $i++) {
-            $this->assertContains(
-                (string) (200 + $i),
-                $includedPollIds,
-                'Poll '.(200 + $i).' should be included on the discussion list.'
-            );
-        }
     }
 }
