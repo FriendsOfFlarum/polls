@@ -90,7 +90,7 @@ class Poll extends AbstractModel
         $poll->settings = [
             'public_poll'          => $publicPoll,
             'allow_multiple_votes' => $allowMultipleVotes,
-            'max_votes'            => min(0, (int) $maxVotes),
+            'max_votes'            => max(0, (int) $maxVotes),
             'hide_votes'           => $hideVotes,
             'allow_change_vote'    => $allowChangeVote,
         ];

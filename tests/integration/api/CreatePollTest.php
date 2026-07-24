@@ -842,4 +842,109 @@ class CreatePollTest extends TestCase
 
         $this->assertEquals(404, $response->getStatusCode());
     }
+
+    #[Test]
+    public function max_votes_is_persisted_when_creating_a_poll()
+    {
+        $response = $this->send(
+            $this->request(
+                'POST',
+                '/api/posts',
+                [
+                    'authenticatedAs' => 1,
+                    'json'            => [
+                        'data' => [
+                            'attributes' => [
+                                'content' => 'Here is my poll',
+                                'poll'    => [
+                                    'question'           => 'Pick up to two colours',
+                                    'publicPoll'         => false,
+                                    'hideVotes'          => false,
+                                    'allowChangeVote'    => true,
+                                    'allowMultipleVotes' => true,
+                                    'maxVotes'           => 2,
+                                    'endDate'            => false,
+                                    'options'            => [
+                                        ['answer' => 'Red'],
+                                        ['answer' => 'Blue'],
+                                        ['answer' => 'Yellow'],
+                                    ],
+                                ],
+                            ],
+                            'relationships' => [
+                                'discussion' => [
+                                    'data' => [
+                                        'type' => 'discussions',
+                                        'id'   => 1,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        $this->assertEquals(201, $response->getStatusCode());
+
+        $json = json_decode($response->getBody()->getContents(), true);
+        $pollId = $json['data']['relationships']['polls']['data'][0]['id'];
+
+        $poll = Poll::find($pollId);
+
+        // A positive maxVotes must survive creation. Clamping it with min(0, ...)
+        // instead of max(0, ...) silently stored 0, which means "unlimited"
+        // downstream (MultipleVotesPollHandler falls back to the option count),
+        // so the author's vote limit was dropped until the poll was edited.
+        $this->assertEquals(2, $poll->max_votes);
+    }
+
+    #[Test]
+    public function negative_max_votes_is_floored_to_zero_when_creating_a_poll()
+    {
+        $response = $this->send(
+            $this->request(
+                'POST',
+                '/api/posts',
+                [
+                    'authenticatedAs' => 1,
+                    'json'            => [
+                        'data' => [
+                            'attributes' => [
+                                'content' => 'Here is my poll',
+                                'poll'    => [
+                                    'question'           => 'What is your favourite colour?',
+                                    'publicPoll'         => false,
+                                    'hideVotes'          => false,
+                                    'allowChangeVote'    => true,
+                                    'allowMultipleVotes' => true,
+                                    'maxVotes'           => -5,
+                                    'endDate'            => false,
+                                    'options'            => [
+                                        ['answer' => 'Red'],
+                                        ['answer' => 'Blue'],
+                                    ],
+                                ],
+                            ],
+                            'relationships' => [
+                                'discussion' => [
+                                    'data' => [
+                                        'type' => 'discussions',
+                                        'id'   => 1,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        $this->assertEquals(201, $response->getStatusCode());
+
+        $json = json_decode($response->getBody()->getContents(), true);
+        $pollId = $json['data']['relationships']['polls']['data'][0]['id'];
+
+        $this->assertEquals(0, Poll::find($pollId)->max_votes);
+    }
 }
