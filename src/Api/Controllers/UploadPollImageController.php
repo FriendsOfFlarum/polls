@@ -13,6 +13,8 @@ namespace FoF\Polls\Api\Controllers;
 
 use Flarum\Http\RequestUtil;
 use Flarum\Settings\SettingsRepositoryInterface;
+use Flarum\User\Exception\PermissionDeniedException;
+use Flarum\User\User;
 use FoF\Polls\Events\PollImageWillBeResized;
 use FoF\Polls\Poll;
 use FoF\Polls\PollImageUploader;
@@ -50,8 +52,14 @@ class UploadPollImageController implements RequestHandlerInterface
             $actor->assertCan('edit', $poll);
         } else {
             $poll = null;
-            $actor->assertCan('startPoll');
-            $actor->assertCan('startGlobalPoll');
+
+            // The poll doesn't exist yet (the composer uploads the image
+            // before saving), so there is no model to authorize against —
+            // only "may this actor start a poll at all". `startPoll` cannot
+            // serve here: it is a policy ability on Post, so with no model
+            // core's Gate falls back to hasPermission('startPoll'), which no
+            // group can ever hold. That made this admin-only (issue #131).
+            $this->assertCanStartAnyPoll($actor);
         }
 
         $file = Arr::get($request->getUploadedFiles(), $this->filenamePrefix);
@@ -87,5 +95,20 @@ class UploadPollImageController implements RequestHandlerInterface
             'fileUrl'  => $this->uploader->url($uploadName),
             'fileName' => $uploadName,
         ]);
+    }
+
+    /**
+     * Assert the actor may start a poll somewhere — used when the poll being
+     * illustrated does not exist yet, so there is nothing to authorize
+     * against. Global polls and discussion polls are separate abilities, and
+     * holding either is enough to be legitimately uploading an image.
+     */
+    protected function assertCanStartAnyPoll(User $actor): void
+    {
+        if ($actor->can('startGlobalPoll') || $actor->can('discussion.polls.start')) {
+            return;
+        }
+
+        throw new PermissionDeniedException();
     }
 }
