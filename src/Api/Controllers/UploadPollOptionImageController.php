@@ -36,8 +36,10 @@ class UploadPollOptionImageController extends UploadPollImageController
             $actor->assertCan('edit', $poll);
         } else {
             $option = null;
-            $actor->assertCan('startPoll');
-            $actor->assertCan('startGlobalPoll');
+
+            // No option to authorize against yet — see
+            // UploadPollImageController::assertCanStartAnyPoll().
+            $this->assertCanStartAnyPoll($actor);
         }
 
         $file = Arr::get($request->getUploadedFiles(), $this->filenamePrefix);
