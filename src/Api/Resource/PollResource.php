@@ -333,9 +333,16 @@ class PollResource extends Resource\AbstractDatabaseResource
                 ->type('poll_votes')
                 ->get(function (Poll $poll, Context $context) {
                     Poll::setStateUser($context->getActor());
-                    $poll->unsetRelation('myVotes');
 
-                    return $poll->myVotes($context->getActor())->get()->all();
+                    // The actor is constant within a request, so a relation
+                    // loaded earlier (eager load or the vote policies) is
+                    // this actor's — reuse it instead of re-querying per
+                    // poll per serialized field.
+                    if (!$poll->relationLoaded('myVotes')) {
+                        $poll->setRelation('myVotes', $poll->myVotes($context->getActor())->get());
+                    }
+
+                    return $poll->getRelation('myVotes')->all();
                 }),
             Schema\Relationship\ToOne::make('post')
                 ->includable()

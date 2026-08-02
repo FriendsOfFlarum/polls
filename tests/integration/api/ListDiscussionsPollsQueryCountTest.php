@@ -187,25 +187,43 @@ class ListDiscussionsPollsQueryCountTest extends TestCase
     }
 
     #[Test]
-    public function discussion_list_still_includes_first_post_polls()
+    public function the_discussion_list_serializes_no_posts_or_polls_by_default()
     {
+        // The list UI reads exactly one thing from this extension: the
+        // hasPoll attribute, powered by a narrow eager load. Default-including
+        // firstPost.polls forced every first post to be fully serialized
+        // (rendered HTML, per-post policies) and ran every poll's policy
+        // attributes — which lazily fetched one post per poll.
         $data = $this->listDiscussions();
 
         $included = $data['included'] ?? [];
 
-        $includedPollIds = array_column(
-            array_values(array_filter($included, fn ($resource) => $resource['type'] === 'polls')),
-            'id'
-        );
+        $this->assertCount(0, array_filter($included, fn ($resource) => $resource['type'] === 'posts'), 'No posts in the default list payload.');
+        $this->assertCount(0, array_filter($included, fn ($resource) => $resource['type'] === 'polls'), 'No polls in the default list payload.');
+    }
 
-        // The batched eager-load must not drop the include — every fixture poll
-        // (ids 200..207) should still be serialized on the discussion list.
+    #[Test]
+    public function explicitly_including_first_post_polls_serializes_complete_polls()
+    {
+        $data = $this->listDiscussions(['include' => 'firstPost,firstPost.polls']);
+
+        $included = $data['included'] ?? [];
+        $polls = array_values(array_filter($included, fn ($resource) => $resource['type'] === 'polls'));
+
+        $includedPollIds = array_column($polls, 'id');
+
         for ($i = 0; $i < self::DISCUSSION_COUNT; $i++) {
             $this->assertContains(
                 (string) (200 + $i),
                 $includedPollIds,
-                'Poll '.(200 + $i).' should be included on the discussion list.'
+                'Poll '.(200 + $i).' should be included when explicitly requested.'
             );
+        }
+
+        // The narrow hasPoll eager load (id, post_id only) must not leak into
+        // serialization: explicitly requested polls carry their real data.
+        foreach ($polls as $poll) {
+            $this->assertNotNull($poll['attributes']['question'] ?? null, "Poll {$poll['id']} serialized without its question — a narrow eager load leaked into the include.");
         }
     }
 }

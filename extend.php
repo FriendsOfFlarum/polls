@@ -164,15 +164,23 @@ return [
                             // contains discussions (and therefore first posts) the actor can
                             // already see, and discussion-scoped polls inherit that post's
                             // visibility (see Access\ScopePollVisibility).
-                            ->eagerLoadWhere('firstPost.polls', function ($query) {
-                                $query->select(['id', 'post_id']);
-                            })
                             // Powers the `hasPoll` attribute without a per-discussion
-                            // `exists()` query.
+                            // `exists()` query. Narrow on purpose: nothing on
+                            // the list serializes these rows.
                             ->eagerLoadWhere('polls', function ($query) {
                                 $query->select(['id', 'post_id']);
                             })
-                            ->addDefaultInclude(['firstPost.polls']);
+                            // No default include: the list UI reads only
+                            // hasPoll, and including firstPost.polls forced
+                            // every first post to be fully serialized and ran
+                            // every poll's policy attributes — one lazy post
+                            // fetch per poll. Explicit includers get complete,
+                            // batch-loaded polls; the poll policies read
+                            // poll.post.discussion, so load that chain with
+                            // them.
+                            ->eagerLoadWhenIncluded([
+                                'firstPost' => ['firstPost.discussion', 'firstPost.polls.post.discussion', 'firstPost.polls.myVotes'],
+                            ]);
                     })
                     ->endpoint('show', function ($endpoint) {
                         return $endpoint->addDefaultInclude([
