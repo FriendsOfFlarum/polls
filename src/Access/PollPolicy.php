@@ -31,7 +31,7 @@ class PollPolicy extends AbstractPolicy
         // identical counts per poll per request. Load the relation once and
         // cache it on the instance; endpoints that eager load myVotes make
         // this free.
-        if (! $poll->relationLoaded('myVotes')) {
+        if (!$poll->relationLoaded('myVotes')) {
             $poll->setRelation('myVotes', $poll->myVotes($actor)->get());
         }
 

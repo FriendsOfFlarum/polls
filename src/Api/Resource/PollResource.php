@@ -338,7 +338,7 @@ class PollResource extends Resource\AbstractDatabaseResource
                     // loaded earlier (eager load or the vote policies) is
                     // this actor's — reuse it instead of re-querying per
                     // poll per serialized field.
-                    if (! $poll->relationLoaded('myVotes')) {
+                    if (!$poll->relationLoaded('myVotes')) {
                         $poll->setRelation('myVotes', $poll->myVotes($context->getActor())->get());
                     }
 
