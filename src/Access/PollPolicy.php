@@ -26,7 +26,16 @@ class PollPolicy extends AbstractPolicy
             return $this->deny();
         }
 
-        if ($poll->myVotes($actor)->count() || $actor->can('polls.viewResultsWithoutVoting', $poll->post !== null ? $poll->post->discussion : null) || $poll->isGlobal() || $isPollAuthor) {
+        // Serializing a poll evaluates several policy-backed attributes, and
+        // each used to re-count the actor's votes with a fresh query — three
+        // identical counts per poll per request. Load the relation once and
+        // cache it on the instance; endpoints that eager load myVotes make
+        // this free.
+        if (! $poll->relationLoaded('myVotes')) {
+            $poll->setRelation('myVotes', $poll->myVotes($actor)->get());
+        }
+
+        if ($poll->getRelation('myVotes')->isNotEmpty() || $actor->can('polls.viewResultsWithoutVoting', $poll->post !== null ? $poll->post->discussion : null) || $poll->isGlobal() || $isPollAuthor) {
             return $this->allow();
         }
 
