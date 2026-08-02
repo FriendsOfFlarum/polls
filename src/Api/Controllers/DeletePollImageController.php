@@ -36,9 +36,14 @@ class DeletePollImageController implements RequestHandlerInterface
         $pollId = Arr::get($request->getQueryParams(), 'pollId');
 
         /** @var Poll $poll */
-        $poll = Poll::find($pollId);
+        $poll = Poll::findOrFail($pollId);
 
         $actor->assertCan('uploadPollImages');
+        // Deleting a poll's image is an edit of that poll, so it needs the same
+        // per-poll check the upload endpoint already performs. Without it, the
+        // `uploadPollImages` permission alone let any user clear the image of
+        // any poll, and poll ids are trivially enumerable.
+        $actor->assertCan('edit', $poll);
 
         $this->events->dispatch(
             new PollImageDeleting($poll->image, $actor)
