@@ -26,7 +26,7 @@ return [
         $after = 'end_date';
 
         foreach ($columns as $name => $definition) {
-            if (! $schema->hasColumn('polls', $name)) {
+            if (!$schema->hasColumn('polls', $name)) {
                 $schema->table('polls', function (Blueprint $table) use ($definition, $after) {
                     $definition($table, $after);
                 });
@@ -35,7 +35,7 @@ return [
             $after = $name;
         }
 
-        if (! $schema->hasIndex('polls', 'polls_scheduled_publish_at_index')) {
+        if (!$schema->hasIndex('polls', 'polls_scheduled_publish_at_index')) {
             $schema->table('polls', function (Blueprint $table) {
                 $table->index('scheduled_publish_at', 'polls_scheduled_publish_at_index');
             });

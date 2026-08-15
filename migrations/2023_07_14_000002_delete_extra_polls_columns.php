@@ -36,7 +36,7 @@ return [
     },
     'down' => function (Builder $schema) use ($columns) {
         foreach ($columns as $name => $definition) {
-            if (! $schema->hasColumn('polls', $name)) {
+            if (!$schema->hasColumn('polls', $name)) {
                 $schema->table('polls', function (Blueprint $table) use ($definition) {
                     $definition($table);
                 });
