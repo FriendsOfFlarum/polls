@@ -1,7 +1,7 @@
 import app from 'flarum/forum/app';
-
 import { extend } from 'flarum/common/extend';
 import classList from 'flarum/common/utils/classList';
+import Button from 'flarum/common/components/Button';
 import Poll from './models/Poll';
 import PollOption from './models/PollOption';
 import { ModelAttributes } from 'flarum/common/Model';
@@ -40,11 +40,11 @@ export const addToComposer = (composerPath: string) => {
     if (canStartPoll) {
       items.add(
         'polls',
-        <a className="ComposerBody-poll" onclick={() => addPoll(this)}>
+        <Button className="ComposerBody-poll Button Button--ua-reset" onclick={() => addPoll(this)}>
           <span className={classList('PollLabel', !this.composer.fields.poll && 'none')}>
             {app.translator.trans(`fof-polls.forum.composer_discussion.${this.composer.fields.poll ? 'edit' : 'add'}_poll`)}
           </span>
-        </a>,
+        </Button>,
         1
       );
     }
