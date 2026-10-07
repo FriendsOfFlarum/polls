@@ -4,6 +4,24 @@
 
 A [Flarum](https://flarum.org) extension that adds polls to your discussions.
 
+## Screenshots
+
+A poll in a discussion:
+
+![A poll in a discussion](screenshots/discussion-poll.png)
+
+The global polls page:
+
+![The global polls page](screenshots/polls-directory.png)
+
+Creating a poll:
+
+![Creating a poll](screenshots/poll-compose.png)
+
+Extension settings:
+
+![Extension settings](screenshots/admin-settings.png)
+
 ## Installation
 
 ```sh
@@ -31,15 +49,7 @@ php flarum cache:clear
 
 ## Global Polls
 
-### What Are Global Polls?
-
-Global polls are polls that exist on their own, independent of any discussion. Instead of being attached to a post, they appear on a dedicated **Polls** page accessible from the main navigation, where members can browse and vote on them as standalone items.
-
-### What Can You Use Global Polls For?
-
-- **Community-wide votes:** feature requests, governance decisions, or general-interest questions that shouldn't be buried inside a thread.
-- **Announcements & surveys:** recurring satisfaction surveys, event planning, or quick "pulse" polls.
-- **Long-running questions:** polls with end dates that stay discoverable on the page until they close.
+Global polls are not attached to a post. They live on a **Polls** page reachable from the forum navigation, where members browse and vote on them.
 
 ### Enabling Global Polls
 
