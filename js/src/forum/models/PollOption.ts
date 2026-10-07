@@ -15,7 +15,7 @@ export default class PollOption extends Model {
     return Model.attribute<string | null>('imageSrcset').call(this);
   }
 
-  /** @deprecated Use imageSrcset() presence instead */
+  // Deprecated: read imageSrcset() presence instead.
   isImageUpload() {
     return Model.attribute<boolean>('isImageUpload').call(this);
   }

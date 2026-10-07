@@ -1,16 +1,17 @@
 import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
-import FormModal, { IFormModalAttrs } from 'flarum/common/components/FormModal';
+import Modal, { IInternalModalAttrs } from 'flarum/common/components/Modal';
 import PollForm from './Poll/PollForm';
 import PollModel from '../models/Poll';
 import PollFormState from '../states/PollFormState';
 
-interface CreatePollModalAttrs extends IFormModalAttrs {
+export interface ICreatePollModalAttrs extends IInternalModalAttrs {
   poll: PollModel;
-  onsubmit: (data: object) => Promise<void>;
+  onsubmit: (data: object) => Promise<void> | void;
 }
 
-export default class CreatePollModal extends FormModal<CreatePollModalAttrs> {
+// Plain Modal, not FormModal: PollForm brings its own <form>.
+export default class CreatePollModal<CustomAttrs extends ICreatePollModalAttrs = ICreatePollModalAttrs> extends Modal<CustomAttrs> {
   title(): Mithril.Children {
     return app.translator.trans('fof-polls.forum.modal.add_title');
   }
@@ -20,15 +21,16 @@ export default class CreatePollModal extends FormModal<CreatePollModalAttrs> {
   }
 
   content(): Mithril.Children {
-    return [
+    return (
       <div className="Modal-body">
-        <PollForm poll={this.attrs.poll} onsubmit={this.onFormSubmit.bind(this)}></PollForm>
-      </div>,
-    ];
+        <PollForm poll={this.attrs.poll} onsubmit={this.onFormSubmit.bind(this)} />
+      </div>
+    );
   }
 
   async onFormSubmit(data: object, state: PollFormState): Promise<void> {
-    this.hide();
     await this.attrs.onsubmit(data);
+
+    this.hide();
   }
 }

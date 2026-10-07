@@ -1,61 +1,56 @@
 import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
-import PollGroup from '../models/PollGroup';
 import Component from 'flarum/common/Component';
-import ItemList from 'flarum/common/utils/ItemList';
-import Separator from 'flarum/common/components/Separator';
 import Button from 'flarum/common/components/Button';
+import Separator from 'flarum/common/components/Separator';
+import ItemList from 'flarum/common/utils/ItemList';
+import extractText from 'flarum/common/utils/extractText';
+import PollGroup from '../models/PollGroup';
 import ComposePollGroupPage from '../components/ComposePollGroupPage';
+import PollGroupListState from '../states/PollGroupListState';
 import PollModelAttributes from '../models/PollModelAttributes';
 
-/**
- * The `PollGroupControls` utility constructs a list of buttons for a poll group which
- * perform actions on it.
- */
-export default {
-  /**
-   * Get a list of controls for a poll group.
-   */
-  controls(pollGroup: PollGroup, context: Component): ItemList<Mithril.Children> {
-    const items = new ItemList<Mithril.Children>();
+type Context = Component<any, any>;
 
-    const sections: ('moderation' | 'destructive')[] = ['moderation', 'destructive'];
+export default {
+  controls(pollGroup: PollGroup, context: Context): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+    const sections = ['moderation', 'destructive'] as const;
+
     sections.forEach((section) => {
       const controls = (this[`${section}Controls`](pollGroup, context) as ItemList<Mithril.Children>).toArray();
-      if (controls.length) {
-        controls.forEach((item) => items.add(item.itemName, item));
-        items.add(section + 'Separator', <Separator />);
-      }
+
+      if (!controls.length) return;
+
+      controls.forEach((item: any) => items.add(item.itemName, item));
+      items.add(`${section}Separator`, <Separator />);
     });
 
     return items;
   },
 
-  /**
-   * Get controls for a poll group pertaining to moderation (e.g. edit).
-   */
-  moderationControls(pollGroup: PollGroup, context: Component): ItemList<Mithril.Children> {
+  moderationControls(pollGroup: PollGroup, context: Context): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
 
     if (pollGroup.canEdit()) {
       items.add(
         'edit',
         <Button icon="fas fa-pencil-alt" onclick={this.editAction.bind(this, pollGroup)}>
-          {app.translator.trans(`fof-polls.forum.poll_groups.controls.edit_label`)}
+          {app.translator.trans('fof-polls.forum.poll_groups.controls.edit_label')}
         </Button>
       );
 
       items.add(
         'addPoll',
         <Button icon="fas fa-plus" onclick={this.addPoll.bind(this, pollGroup)}>
-          {app.translator.trans(`fof-polls.forum.poll_groups.controls.add_poll_label`)}
+          {app.translator.trans('fof-polls.forum.poll_groups.controls.add_poll_label')}
         </Button>
       );
 
       items.add(
         'view',
         <Button icon="far fa-arrow-up-right-from-square" onclick={() => m.route.set(app.route('fof.polls.groups.view', { id: pollGroup.id() }))}>
-          {app.translator.trans(`fof-polls.forum.poll_groups.controls.view_label`)}
+          {app.translator.trans('fof-polls.forum.poll_groups.controls.view_label')}
         </Button>
       );
     }
@@ -63,18 +58,14 @@ export default {
     return items;
   },
 
-  /**
-   * Get controls for a poll group which are destructive (e.g. delete).
-   * @protected
-   */
-  destructiveControls(pollGroup: PollGroup, context: Component): ItemList<Mithril.Children> {
+  destructiveControls(pollGroup: PollGroup, context: Context): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
 
     if (pollGroup.canDelete()) {
       items.add(
         'delete',
         <Button icon="far fa-trash-alt" onclick={this.deleteAction.bind(this, pollGroup)}>
-          {app.translator.trans(`fof-polls.forum.poll_groups.controls.delete_label`)}
+          {app.translator.trans('fof-polls.forum.poll_groups.controls.delete_label')}
         </Button>
       );
     }
@@ -82,78 +73,45 @@ export default {
     return items;
   },
 
-  /**
-   * Delete the poll group.
-   */
+  editAction(pollGroup: PollGroup): void {
+    m.route.set(app.route('fof.polls.groups.composer', { id: pollGroup.id() }));
+  },
+
   async deleteAction(pollGroup: PollGroup): Promise<void> {
-    if (!confirm(app.translator.trans(`fof-polls.forum.poll_groups.controls.delete_confirmation`) as string)) {
+    if (!confirm(extractText(app.translator.trans('fof-polls.forum.poll_groups.controls.delete_confirmation')))) {
       return;
     }
 
     return pollGroup
       .delete()
       .then(() => {
-        this.showDeletionAlert(pollGroup, 'success');
+        this.alert('success', 'fof-polls.forum.poll_groups.controls.delete_success_message');
+
         if (app.current.matches(ComposePollGroupPage, { id: pollGroup.id() })) {
-          app.history.back();
+          m.route.set(app.route('fof.polls.groups.list'));
         } else {
-          window.location.reload();
+          PollGroupListState.notifyDeleted(pollGroup);
         }
       })
-      .catch(() => this.showDeletionAlert(pollGroup, 'error'));
+      .catch(() => this.alert('error', 'fof-polls.forum.poll_groups.controls.delete_error_message'));
   },
 
-  /**
-   * Show deletion alert of poll group
-   */
-  showDeletionAlert(pollGroup: PollGroup, type: string): void {
-    const message = {
-      success: `fof-polls.forum.poll_groups.controls.delete_success_message`,
-      error: `fof-polls.forum.poll_groups.controls.delete_error_message`,
-    }[type]!;
-
-    const content = app.translator.trans(message, { pollGroup: pollGroup });
-    const alertId = app.alerts.show({ type }, content);
-    // Errors stay sticky so the user can read them; successes auto-dismiss.
-    if (type === 'success') {
-      setTimeout(() => app.alerts.dismiss(alertId), 10000);
-    }
-  },
-
-  /**
-   * Edit the poll group.
-   */
-  editAction(pollGroup: PollGroup): void {
-    m.route.set(app.route('fof.polls.groups.composer', { id: pollGroup.id() }));
-  },
-
-  /**
-   * Add poll to group.
-   */
   addPoll(pollGroup: PollGroup): void {
     app.modal.show(() => import('../components/CreatePollModal'), {
-      onsubmit: function (data: PollModelAttributes): void {
+      onsubmit: (data: PollModelAttributes) =>
         app.store
           .createRecord('polls')
-          .save(
-            {
-              ...data,
-              relationships: {
-                pollGroup: pollGroup,
-              },
-            },
-            {
-              data: {
-                include: 'options,myVotes,myVotes.option',
-              },
-            }
-          )
+          .save({ ...data, relationships: { pollGroup } }, { data: { include: 'options,myVotes,myVotes.option' } })
           .then((poll) => {
-            // @ts-ignore
-            pollGroup.rawRelationship('polls')?.push?.({ type: 'polls', id: poll.id() });
+            (pollGroup as any).rawRelationship('polls')?.push?.({ type: 'polls', id: poll.id() });
             m.redraw();
-          });
-      },
+          }),
     });
+  },
+
+  alert(type: 'success' | 'error', key: string): void {
+    const id = app.alerts.show({ type }, app.translator.trans(key));
+
+    if (type === 'success') setTimeout(() => app.alerts.dismiss(id), 10000);
   },
 };

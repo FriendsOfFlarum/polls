@@ -90,6 +90,9 @@ fof-polls:
         edit_title: Edit Poll Group
         save_changes: => core.ref.save_changes
         delete: Delete Poll Group
+        name_label: Name
+        name_required: A poll group needs a name.
+        error: There was an error saving the poll group, please contact any administrator.
         groups_manager: Poll Groups Manager
         view_group: View Poll Group
         success: Poll group saved successfully.
@@ -165,6 +168,7 @@ fof-polls:
       option_placeholder: Answer
       image_option_placeholder: Image URL (optional)
       options_label: Answers
+      settings_label: Voting
       public_poll_label: Allow people to see who voted
       allow_multiple_votes_label: Allow people to vote for multiple options
       max_votes_label: Max votes per user

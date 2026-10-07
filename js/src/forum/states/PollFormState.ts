@@ -4,12 +4,11 @@ import PollOption from '../models/PollOption';
 
 export default class PollFormState {
   poll: Poll;
-  loading: boolean;
-  deleting: boolean;
-  expandedGroup: string;
+  loading: boolean = false;
+  deleting: boolean = false;
   dirty: boolean = false;
 
-  static createNewPoll() {
+  static createNewPoll(): Poll {
     const poll = app.store.createRecord<Poll>('polls');
 
     poll.pushAttributes({
@@ -28,14 +27,7 @@ export default class PollFormState {
   }
 
   constructor(poll: Poll) {
-    if (!poll) {
-      poll = PollFormState.createNewPoll();
-    }
-
-    this.loading = false;
-    this.deleting = false;
-    this.poll = poll;
-    this.expandedGroup = 'setup';
+    this.poll = poll || PollFormState.createNewPoll();
   }
 
   isNew(): boolean {
@@ -50,26 +42,15 @@ export default class PollFormState {
     this.dirty = value;
   }
 
-  isExpanded(groupKey: string) {
-    return this.expandedGroup === groupKey;
-  }
-
-  expand(groupKey: string) {
-    this.expandedGroup = groupKey;
-    m.redraw();
-  }
-
-  async save(data: any) {
+  async save(data: any): Promise<void> {
     this.loading = true;
     m.redraw();
 
     try {
       this.poll = await this.poll.save(data);
-      /**
-       * Cleanup attributes:
-       * For the saving process, we add the options directly to the attributes.
-       * As we currently cannot add new PollOptions as relationships.
-       */
+
+      // Options are sent as attributes because new PollOptions cannot be
+      // saved as relationships yet; they would linger on the model otherwise.
       delete this.poll!.data!.attributes!.options;
     } finally {
       this.loading = false;
@@ -77,7 +58,7 @@ export default class PollFormState {
     }
   }
 
-  async delete() {
+  async delete(): Promise<void> {
     this.loading = true;
     m.redraw();
 

@@ -1,18 +1,18 @@
+import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
 import Page, { IPageAttrs } from 'flarum/common/components/Page';
 import PageStructure from 'flarum/forum/components/PageStructure';
-import IndexSidebar from 'flarum/forum/components/IndexSidebar';
 import ItemList from 'flarum/common/utils/ItemList';
-import type Mithril from 'mithril';
 import PollGroup from '../models/PollGroup';
 import PollGroupListItem from './PollGroup/PollGroupListItem';
 import PollPageHero from './PollPageHero';
+import PollsIndexSidebar from './PollsIndexSidebar';
 
 export default class PollGroupViewPage extends Page<IPageAttrs> {
   loading: boolean = false;
   pollGroup: PollGroup | null = null;
 
-  oninit(vnode: Mithril.Vnode) {
+  oninit(vnode: Mithril.Vnode<IPageAttrs, this>) {
     super.oninit(vnode);
 
     if (!app.forum.attribute<boolean>('canViewPollGroups')) {
@@ -20,19 +20,25 @@ export default class PollGroupViewPage extends Page<IPageAttrs> {
       return;
     }
 
-    const editId = m.route.param('id');
-    this.pollGroup = app.store.getById<PollGroup>('poll_groups', editId) || null;
+    this.bodyClass = 'App--polls';
 
-    if (!this.pollGroup) {
+    const id = m.route.param('id');
+    const cached = app.store.getById<PollGroup>('poll_groups', id);
+
+    // The listing loads a group's polls without their options.
+    if (cached && (cached.polls() ?? []).every((poll) => poll?.options().length)) {
+      this.pollGroup = cached;
+      app.setTitle(cached.name());
+    } else {
       this.loading = true;
-
-      app.store.find<PollGroup>('poll_groups', editId).then((item) => {
-        this.pollGroup = item;
-        this.loading = false;
-        app.setTitle(this.pollGroup.name());
-        m.redraw();
-      });
     }
+
+    app.store.find<PollGroup>('poll_groups', id).then((pollGroup) => {
+      this.pollGroup = pollGroup;
+      this.loading = false;
+      app.setTitle(pollGroup.name());
+      m.redraw();
+    });
   }
 
   view(): Mithril.Children {
@@ -44,11 +50,11 @@ export default class PollGroupViewPage extends Page<IPageAttrs> {
   }
 
   hero(): Mithril.Children {
-    return <PollPageHero title={app.translator.trans('fof-polls.forum.poll_groups.list_page.title')} icon="fas fa-layer-group" />;
+    return <PollPageHero title={this.pollGroup?.name()} icon="fas fa-layer-group" />;
   }
 
   sidebar(): Mithril.Children {
-    return <IndexSidebar />;
+    return <PollsIndexSidebar />;
   }
 
   contentItems(): ItemList<Mithril.Children> {

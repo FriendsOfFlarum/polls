@@ -4,30 +4,22 @@ import PollGroupControls from '../utils/PollGroupControls';
 
 export default class PollGroupFormState {
   pollGroup: PollGroup;
-  loading: boolean;
-  deleting: boolean;
+  loading: boolean = false;
+  deleting: boolean = false;
 
-  static createNewPollGroup() {
+  static createNewPollGroup(): PollGroup {
     const pollGroup = app.store.createRecord<PollGroup>('poll_groups');
 
-    pollGroup.pushAttributes({
-      name: '',
-    });
+    pollGroup.pushAttributes({ name: '' });
 
     return pollGroup;
   }
 
   constructor(pollGroup: PollGroup) {
-    if (!pollGroup) {
-      pollGroup = PollGroupFormState.createNewPollGroup();
-    }
-
-    this.loading = false;
-    this.deleting = false;
-    this.pollGroup = pollGroup;
+    this.pollGroup = pollGroup || PollGroupFormState.createNewPollGroup();
   }
 
-  async save(data: any) {
+  async save(data: any): Promise<void> {
     this.loading = true;
     m.redraw();
 
@@ -39,24 +31,13 @@ export default class PollGroupFormState {
     }
   }
 
-  async delete() {
-    if (!confirm(app.translator.trans(`fof-polls.forum.poll_groups.controls.delete_confirmation`) as string)) {
-      return;
-    }
-
+  async delete(): Promise<void> {
     this.loading = true;
     m.redraw();
 
-    const pollGroup = this.pollGroup;
-
     try {
-      await pollGroup
-        .delete()
-        .then(() => {
-          this.deleting = true;
-          PollGroupControls.showDeletionAlert(pollGroup, 'success');
-        })
-        .catch(() => PollGroupControls.showDeletionAlert(pollGroup, 'error'));
+      await PollGroupControls.deleteAction(this.pollGroup);
+      this.deleting = !this.pollGroup.exists;
     } finally {
       this.loading = false;
       m.redraw();

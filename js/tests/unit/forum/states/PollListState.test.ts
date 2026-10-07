@@ -1,179 +1,66 @@
-import { jest } from '@jest/globals';
+import bootstrapForum from '../../../bootstrap';
+import { makePoll } from '../../../factory';
+import PollListState from '../../../../src/forum/states/PollListState';
+import PollGroupListState from '../../../../src/forum/states/PollGroupListState';
 
-// @ts-ignore
-globalThis.m = { redraw: jest.fn() };
+beforeAll(() => bootstrapForum());
 
-describe('PollListState logic', () => {
-  describe('sortMap', () => {
-    function sortMap(hasQuery: boolean) {
-      const map: Record<string, string> = {};
-      if (hasQuery) map.relevance = '';
-      map.newest = '-createdAt';
-      map.oldest = 'createdAt';
-      map.most_voted = '-voteCount';
-      map.least_voted = 'voteCount';
-      return map;
-    }
+function seed<T extends { getPages: () => unknown[] }>(state: T, items: unknown[]): T {
+  (state as any).pages = [{ number: 1, items }];
 
-    it('includes all sort options without query', () => {
-      const map = sortMap(false);
-      expect(Object.keys(map)).toEqual(['newest', 'oldest', 'most_voted', 'least_voted']);
-      expect(map.newest).toBe('-createdAt');
-      expect(map.oldest).toBe('createdAt');
-    });
+  return state;
+}
 
-    it('includes relevance when query is present', () => {
-      const map = sortMap(true);
-      expect(Object.keys(map)[0]).toBe('relevance');
-      expect(map.relevance).toBe('');
-    });
+describe('PollListState', () => {
+  it('falls back to the newest sort when none is set', () => {
+    expect(new PollListState({}).getSort()).toBe('newest');
+    expect(new PollListState({ sort: 'oldest' }).getSort()).toBe('oldest');
   });
 
-  describe('getSort', () => {
-    it('returns params.sort when set', () => {
-      const params = { sort: '-voteCount' };
-      const result = params.sort || '-createdAt';
-      expect(result).toBe('-voteCount');
-    });
-
-    it('falls back to -createdAt when no sort set', () => {
-      const params = { sort: undefined };
-      const result = params.sort || '-createdAt';
-      expect(result).toBe('-createdAt');
-    });
+  it('translates the configured API sort value back into a key', () => {
+    expect(PollListState.sortKey('-voteCount')).toBe('most_voted');
+    expect(PollListState.sortKey('nonsense')).toBe('newest');
   });
 
-  describe('requestParams', () => {
-    it('builds params with filter and sort', () => {
-      const paramsConfig = { sort: '-voteCount', filter: { isEnded: '1' }, q: undefined as string | undefined };
-      const includes = ['options', 'votes'];
-
-      const params: Record<string, any> = {
-        include: includes.join(','),
-        filter: paramsConfig.filter || {},
-        sort: paramsConfig.sort || '-createdAt',
-      };
-
-      if (paramsConfig.q) {
-        params.filter.q = paramsConfig.q;
-      }
-
-      expect(params.sort).toBe('-voteCount');
-      expect(params.filter).toEqual({ isEnded: '1' });
-      expect(params.include).toBe('options,votes');
-    });
-
-    it('adds q to filter when present', () => {
-      const paramsConfig = { sort: undefined, filter: {} as Record<string, string>, q: 'search term' };
-
-      const params: Record<string, any> = {
-        include: 'options,votes',
-        filter: paramsConfig.filter || {},
-        sort: paramsConfig.sort || '-createdAt',
-      };
-
-      if (paramsConfig.q) {
-        params.filter.q = paramsConfig.q;
-      }
-
-      expect(params.filter.q).toBe('search term');
-    });
+  it('offers relevance as a sort only while searching', () => {
+    expect(Object.keys(new PollListState({}).sortMap())).not.toContain('relevance');
+    expect(Object.keys(new PollListState({ q: 'cats' }).sortMap())).toContain('relevance');
   });
 
-  describe('isSearchResults', () => {
-    it('returns true when q is set', () => {
-      expect(!!('search term')).toBe(true);
-    });
+  it('asks the API for the sort behind the current key', () => {
+    const params = new PollListState({ sort: 'least_voted', filter: { isDraft: '0' } }).requestParams();
 
-    it('returns false when q is empty', () => {
-      expect(!!(undefined)).toBe(false);
-      expect(!!('')).toBe(false);
-    });
+    expect(params.sort).toBe('voteCount');
+    expect(params.filter).toEqual({ isDraft: '0' });
+    expect(params.include).toBe('options,votes');
   });
 
-  describe('deletePoll from pages', () => {
-    it('removes poll from correct page', () => {
-      const poll1 = { id: () => '1' };
-      const poll2 = { id: () => '2' };
-      const poll3 = { id: () => '3' };
-
-      const pages = [{ number: 1, items: [poll1, poll2] }, { number: 2, items: [poll3] }];
-
-      // Simulate deletePoll
-      for (const page of pages) {
-        const index = page.items.indexOf(poll2);
-        if (index !== -1) {
-          page.items.splice(index, 1);
-          break;
-        }
-      }
-
-      expect(pages[0].items).toEqual([poll1]);
-      expect(pages[1].items).toEqual([poll3]);
-    });
-
-    it('removes poll from extraPolls', () => {
-      const poll1 = { id: () => '1' };
-      const poll2 = { id: () => '2' };
-      const extraPolls = [poll1, poll2];
-
-      const index = extraPolls.indexOf(poll1);
-      if (index !== -1) extraPolls.splice(index, 1);
-
-      expect(extraPolls).toEqual([poll2]);
-    });
-
-    it('handles poll not in any page', () => {
-      const poll1 = { id: () => '1' };
-      const missingPoll = { id: () => '99' };
-
-      const pages = [{ number: 1, items: [poll1] }];
-
-      for (const page of pages) {
-        const index = page.items.indexOf(missingPoll);
-        if (index !== -1) {
-          page.items.splice(index, 1);
-          break;
-        }
-      }
-
-      expect(pages[0].items).toEqual([poll1]);
-    });
+  it('carries a search term into the filter', () => {
+    expect(new PollListState({ q: 'cats' }).requestParams().filter!.q).toBe('cats');
   });
 
-  describe('addPoll', () => {
-    it('adds poll to front of extraPolls', () => {
-      const poll1 = { id: () => '1' };
-      const newPoll = { id: () => '2' };
-      const extraPolls = [poll1];
-
-      extraPolls.unshift(newPoll);
-
-      expect(extraPolls[0]).toBe(newPoll);
-      expect(extraPolls[1]).toBe(poll1);
-    });
+  it('reports whether the list is search results', () => {
+    expect(new PollListState({ q: 'cats' }).isSearchResults()).toBe(true);
+    expect(new PollListState({}).isSearchResults()).toBe(false);
   });
 
-  describe('getPages with extraPolls', () => {
-    it('prepends extra page when extraPolls exist', () => {
-      const extra = [{ id: () => '0' }];
-      const regularPages = [{ number: 1, items: [{ id: () => '1' }] }];
+  it('drops a deleted poll from every live list', () => {
+    const poll = makePoll();
+    const one = seed(new PollListState({}), [poll]);
+    const two = seed(new PollListState({}), [poll]);
 
-      const pages = extra.length ? [{ number: -1, items: extra }, ...regularPages] : regularPages;
+    PollListState.notifyDeleted(poll);
 
-      expect(pages.length).toBe(2);
-      expect(pages[0].number).toBe(-1);
-      expect(pages[0].items).toBe(extra);
-    });
+    expect(one.getPages()[0].items).toEqual([]);
+    expect(two.getPages()[0].items).toEqual([]);
+  });
 
-    it('returns regular pages when no extras', () => {
-      const extra: any[] = [];
-      const regularPages = [{ number: 1, items: [{ id: () => '1' }] }];
+  it('leaves poll group lists alone when a poll is deleted', () => {
+    const poll = makePoll();
+    const groups = seed(new PollGroupListState({}), [poll as any]);
 
-      const pages = extra.length ? [{ number: -1, items: extra }, ...regularPages] : regularPages;
+    PollListState.notifyDeleted(poll);
 
-      expect(pages.length).toBe(1);
-      expect(pages[0].number).toBe(1);
-    });
+    expect(groups.getPages()[0].items).toHaveLength(1);
   });
 });

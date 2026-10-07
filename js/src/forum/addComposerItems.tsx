@@ -31,7 +31,6 @@ function addPoll(composer: any) {
 }
 
 export const addToComposer = (composerPath: string) => {
-  // Add button to composer header
   extend(composerPath, 'headerItems', function (this: any, items) {
     const discussion = this.composer.body?.attrs?.discussion;
 

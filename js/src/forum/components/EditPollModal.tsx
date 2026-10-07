@@ -10,8 +10,7 @@ export default class EditPollModal extends CreatePollModal {
 
   async onFormSubmit(data: object, state: PollFormState): Promise<void> {
     await state.save(data);
+
     this.hide();
-    // Success alert is fired by PollForm.onsubmit (the form-level
-    // handler) now, matching the per-flow pattern in ComposePollPage.
   }
 }

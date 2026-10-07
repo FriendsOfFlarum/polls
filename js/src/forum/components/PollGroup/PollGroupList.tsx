@@ -1,59 +1,23 @@
+import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
-import Component, { ComponentAttrs } from 'flarum/common/Component';
+import PollGroup from '../../models/PollGroup';
+import PollList, { IPollListAttrs } from '../Poll/PollList';
 import PollGroupListItem from './PollGroupListItem';
-import Button from 'flarum/common/components/Button';
-import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
-import Placeholder from 'flarum/common/components/Placeholder';
-import classList from 'flarum/common/utils/classList';
-import PollGroupListState from '../../states/PollGroupListState';
 
-export interface PollGroupListAttrs extends ComponentAttrs {
-  state: PollGroupListState;
-}
+export default class PollGroupList extends PollList<PollGroup, IPollListAttrs<PollGroup>> {
+  className(): string {
+    return 'PollGroupList';
+  }
 
-/**
- * The `PollGroupList` component displays a list of poll groups.
- */
-export default class PollGroupList extends Component<PollGroupListAttrs> {
-  view() {
-    const state = this.attrs.state;
-    const params = state.getParams();
-    const isLoading = state.isInitialLoading() || state.isLoadingNext();
+  itemView(pollGroup: PollGroup): Mithril.Children {
+    return <PollGroupListItem pollGroup={pollGroup} compactView={true} />;
+  }
 
-    let loading;
+  emptyText(): Mithril.Children {
+    return app.translator.trans('fof-polls.forum.poll_groups.list_page.empty_text');
+  }
 
-    if (isLoading) {
-      loading = <LoadingIndicator />;
-    } else if (state.hasNext()) {
-      loading = (
-        <Button className="Button" onclick={state.loadNext.bind(state)}>
-          {app.translator.trans('fof-polls.forum.poll_groups.list_page.load_more_button')}
-        </Button>
-      );
-    }
-
-    if (state.isEmpty()) {
-      const text = app.translator.trans('fof-polls.forum.poll_groups.list_page.empty_text');
-      return (
-        <div className="PollGroupList">
-          <Placeholder text={text} />
-        </div>
-      );
-    }
-
-    return (
-      <div className={classList('PollGroupList', { 'PollGroupList--searchResults': state.isSearchResults() })}>
-        <ul aria-busy={isLoading} className="PollGroupList-pollgroups">
-          {state.getPages().map((pg) => {
-            return pg.items.map((pollGroup) => (
-              <li key={pollGroup.id()} data-id={pollGroup.id()}>
-                <PollGroupListItem pollGroup={pollGroup} params={params} compactView={true} />
-              </li>
-            ));
-          })}
-        </ul>
-        <div className="PollGroupList-loadMore">{loading}</div>
-      </div>
-    );
+  loadMoreText(): Mithril.Children {
+    return app.translator.trans('fof-polls.forum.poll_groups.list_page.load_more_button');
   }
 }

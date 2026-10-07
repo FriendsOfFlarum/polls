@@ -1,81 +1,58 @@
-import Component, { ComponentAttrs } from 'flarum/common/Component';
-import PollListState from '../../states/PollListState';
 import type Mithril from 'mithril';
-import ItemList from 'flarum/common/utils/ItemList';
-import PollShowcaseItem from './PollShowcaseItem';
-import Placeholder from 'flarum/common/components/Placeholder';
 import app from 'flarum/forum/app';
-import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
+import Component, { ComponentAttrs } from 'flarum/common/Component';
 import Button from 'flarum/common/components/Button';
+import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
+import Placeholder from 'flarum/common/components/Placeholder';
+import ItemList from 'flarum/common/utils/ItemList';
+import PollListState from '../../states/PollListState';
+import PollShowcaseItem from './PollShowcaseItem';
 
-export interface PollListAttrs extends ComponentAttrs {
+const EMPTY_KEY = { active: 'no-active-polls', ended: 'no-recent-polls' } as const;
+
+export interface IPollShowcaseAttrs extends ComponentAttrs {
   activeState: PollListState;
   endedState: PollListState;
 }
 
-export default class PollShowcase extends Component<PollListAttrs, PollListState> {
-  oninit(vnode: Mithril.Vnode) {
-    super.oninit(vnode);
-    // States are already refreshed by PollsShowcasePage.
-  }
-
+export default class PollShowcase<CustomAttrs extends IPollShowcaseAttrs = IPollShowcaseAttrs> extends Component<CustomAttrs> {
   view(): Mithril.Children {
-    const activeItems = this.showcaseItems();
-    const endedItems = this.endedItems();
-
     return (
       <div className="PollShowcase">
-        <div className="PollShowcase--active">
-          <h2 className="PollShowcase-title PollShowcase-title--active">{app.translator.trans('fof-polls.forum.showcase.active-polls')}</h2>
-          {activeItems.toArray()}
-          {!this.attrs.activeState.isLoading() && activeItems.toArray().length === 0 && (
-            <Placeholder text={app.translator.trans('fof-polls.forum.showcase.no-active-polls')} />
-          )}
-        </div>
-        <div className="PollShowcase--ended">
-          <h2 className="PollShowcase-title PollShowcase-title--ended">{app.translator.trans('fof-polls.forum.showcase.ended-polls')}</h2>
-          {endedItems.toArray()}
-          {!this.attrs.endedState.isLoading() && endedItems.toArray().length === 0 && (
-            <Placeholder text={app.translator.trans('fof-polls.forum.showcase.no-recent-polls')} />
-          )}
-          {this.attrs.endedState.hasNext() && (
-            <Button className="Button" loading={this.attrs.endedState.isLoadingNext()} onclick={() => this.attrs.endedState.loadNext()}>
-              {app.translator.trans('core.forum.discussion_list.load_more_button')}
-            </Button>
-          )}
-        </div>
+        {this.section('active', this.attrs.activeState, false)}
+        {this.section('ended', this.attrs.endedState, true)}
       </div>
     );
   }
 
-  showcaseItems(): ItemList<Mithril.Children> {
-    const items = new ItemList<Mithril.Children>();
+  section(name: 'active' | 'ended', state: PollListState, loadMore: boolean): Mithril.Children {
+    const items = this.pollItems(name, state).toArray();
 
-    if (this.attrs.activeState.isLoading()) {
-      items.add('loading', <LoadingIndicator size="large" />);
-      return items;
-    }
-
-    this.attrs.activeState.getPages().forEach((page) => {
-      page.items.forEach((poll) => {
-        items.add('poll-active-' + poll.id(), <PollShowcaseItem poll={poll} />);
-      });
-    });
-
-    return items;
+    return (
+      <div className={`PollShowcase-section PollShowcase-section--${name}`}>
+        <h2 className="PollShowcase-title">{app.translator.trans(`fof-polls.forum.showcase.${name}-polls`)}</h2>
+        {items.length ? items : <Placeholder text={app.translator.trans(`fof-polls.forum.showcase.${EMPTY_KEY[name]}`)} />}
+        {loadMore && state.hasNext() && (
+          <Button className="Button" loading={state.isLoadingNext()} onclick={() => state.loadNext()}>
+            {app.translator.trans('fof-polls.forum.polls_list.load_more_button')}
+          </Button>
+        )}
+      </div>
+    );
   }
 
-  endedItems(): ItemList<Mithril.Children> {
+  pollItems(name: string, state: PollListState): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
 
-    if (this.attrs.endedState.isLoading()) {
+    if (state.isLoading()) {
       items.add('loading', <LoadingIndicator size="large" />);
+
       return items;
     }
 
-    this.attrs.endedState.getPages().forEach((page) => {
+    state.getPages().forEach((page) => {
       page.items.forEach((poll) => {
-        items.add('poll-ended-' + poll.id(), <PollShowcaseItem poll={poll} />);
+        items.add(`poll-${name}-${poll.id()}`, <PollShowcaseItem key={poll.id()} poll={poll} />);
       });
     });
 

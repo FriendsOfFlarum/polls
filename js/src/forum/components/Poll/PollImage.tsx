@@ -1,38 +1,22 @@
 import type Mithril from 'mithril';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
-import Poll from 'src/forum/models/Poll';
-import ItemList from 'flarum/common/utils/ItemList';
+import Poll from '../../models/Poll';
 
-interface PollImageAttrs extends ComponentAttrs {
+export interface IPollImageAttrs extends ComponentAttrs {
   poll: Poll;
 }
 
-export default class PollImage extends Component<PollImageAttrs> {
-  imageUrl: string | null = null;
-  imageAlt: string | null = null;
-
-  oninit(vnode: Mithril.Vnode<PollImageAttrs, this>) {
-    super.oninit(vnode);
-
-    this.imageUrl = this.attrs.poll.imageUrl();
-    this.imageAlt = this.attrs.poll.imageAlt();
-  }
-
+export default class PollImage<CustomAttrs extends IPollImageAttrs = IPollImageAttrs> extends Component<CustomAttrs> {
   view(): Mithril.Children {
-    if (!this.imageUrl) {
-      return;
-    }
+    const poll = this.attrs.poll;
+    const url = poll.imageUrl();
 
-    return <div className="PollImage">{this.imageItems().toArray()}</div>;
-  }
+    if (!url) return null;
 
-  imageItems(): ItemList<Mithril.Children> {
-    const items = new ItemList<Mithril.Children>();
-
-    const srcset = this.attrs.poll.imageSrcset();
-
-    items.add('image', <img src={this.imageUrl} srcset={srcset ?? undefined} alt={this.imageAlt ?? ''} className="PollImage-image" loading="lazy" />);
-
-    return items;
+    return (
+      <div className="PollImage">
+        <img className="PollImage-image" src={url} srcset={poll.imageSrcset() ?? undefined} alt={poll.imageAlt() ?? ''} loading="lazy" />
+      </div>
+    );
   }
 }
