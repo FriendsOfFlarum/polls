@@ -21,6 +21,8 @@ export default class PollsShowcasePage extends Page<IPageAttrs, PollListState> {
       return;
     }
 
+    this.bodyClass = 'App--polls';
+
     this.state = new PollListState({
       sort: m.route.param('sort'),
       filter: { '-isEnded': '1', isDraft: '0' },

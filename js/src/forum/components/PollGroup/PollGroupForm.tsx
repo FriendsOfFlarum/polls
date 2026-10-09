@@ -1,8 +1,11 @@
-import Component, { ComponentAttrs } from 'flarum/common/Component';
-import Mithril from 'mithril';
+import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
+import Component, { ComponentAttrs } from 'flarum/common/Component';
 import Button from 'flarum/common/components/Button';
+import Form from 'flarum/common/components/Form';
+import FormGroup from 'flarum/common/components/FormGroup';
 import ItemList from 'flarum/common/utils/ItemList';
+import RequestError from 'flarum/common/utils/RequestError';
 import Stream from 'flarum/common/utils/Stream';
 import FormError from '../form/FormError';
 import PollGroupModel from '../../models/PollGroup';
@@ -10,15 +13,15 @@ import PollGroupFormState from '../../states/PollGroupFormState';
 import PollGroupControls from '../../utils/PollGroupControls';
 import PollListItem from '../Poll/PollListItem';
 
-interface PollGroupFormAttrs extends ComponentAttrs {
+export interface IPollGroupFormAttrs extends ComponentAttrs {
   pollGroup: PollGroupModel;
   onsubmit: (data: object, state: PollGroupFormState) => Promise<void>;
 }
 
-export default class PollGroupForm extends Component<PollGroupFormAttrs, PollGroupFormState> {
-  protected name: Stream<string>;
+export default class PollGroupForm extends Component<IPollGroupFormAttrs, PollGroupFormState> {
+  protected name!: Stream<string>;
 
-  oninit(vnode: Mithril.Vnode): void {
+  oninit(vnode: Mithril.Vnode<IPollGroupFormAttrs, this>): void {
     super.oninit(vnode);
 
     this.state = new PollGroupFormState(this.attrs.pollGroup);
@@ -27,8 +30,8 @@ export default class PollGroupForm extends Component<PollGroupFormAttrs, PollGro
 
   view(): Mithril.Children {
     return (
-      <form onsubmit={this.onsubmit.bind(this)}>
-        <div className="PollGroupModal-form">{this.fields().toArray()}</div>
+      <form className="PollGroupForm" onsubmit={this.onsubmit.bind(this)}>
+        <Form>{this.fields().toArray()}</Form>
       </form>
     );
   }
@@ -38,54 +41,65 @@ export default class PollGroupForm extends Component<PollGroupFormAttrs, PollGro
 
     items.add(
       'name',
-      <div className="Form-group">
-        <label className="label">Name</label>
-        <input type="text" name="name" className="FormControl" bidi={this.name} required />
-      </div>,
+      <FormGroup
+        type="text"
+        name="name"
+        label={app.translator.trans('fof-polls.forum.poll_groups.composer.name_label')}
+        required={true}
+        stream={this.name}
+      />,
       100
     );
 
-    items.add(
-      'submit',
-      <div className="Form-group">
-        <Button type="submit" className="Button Button--primary PollGroupModal-SubmitButton" icon="fas fa-save" loading={this.state.loading}>
-          {app.translator.trans('fof-polls.forum.poll_groups.composer.save_changes')}
-        </Button>
-        {this.state.pollGroup.exists && (
-          <Button
-            className="Button Button--secondary PollGroupModal-deleteButton"
-            icon="fas fa-trash-alt"
-            loading={this.state.deleting}
-            onclick={this.delete.bind(this)}
-          >
-            {app.translator.trans('fof-polls.forum.poll_groups.composer.delete')}
-          </Button>
-        )}
-      </div>
-    );
+    items.add('submit', <div className="PollGroupForm-submit">{this.submitItems().toArray()}</div>, 50);
 
     if (this.state.pollGroup.exists) {
-      const pollItems = this.pollItems().toArray();
-      if (pollItems.length > 0) {
-        items.add(
-          'polls',
-          <div className="PollList">
-            <ul className="PollList-polls PollGroup-polls">{pollItems}</ul>
-          </div>
-        );
+      const polls = this.pollItems().toArray();
+
+      if (polls.length) {
+        items.add('polls', <ul className="PollGroupForm-polls">{polls}</ul>, 20);
       }
 
       items.add(
         'addPoll',
-        <div className="Form-group">
-          <Button
-            className="Button Button--primary PollGroupModal-addPollButton"
-            icon="fas fa-plus"
-            onclick={() => PollGroupControls.addPoll(this.state.pollGroup)}
-          >
-            {app.translator.trans('fof-polls.forum.poll_groups.controls.add_poll_label')}
-          </Button>
-        </div>
+        <Button
+          className="Button Button--primary PollGroupForm-addPoll"
+          icon="fas fa-plus"
+          onclick={() => PollGroupControls.addPoll(this.state.pollGroup)}
+        >
+          {app.translator.trans('fof-polls.forum.poll_groups.controls.add_poll_label')}
+        </Button>,
+        10
+      );
+    }
+
+    return items;
+  }
+
+  submitItems(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+
+    items.add(
+      'save',
+      <Button type="submit" className="Button Button--primary" icon="fas fa-save" loading={this.state.loading}>
+        {app.translator.trans('fof-polls.forum.poll_groups.composer.save_changes')}
+      </Button>,
+      100
+    );
+
+    if (this.state.pollGroup.exists) {
+      items.add(
+        'delete',
+        <Button
+          type="button"
+          className="Button Button--secondary"
+          icon="fas fa-trash-alt"
+          loading={this.state.deleting}
+          onclick={() => this.state.delete()}
+        >
+          {app.translator.trans('fof-polls.forum.poll_groups.composer.delete')}
+        </Button>,
+        0
       );
     }
 
@@ -93,22 +107,17 @@ export default class PollGroupForm extends Component<PollGroupFormAttrs, PollGro
   }
 
   pollItems(): ItemList<Mithril.Children> {
-    const polls = this.state.pollGroup.polls();
     const items = new ItemList<Mithril.Children>();
 
-    if (!polls || polls.length === 0) {
-      return items;
-    }
+    this.state.pollGroup.polls()?.forEach((poll) => {
+      if (!poll) return;
 
-    polls.forEach((poll): void => {
-      if (poll) {
-        items.add(
-          'poll-' + poll.id(),
-          <li key={poll.id()} className="PollGroup-poll">
-            <PollListItem poll={poll} />
-          </li>
-        );
-      }
+      items.add(
+        `poll-${poll.id()}`,
+        <li key={poll.id()} className="PollGroupForm-poll">
+          <PollListItem poll={poll} />
+        </li>
+      );
     });
 
     return items;
@@ -116,30 +125,28 @@ export default class PollGroupForm extends Component<PollGroupFormAttrs, PollGro
 
   data(): object {
     if (!this.name()) {
-      throw new FormError('Name cannot be empty');
+      throw new FormError(app.translator.trans('fof-polls.forum.poll_groups.composer.name_required'));
     }
 
-    return {
-      name: this.name(),
-    };
+    return { name: this.name() };
   }
 
-  async onsubmit(event: Event) {
+  async onsubmit(event: Event): Promise<void> {
     event.preventDefault();
 
     try {
       await this.attrs.onsubmit(this.data(), this.state);
     } catch (error) {
       if (error instanceof FormError) {
-        app.alerts.show({ type: 'error' }, error.message);
-      } else {
-        console.error(error);
-        app.alerts.show({ type: 'error' }, 'An error occurred while saving the poll group');
+        app.alerts.show({ type: 'error' }, error.content);
+        return;
       }
-    }
-  }
 
-  async delete(): Promise<void> {
-    await this.state.delete();
+      // Core's request handler has already shown the server's own message.
+      if (error instanceof RequestError) return;
+
+      console.error(error);
+      app.alerts.show({ type: 'error' }, app.translator.trans('fof-polls.forum.poll_groups.composer.error'));
+    }
   }
 }

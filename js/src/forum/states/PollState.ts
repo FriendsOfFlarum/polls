@@ -1,33 +1,45 @@
 import app from 'flarum/forum/app';
+import Post from 'flarum/common/models/Post';
+import { ApiPayloadSingle } from 'flarum/common/Store';
 import Poll from '../models/Poll';
 import PollOption from '../models/PollOption';
 import PollVote from '../models/PollVote';
-import Post from 'flarum/common/models/Post';
-import { ApiPayloadSingle } from 'flarum/common/Store';
 
 export default class PollState {
   public poll: Poll;
   public post?: Post;
+  public loadingOptions: boolean = false;
   protected pendingSubmit: boolean = false;
   protected pendingOptions: Set<string> | null = null;
-  public loadingOptions: boolean = false;
-  public useSubmitUI: boolean;
-  public showCheckMarks: boolean;
-  public canSeeVoteCount: boolean;
 
   constructor(poll: Poll, post?: Post) {
     this.poll = poll;
     this.post = post;
-    this.useSubmitUI = !poll?.canChangeVote() && poll?.allowMultipleVotes();
-    this.showCheckMarks = !app.session.user || (!poll.hasEnded() && poll.canVote() && (!this.hasVoted() || poll.canChangeVote()));
-    this.canSeeVoteCount = typeof poll.voteCount() === 'number';
     this.init();
   }
 
-  /**
-   * used as en extendable entry point for init customizations
-   */
   init(): void {}
+
+  // The server omits the count entirely while votes are hidden, so its
+  // absence is the permission check.
+  get canSeeVoteCount(): boolean {
+    return typeof this.poll.voteCount() === 'number';
+  }
+
+  get useSubmitUI(): boolean {
+    return !this.poll.canChangeVote() && this.poll.allowMultipleVotes();
+  }
+
+  canSelect(): boolean {
+    if (this.loadingOptions || this.poll.hasEnded()) return false;
+
+    // Guests get a live control: clicking it asks them to log in.
+    if (!app.session.user) return true;
+
+    if (!this.poll.canVote()) return false;
+
+    return !this.hasVoted() || this.poll.canChangeVote();
+  }
 
   isShowResult(): boolean {
     return this.poll.hasEnded() || (this.canSeeVoteCount && !!app.session.user && this.hasVoted());
@@ -48,7 +60,9 @@ export default class PollState {
   getMaxVotes(): number {
     const poll = this.poll;
     let maxVotes = poll.allowMultipleVotes() ? poll.maxVotes() : 1;
+
     if (maxVotes === 0) maxVotes = poll.options().length;
+
     return maxVotes;
   }
 
@@ -67,9 +81,8 @@ export default class PollState {
 
     const optionIds = this.pendingOptions || new Set(this.poll.myVotes().map((v: PollVote) => v.option()!.id()!));
     const isUnvoting = optionIds.delete(option.id()!);
-    const allowsMultiple = this.poll.allowMultipleVotes();
 
-    if (!allowsMultiple) {
+    if (!this.poll.allowMultipleVotes()) {
       optionIds.clear();
     }
 
@@ -129,13 +142,11 @@ export default class PollState {
       })
       .finally(() => {
         this.loadingOptions = false;
-        this.canSeeVoteCount = typeof this.poll.voteCount() === 'number';
         m.redraw();
       });
   }
 
   showVoters = () => {
-    // Load all the votes only when opening the votes list
     app.modal.show(() => import('../components/ListVotersModal'), {
       poll: this.poll,
       post: this.post,

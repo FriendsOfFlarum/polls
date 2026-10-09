@@ -1,78 +1,45 @@
 import mq from 'mithril-query';
-import m from 'mithril';
-import { jest } from '@jest/globals';
+import app from 'flarum/forum/app';
+import bootstrapForum from '../../../bootstrap';
+import { makePoll } from '../../../factory';
+import ComposeHero from '../../../../src/forum/components/ComposeHero';
+import PollFormState from '../../../../src/forum/states/PollFormState';
 
-// @ts-ignore
-globalThis.m = m;
+beforeAll(() => bootstrapForum());
 
-// Mock app.translator and app.route
-const translations: Record<string, string> = {
-  'test.prefix.add_title': 'Add New Item',
-  'test.prefix.edit_title': 'Edit Item',
-};
+function render(item: any) {
+  return mq(ComposeHero, {
+    item,
+    className: 'ComposePollHero',
+    translationPrefix: 'fof-polls.forum.compose',
+    managerRoute: 'fof.polls.list',
+    managerIcon: 'far fa-edit',
+    managerLabel: app.translator.trans('fof-polls.forum.compose.polls_manager'),
+    viewRoute: 'fof.polls.view',
+    viewIcon: 'far fa-arrow-up-right-from-square',
+    viewLabel: app.translator.trans('fof-polls.forum.compose.polls_preview'),
+  });
+}
 
-const routes: Record<string, string> = {
-  'test.list': '/test/list',
-  'test.view': '/test/view/1',
-};
+describe('ComposeHero', () => {
+  // Core's Hero owns the <header>/container scaffolding; this used to be
+  // hand-built out of divs.
+  it('is a core Hero', () => {
+    const out = render(PollFormState.createNewPoll());
 
-// @ts-ignore
-globalThis.app = {
-  translator: { trans: (key: string) => translations[key] || key },
-  route: (name: string, params?: any) => routes[name] || `/${name}`,
-};
-
-/**
- * Tests for the generic ComposeHero component structure.
- * Since ComposeHero depends on Flarum imports, we test the rendering
- * pattern with minimal mithril components that mirror the structure.
- */
-describe('ComposeHero rendering pattern', () => {
-  function renderHero(opts: { isEditing: boolean; translationPrefix: string; className: string }) {
-    const { isEditing, translationPrefix, className } = opts;
-    const titleKey = `${translationPrefix}.${isEditing ? 'edit' : 'add'}_title`;
-
-    return mq(
-      m(`div.${className}.Hero`, [
-        m('div.container', [
-          m('div.containerNarrow', [
-            m('h2.Hero-title', translations[titleKey] || titleKey),
-            m(`div.${className}-controls`, [
-              m('a.Button.Button--secondary', 'Manager'),
-              isEditing ? m('a.Button.Button--secondary', 'View') : null,
-            ]),
-          ]),
-        ]),
-      ])
-    );
-  }
-
-  it('shows "add" title when creating new item', () => {
-    const hero = renderHero({ isEditing: false, translationPrefix: 'test.prefix', className: 'ComposeHero' });
-    expect(hero.contains('Add New Item')).toBe(true);
+    expect(out).toHaveElement('header.Hero.ComposePollHero .container');
   });
 
-  it('shows "edit" title when editing existing item', () => {
-    const hero = renderHero({ isEditing: true, translationPrefix: 'test.prefix', className: 'ComposeHero' });
-    expect(hero.contains('Edit Item')).toBe(true);
+  it('says "add" for a poll that does not exist yet', () => {
+    expect(render(PollFormState.createNewPoll()).rootEl.querySelector('.Hero-title')!.textContent).toBe('Add a Poll');
   });
 
-  it('shows manager button always', () => {
-    const hero = renderHero({ isEditing: false, translationPrefix: 'test.prefix', className: 'ComposeHero' });
-    expect(hero.contains('Manager')).toBe(true);
+  it('says "edit" for a saved poll', () => {
+    expect(render(makePoll()).rootEl.querySelector('.Hero-title')!.textContent).toBe('Edit Poll');
   });
 
-  it('shows view button only when editing', () => {
-    const heroNew = renderHero({ isEditing: false, translationPrefix: 'test.prefix', className: 'ComposeHero' });
-    expect(heroNew.contains('View')).toBe(false);
-
-    const heroEdit = renderHero({ isEditing: true, translationPrefix: 'test.prefix', className: 'ComposeHero' });
-    expect(heroEdit.contains('View')).toBe(true);
-  });
-
-  it('applies the correct className', () => {
-    const hero = renderHero({ isEditing: false, translationPrefix: 'test.prefix', className: 'ComposePollHero' });
-    expect(hero.has('.ComposePollHero')).toBe(true);
-    expect(hero.has('.Hero')).toBe(true);
+  it('links to the manager always, and to the poll only once it exists', () => {
+    expect(render(PollFormState.createNewPoll()).find('.ComposeHero-controls a')).toHaveLength(1);
+    expect(render(makePoll()).find('.ComposeHero-controls a')).toHaveLength(2);
   });
 });

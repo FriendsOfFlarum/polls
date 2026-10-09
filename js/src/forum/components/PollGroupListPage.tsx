@@ -1,12 +1,12 @@
 import app from 'flarum/forum/app';
 import Page, { IPageAttrs } from 'flarum/common/components/Page';
 import PageStructure from 'flarum/forum/components/PageStructure';
-import IndexSidebar from 'flarum/forum/components/IndexSidebar';
 import ItemList from 'flarum/common/utils/ItemList';
 import type Mithril from 'mithril';
 import PollGroupList from './PollGroup/PollGroupList';
 import PollGroupListState from '../states/PollGroupListState';
 import PollPageHero from './PollPageHero';
+import PollsIndexSidebar from './PollsIndexSidebar';
 
 export default class PollGroupListPage extends Page<IPageAttrs, PollGroupListState> {
   state!: PollGroupListState;
@@ -18,6 +18,8 @@ export default class PollGroupListPage extends Page<IPageAttrs, PollGroupListSta
       m.route.set('/');
       return;
     }
+
+    this.bodyClass = 'App--polls';
 
     this.state = new PollGroupListState({
       sort: m.route.param('sort'),
@@ -40,7 +42,7 @@ export default class PollGroupListPage extends Page<IPageAttrs, PollGroupListSta
   }
 
   sidebar(): Mithril.Children {
-    return <IndexSidebar />;
+    return <PollsIndexSidebar />;
   }
 
   contentItems(): ItemList<Mithril.Children> {

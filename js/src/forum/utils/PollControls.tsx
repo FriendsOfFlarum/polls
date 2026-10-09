@@ -1,59 +1,48 @@
 import type Mithril from 'mithril';
 import app from 'flarum/forum/app';
-import Poll from '../models/Poll';
 import Component from 'flarum/common/Component';
+import Button from 'flarum/common/components/Button';
+import Separator from 'flarum/common/components/Separator';
+import ItemList from 'flarum/common/utils/ItemList';
+import extractText from 'flarum/common/utils/extractText';
+import Poll from '../models/Poll';
 import ComposePollPage from '../components/ComposePollPage';
 import PollsPage from '../components/PollsPage';
 import PollViewPage from '../components/PollViewPage';
 import PollListState from '../states/PollListState';
-import ItemList from 'flarum/common/utils/ItemList';
-import Separator from 'flarum/common/components/Separator';
-import Button from 'flarum/common/components/Button';
 import SchedulePollModal from '../components/SchedulePollModal';
 
-/**
- * The `UserControls` utility constructs a list of buttons for a user which
- * perform actions on it.
- */
-export default {
-  /**
-   * Get a list of controls for a user.
-   */
-  controls(poll: Poll, context: Component): ItemList<Mithril.Children> {
-    const items = new ItemList<Mithril.Children>();
+type Context = Component<any, any>;
 
-    const sections: ('poll' | 'moderation' | 'destructive')[] = ['poll', 'moderation', 'destructive'];
+export default {
+  controls(poll: Poll, context: Context): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+    const sections = ['poll', 'moderation', 'destructive'] as const;
+
     sections.forEach((section) => {
       const controls = (this[`${section}Controls`](poll, context) as ItemList<Mithril.Children>).toArray();
-      if (controls.length) {
-        controls.forEach((item) => items.add(item.itemName, item));
-        items.add(section + 'Separator', <Separator />);
-      }
+
+      if (!controls.length) return;
+
+      controls.forEach((item: any) => items.add(item.itemName, item));
+      items.add(`${section}Separator`, <Separator />);
     });
 
     return items;
   },
 
-  /**
-   * Get controls for direct modifcation actions on polls (e.g. vote, view voters).
-   */
-  pollControls(poll: Poll, context: Component): ItemList<Mithril.Children> {
-    const items = new ItemList<Mithril.Children>();
-
-    return items;
+  pollControls(poll: Poll, context: Context): ItemList<Mithril.Children> {
+    return new ItemList<Mithril.Children>();
   },
 
-  /**
-   * Get controls for a user pertaining to moderation (e.g. suspend, edit).
-   */
-  moderationControls(poll: Poll, context: Component): ItemList<Mithril.Children> {
+  moderationControls(poll: Poll, context: Context): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
 
     if (poll.canEdit()) {
       items.add(
         'edit',
         <Button icon="fas fa-pencil-alt" onclick={this.editAction.bind(this, poll)}>
-          {app.translator.trans(`fof-polls.forum.poll_controls.edit_label`)}
+          {app.translator.trans('fof-polls.forum.poll_controls.edit_label')}
         </Button>
       );
     }
@@ -68,20 +57,9 @@ export default {
 
       items.add(
         'schedulePublish',
-        <Button
-          icon="fas fa-clock"
-          onclick={() =>
-            app.modal.show(SchedulePollModal, {
-              poll,
-              form: null,
-              onSuccess: app.current.matches(PollsPage) ? () => m.redraw() : () => m.route.set(app.route('fof.polls.view', { id: poll.id() })),
-            })
-          }
-        >
+        <Button icon="fas fa-clock" onclick={() => this.scheduleAction(poll)}>
           {app.translator.trans(
-            poll.isScheduled?.()
-              ? 'fof-polls.forum.poll_controls.edit_schedule_publish_label'
-              : 'fof-polls.forum.poll_controls.schedule_publish_label'
+            poll.isScheduled() ? 'fof-polls.forum.poll_controls.edit_schedule_publish_label' : 'fof-polls.forum.poll_controls.schedule_publish_label'
           )}
         </Button>
       );
@@ -99,11 +77,7 @@ export default {
     return items;
   },
 
-  /**
-   * Get controls for a user which are destructive (e.g. delete).
-   * @protected
-   */
-  destructiveControls(poll: Poll, context: Component): ItemList<Mithril.Children> {
+  destructiveControls(poll: Poll, context: Context): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
 
     if (poll.canUnpublish()) {
@@ -119,7 +93,7 @@ export default {
       items.add(
         'delete',
         <Button icon="far fa-trash-alt" onclick={this.deleteAction.bind(this, poll)}>
-          {app.translator.trans(`fof-polls.forum.poll_controls.delete_label`)}
+          {app.translator.trans('fof-polls.forum.poll_controls.delete_label')}
         </Button>
       );
     }
@@ -127,84 +101,78 @@ export default {
     return items;
   },
 
-  /**
-   * Delete the poll.
-   */
+  editAction(poll: Poll): void {
+    m.route.set(app.route('fof.polls.composer', { id: poll.id() }));
+  },
+
+  scheduleAction(poll: Poll): void {
+    app.modal.show(SchedulePollModal, {
+      poll,
+      form: null,
+      onSuccess: app.current.matches(PollsPage) ? () => m.redraw() : () => m.route.set(app.route('fof.polls.view', { id: poll.id() })),
+    });
+  },
+
   async deleteAction(poll: Poll): Promise<void> {
-    if (!confirm(app.translator.trans(`fof-polls.forum.poll_controls.delete_confirmation`) as string)) {
+    if (!confirm(extractText(app.translator.trans('fof-polls.forum.poll_controls.delete_confirmation')))) {
       return;
     }
 
     return poll
       .delete()
       .then(() => {
-        this.showDeletionAlert(poll, 'success');
+        this.alert('success', 'fof-polls.forum.poll_controls.delete_success_message');
+
         if (app.current.matches(ComposePollPage) || app.current.matches(PollViewPage)) {
           m.route.set(app.route('fof.polls.list'));
         } else {
           PollListState.notifyDeleted(poll);
         }
       })
-      .catch(() => this.showDeletionAlert(poll, 'error'));
-  },
-
-  /**
-   * Show deletion alert of poll
-   */
-  showDeletionAlert(poll: Poll, type: string): void {
-    const message = {
-      success: `fof-polls.forum.poll_controls.delete_success_message`,
-      error: `fof-polls.forum.poll_controls.delete_error_message`,
-    }[type]!;
-
-    const content = app.translator.trans(message, { poll: poll });
-    const alertId = app.alerts.show({ type }, content);
-    // Errors stay sticky so the user can read them; successes auto-dismiss.
-    if (type === 'success') {
-      setTimeout(() => app.alerts.dismiss(alertId), 10000);
-    }
-  },
-
-  /**
-   * Edit the poll.
-   */
-  editAction(poll: Poll): void {
-    m.route.set(app.route('fof.polls.composer', { id: poll.id() }));
+      .catch(() => this.alert('error', 'fof-polls.forum.poll_controls.delete_error_message'));
   },
 
   async publishAction(poll: Poll): Promise<void> {
     try {
-      await poll.publish();
-      const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.publish_success'));
-      setTimeout(() => app.alerts.dismiss(alertId), 10000);
+      await poll.publish({}, (error: any) => this.errorAlert(error));
+      this.alert('success', 'fof-polls.forum.poll_controls.publish_success');
       m.redraw();
-    } catch (e: any) {
-      const detail = e?.response?.errors?.[0]?.detail;
-      app.alerts.show({ type: 'error' }, detail ?? app.translator.trans('fof-polls.forum.poll_form.error'));
+    } catch {
+      // errorAlert already reported it.
     }
   },
 
   async cancelScheduleAction(poll: Poll): Promise<void> {
     try {
-      await poll.publish({ scheduledFor: null });
-      const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.cancel_schedule_success'));
-      setTimeout(() => app.alerts.dismiss(alertId), 10000);
+      await poll.publish({ scheduledFor: null }, (error: any) => this.errorAlert(error));
+      this.alert('success', 'fof-polls.forum.poll_controls.cancel_schedule_success');
       m.redraw();
-    } catch (e: any) {
-      const detail = e?.response?.errors?.[0]?.detail;
-      app.alerts.show({ type: 'error' }, detail ?? app.translator.trans('fof-polls.forum.poll_form.error'));
+    } catch {
+      // errorAlert already reported it.
     }
   },
 
   async unpublishAction(poll: Poll): Promise<void> {
-    if (!confirm(app.translator.trans('fof-polls.forum.poll_controls.unpublish_confirmation') as string)) return;
+    if (!confirm(extractText(app.translator.trans('fof-polls.forum.poll_controls.unpublish_confirmation')))) return;
+
     try {
-      await poll.unpublish();
-      const alertId = app.alerts.show({ type: 'success' }, app.translator.trans('fof-polls.forum.poll_controls.unpublish_success'));
-      setTimeout(() => app.alerts.dismiss(alertId), 10000);
+      await poll.unpublish(() => app.alerts.show({ type: 'error' }, app.translator.trans('fof-polls.forum.poll_controls.unpublish_error_has_votes')));
+      this.alert('success', 'fof-polls.forum.poll_controls.unpublish_success');
       m.redraw();
-    } catch (e: any) {
-      app.alerts.show({ type: 'error' }, app.translator.trans('fof-polls.forum.poll_controls.unpublish_error_has_votes'));
+    } catch {
+      // The error handler above already reported it.
     }
+  },
+
+  alert(type: 'success' | 'error', key: string): void {
+    const id = app.alerts.show({ type }, app.translator.trans(key));
+
+    if (type === 'success') setTimeout(() => app.alerts.dismiss(id), 10000);
+  },
+
+  errorAlert(error: any): void {
+    const detail = error?.response?.errors?.[0]?.detail;
+
+    app.alerts.show({ type: 'error' }, detail ?? app.translator.trans('fof-polls.forum.poll_form.error'));
   },
 };

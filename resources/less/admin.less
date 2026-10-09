@@ -1,53 +1,22 @@
 .PollsSettingsPage {
-    padding-top: 20px;
+  // Core's default is 24px, which reads as a gap between pages rather than
+  // between groups of one form.
+  .Form {
+    --gap: 24px;
+  }
+}
 
-    .Button {
-      margin-right: 10px;
-      margin-bottom: 10px;
-    }
+.PollsSettingsPage-section {
+  .FieldSet-items {
+    gap: 16px;
+  }
 
-    .PollsSettingsTabPage {
-      background: var(--control-bg);
-      padding: 20px;
-      border-radius: var(--border-radius);
-      box-shadow: 0 2px 4px var(--shadow-color);
+  input.FormControl {
+    max-width: 300px;
+  }
 
-      h3 {
-        color: var(--primary-color);
-        margin-bottom: 10px;
-      }
-
-      .Section {
-        background: var(--body-bg);
-        border-radius: var(--border-radius);
-        box-shadow: 0 1px 3px var(--shadow-color);
-        padding: 15px;
-        margin-bottom: 20px;
-      }
-
-      .Form {
-        .control {
-          background: var(--body-bg);
-          border: 1px solid var(--muted-color);
-          color: var(--text-color);
-          padding: 6px 12px;
-          border-radius: var(--border-radius);
-        }
-        input {
-            max-width: 300px;
-        }
-
-        .disabled {
-          opacity: 0.5;
-        }
-      }
-    }
-
-    &--settings {
-      margin: 0 auto;
-
-      @media @desktop-up {
-        margin: 0;
-      }
-    }
+  & + & {
+    border-top: 1px solid var(--control-bg);
+    padding-top: 24px;
+  }
 }

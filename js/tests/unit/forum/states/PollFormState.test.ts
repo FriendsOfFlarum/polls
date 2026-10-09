@@ -1,53 +1,42 @@
-import { jest } from '@jest/globals';
+import bootstrapForum from '../../../bootstrap';
+import { makePoll } from '../../../factory';
+import PollFormState from '../../../../src/forum/states/PollFormState';
 
-// @ts-ignore
-globalThis.m = { redraw: jest.fn() };
+beforeAll(() => bootstrapForum());
 
-describe('PollFormState logic', () => {
-  describe('isExpanded / expand', () => {
-    it('defaults to setup group expanded', () => {
-      let expandedGroup = 'setup';
-      expect(expandedGroup === 'setup').toBe(true);
-      expect(expandedGroup === 'options').toBe(false);
-    });
+describe('PollFormState', () => {
+  it('starts a new poll with two blank answers ready', () => {
+    const poll = PollFormState.createNewPoll();
 
-    it('expands a different group', () => {
-      let expandedGroup = 'setup';
-      expandedGroup = 'options';
-      expect(expandedGroup === 'options').toBe(true);
-      expect(expandedGroup === 'setup').toBe(false);
-    });
+    expect(poll.exists).toBe(false);
+    expect(poll.question()).toBe('');
+    expect(poll.tempOptions).toHaveLength(2);
   });
 
-  describe('save flow', () => {
-    it('sets loading during save', async () => {
-      let loading = false;
-
-      // Simulate save
-      loading = true;
-      expect(loading).toBe(true);
-
-      await Promise.resolve(); // simulate async save
-
-      loading = false;
-      expect(loading).toBe(false);
-    });
+  it('builds its own poll when handed none', () => {
+    expect(new PollFormState(undefined as any).poll.exists).toBe(false);
   });
 
-  describe('delete flow', () => {
-    it('sets deleting flag after delete', async () => {
-      let loading = false;
-      let deleting = false;
+  it('counts an unsaved poll as new, and a saved one as not', () => {
+    expect(new PollFormState(PollFormState.createNewPoll()).isNew()).toBe(true);
+    expect(new PollFormState(makePoll()).isNew()).toBe(false);
+  });
 
-      loading = true;
+  it('only calls a saved poll a draft', () => {
+    expect(new PollFormState(makePoll({ isDraft: true })).isDraft()).toBe(true);
+    expect(new PollFormState(makePoll({ isDraft: false })).isDraft()).toBe(false);
+    expect(new PollFormState(PollFormState.createNewPoll()).isDraft()).toBe(false);
+  });
 
-      await Promise.resolve(); // simulate async delete
-      deleting = true;
+  it('tracks whether the form has unsaved edits', () => {
+    const state = new PollFormState(PollFormState.createNewPoll());
 
-      loading = false;
+    expect(state.dirty).toBe(false);
 
-      expect(deleting).toBe(true);
-      expect(loading).toBe(false);
-    });
+    state.markDirty();
+    expect(state.dirty).toBe(true);
+
+    state.markDirty(false);
+    expect(state.dirty).toBe(false);
   });
 });

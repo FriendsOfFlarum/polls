@@ -32,7 +32,7 @@ export default class Poll extends Model {
     return Model.attribute<string | null>('imageAlt').call(this);
   }
 
-  /** @deprecated Use imageSrcset() presence instead */
+  // Deprecated: read imageSrcset() presence instead.
   isImageUpload() {
     return Model.attribute<boolean>('isImageUpload').call(this);
   }
@@ -148,7 +148,7 @@ export default class Poll extends Model {
     return Model.attribute<boolean>('canUnpublish').call(this);
   }
 
-  publish(body: { scheduledFor?: string | null } = {}): Promise<this> {
+  publish(body: { scheduledFor?: string | null } = {}, errorHandler?: (error: any) => any): Promise<this> {
     const id = this.id();
 
     if (!id) {
@@ -160,6 +160,7 @@ export default class Poll extends Model {
         method: 'POST',
         url: `${app.forum.attribute('apiUrl')}/polls/${id}/publish`,
         body: { data: { attributes: body } },
+        errorHandler,
       })
       .then((payload) => {
         app.store.pushPayload(payload);
@@ -167,7 +168,7 @@ export default class Poll extends Model {
       });
   }
 
-  unpublish(): Promise<this> {
+  unpublish(errorHandler?: (error: any) => any): Promise<this> {
     const id = this.id();
 
     if (!id) {
@@ -178,6 +179,7 @@ export default class Poll extends Model {
       .request<any>({
         method: 'POST',
         url: `${app.forum.attribute('apiUrl')}/polls/${id}/unpublish`,
+        errorHandler,
       })
       .then((payload) => {
         app.store.pushPayload(payload);

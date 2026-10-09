@@ -1,6 +1,5 @@
 :root {
   --poll-option-color: var(--muted-color);
-  --poll-option-accent-color: var(--primary-color);
   --poll-option-active-color: var(--secondary-color);
 }
 
@@ -27,401 +26,317 @@
   }
 }
 
-.PollDiscussionModal-form {
-  .Form-group.hide {
-    display: none;
-  }
+// Compose form
 
-  .Form-group--input,
-  .Form-group--upload {
-    margin-bottom: 25px;
-  }
-
-  .Form-group--switch {
-    margin-bottom: 10px;
-  }
-
-  .Form-group--actions {
-    flex-direction: row;
-  }
-
-  input.FormControl {
-    &:invalid {
-      background-color: var(--alert-error-bg);
-      color: var(--alert-error-color);
-    }
-
-    + .FormControl {
-      margin-top: 5px;
-    }
-  }
-
-  .Poll-image-inputs {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-  }
-
-  .PollModal--answers {
-    margin-bottom: 20px;
-
-    .PollModal--answers-title {
-      margin-bottom: 10px;
-    }
-
-    .Form-group {
-      display: flex;
-      flex-direction: row;
-      margin-top: 2.5px;
-      margin-bottom: 18px;
-      width: 100%;
-    }
-
-    .Form-group--answer {
-      .PollModal--button {
-        margin-top: 31px;
-      }
-    }
-
-    fieldset {
-      flex-grow: 1;
-      width: 100%;
-    }
-
-    .Poll-answer-input input {
-      margin-bottom: 10px;
-    }
-
-    .Poll-answer-image {
-      display: flex;
-      justify-content: space-between;
-
-      img {
-        max-width: 100%;
-      }
-    }
-  }
-
-  .PollModal--button {
-    flex-shrink: 1;
-    margin-left: 10px;
-
-    --button-color: var(--muted-color);
-    --button-bg: var(--control-bg-darken-5);
-
-    .icon {
-      margin-right: 0;
-      font-size: 12px;
-      vertical-align: baseline;
-    }
-
-    &.small {
-      padding: 2px 7px;
-      float: right;
-    }
-  }
-
-  .PollModal--date {
-    display: flex;
-
-    input {
-      flex-grow: 1;
-    }
-
-    .Button {
-      flex-shrink: 1;
-      margin-left: 10px;
-    }
-  }
-
-  .PollModal-SubmitButton {
-    margin-top: 10px;
-  }
-
-  .PollModal-DeleteButton {
-    margin-top: 10px;
-    margin-left: 10px;
-  }
-
-  .PollModal-Button {
-    margin-bottom: 15px;
-  }
-
-  .PollModal--add-button {
-    margin-left: 0px;
-  }
-
-  .Checkbox.disabled {
-    &,
-    [disabled] {
-      cursor: not-allowed;
-    }
-
-    opacity: 0.5;
+.PollForm {
+  .UploadImageButton-image img {
+    max-width: 100%;
+    border-radius: var(--border-radius);
   }
 }
 
+.PollForm-answer {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.PollForm-answerFields {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.PollForm-removeAnswer {
+  margin-top: 26px;
+}
+
+.PollForm-addAnswer {
+  margin-top: 10px;
+}
+
+.PollForm-date {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  .PollForm-dateInput {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+}
+
+.PollForm-clearDate {
+  margin-top: 26px;
+}
+
+.PollForm-submit,
+.PollGroupForm-submit {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 10px;
+}
+
+.PollGroupForm-polls,
+.PollGroupListItem-polls {
+  list-style: none;
+  padding-inline-start: 0;
+  margin: 0;
+}
+
+// A poll, wherever it is shown
+
+.Poll,
 .Post-poll {
+  position: relative;
+  display: grid;
+  gap: 10px;
+
   .Post--hidden & {
     opacity: 0.5;
   }
+}
 
-  .PollOptions {
-    display: grid;
-    grid: auto-flow / repeat(auto-fit, minmax(~"min(250px, 100%)", 1fr));
-    column-gap: 30px;
-    row-gap: 15px;
-    margin-left: 15px;
-    align-items: start;
-    margin-top: 15px;
+.Post-poll + .Post-poll {
+  margin-top: 2em;
+}
 
-    .PollAnswer when (@fof-polls-options-color-blend = true) {
-      &-checkbox,
-      &-text {[data-theme^=dark] & {
-          mix-blend-mode: difference;
-        }[data-theme^=light] & {
-          mix-blend-mode: darken;
-        }
-      }
-    }
-  }
+.Poll-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  column-gap: 10px;
+}
 
-  .Poll-sticky {
-    position: sticky;
-    bottom: 0;
-    padding: 10px 0;
-    margin-left: 15px;
-    margin-top: 10px;
-    display: flex;
-    align-items: flex-start;
-    column-gap: 15px;
-    background-color: var(--body-bg);
-    box-shadow: inset 0px 2px 0px 0px var(--muted-more-bg);
+.Poll-title {
+  grid-column: 1;
+  margin: 0;
+  font-weight: 600;
+}
 
-    &:empty {
-      display: none;
-    }
+.Poll-subtitle {
+  grid-column: 1;
+  margin: 0;
+  color: var(--muted-color);
+}
 
-    .PollInfoText {
-      flex-grow: 1;
-      margin-bottom: 0;
-    }
-  }
+.Poll-controls {
+  grid-column: 2;
+  grid-row: 1;
+}
 
-  & + & {
-    margin-top: 2em;
-  }
+.Poll-content {
+  display: grid;
+  gap: 10px;
+}
 
-  .PollHeading {
-    display: flex;
-    align-items: baseline;
+.Poll-optionsFieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
 
-    &-actions {
-      display: flex;
-      gap: 10px;
-      align-items: baseline;
-    }
+.Poll-options {
+  display: grid;
+  gap: 10px;
+}
 
-    &-title-container {
-      flex-grow: 1;
-    }
+.Poll-footer {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: flex-start;
+  column-gap: 15px;
+  padding: 10px 0;
+  background-color: var(--body-bg);
 
-    &-voters {
-      .Button--color-auto("button-primary");
-    }
-
-    .Button {
-      flex-shrink: 1;
-      padding: 6px 10px;
-
-      .icon {
-        margin-right: 0;
-      }
-    }
+  &:empty {
+    display: none;
   }
 }
 
-.ComposePollHero {
-  &-controls {
-    margin-left: 2em;
-    display: flex;
-    justify-content: space-around;
+.PollInfoText {
+  flex-grow: 1;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 
-    .Button {
-      margin-right: 1em;
-    }
+  .icon {
+    margin-right: 2.5px;
   }
 }
+
+.PollImage {
+  width: 100%;
+
+  &-image {
+    max-width: 100%;
+    border-radius: var(--border-radius);
+  }
+}
+
+// One answer. The whole row is a <label>, so clicking anywhere in it drives
+// the real radio/checkbox that carries the state.
 
 .PollOption {
-  &,
-  .PollBar {
-    border-radius: 4px;
-  }
+  position: relative;
+  border-radius: 4px;
+  background: var(--body-bg);
 
   &:hover {
-    background: var(--muted-more-bg);
+    background: var(--control-bg-light);
+  }
+}
+
+.PollBar {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: start;
+  margin: 0;
+  padding: 10px;
+  border: 2px solid var(--poll-option-color);
+  border-radius: 4px;
+  overflow: hidden;
+  isolation: isolate;
+  cursor: pointer;
+
+  &[data-selected] {
+    --poll-option-color: var(--poll-option-active-color);
   }
 
-  /* Percent */
-  .PollPercent {
-    padding-right: 5px;
-    font-size: 11px;
-    font-weight: 600;
-
-    &--option {
-      color: var(--muted-color);
-    }
+  &:has(.PollOption-input:disabled) {
+    cursor: default;
   }
 
-  .PollLabel {
-    font-size: 85%;
-    font-weight: 600;
-    display: inline-block;
-    padding: 0.1em 0.5em;
-    border-radius: 4px;
-    background: transparent;
-    color: var(--muted-color);
-    text-transform: none;
+  // A tint rather than a solid fill: the answer sits on top of it, and the
+  // text colour has to stay readable over both the filled and unfilled part.
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.3;
+    background-image: linear-gradient(to right, var(--poll-option-color) 0% 100%);
+    background-size: var(--poll-option-width) 100%;
+    background-repeat: no-repeat;
   }
 
-  &:not(.Post--hidden &) {
-    .PollBar::after {
-      animation: slideInPollBackground 1s ease-in-out;
-      transition: background-size 0.75s ease-in-out;
-    }
+  .Post:not(.Post--hidden) &::after {
+    animation: slideInPollBackground 1s ease-in-out;
+    transition: background-size 0.75s ease-in-out;
   }
+}
 
-  .PollBar {
-    padding: 10px;
-    position: relative;
-    border: 2px solid var(--poll-option-color);
-    overflow: hidden;
-    isolation: isolate;
+.PollOption-input {
+  grid-column: 1;
+  grid-row: 1;
+  margin: 0;
+  width: 20px;
+  height: 20px;
+  accent-color: var(--poll-option-active-color);
 
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-auto-flow: row;
-    gap: 10px;
-    align-items: flex-start;
-    cursor: pointer;
-
-    // All children pass clicks through to the .PollBar onclick handler
-    > * {
-      pointer-events: none;
-    }
-
-    &[data-selected] .checkmark:after {
-      display: block;
-    }
-
-    .PollAnswer-input[disabled] ~ * {
-      cursor: not-allowed;
-    }
-
-    .PollAnswer-checkbox {
-      grid-column: 1;
-      grid-row: 1;
-
-      + .PollAnswer-text {
-        grid-column: 2;
-      }
-    }
-
-    .PollAnswer-text {
-      grid-column: ~"1 / span 2";
-      grid-row: 1;
-
-      display: flex;
-      column-gap: 5px;
-      align-items: first baseline;
-
-      &-answer {
-        flex-grow: 1;
-      }
-    }
-
-    .PollAnswer-image {
-      grid-column: ~"1 / span 2";
-      grid-row: 2;
-      max-width: 100%;
-    }
-
-    &::after {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      right: 0;
-      left: 0;
-      z-index: -1;
-      background-image: linear-gradient(
-        to right,
-        var(--poll-option-color) 0% 100%
-      );
-      background-size: var(--poll-option-width) 100%;
-      background-repeat: no-repeat;
-      content: "";
-    }
-
-    .PollAnswer {
-      flex-grow: 1;
-    }
-
-    &[data-selected] {
-      --poll-option-color: var(--poll-option-active-color);
-    }
+  &:disabled {
+    cursor: default;
   }
+}
 
-  .PollAnswer-checkbox {
-    margin-bottom: 0;
-    position: relative;
-    z-index: 2;
+.PollOption-text {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  column-gap: 5px;
+  align-items: first baseline;
 
-    input[type="checkbox"] {
-      position: absolute;
-      opacity: 0;
-      cursor: pointer;
-
-      &:checked ~ .checkmark:after {
-        display: block;
-      }
+  & when (@fof-polls-options-color-blend = true) {
+    [data-theme^="dark"] & {
+      mix-blend-mode: difference;
     }
 
-    .checkmark {
-      position: relative;
-      display: block;
-      top: 0;
-      left: 0;
-      height: 20px;
-      width: 20px;
-      border: 1px solid;
-      border-radius: 4px;
-
-      &:after {
-        content: "";
-        position: absolute;
-        display: none;
-        left: 6.75px;
-        top: 3px;
-        width: 5px;
-        height: 10px;
-        border: solid var(--text-color);
-        border-width: 0 3px 3px 0;
-        transform: rotate(45deg);
-      }
+    [data-theme^="light"] & {
+      mix-blend-mode: darken;
     }
   }
 }
 
+.PollOption-answer {
+  flex-grow: 1;
+}
+
+.PollOption-percent {
+  padding-right: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted-color);
+
+  &--full {
+    color: inherit;
+  }
+}
+
+.PollOption-image {
+  grid-column: ~"1 / span 2";
+  grid-row: 2;
+  max-width: 100%;
+}
+
+@keyframes slideInPollBackground {
+  from {
+    background-size: 0 100%;
+  }
+  to {
+    background-size: var(--poll-option-width) 100%;
+  }
+}
+
+// Draft and schedule pills, shared by the poll row and the poll itself
+
+.PollDraftBadges {
+  display: inline-flex;
+  gap: 6px;
+  vertical-align: middle;
+  margin-left: 8px;
+  font-size: 12px;
+
+  .Pill > * {
+    padding: 2px 6px;
+    line-height: 16px;
+  }
+}
+
+.PollDraftBadges-draft {
+  --pill-bg: var(--control-bg);
+  --pill-color: var(--muted-color);
+}
+
+.PollDraftBadges-scheduled {
+  --pill-bg: var(--control-warning-bg);
+  --pill-color: var(--control-warning-color);
+}
+
+.PollDraftBadges-scheduleError {
+  color: var(--error-color);
+}
+
+// Voters
+
 .VotesModal {
+  &-option + &-option {
+    margin-top: 20px;
+  }
+
   &-list {
     display: grid;
     grid: auto-flow / repeat(auto-fill, minmax(150px, 1fr));
-    column-gap: 10px;
-    row-gap: 10px;
+    gap: 10px;
     margin-bottom: 20px;
 
-    a {
+    .VotesModal-voter {
       color: var(--text-color);
       font-size: 15px;
       font-weight: bold;
@@ -435,6 +350,7 @@
         text-decoration: underline;
       }
     }
+
     .Avatar {
       .Avatar--size(32px);
       vertical-align: middle;
@@ -442,217 +358,31 @@
     }
   }
 
-  h2 {
+  h3 {
     margin-bottom: 15px;
   }
-
-  h4 {
-    color: var(--text-color);
-    margin-top: 0;
-    margin-bottom: 20px;
-  }
 }
 
-.PublicPollButton {
-  display: block;
-  margin: 20px 15px;
-}
+// Poll directory
 
-.PollInfoText {
-  span {
-    display: block;
-  }
-
-  .icon {
-    margin-right: 2.5px;
-  }
-}
-
-@keyframes slideInPollBackground {
-  from {
-    background-size: 0 100%;
-  }
-  to {
-    background-size: var(--poll-option-width) 100%;
-  }
-}
-
-@media @desktop-up {
-  .item-newGlobalPoll,
-  .item-newPollGroup {
-    .Button {
-      display: block;
-      width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  }
-}
-
-.Poll {
-  position: relative;
-  .Poll-sticky {
-    position: sticky;
-    bottom: 0;
-    padding: 10px 0;
-    margin-top: 10px;
-    display: flex;
-    align-items: flex-start;
-    column-gap: 15px;
-    background-color: var(--body-bg);
-    box-shadow: inset 0px 2px 0px 0px var(--muted-more-bg);
-
-    &:empty {
-      display: none;
-    }
-
-    .PollInfoText {
-      flex-grow: 1;
-      margin-bottom: 0;
-    }
-  }
-}
-
-.Poll-subtitle {
-  color: var(--muted-color);
-}
-
-.Poll-content {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 10px;
-}
-
-.Poll-options {
-  display: grid;
-  gap: 10px;
-  margin-bottom: 10px;
-  border-radius: var(--border-radius);
-
-  &.grid-layout {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  &.list-layout {
-    flex-direction: column;
-  }
-}
-
-.PollImage {
-  width: 100%;
-
-  &-image {
-    max-width: 100%;
-    border-radius: var(--border-radius);
-  }
-}
-
-.PollOption {
-  position: relative;
-  background: var(--body-bg);
-  border-radius: 4px;
-
-  &:hover {
-    background: var(--control-bg-light);
-  }
-}
-
-.PollResult {
-  display: flex;
-  flex-direction: row;
-  position: relative;
-  padding: 10px;
-  border-radius: 4px;
-
-  progress {
-    width: 100%;
-  }
-}
-
-.PollResult-input,
-.PollOption-input {
-  accent-color: var(--poll-option-accent-color);
-}
-
-.PollResult-input {
-  pointer-events: none;
-}
-
-.PollResult-row {
-  display: flex;
-  flex-grow: 1;
-  justify-content: space-between;
-}
-
-.PollResult-bar {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 4px;
-  width: 100%;
-
-  &::-webkit-progress-value {
-    background-color: var(--muted-color-dark);
-  }
-
-  &::-webkit-progress-bar {
-    background-color: var(--muted-color-light);
-  }
-}
-
-.Poll-title,
-.PollResult-number {
-  font-weight: 600;
-}
-
-.PollOption-label {
-  display: block;
-  font-weight: 600;
-}
-
-.PollOption-description {
-  display: block;
-  color: var(--muted-color);
-}
-
-.PollOption:has(.PollOption-input:checked) {
-  border-color: var(--poll-option-active-color);
-  background: var(--control-bg-shaded);
-}
-
-.PollList .PollList-polls {
+.PollList-items,
+.PollGroupList-items {
   list-style-type: none;
   padding: 0;
   clear: both;
 }
 
-@media (any-hover: none) {
-  .PollListItem-controls > .Dropdown-toggle {
-    display: none;
-  }
-}
-
-.PollListItem-controls {
-  float: right;
+.PollList-loadMore,
+.PollGroupList-loadMore {
+  text-align: center;
 }
 
 .PollListItem a {
   text-decoration: none;
 }
 
-.PollListItem-info {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  font-size: 11px;
-  color: var(--muted-more-color);
-
-  > li {
-    display: inline-block;
-  }
-
-  .item-voteCount {
-    margin-right: 5px;
-  }
+.PollListItem-controls {
+  float: right;
 }
 
 .PollListItem-main {
@@ -668,6 +398,32 @@
   font-weight: normal;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.PollListItem-subtitle {
+  margin: 0 0 3px;
+}
+
+.PollListItem-info {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  font-size: 11px;
+  color: var(--muted-more-color);
+
+  > li {
+    display: inline-block;
+  }
+
+  > li + li {
+    margin-left: 8px;
+  }
+}
+
+@media (any-hover: none) {
+  .PollListItem-controls > .Dropdown-toggle {
+    display: none;
+  }
 }
 
 @media @phone {
@@ -701,24 +457,15 @@
     &:hover {
       background: var(--discussion-list-item-bg-hover);
     }
-    &:hover .PollListItem-controls,
-    .PollListItem-controls.open {
-      opacity: 1;
-    }
-    .PollListItem-controls.open {
-      z-index: 3;
-    }
   }
   .PollListItem-controls {
     position: absolute;
     right: 5px;
     top: 5px;
     z-index: 1;
-    opacity: 1;
-    transition: opacity 0.2s;
 
-    &:focus-within {
-      opacity: 1;
+    &.open {
+      z-index: 3;
     }
 
     .Dropdown-toggle {
@@ -729,93 +476,29 @@
       left: auto;
     }
   }
-  .PollListItem-info {
-    .item-excerpt {
-      margin-right: 170px;
-    }
-  }
   .PollListItem-title {
     font-size: 16px;
   }
 }
 
-// Layout is now handled by PageStructure's .Page styles.
+// Showcase and groups
 
-@media @desktop-up {
-  .PollsShowcasePage,
-  .PollGroupViewPage {
-    .Page-container {
-      display: block;
-    }
-
-    .Page-sidebar {
-      width: unset;
-    }
-
-    .sideNav {
-      .sideNav--horizontal();
-      float: none;
-      width: auto;
-      margin-right: 0;
-      padding-top: 0;
-
-      &:after {
-        display: none;
-      }
-
-      .App-primaryControl {
-        margin-bottom: 0;
-      }
-
-      > ul > li:first-child {
-        width: 190px;
-      }
-    }
-    .Page-content {
-      margin-top: 15px;
-    }
-  }
-}
-
-.PollShowcase {
-  &--item {
-    background-color: var(--control-bg);
-    border-radius: var(--border-radius);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    margin-bottom: 20px;
-
-    .Poll {
-      padding: 20px;
-      border-radius: var(--border-radius);
-      background-color: var(--body-bg);
-
-      .Poll-header {
-        background-color: var(--header-bg);
-        color: var(--header-color);
-      }
-    }
-  }
-}
-
-// .PollsPage--groups
-.PollGroupList-pollgroups,
-.PollGroupListItem-polls {
-  display: flex;
-  flex-direction: column;
-  list-style: none;
-  padding-inline-start: 0;
-}
-
-.PollGroupListItem-polls {
-  border: 10px solid #ededed;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.PollShowcase-item {
+  background-color: var(--control-bg);
+  border-radius: var(--border-radius);
   padding: 10px;
   margin-bottom: 20px;
+
+  .Poll {
+    padding: 20px;
+    border-radius: var(--border-radius);
+    background-color: var(--body-bg);
+  }
 }
 
-.PollGroupList-pollgroups {
+.PollGroupList-items {
+  display: flex;
+  flex-direction: column;
   gap: 20px;
 }
 
@@ -836,73 +519,9 @@
   margin-block: 0;
 }
 
-// Poll Groups Composer
-.PollGroupModal-SubmitButton {
-  margin-right: 10px;
-}
-
-// Submit cluster (draft / publish / schedule / save)
-.PollModal--submitCluster {
+.ComposeHero-controls {
   display: flex;
-  gap: 10px;
-  padding-top: 10px;
-
-  .PollModal-SubmitButton {
-    margin-top: 0;
-  }
-
-  .Button--primary .Button-icon {
-    display: inline-block;
-  }
-}
-
-// Draft & schedule badges (shared between poll list rows and the poll view)
-:root {
-  --poll-draft-bg: #fde68a;
-  --poll-draft-color: #92400e;
-  --poll-scheduled-bg: #bfdbfe;
-  --poll-scheduled-color: #1e3a8a;
-  --poll-schedule-error-color: #b91c1c;
-}
-[data-theme^=dark] {
-  --poll-draft-bg: #3f2e0a;
-  --poll-draft-color: #fde68a;
-  --poll-scheduled-bg: #1e3a8a;
-  --poll-scheduled-color: #bfdbfe;
-  --poll-schedule-error-color: #fca5a5;
-}
-
-.PollDraftBadges {
-  display: inline-flex;
-  gap: 6px;
-  vertical-align: middle;
-}
-.PollDraftBadges-draft {
-  background: var(--poll-draft-bg);
-  color: var(--poll-draft-color);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 12px;
-}
-.PollDraftBadges-scheduled {
-  background: var(--poll-scheduled-bg);
-  color: var(--poll-scheduled-color);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 12px;
-}
-.PollDraftBadges-scheduleError {
-  color: var(--poll-schedule-error-color);
-  margin-left: 4px;
-}
-
-.PollListItem .PollDraftBadges {
-  margin-left: 8px;
-}
-
-[data-theme^=light] {
-  --control-bg-darken-5: darken(@control-bg-light, 5%);
-}
-[data-theme^=dark] {
-  --control-bg-darken-5: darken(@control-bg-dark, 5%);
+  flex-wrap: wrap;
+  gap: 1em;
+  margin-top: 1em;
 }

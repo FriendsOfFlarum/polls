@@ -1,125 +1,115 @@
 import app from 'flarum/forum/app';
-import Mithril from 'mithril';
+import type Mithril from 'mithril';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
-import PollOptionModel from '../../models/PollOption';
-import PollState from '../../states/PollState';
-import Tooltip, { TooltipAttrs } from 'flarum/common/components/Tooltip';
-import Icon from 'flarum/common/components/Icon';
+import Tooltip from 'flarum/common/components/Tooltip';
 import classList from 'flarum/common/utils/classList';
 import ItemList from 'flarum/common/utils/ItemList';
-import Poll from '../../models/Poll';
+import PollOptionModel from '../../models/PollOption';
+import PollState from '../../states/PollState';
 
-interface PollOptionAttrs extends ComponentAttrs {
+export interface IPollOptionAttrs extends ComponentAttrs {
   option: PollOptionModel;
   name: string;
   state: PollState;
 }
 
-export default class PollOption extends Component<PollOptionAttrs, PollState> {
-  option!: PollOptionModel;
-  name!: string;
-  state!: PollState;
-  hasVoted: boolean = false;
-  totalVotes: number = 0;
-  votes: number = 0;
-  voted: boolean = false;
-  poll!: Poll;
-  canSeeVoteCount: boolean = false;
-  answer!: string;
+export default class PollOption<CustomAttrs extends IPollOptionAttrs = IPollOptionAttrs> extends Component<CustomAttrs> {
+  view(): Mithril.Children {
+    const { option, state } = this.attrs;
+    const voted = state.hasVotedFor(option);
 
-  oninit(vnode: Mithril.Vnode<PollOptionAttrs, PollState>) {
-    super.oninit(vnode);
-    this.option = this.attrs.option;
-    this.name = this.attrs.name;
-    this.state = this.attrs.state;
-    this.poll = this.state.poll;
+    const bar = (
+      <label className="PollBar" data-selected={voted || undefined} style={`--poll-option-width: ${this.width()}%`}>
+        {this.barItems().toArray()}
+      </label>
+    );
 
-    // isNaN(null) is false, so we have to check type directly now that API always returns the field
-    this.canSeeVoteCount = typeof this.votes === 'number';
+    const className = classList('PollOption', voted && 'PollOption--voted', option.imageUrl() && 'PollOption--hasImage');
 
-    this.answer = this.option.answer();
+    if (!state.canSeeVoteCount) {
+      return (
+        <div className={className} data-id={option.id()}>
+          {bar}
+        </div>
+      );
+    }
+
+    return (
+      <Tooltip text={app.translator.trans('fof-polls.forum.tooltip.votes', { count: option.voteCount() })}>
+        <div className={className} data-id={option.id()}>
+          {bar}
+        </div>
+      </Tooltip>
+    );
+  }
+
+  barItems(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+    const { option, name, state } = this.attrs;
+    const multiple = state.poll.allowMultipleVotes();
+
+    items.add(
+      'input',
+      <input
+        className="PollOption-input"
+        type={multiple ? 'checkbox' : 'radio'}
+        name={name}
+        value={option.id()}
+        checked={state.hasVotedFor(option)}
+        disabled={!state.canSelect()}
+        // A selected radio fires no change event when clicked again, so the
+        // click is the only signal to withdraw. A checkbox flips, so it is
+        // left to change alone.
+        onclick={(e: Event) => {
+          if (!multiple && state.hasVotedFor(option)) state.changeVote(option, e);
+        }}
+        onchange={(e: Event) => state.changeVote(option, e)}
+      />,
+      100
+    );
+
+    items.add('text', <span className="PollOption-text">{this.textItems().toArray()}</span>, 50);
+
+    if (option.imageUrl()) {
+      items.add(
+        'image',
+        <img className="PollOption-image" src={option.imageUrl()} srcset={option.imageSrcset() ?? undefined} alt={option.answer()} loading="lazy" />,
+        0
+      );
+    }
+
+    return items;
+  }
+
+  textItems(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+    const { option, state } = this.attrs;
+
+    items.add('answer', <span className="PollOption-answer">{option.answer()}</span>, 100);
+
+    if (state.canSeeVoteCount) {
+      const percent = this.percent();
+
+      items.add('percent', <span className={classList('PollOption-percent', percent === 100 && 'PollOption-percent--full')}>{percent}%</span>, 50);
+
+      items.add('votes', <span className="sr-only">{app.translator.trans('fof-polls.forum.tooltip.votes', { count: option.voteCount() })}</span>, 0);
+    }
+
+    return items;
   }
 
   percent(): number {
-    return this.totalVotes > 0 ? Math.round((this.votes / this.totalVotes) * 100) : 0;
+    const total = this.attrs.state.overallVoteCount();
+
+    return total > 0 ? Math.round((this.attrs.option.voteCount() / total) * 100) : 0;
   }
 
-  view(): Mithril.Children {
-    // following values can be changed by ui interactions, so we need to update them on every render
-    this.hasVoted = this.state.hasVoted();
-    this.totalVotes = this.state.overallVoteCount();
-    this.votes = this.option.voteCount();
-    this.voted = this.state.hasVotedFor(this.option);
+  // With no count to scale against, the bar just marks what the reader picked.
+  width(): number {
+    const state = this.attrs.state;
 
-    const isDisabled = this.state.loadingOptions || (this.hasVoted && !this.poll.canChangeVote());
-    const width = this.canSeeVoteCount ? this.percent() : (Number(this.voted) / (this.poll.myVotes()?.length || 1)) * 100;
+    if (state.canSeeVoteCount) return this.percent();
 
-    const onBarClick = (e: MouseEvent) => {
-      if (isDisabled || !this.state.showCheckMarks) return;
-      e.preventDefault();
-      this.state.changeVote(this.option, e);
-    };
-
-    const bar = (
-      <div className="PollBar" data-selected={!!this.voted} style={`--poll-option-width: ${width}%`} onclick={onBarClick}>
-        {this.state.showCheckMarks && (
-          <div className="PollAnswer-checkbox">
-            <span className="checkmark" />
-          </div>
-        )}
-
-        <div className="PollAnswer-text">{this.optionDisplayItems().toArray()}</div>
-
-        {this.option.imageUrl() ? (
-          <img
-            className="PollAnswer-image"
-            src={this.option.imageUrl()}
-            srcset={this.option.imageSrcset() ?? undefined}
-            alt={this.option.answer()}
-            loading="lazy"
-          />
-        ) : null}
-      </div>
-    );
-
-    return (
-      <div
-        className={classList('PollOption', this.hasVoted && 'PollVoted', this.option.imageUrl() && 'PollOption-hasImage')}
-        data-id={this.option.id()}
-      >
-        {this.canSeeVoteCount ? (
-          <Tooltip text={app.translator.trans('fof-polls.forum.tooltip.votes', { count: this.votes })} onremove={this.hideOptionTooltip}>
-            {bar}
-          </Tooltip>
-        ) : (
-          bar
-        )}
-      </div>
-    );
-  }
-
-  hideOptionTooltip(vnode: Mithril.Vnode<TooltipAttrs, Tooltip>) {
-    vnode.attrs.tooltipVisible = false;
-
-    // @ts-ignore
-    vnode.state.updateVisibility();
-  }
-
-  optionDisplayItems(): ItemList<Mithril.Children> {
-    const items = new ItemList<Mithril.Children>();
-
-    items.add(
-      'answer',
-      <span className="PollAnswer-text-answer" id={`${this.name}-${this.option.id()}-label`}>
-        {this.answer}
-      </span>
-    );
-
-    this.voted && !this.state.showCheckMarks && items.add('check', <Icon name="fas fa-check-circle" className="PollAnswer-check" />);
-
-    this.canSeeVoteCount &&
-      items.add('percent', <span className={classList('PollPercent', this.percent() !== 100 && 'PollPercent--option')}>{this.percent()}%</span>);
-
-    return items;
+    return (Number(state.hasVotedFor(this.attrs.option)) / (state.poll.myVotes()?.length || 1)) * 100;
   }
 }

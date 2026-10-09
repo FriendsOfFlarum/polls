@@ -2,7 +2,6 @@ import app from 'flarum/forum/app';
 
 import { extend } from 'flarum/common/extend';
 import CommentPost from 'flarum/forum/components/CommentPost';
-import PollView from './components/PollView';
 import DiscussionPage from 'flarum/forum/components/DiscussionPage';
 import Poll from './models/Poll';
 import PollOption from './models/PollOption';
@@ -49,8 +48,6 @@ export default () => {
     if (app.pusher) {
       // @ts-ignore
       app.pusher.then((binding) => {
-        // We will listen for updates to all polls and options
-        // Even if that model is not in the current discussion, it doesn't really matter
         binding.channels.main.bind('updatedPollOptions', (data: PusherPollDto) => {
           const poll = app.store.getById<Poll>('polls', data['pollId']);
 
@@ -59,7 +56,7 @@ export default () => {
               voteCount: data['pollVoteCount'],
             });
 
-            // Not redrawing here, as the option below should trigger the redraw already
+            // The option update below redraws.
           }
 
           const changedOptions = data['options'];

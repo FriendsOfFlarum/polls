@@ -1,20 +1,31 @@
-import Form from 'flarum/common/components/Form';
+import type Mithril from 'mithril';
 import app from 'flarum/admin/app';
 import ExtensionPage from 'flarum/admin/components/ExtensionPage';
+import FieldSet from 'flarum/common/components/FieldSet';
+import Form from 'flarum/common/components/Form';
 import ItemList from 'flarum/common/utils/ItemList';
-import Mithril from 'mithril';
+import extractText from 'flarum/common/utils/extractText';
 
 export default class PollsSettingsPage extends ExtensionPage {
   content() {
     return (
-      <div className="PollsSettingsPage">
+      <div className="ExtensionPage-settings PollsSettingsPage">
         <div className="container">
-          <div className="PollsSettingsTabPage PollsSettingsPage--settings">
-            <Form>
-              {this.settingsItems().toArray()}
-              <div className="Form-group">{this.submitButton()}</div>
-            </Form>
-          </div>
+          <Form>
+            {this.settingsItems().toArray()}
+            <div className="Form-group Form-controls">
+              {this.submitButton()}
+              {this.resetButton(
+                undefined,
+                extractText(
+                  app.translator.trans('core.admin.extension.reset_settings.title_extension', {
+                    extensionTitle: this.extension.extra['flarum-extension'].title,
+                  })
+                ),
+                this.extension.id
+              )}
+            </div>
+          </Form>
         </div>
       </div>
     );
@@ -23,43 +34,24 @@ export default class PollsSettingsPage extends ExtensionPage {
   settingsItems(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
 
-    items.add(
-      'general',
-      <div className="Section">
-        <h3>{app.translator.trans('fof-polls.admin.settings.general.heading')}</h3>
-        <p className="helpText">{app.translator.trans('fof-polls.admin.settings.general.help')}</p>
-        {this.generalItems().toArray()}
-      </div>
-    );
-
-    items.add(
-      'discussionPolls',
-      <div className="Section">
-        <h3>{app.translator.trans('fof-polls.admin.settings.discussion_polls.heading')}</h3>
-        <p className="helpText">{app.translator.trans('fof-polls.admin.settings.discussion_polls.help')}</p>
-        {this.discussionPollsItems().toArray()}
-      </div>
-    );
-
-    items.add(
-      'globalPolls',
-      <div className="Section">
-        <h3>{app.translator.trans('fof-polls.admin.settings.global_polls.heading')}</h3>
-        <p className="helpText">{app.translator.trans('fof-polls.admin.settings.global_polls.help')}</p>
-        {this.globalPollsItems().toArray()}
-      </div>
-    );
-
-    items.add(
-      'image',
-      <div className="Section">
-        <h3>{app.translator.trans('fof-polls.admin.settings.image.heading')}</h3>
-        <p className="helpText">{app.translator.trans('fof-polls.admin.settings.image.help')}</p>
-        {this.imageItems().toArray()}
-      </div>
-    );
+    items.add('general', this.section('general', this.generalItems()), 100);
+    items.add('discussionPolls', this.section('discussion_polls', this.discussionPollsItems()), 90);
+    items.add('globalPolls', this.section('global_polls', this.globalPollsItems()), 80);
+    items.add('image', this.section('image', this.imageItems()), 70);
 
     return items;
+  }
+
+  section(key: string, items: ItemList<Mithril.Children>): Mithril.Children {
+    return (
+      <FieldSet
+        className="FieldSet--form PollsSettingsPage-section"
+        label={extractText(app.translator.trans(`fof-polls.admin.settings.${key}.heading`))}
+        description={extractText(app.translator.trans(`fof-polls.admin.settings.${key}.help`))}
+      >
+        {items.toArray()}
+      </FieldSet>
+    );
   }
 
   generalItems(): ItemList<Mithril.Children> {
@@ -72,7 +64,8 @@ export default class PollsSettingsPage extends ExtensionPage {
         type: 'switch',
         label: app.translator.trans('fof-polls.admin.settings.options_color_blend'),
         help: app.translator.trans('fof-polls.admin.settings.options_color_blend_help'),
-      })
+      }),
+      100
     );
 
     items.add(
@@ -82,7 +75,8 @@ export default class PollsSettingsPage extends ExtensionPage {
         type: 'number',
         label: app.translator.trans('fof-polls.admin.settings.max_options'),
         min: 2,
-      })
+      }),
+      90
     );
 
     return items;
@@ -106,46 +100,31 @@ export default class PollsSettingsPage extends ExtensionPage {
 
   globalPollsItems(): ItemList<Mithril.Children> {
     const items = new ItemList<Mithril.Children>();
+    // Settings are strings, so '0' is off.
+    const globalPolls = this.setting('fof-polls.enableGlobalPolls')();
 
     items.add(
       'enableGlobalPolls',
       this.buildSettingComponent({
         setting: 'fof-polls.enableGlobalPolls',
-        type: 'boolean',
+        type: 'switch',
         label: app.translator.trans('fof-polls.admin.settings.enable_global_polls'),
         help: app.translator.trans('fof-polls.admin.settings.enable_global_polls_help'),
-      })
+      }),
+      100
     );
 
     items.add(
       'enabledPollGroups',
       this.buildSettingComponent({
         setting: 'fof-polls.enablePollGroups',
-        type: 'boolean',
+        type: 'switch',
         label: app.translator.trans('fof-polls.admin.settings.enabled_poll_groups'),
         help: app.translator.trans('fof-polls.admin.settings.enabled_poll_groups_help'),
-        disabled: this.setting('fof-polls.enableGlobalPolls')() === false,
-      })
+        disabled: !globalPolls || globalPolls === '0',
+      }),
+      90
     );
-
-    this.onsaved = () => {
-      this.loading = false;
-
-      app.alerts.show({ type: 'success' }, app.translator.trans('core.admin.settings.saved_message'));
-
-      items.setContent(
-        'enabledPollGroups',
-        this.buildSettingComponent({
-          setting: 'fof-polls.enablePollGroups',
-          type: 'boolean',
-          label: app.translator.trans('fof-polls.admin.settings.enabled_poll_groups'),
-          help: app.translator.trans('fof-polls.admin.settings.enabled_poll_groups_help'),
-          disabled: this.setting('fof-polls.enableGlobalPolls')() === false,
-        })
-      );
-
-      m.redraw();
-    };
 
     return items;
   }
@@ -161,7 +140,19 @@ export default class PollsSettingsPage extends ExtensionPage {
         label: app.translator.trans('fof-polls.admin.settings.max_image_upload_size'),
         help: app.translator.trans('fof-polls.admin.settings.max_image_upload_size_help'),
         min: 1,
-      })
+      }),
+      100
+    );
+
+    items.add(
+      'imageWidth',
+      this.buildSettingComponent({
+        setting: 'fof-polls.image_width',
+        type: 'number',
+        label: app.translator.trans('fof-polls.admin.settings.image_width'),
+        min: 1,
+      }),
+      90
     );
 
     items.add(
@@ -171,16 +162,9 @@ export default class PollsSettingsPage extends ExtensionPage {
         type: 'number',
         label: app.translator.trans('fof-polls.admin.settings.image_height'),
         help: app.translator.trans('fof-polls.admin.settings.image_dimensions_help'),
-      })
-    );
-
-    items.add(
-      'imageWidth',
-      this.buildSettingComponent({
-        setting: 'fof-polls.image_width',
-        type: 'number',
-        label: app.translator.trans('fof-polls.admin.settings.image_width'),
-      })
+        min: 1,
+      }),
+      80
     );
 
     return items;

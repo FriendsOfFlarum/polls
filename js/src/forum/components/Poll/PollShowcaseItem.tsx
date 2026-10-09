@@ -1,25 +1,17 @@
+import type Mithril from 'mithril';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
 import Poll from '../../models/Poll';
-import type Mithril from 'mithril';
 import PollView from '../PollView';
 
-export interface PollShowcaseItemAttrs extends ComponentAttrs {
+export interface IPollShowcaseItemAttrs extends ComponentAttrs {
   poll: Poll;
 }
 
-export default class PollShowcaseItem extends Component<PollShowcaseItemAttrs> {
-  poll!: Poll;
-
-  oninit(vnode: Mithril.Vnode) {
-    super.oninit(vnode);
-
-    this.poll = this.attrs.poll;
-  }
-
-  view() {
+export default class PollShowcaseItem<CustomAttrs extends IPollShowcaseItemAttrs = IPollShowcaseItemAttrs> extends Component<CustomAttrs> {
+  view(): Mithril.Children {
     return (
-      <div className="PollShowcase--item">
-        <PollView poll={this.poll} />
+      <div className="PollShowcase-item">
+        <PollView poll={this.attrs.poll} />
       </div>
     );
   }
