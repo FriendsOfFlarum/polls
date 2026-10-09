@@ -1,16 +1,15 @@
 import type Mithril from 'mithril';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
-import PollOptionModel from '../../models/PollOption';
 import ItemList from 'flarum/common/utils/ItemList';
+import PollOptionModel from '../../models/PollOption';
 import PollState from '../../states/PollState';
-interface PollOptionsAttrs extends ComponentAttrs {
+export interface IPollOptionsAttrs extends ComponentAttrs {
     options: PollOptionModel[];
-    name: String;
+    name: string;
     state: PollState;
 }
-export default class PollOptions extends Component<PollOptionsAttrs> {
+export default class PollOptions<CustomAttrs extends IPollOptionsAttrs = IPollOptionsAttrs> extends Component<CustomAttrs> {
     view(): Mithril.Children;
     pollOptions(): ItemList<Mithril.Children>;
     createOptionView(option: PollOptionModel): Mithril.Children;
 }
-export {};

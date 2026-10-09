@@ -1,20 +1,17 @@
+import Post from 'flarum/common/models/Post';
 import Poll from '../models/Poll';
 import PollOption from '../models/PollOption';
-import Post from 'flarum/common/models/Post';
 export default class PollState {
     poll: Poll;
     post?: Post;
+    loadingOptions: boolean;
     protected pendingSubmit: boolean;
     protected pendingOptions: Set<string> | null;
-    loadingOptions: boolean;
-    useSubmitUI: boolean;
-    showCheckMarks: boolean;
-    canSeeVoteCount: boolean;
     constructor(poll: Poll, post?: Post);
-    /**
-     * used as en extendable entry point for init customizations
-     */
     init(): void;
+    get canSeeVoteCount(): boolean;
+    get useSubmitUI(): boolean;
+    canSelect(): boolean;
     isShowResult(): boolean;
     hasVoted(): boolean;
     overallVoteCount(): number;

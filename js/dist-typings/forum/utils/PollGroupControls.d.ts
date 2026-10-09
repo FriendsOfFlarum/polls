@@ -1,40 +1,15 @@
 import type Mithril from 'mithril';
-import PollGroup from '../models/PollGroup';
 import Component from 'flarum/common/Component';
 import ItemList from 'flarum/common/utils/ItemList';
-/**
- * The `PollGroupControls` utility constructs a list of buttons for a poll group which
- * perform actions on it.
- */
+import PollGroup from '../models/PollGroup';
+type Context = Component<any, any>;
 declare const _default: {
-    /**
-     * Get a list of controls for a poll group.
-     */
-    controls(pollGroup: PollGroup, context: Component): ItemList<Mithril.Children>;
-    /**
-     * Get controls for a poll group pertaining to moderation (e.g. edit).
-     */
-    moderationControls(pollGroup: PollGroup, context: Component): ItemList<Mithril.Children>;
-    /**
-     * Get controls for a poll group which are destructive (e.g. delete).
-     * @protected
-     */
-    destructiveControls(pollGroup: PollGroup, context: Component): ItemList<Mithril.Children>;
-    /**
-     * Delete the poll group.
-     */
-    deleteAction(pollGroup: PollGroup): Promise<void>;
-    /**
-     * Show deletion alert of poll group
-     */
-    showDeletionAlert(pollGroup: PollGroup, type: string): void;
-    /**
-     * Edit the poll group.
-     */
+    controls(pollGroup: PollGroup, context: Context): ItemList<Mithril.Children>;
+    moderationControls(pollGroup: PollGroup, context: Context): ItemList<Mithril.Children>;
+    destructiveControls(pollGroup: PollGroup, context: Context): ItemList<Mithril.Children>;
     editAction(pollGroup: PollGroup): void;
-    /**
-     * Add poll to group.
-     */
+    deleteAction(pollGroup: PollGroup): Promise<void>;
     addPoll(pollGroup: PollGroup): void;
+    alert(type: 'success' | 'error', key: string): void;
 };
 export default _default;

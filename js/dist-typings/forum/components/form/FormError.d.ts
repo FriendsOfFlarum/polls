@@ -1,4 +1,5 @@
 import type Mithril from 'mithril';
 export default class FormError extends Error {
-    constructor(message: Mithril.Children | string);
+    content: Mithril.Children;
+    constructor(content: Mithril.Children);
 }

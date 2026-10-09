@@ -10,7 +10,6 @@ export default class Poll extends Model {
     imageUrl(): string | null;
     imageSrcset(): string | null;
     imageAlt(): string | null;
-    /** @deprecated Use imageSrcset() presence instead */
     isImageUpload(): boolean;
     hasEnded(): boolean;
     endDate(): Date | null | undefined;
@@ -41,6 +40,6 @@ export default class Poll extends Model {
     canUnpublish(): boolean;
     publish(body?: {
         scheduledFor?: string | null;
-    }): Promise<this>;
-    unpublish(): Promise<this>;
+    }, errorHandler?: (error: any) => any): Promise<this>;
+    unpublish(errorHandler?: (error: any) => any): Promise<this>;
 }

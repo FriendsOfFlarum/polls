@@ -1,18 +1,14 @@
+import type Mithril from 'mithril';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
-import PollGroup from '../../models/PollGroup';
-import Poll from '../../models/Poll';
-import Mithril from 'mithril';
 import ItemList from 'flarum/common/utils/ItemList';
-interface PollGroupListItemAttrs extends ComponentAttrs {
+import PollGroup from '../../models/PollGroup';
+export interface IPollGroupListItemAttrs extends ComponentAttrs {
     pollGroup: PollGroup;
-    poll: Poll;
-    params?: any;
-    compactView: boolean;
+    compactView?: boolean;
 }
-export default class PollGroupListItem extends Component<PollGroupListItemAttrs> {
-    pollItems(): ItemList<Mithril.Children>;
+export default class PollGroupListItem<CustomAttrs extends IPollGroupListItemAttrs = IPollGroupListItemAttrs> extends Component<CustomAttrs> {
+    view(): Mithril.Children;
     mainItems(): ItemList<Mithril.Children>;
-    view(): JSX.Element;
-    controlsView(controls: Mithril.ChildArray): Mithril.Children;
+    pollItems(): ItemList<Mithril.Children>;
+    controlsView(): Mithril.Children;
 }
-export {};

@@ -6,8 +6,7 @@ type PollStatus = 'all' | 'published' | 'draft';
 export default class PollsPage extends Page<IPageAttrs, PollListState> {
     state: PollListState;
     status: PollStatus;
-    oninit(vnode: Mithril.Vnode): void;
-    setStatus(status: PollStatus): void;
+    oninit(vnode: Mithril.Vnode<IPageAttrs, this>): void;
     view(): Mithril.Children;
     hero(): Mithril.Children;
     sidebar(): Mithril.Children;
@@ -15,5 +14,6 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
     toolbarItems(): ItemList<Mithril.Children>;
     viewItems(): ItemList<Mithril.Children>;
     actionItems(): ItemList<Mithril.Children>;
+    setStatus(status: PollStatus): void;
 }
 export {};

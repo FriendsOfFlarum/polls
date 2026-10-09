@@ -1,25 +1,21 @@
+import type Mithril from 'mithril';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
-import Mithril from 'mithril';
 import ItemList from 'flarum/common/utils/ItemList';
 import Stream from 'flarum/common/utils/Stream';
 import PollFormState from '../../states/PollFormState';
 import PollModel from '../../models/Poll';
 import PollOption from '../../models/PollOption';
-interface PollFormAttrs extends ComponentAttrs {
+export interface IPollFormAttrs extends ComponentAttrs {
     poll: PollModel;
     onsubmit: (data: object, state: PollFormState) => Promise<void>;
-    /**
-     * Whether the draft / publish / schedule controls should be offered.
-     * Drafts are only supported for global polls, so post-bound and
-     * poll-group flows must leave this off (default). The compose page
-     * opts in explicitly.
-     */
     allowDrafts?: boolean;
 }
-export default class PollForm extends Component<PollFormAttrs, PollFormState> {
+export default class PollForm extends Component<IPollFormAttrs, PollFormState> {
     protected options: PollOption[];
     protected optionAnswers: Stream<string>[];
     protected optionImageUrls: Stream<string>[];
+    protected optionKeys: number[];
+    protected nextOptionKey: number;
     protected question: Stream<string>;
     protected subtitle: Stream<string>;
     protected image: Stream<string | null>;
@@ -34,20 +30,22 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     protected pendingAction: 'draft' | 'publish' | null;
     protected snapshot: string;
     private beforeUnloadHandler;
-    oninit(vnode: Mithril.Vnode): void;
-    oncreate(vnode: Mithril.VnodeDOM): void;
-    onremove(vnode: Mithril.VnodeDOM): void;
-    /**
-     * Stable JSON of every user-editable field, used to detect dirty state by
-     * comparison against `this.snapshot`. Order matters — keep it stable.
-     */
-    protected serializeFormState(): string;
-    protected refreshDirty(): void;
+    oninit(vnode: Mithril.Vnode<IPollFormAttrs, this>): void;
+    oncreate(vnode: Mithril.VnodeDOM<IPollFormAttrs, this>): void;
+    onremove(vnode: Mithril.VnodeDOM<IPollFormAttrs, this>): void;
     view(): Mithril.Children;
     fields(): ItemList<Mithril.Children>;
+    imageField(): Mithril.Children;
+    answersField(): Mithril.Children;
+    answerItems(): ItemList<Mithril.Children>;
+    endDateField(): Mithril.Children;
+    endDateHelp(): Mithril.Children;
+    settingsField(): Mithril.Children;
+    settingItems(): ItemList<Mithril.Children>;
     submitItems(): ItemList<Mithril.Children>;
     publishSplitButton(): Mithril.Children;
-    displayOptions(): ItemList<Mithril.Children>;
+    schedule(): void;
+    deprecationNotice(hasImage: boolean, isUpload: boolean): Mithril.Children;
     addOption(): void;
     removeOption(i: number): void;
     data(): object;
@@ -56,12 +54,12 @@ export default class PollForm extends Component<PollFormAttrs, PollFormState> {
     onSaveDraft(): Promise<void>;
     publish(): Promise<void>;
     submit(extra: object): Promise<boolean>;
-    protected handleError(error: unknown): void;
     delete(): Promise<void>;
+    protected handleError(error: unknown): void;
+    protected successAlert(key: string): void;
+    protected serializeFormState(): string;
     formatDate(date?: Date | string | false | undefined | null, def?: Date | false): string | false;
-    dateToTimestamp(date: Date | false): string | null;
+    dateToTimestamp(date: string | null): string | null;
     pollImageUploadSuccess(fileName: string | null | undefined): void;
     pollOptionImageUploadSuccess(index: number, fileName: string | null | undefined): void;
-    uploadConditional(hasImage: boolean, isUpload: boolean, ifCanUpload: JSX.Element, uploadButton: JSX.Element): JSX.Element;
 }
-export {};

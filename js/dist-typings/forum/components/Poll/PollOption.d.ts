@@ -1,30 +1,17 @@
-import Mithril from 'mithril';
+import type Mithril from 'mithril';
 import Component, { ComponentAttrs } from 'flarum/common/Component';
+import ItemList from 'flarum/common/utils/ItemList';
 import PollOptionModel from '../../models/PollOption';
 import PollState from '../../states/PollState';
-import Tooltip, { TooltipAttrs } from 'flarum/common/components/Tooltip';
-import ItemList from 'flarum/common/utils/ItemList';
-import Poll from '../../models/Poll';
-interface PollOptionAttrs extends ComponentAttrs {
+export interface IPollOptionAttrs extends ComponentAttrs {
     option: PollOptionModel;
     name: string;
     state: PollState;
 }
-export default class PollOption extends Component<PollOptionAttrs, PollState> {
-    option: PollOptionModel;
-    name: string;
-    state: PollState;
-    hasVoted: boolean;
-    totalVotes: number;
-    votes: number;
-    voted: boolean;
-    poll: Poll;
-    canSeeVoteCount: boolean;
-    answer: string;
-    oninit(vnode: Mithril.Vnode<PollOptionAttrs, PollState>): void;
-    percent(): number;
+export default class PollOption<CustomAttrs extends IPollOptionAttrs = IPollOptionAttrs> extends Component<CustomAttrs> {
     view(): Mithril.Children;
-    hideOptionTooltip(vnode: Mithril.Vnode<TooltipAttrs, Tooltip>): void;
-    optionDisplayItems(): ItemList<Mithril.Children>;
+    barItems(): ItemList<Mithril.Children>;
+    textItems(): ItemList<Mithril.Children>;
+    percent(): number;
+    width(): number;
 }
-export {};
