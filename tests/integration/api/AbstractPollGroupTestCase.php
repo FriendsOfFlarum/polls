@@ -45,7 +45,8 @@ abstract class AbstractPollGroupTestCase extends TestCase
             'group_permission' => [
                 ['permission' => 'discussion.polls.start', 'group_id' => 4],
                 ['permission' => 'startGlobalPoll', 'group_id' => 4],
-                ['permission' => 'viewPollGroups', 'group_id' => 4],
+                // Members see groups, so the edit/delete tests reach the policy.
+                ['permission' => 'viewPollGroups', 'group_id' => 3],
                 ['permission' => 'startPollGroup', 'group_id' => 4],
                 ['permission' => 'polls.moderate_group', 'group_id' => 4],
             ],
