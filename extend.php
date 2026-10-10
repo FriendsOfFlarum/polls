@@ -124,8 +124,8 @@ return [
         ->addSearcher(PollGroup::class, Filter\PollGroupSearcher::class)
         ->addFilter(Filter\PollGroupSearcher::class, Filter\PollGroupHasPollsFilter::class),
 
-    // Discussion-based polls (conditionally loaded)
     (new Extend\Conditional())
+        // Discussion-based polls
         ->whenSetting('fof-polls.enableDiscussionPolls', true, function () {
             return [
                 (new Extend\Model(Post::class))
@@ -225,10 +225,8 @@ return [
                 (new Extend\Policy())
                     ->modelPolicy(Post::class, Access\PostPolicy::class),
             ];
-        }),
-
-    // Poll groups (conditionally loaded)
-    (new Extend\Conditional())
+        })
+        // Poll groups
         ->when(new Extender\IsPollGroupEnabled(), function () {
             return [
                 (new Extend\Policy())
