@@ -104,6 +104,9 @@ return [
     (new Extend\ModelVisibility(Poll::class))
         ->scope(Access\ScopePollVisibility::class),
 
+    (new Extend\ModelVisibility(PollGroup::class))
+        ->scope(Access\ScopePollGroupVisibility::class),
+
     (new Extend\View())
         ->namespace('fof-polls', __DIR__.'/resources/views'),
 
