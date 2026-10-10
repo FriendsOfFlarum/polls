@@ -59,6 +59,12 @@ describe('PollView', () => {
     expect(out.rootEl.querySelector('.PollInfoText')!.textContent).not.toContain('were given');
   });
 
+  it('gives a voter no total while votes are hidden until the poll ends', () => {
+    const out = render({ voteCount: undefined, hideVotes: true, endDate: dayjs().add(5, 'day').toISOString() }, true);
+
+    expect(out.rootEl.querySelector('.PollInfoText')!.textContent).not.toContain('were given');
+  });
+
   it('shows the draft pill for a draft poll', () => {
     const out = render({ isDraft: true });
 
