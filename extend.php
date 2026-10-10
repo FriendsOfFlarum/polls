@@ -51,6 +51,9 @@ return [
     (new Extend\Event())
         ->listen(SettingsSaved::class, Listeners\ClearFormatterCache::class),
 
+    (new Extend\Middleware('api'))
+        ->add(Api\Middleware\SetPollViewer::class),
+
     // Add poll-related attributes to Forum resource (always loaded)
     (new Extend\ApiResource(Resource\ForumResource::class))
         ->fields(function () {
@@ -128,8 +131,11 @@ return [
     (new Extend\Conditional())
         ->whenSetting('fof-polls.enableDiscussionPolls', true, function () {
             return [
+                // chaperone(): a poll's `post` is the post it was loaded
+                // through, so the policies reading poll.post.discussion find
+                // both in memory instead of fetching them per poll.
                 (new Extend\Model(Post::class))
-                    ->hasMany('polls', Poll::class, 'post_id', 'id'),
+                    ->relationship('polls', fn (Post $post) => $post->hasMany(Poll::class, 'post_id', 'id')->chaperone('post')),
 
                 (new Extend\Model(Discussion::class))
                     ->hasMany('polls', Poll::class, 'post_id', 'first_post_id'),
@@ -140,11 +146,7 @@ return [
                 (new Extend\ApiResource(Resource\DiscussionResource::class))
                     ->fields(fn () => [
                         Schema\Boolean::make('hasPoll')
-                            ->get(function (Discussion $discussion) {
-                                return $discussion->relationLoaded('polls')
-                                    ? $discussion->polls->isNotEmpty() // @phpstan-ignore property.notFound
-                                    : $discussion->polls()->exists(); // @phpstan-ignore method.notFound
-                            }),
+                            ->get(Api\DiscussionHasPoll::get(...)),
                         Schema\Boolean::make('canStartPoll')
                             ->get(fn (Discussion $discussion, Context $context) => $context->getActor()->can('polls.start', $discussion)),
                         Schema\Arr::make('poll')
@@ -164,22 +166,19 @@ return [
                             // contains discussions (and therefore first posts) the actor can
                             // already see, and discussion-scoped polls inherit that post's
                             // visibility (see Access\ScopePollVisibility).
-                            // Powers the `hasPoll` attribute without a per-discussion
-                            // `exists()` query. Narrow on purpose: nothing on
-                            // the list serializes these rows.
-                            ->eagerLoadWhere('polls', function ($query) {
-                                $query->select(['id', 'post_id']);
-                            })
                             // No default include: the list UI reads only
                             // hasPoll, and including firstPost.polls forced
                             // every first post to be fully serialized and ran
                             // every poll's policy attributes — one lazy post
                             // fetch per poll. Explicit includers get complete,
-                            // batch-loaded polls; the poll policies read
-                            // poll.post.discussion, so load that chain with
-                            // them.
+                            // batch-loaded polls, with the viewer's votes the
+                            // policies read; only when the polls themselves
+                            // are included.
                             ->eagerLoadWhenIncluded([
-                                'firstPost' => ['firstPost.discussion', 'firstPost.polls.post.discussion', 'firstPost.polls.myVotes'],
+                                'firstPost'       => ['firstPost.discussion'],
+                                'firstPost.polls'               => ['firstPost.polls.myVotes'],
+                                'firstPost.polls.options'       => ['firstPost.polls.options'],
+                                'firstPost.polls.myVotes.option' => ['firstPost.polls.myVotes.option'],
                             ]);
                     })
                     ->endpoint('show', function ($endpoint) {
@@ -200,20 +199,22 @@ return [
                             ->includable()
                             ->type('polls'),
                     ])
-                    ->endpoint('create', function ($endpoint) {
-                        return $endpoint->addDefaultInclude([
-                            'polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option',
-                        ]);
-                    })
-                    ->endpoint('index', function ($endpoint) {
-                        return $endpoint->addDefaultInclude([
-                            'polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option',
-                        ]);
-                    })
-                    ->endpoint('show', function ($endpoint) {
-                        return $endpoint->addDefaultInclude([
-                            'polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option',
-                        ]);
+                    ->endpoint(['create', 'index', 'show'], function ($endpoint) {
+                        return $endpoint
+                            ->addDefaultInclude([
+                                'polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option',
+                            ])
+                            // Load what is serialized with the polls, with
+                            // them. The include buffer cannot batch these: it
+                            // resolves each poll's relationships before the
+                            // next poll is queued, so it would query options
+                            // and voted options once per poll, and the
+                            // policies read the viewer's votes even earlier.
+                            ->eagerLoadWhenIncluded([
+                                'polls'               => ['polls.myVotes'],
+                                'polls.options'       => ['polls.options'],
+                                'polls.myVotes.option' => ['polls.myVotes.option'],
+                            ]);
                     }),
 
                 (new Extend\ApiResource(Resource\ForumResource::class))

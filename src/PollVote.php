@@ -67,4 +67,26 @@ class PollVote extends AbstractModel
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * An option loaded through a vote (`myVotes.option`, `votes.option`) shares
+     * the vote's poll. BelongsTo has no chaperone(), so link it here: Eloquent
+     * sets every loaded relation through this method, eager or lazy, in
+     * whichever order the two arrive.
+     */
+    public function setRelation($relation, $value)
+    {
+        parent::setRelation($relation, $value);
+
+        if ($relation === 'option' || $relation === 'poll') {
+            $poll = $this->relations['poll'] ?? null;
+            $option = $this->relations['option'] ?? null;
+
+            if ($poll instanceof Poll && $option instanceof PollOption && $option->poll_id === $poll->id && !$option->relationLoaded('poll')) {
+                $option->setRelation('poll', $poll);
+            }
+        }
+
+        return $this;
+    }
 }

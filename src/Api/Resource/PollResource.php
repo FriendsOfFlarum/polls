@@ -114,7 +114,6 @@ class PollResource extends Resource\AbstractDatabaseResource
                     $poll->unsetRelation('options');
                     $poll->load('options');
 
-                    Poll::setStateUser($context->getActor());
                     $poll->unsetRelation('myVotes');
 
                     $serializer = new \Flarum\Api\Serializer($context);
@@ -163,7 +162,6 @@ class PollResource extends Resource\AbstractDatabaseResource
                 })
                 ->response(function (Context $context, Poll $poll) {
                     // Reload relations so the response includes updated vote counts
-                    Poll::setStateUser($context->getActor());
                     $poll->unsetRelation('myVotes');
                     $poll->load(['options', 'myVotes']);
 
@@ -224,7 +222,6 @@ class PollResource extends Resource\AbstractDatabaseResource
         $poll->unsetRelation('options');
         $poll->load('options');
 
-        Poll::setStateUser($context->getActor());
         $poll->unsetRelation('myVotes');
 
         $serializer = new \Flarum\Api\Serializer($context);
@@ -332,8 +329,6 @@ class PollResource extends Resource\AbstractDatabaseResource
                 ->includable()
                 ->type('poll_votes')
                 ->get(function (Poll $poll, Context $context) {
-                    Poll::setStateUser($context->getActor());
-
                     // The actor is constant within a request, so a relation
                     // loaded earlier (eager load or the vote policies) is
                     // this actor's — reuse it instead of re-querying per

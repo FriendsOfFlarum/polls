@@ -142,7 +142,9 @@ class Poll extends AbstractModel
      */
     public function options()
     {
-        return $this->hasMany(PollOption::class);
+        // chaperone(): each option's `poll` is this poll, not a fresh copy
+        // lazy-loaded one option at a time by the policies that read it.
+        return $this->hasMany(PollOption::class)->chaperone('poll');
     }
 
     /**
@@ -150,7 +152,7 @@ class Poll extends AbstractModel
      */
     public function votes()
     {
-        return $this->hasMany(PollVote::class);
+        return $this->hasMany(PollVote::class)->chaperone('poll');
     }
 
     /**
@@ -168,18 +170,33 @@ class Poll extends AbstractModel
         return $this;
     }
 
+    /**
+     * The viewer whose votes an eager-loaded `myVotes` holds. Eloquent calls a
+     * relation method without arguments when it eager loads it, so the viewer
+     * cannot be passed in; Api\SetPollViewer sets it from the actor of every
+     * API request instead, so no endpoint has to remember to.
+     */
     protected static ?User $stateUser = null;
 
     public function myVotes(?User $user = null): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         $user = $user ?: static::$stateUser;
 
-        return $this->votes()->where('user_id', $user ? $user->id : null);
+        // No viewer matches no votes. A null would match the votes of deleted
+        // users, whose user_id is set to null.
+        return $user
+            ? $this->votes()->where('user_id', $user->id)
+            : $this->votes()->whereRaw('1 = 0');
     }
 
-    public static function setStateUser(User $user): void
+    public static function setStateUser(?User $user): void
     {
         static::$stateUser = $user;
+    }
+
+    public static function stateUser(): ?User
+    {
+        return static::$stateUser;
     }
 
     protected function getPublicPollAttribute(): bool
