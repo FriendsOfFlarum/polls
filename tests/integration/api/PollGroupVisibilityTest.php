@@ -38,7 +38,7 @@ class PollGroupVisibilityTest extends TestCase
                 $this->normalUser(),
                 ['id' => 3, 'username' => 'moderator', 'email' => 'moderator@machine.local', 'is_email_confirmed' => 1],
             ],
-            'group_user'  => [['user_id' => 3, 'group_id' => 4]],
+            'group_user'     => [['user_id' => 3, 'group_id' => 4]],
             PollGroup::class => [['id' => 1, 'name' => 'Group', 'user_id' => 1]],
             Poll::class      => [
                 ['id' => 1, 'question' => 'Grouped poll', 'poll_group_id' => 1, 'user_id' => 1],
