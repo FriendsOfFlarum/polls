@@ -197,6 +197,19 @@ For extension developers, in `FoF\Polls\Events`:
 - **`PollVotesChanged`** — `unvotedOptionIds` now holds the option ids. Earlier releases passed nulls.
 - **`DeletingPollGroup` / `DeletedPollGroup`** — now dispatched when a group is deleted through the API. Earlier releases never dispatched them there.
 
+## Model factories
+
+`Poll`, `PollOption`, `PollVote` and `PollGroup` have Laravel model factories, for tests in fof/polls and in extensions that integrate with it. With flarum/testing, rows keyed by the model class are filled in from its factory:
+
+```php
+$this->prepareDatabase([
+    Poll::class       => [['id' => 1, 'settings' => ['public_poll' => true]]],
+    PollOption::class => [['id' => 1, 'poll_id' => 1]],
+]);
+```
+
+A poll defaults to a published global poll. A partial `settings` array is merged over the default settings. If a row leaves out a foreign key, the factory creates the related record.
+
 ## Audit log
 
 With [flarum/audit](https://docs.flarum.org/extensions/audit) enabled, polls records these actions. Each can be switched off in the audit settings.
