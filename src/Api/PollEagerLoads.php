@@ -36,7 +36,22 @@ namespace FoF\Polls\Api;
  */
 class PollEagerLoads
 {
-    private const NESTED = ['options', 'votes', 'votes.option', 'votes.user', 'myVotes.option', 'myVotes.user', 'user'];
+    /**
+     * include => the relations it needs loaded. Each user path brings the
+     * user's groups along: serializing a user for an actor who can edit
+     * credentials reads them (UserPolicy::editCredentials asks isAdmin()), as
+     * does an explicit `user.groups` include, so polls with different authors
+     * or voters would otherwise load them one user at a time.
+     */
+    private const NESTED = [
+        'options'        => ['options'],
+        'votes'          => ['votes'],
+        'votes.option'   => ['votes.option'],
+        'votes.user'     => ['votes.user', 'votes.user.groups'],
+        'myVotes.option' => ['myVotes.option'],
+        'myVotes.user'   => ['myVotes.user', 'myVotes.user.groups'],
+        'user'           => ['user', 'user.groups'],
+    ];
 
     /**
      * For polls included at $path ('polls', 'firstPost.polls').
@@ -47,8 +62,8 @@ class PollEagerLoads
     {
         $map = [$path => [$path.'.myVotes']];
 
-        foreach (self::NESTED as $relation) {
-            $map[$path.'.'.$relation] = [$path.'.'.$relation];
+        foreach (self::NESTED as $include => $relations) {
+            $map[$path.'.'.$include] = array_map(fn (string $relation) => $path.'.'.$relation, $relations);
         }
 
         return $map;
@@ -61,11 +76,8 @@ class PollEagerLoads
      */
     public static function primary(): array
     {
-        $map = [];
-
-        foreach (array_diff(self::NESTED, ['votes']) as $relation) {
-            $map[$relation] = [$relation];
-        }
+        $map = self::NESTED;
+        unset($map['votes']);
 
         return $map;
     }

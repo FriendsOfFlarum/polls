@@ -99,11 +99,11 @@ class PollGroupResource extends Resource\AbstractDatabaseResource
                 ->can('delete'),
             Endpoint\Show::make()
                 ->defaultInclude(['polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option'])
-                ->eagerLoadWhenIncluded(PollEagerLoads::under('polls')),
+                ->eagerLoadWhenIncluded(['user' => ['user', 'user.groups']] + PollEagerLoads::under('polls')),
             Endpoint\Index::make()
                 ->paginate()
                 ->defaultInclude(['polls'])
-                ->eagerLoadWhenIncluded(PollEagerLoads::under('polls')),
+                ->eagerLoadWhenIncluded(['user' => ['user', 'user.groups']] + PollEagerLoads::under('polls')),
         ];
     }
 

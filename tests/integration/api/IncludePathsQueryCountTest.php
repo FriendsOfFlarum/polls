@@ -31,8 +31,7 @@ use PHPUnit\Framework\Attributes\Test;
  * Each request is measured with eight polls per list, the extra rows are
  * deleted, and the same request must then run exactly as many queries. Total
  * queries, not only those on poll tables: a user or group loaded per poll
- * counts too, and flarum/testing's detector only warns when the ids are
- * inlined.
+ * counts too, wherever it comes from.
  */
 class IncludePathsQueryCountTest extends TestCase
 {
@@ -40,7 +39,13 @@ class IncludePathsQueryCountTest extends TestCase
 
     private const ROUNDS = 8;
 
-    private const PATHS = ['', 'options', 'votes', 'votes.option', 'votes.user', 'votes.poll', 'myVotes', 'myVotes.option', 'myVotes.user', 'myVotes.poll', 'user', 'post', 'post.discussion', 'pollGroup'];
+    private const PATHS = ['', 'options', 'votes', 'votes.option', 'votes.user', 'votes.user.groups', 'votes.poll', 'myVotes', 'myVotes.option', 'myVotes.user', 'myVotes.user.groups', 'myVotes.poll', 'user', 'user.groups', 'post', 'post.discussion', 'pollGroup'];
+
+    /** A poll group's own owner, on the group endpoints: label => [path, include] */
+    private const GROUP_OWNER = [
+        'groups' => ['/api/poll_groups', 'user,user.groups,polls'],
+        'group'  => ['/api/poll_groups/1', 'user,user.groups,polls'],
+    ];
 
     /** endpoint => [path, query, where its polls are included] */
     private const ENDPOINTS = [
@@ -71,19 +76,32 @@ class IncludePathsQueryCountTest extends TestCase
 
         $settings = json_encode(['max_votes' => 0, 'hide_votes' => false, 'public_poll' => $public, 'allow_change_vote' => false, 'allow_multiple_votes' => false]);
         $date = '2021-01-01 00:00:00';
-        $rows = ['discussions' => [], 'posts' => [], 'groups' => [], 'polls' => [], 'options' => [], 'votes' => []];
+        $rows = ['discussions' => [], 'posts' => [], 'groups' => [], 'polls' => [], 'options' => [], 'votes' => [], 'users' => [], 'memberships' => []];
 
         $addPoll = function (?int $postId, ?int $groupId) use (&$rows, $settings, $date) {
             $id = 1000 + count($rows['polls']) + 1;
-            $rows['polls'][] = ['id' => $id, 'question' => "Poll $id", 'post_id' => $postId, 'poll_group_id' => $groupId, 'user_id' => 2, 'end_date' => null, 'created_at' => $date, 'updated_at' => $date, 'vote_count' => 3, 'published_at' => $date, 'settings' => $settings];
+
+            /*
+             * Every poll has its OWN author and its own extra voter, each in a
+             * group. Shared users keep the number of distinct users flat as
+             * polls are added, which hides anything loaded per user.
+             */
+            $author = 10 + 2 * ($id - 1000);
+            $voter = $author + 1;
+            foreach ([$author, $voter] as $userId) {
+                $rows['users'][] = ['id' => $userId, 'username' => "user$userId", 'email' => "user$userId@machine.local", 'is_email_confirmed' => 1];
+                $rows['memberships'][] = ['user_id' => $userId, 'group_id' => 4];
+            }
+
+            $rows['polls'][] = ['id' => $id, 'question' => "Poll $id", 'post_id' => $postId, 'poll_group_id' => $groupId, 'user_id' => $author, 'end_date' => null, 'created_at' => $date, 'updated_at' => $date, 'vote_count' => 3, 'published_at' => $date, 'settings' => $settings];
 
             foreach (['Yes', 'No'] as $n => $answer) {
                 $rows['options'][] = ['id' => $id * 10 + $n, 'answer' => $answer, 'poll_id' => $id, 'vote_count' => 0, 'created_at' => $date, 'updated_at' => $date];
             }
 
-            // The admin, the member and another user each voted, so every
-            // actor's myVotes has something in it.
-            foreach ([1, 2, 3] as $n => $userId) {
+            // The admin, the member and the poll's own voter each voted, so
+            // every actor's myVotes has something in it.
+            foreach ([1, 2, $voter] as $n => $userId) {
                 $rows['votes'][] = ['id' => $id * 10 + $n, 'poll_id' => $id, 'option_id' => $id * 10 + ($n % 2), 'user_id' => $userId, 'created_at' => $date, 'updated_at' => $date];
             }
         };
@@ -91,7 +109,11 @@ class IncludePathsQueryCountTest extends TestCase
         for ($round = 1; $round <= self::ROUNDS; $round++) {
             $rows['discussions'][] = ['id' => $round, 'title' => "Discussion $round", 'created_at' => Carbon::parse($date), 'last_posted_at' => Carbon::parse($date), 'user_id' => 2, 'first_post_id' => 100 + $round, 'comment_count' => 1];
             $rows['posts'][] = ['id' => 100 + $round, 'number' => 1, 'discussion_id' => $round, 'created_at' => Carbon::parse($date), 'user_id' => 2, 'type' => 'comment', 'content' => '<t><p>Post</p></t>'];
-            $rows['groups'][] = ['id' => $round, 'name' => "Group $round", 'user_id' => 2, 'created_at' => $date, 'updated_at' => $date];
+            // Each poll group has its own owner too.
+            $owner = 5000 + $round;
+            $rows['users'][] = ['id' => $owner, 'username' => "owner$owner", 'email' => "owner$owner@machine.local", 'is_email_confirmed' => 1];
+            $rows['memberships'][] = ['user_id' => $owner, 'group_id' => 4];
+            $rows['groups'][] = ['id' => $round, 'name' => "Group $round", 'user_id' => $owner, 'created_at' => $date, 'updated_at' => $date];
 
             $addPoll(100 + $round, null);
             $addPoll(null, null);
@@ -104,7 +126,8 @@ class IncludePathsQueryCountTest extends TestCase
         }
 
         $this->prepareDatabase([
-            User::class        => [$this->normalUser(), ['id' => 3, 'username' => 'other', 'email' => 'other@machine.local', 'is_email_confirmed' => 1]],
+            User::class        => array_merge([$this->normalUser()], $rows['users']),
+            'group_user'       => $rows['memberships'],
             Discussion::class  => $rows['discussions'],
             Post::class        => $rows['posts'],
             'poll_groups'      => $rows['groups'],
@@ -185,6 +208,10 @@ class IncludePathsQueryCountTest extends TestCase
                     $label = "$who on $name with ".($chain ?: 'no include');
                     $requests[$label] = [$actor, $path, $query + ($include ? ['include' => implode(',', array_unique($include))] : [])];
                 }
+            }
+
+            foreach (self::GROUP_OWNER as $name => [$path, $include]) {
+                $requests["$who on $name with its owner"] = [$actor, $path, ['include' => $include]];
             }
         }
 
