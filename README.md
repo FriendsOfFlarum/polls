@@ -194,6 +194,18 @@ For extension developers, in `FoF\Polls\Events`:
 - **`PollWasCreated`** — dispatched once the poll and its options are saved. Earlier releases dispatched it before the options were saved, so `PollOptionCreated` now fires first.
 - **`PollWasEdited`** — dispatched once an edit is saved, options included. Carries the actor, the poll and the request data.
 - **`PollWasDeleted`** — dispatched after a poll is deleted through the API. The row is gone, but the model keeps its attributes.
+- **`PollVotesChanged`** — `unvotedOptionIds` now holds the option ids. Earlier releases passed nulls.
+- **`DeletingPollGroup` / `DeletedPollGroup`** — now dispatched when a group is deleted through the API. Earlier releases never dispatched them there.
+
+## Audit log
+
+With [flarum/audit](https://docs.flarum.org/extensions/audit) enabled, polls records these actions. Each can be switched off in the audit settings.
+
+- `poll.created`, `poll.updated`, `poll.deleted`, `poll.published`, `poll.unpublished`
+- `poll.voted`: a vote that changed something. For a public poll, the entry records the options added and removed. For a private poll it doesn't, because its voters are hidden.
+- `poll_group.created`, `poll_group.updated`, `poll_group.deleted`
+
+Entries for a poll in a discussion record that discussion, so they appear when the log is filtered by it.
 
 ## Poll Groups
 

@@ -240,5 +240,18 @@ return [
                     ->route('/polls/groups', 'fof.polls.groups.list')
                     ->route('/polls/groups/{id}', 'fof.polls.groups.view'),
             ];
-        }),
+        })
+        // flarum/audit
+        ->whenExtensionEnabled('flarum-audit', fn () => [
+            (new \Flarum\Audit\Extend\Audit())
+                ->listen(Events\PollWasCreated::class, 'poll.created', fn (Events\PollWasCreated $event) => Audit\Payloads::poll($event->poll))
+                ->listen(Events\PollWasEdited::class, 'poll.updated', fn (Events\PollWasEdited $event) => Audit\Payloads::poll($event->poll))
+                ->listen(Events\PollWasDeleted::class, 'poll.deleted', fn (Events\PollWasDeleted $event) => Audit\Payloads::poll($event->poll))
+                ->listen(Events\PollWasPublished::class, 'poll.published', fn (Events\PollWasPublished $event) => Audit\Payloads::poll($event->poll))
+                ->listen(Events\PollWasUnpublished::class, 'poll.unpublished', fn (Events\PollWasUnpublished $event) => Audit\Payloads::poll($event->poll))
+                ->listen(Events\PollVotesChanged::class, 'poll.voted', fn (Events\PollVotesChanged $event) => Audit\Payloads::vote($event))
+                ->listen(Events\SavedPollGroup::class, 'poll_group.created', fn (Events\SavedPollGroup $event) => $event->pollGroup->wasRecentlyCreated ? Audit\Payloads::pollGroup($event->pollGroup) : null)
+                ->listen(Events\SavedPollGroup::class, 'poll_group.updated', fn (Events\SavedPollGroup $event) => $event->pollGroup->wasRecentlyCreated ? null : Audit\Payloads::pollGroup($event->pollGroup))
+                ->listen(Events\DeletedPollGroup::class, 'poll_group.deleted', fn (Events\DeletedPollGroup $event) => Audit\Payloads::pollGroup($event->pollGroup)),
+        ]),
 ];

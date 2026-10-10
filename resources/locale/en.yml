@@ -223,3 +223,21 @@ fof-polls:
     upload_image:
       remove_button: Delete Image
       upload_button: Upload Image
+
+# Labels for the audit log entries this extension produces, rendered by the (optional)
+# flarum/audit browser. Defined under the flarum-audit namespace so the audit frontend
+# resolves them, but shipped here so they travel with the extension that owns the actions.
+flarum-audit:
+  lib:
+    browser:
+      poll:
+        created: Created poll {title}
+        updated: Updated poll {title}
+        deleted: Deleted poll {title}
+        published: Published poll {title}
+        unpublished: Unpublished poll {title}
+        voted: Voted in poll {title}
+      poll_group:
+        created: Created poll group {name}
+        updated: Updated poll group {name}
+        deleted: Deleted poll group {name}
