@@ -17,6 +17,7 @@ use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
 use Flarum\User\User;
 use FoF\Polls\Poll;
+use FoF\Polls\PollGroup;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -43,7 +44,7 @@ class CreatePollTest extends TestCase
             Post::class => [
                 ['id' => 1, 'user_id' => 1, 'discussion_id' => 1, 'number' => 1, 'created_at' => '2021-01-01 00:00:00', 'content' => 'Post 1', 'type' => 'comment'],
             ],
-            'poll_groups' => [
+            PollGroup::class => [
                 ['id' => 1, 'name' => 'Default Group', 'user_id' => 2],
                 ['id' => 2, 'name' => 'Another Group', 'user_id' => 3],
             ],

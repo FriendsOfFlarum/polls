@@ -44,11 +44,11 @@ class DeletePollImageAuthorizationTest extends TestCase
                 ['id' => 3, 'username' => 'pollowner', 'email' => 'pollowner@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => true],
                 ['id' => 4, 'username' => 'otheruser', 'email' => 'otheruser@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => true],
             ],
-            'polls' => [
-                ['id' => 1, 'question' => 'Owned by user 3', 'post_id' => null, 'user_id' => 3, 'end_date' => null, 'image' => 'pollImage-owned.webp', 'image_alt' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'published_at' => '2021-01-01 00:00:00', 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
+            Poll::class => [
+                ['id' => 1, 'question' => 'Owned by user 3', 'user_id' => 3, 'image' => 'pollImage-owned.webp', 'settings' => ['allow_change_vote' => false]],
             ],
-            'poll_options' => [
-                ['id' => 1, 'answer' => 'Option 1', 'poll_id' => 1, 'vote_count' => 0, 'image_url' => 'pollImage-option.webp', 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
+            PollOption::class => [
+                ['id' => 1, 'answer' => 'Option 1', 'poll_id' => 1, 'image_url' => 'pollImage-option.webp'],
             ],
             'group_user' => [
                 ['user_id' => 3, 'group_id' => 4],

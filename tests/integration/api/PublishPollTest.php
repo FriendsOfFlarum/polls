@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
 use FoF\Polls\Poll;
+use FoF\Polls\PollOption;
 use PHPUnit\Framework\Attributes\Test;
 
 class PublishPollTest extends TestCase
@@ -57,25 +58,25 @@ class PublishPollTest extends TestCase
                 ['permission' => 'polls.selfEdit', 'group_id' => 12],
                 ['permission' => 'polls.moderate', 'group_id' => 12],
             ],
-            'polls' => [
-                ['id' => 10, 'question' => 'Draft Poll', 'post_id' => null, 'user_id' => 3, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => null],
-                ['id' => 11, 'question' => 'Published Poll', 'post_id' => null, 'user_id' => 3, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => '2021-01-01 00:00:00'],
-                ['id' => 12, 'question' => 'Scheduled Draft', 'post_id' => null, 'user_id' => 3, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => null, 'scheduled_publish_at' => '2099-01-01 00:00:00'],
-                ['id' => 13, 'question' => 'Draft with end date', 'post_id' => null, 'user_id' => 3, 'end_date' => '2030-01-01 00:00:00', 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => null],
-                ['id' => 14, 'question' => 'Empty Draft', 'post_id' => null, 'user_id' => 3, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => null],
-                ['id' => 15, 'question' => 'Draft with past end date', 'post_id' => null, 'user_id' => 3, 'end_date' => '2020-01-01 00:00:00', 'created_at' => '2019-12-01 00:00:00', 'updated_at' => '2019-12-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => null],
+            Poll::class => [
+                ['id' => 10, 'question' => 'Draft Poll', 'user_id' => 3, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'settings' => ['allow_change_vote' => false], 'published_at' => null],
+                ['id' => 11, 'question' => 'Published Poll', 'user_id' => 3, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'settings' => ['allow_change_vote' => false], 'published_at' => '2021-01-01 00:00:00'],
+                ['id' => 12, 'question' => 'Scheduled Draft', 'user_id' => 3, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'settings' => ['allow_change_vote' => false], 'published_at' => null, 'scheduled_publish_at' => '2099-01-01 00:00:00'],
+                ['id' => 13, 'question' => 'Draft with end date', 'user_id' => 3, 'end_date' => '2030-01-01 00:00:00', 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'settings' => ['allow_change_vote' => false], 'published_at' => null],
+                ['id' => 14, 'question' => 'Empty Draft', 'user_id' => 3, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'settings' => ['allow_change_vote' => false], 'published_at' => null],
+                ['id' => 15, 'question' => 'Draft with past end date', 'user_id' => 3, 'end_date' => '2020-01-01 00:00:00', 'created_at' => '2019-12-01 00:00:00', 'updated_at' => '2019-12-01 00:00:00', 'settings' => ['allow_change_vote' => false], 'published_at' => null],
             ],
-            'poll_options' => [
-                ['id' => 100, 'answer' => 'A', 'poll_id' => 10, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 101, 'answer' => 'B', 'poll_id' => 10, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 102, 'answer' => 'A', 'poll_id' => 11, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 103, 'answer' => 'B', 'poll_id' => 11, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 104, 'answer' => 'A', 'poll_id' => 12, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 105, 'answer' => 'B', 'poll_id' => 12, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 106, 'answer' => 'A', 'poll_id' => 13, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 107, 'answer' => 'B', 'poll_id' => 13, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 108, 'answer' => 'A', 'poll_id' => 15, 'vote_count' => 0, 'created_at' => '2019-12-01 00:00:00', 'updated_at' => '2019-12-01 00:00:00'],
-                ['id' => 109, 'answer' => 'B', 'poll_id' => 15, 'vote_count' => 0, 'created_at' => '2019-12-01 00:00:00', 'updated_at' => '2019-12-01 00:00:00'],
+            PollOption::class => [
+                ['id' => 100, 'answer' => 'A', 'poll_id' => 10, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
+                ['id' => 101, 'answer' => 'B', 'poll_id' => 10, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
+                ['id' => 102, 'answer' => 'A', 'poll_id' => 11, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
+                ['id' => 103, 'answer' => 'B', 'poll_id' => 11, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
+                ['id' => 104, 'answer' => 'A', 'poll_id' => 12, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
+                ['id' => 105, 'answer' => 'B', 'poll_id' => 12, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
+                ['id' => 106, 'answer' => 'A', 'poll_id' => 13, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
+                ['id' => 107, 'answer' => 'B', 'poll_id' => 13, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
+                ['id' => 108, 'answer' => 'A', 'poll_id' => 15, 'created_at' => '2019-12-01 00:00:00', 'updated_at' => '2019-12-01 00:00:00'],
+                ['id' => 109, 'answer' => 'B', 'poll_id' => 15, 'created_at' => '2019-12-01 00:00:00', 'updated_at' => '2019-12-01 00:00:00'],
             ],
         ]);
     }

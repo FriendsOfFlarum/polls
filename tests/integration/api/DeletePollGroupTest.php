@@ -20,10 +20,10 @@ class DeletePollGroupTest extends AbstractPollGroupTestCase
     protected function getDefaultData(): array
     {
         return array_merge(parent::getDefaultData(), [
-            'poll_groups' => [
+            PollGroup::class => [
                 $this->getDefaultPollGroup(),
             ],
-            'polls' => [
+            Poll::class => [
                 $this->getDefaultPoll(),
             ],
         ]);

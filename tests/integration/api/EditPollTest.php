@@ -17,6 +17,8 @@ use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
 use Flarum\User\User;
 use FoF\Polls\Poll;
+use FoF\Polls\PollGroup;
+use FoF\Polls\PollOption;
 use PHPUnit\Framework\Attributes\Test;
 
 class EditPollTest extends TestCase
@@ -43,15 +45,15 @@ class EditPollTest extends TestCase
             Post::class => [
                 ['id' => 1, 'user_id' => 1, 'discussion_id' => 1, 'number' => 1, 'created_at' => '2021-01-01 00:00:00', 'content' => 'Post 1', 'type' => 'comment'],
             ],
-            'polls' => [
-                ['id' => 1, 'question' => 'Testing Poll--Global', 'subtitle' => 'Testing subtitle', 'image' => 'pollimage-abcdef.png', 'image_alt' => 'test alt', 'post_id' => null, 'user_id' => 1, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => '2021-01-01 00:00:00'],
-                ['id' => 2, 'question' => 'Testing Poll--Group', 'subtitle' => 'Testing subtitle', 'image' => null, 'image_alt' => null, 'user_id' => 4, 'end_date' => null, 'poll_group_id' => 1, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => '2021-01-01 00:00:00'],
+            Poll::class => [
+                ['id' => 1, 'question' => 'Testing Poll--Global', 'subtitle' => 'Testing subtitle', 'image' => 'pollimage-abcdef.png', 'image_alt' => 'test alt', 'user_id' => 1, 'settings' => ['allow_change_vote' => false]],
+                ['id' => 2, 'question' => 'Testing Poll--Group', 'subtitle' => 'Testing subtitle', 'user_id' => 4, 'poll_group_id' => 1, 'settings' => ['allow_change_vote' => false]],
             ],
-            'poll_options' => [
-                ['id' => 1, 'answer' => 'Option 1', 'poll_id' => 1, 'vote_count' => 0, 'image_url' => 'pollimage-hijklm.png', 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 2, 'answer' => 'Option 2', 'poll_id' => 1, 'vote_count' => 0, 'image_url' => 'pollimage-nopqrs.png', 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
+            PollOption::class => [
+                ['id' => 1, 'answer' => 'Option 1', 'poll_id' => 1, 'image_url' => 'pollimage-hijklm.png'],
+                ['id' => 2, 'answer' => 'Option 2', 'poll_id' => 1, 'image_url' => 'pollimage-nopqrs.png'],
             ],
-            'poll_groups' => [
+            PollGroup::class => [
                 ['id' => 1, 'name' => 'Test Group', 'user_id' => 3],
                 ['id' => 2, 'name' => 'Another Group', 'user_id' => 4],
             ],

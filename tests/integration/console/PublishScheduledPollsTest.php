@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Flarum\Testing\integration\TestCase;
 use FoF\Polls\Console\PublishScheduledPollsCommand;
 use FoF\Polls\Poll;
+use FoF\Polls\PollOption;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
@@ -35,19 +36,19 @@ class PublishScheduledPollsTest extends TestCase
             'users' => [
                 ['id' => 3, 'username' => 'author', 'email' => 'author@machine.local', 'password' => 'too-obscure', 'is_email_confirmed' => true],
             ],
-            'polls' => [
-                ['id' => 20, 'question' => 'Due Valid', 'post_id' => null, 'user_id' => 3, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => null, 'scheduled_publish_at' => $past, 'scheduled_publish_error' => null],
-                ['id' => 21, 'question' => 'Due Empty', 'post_id' => null, 'user_id' => 3, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => null, 'scheduled_publish_at' => $past, 'scheduled_publish_error' => null],
-                ['id' => 22, 'question' => 'Previously Errored', 'post_id' => null, 'user_id' => 3, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => null, 'scheduled_publish_at' => $past, 'scheduled_publish_error' => 'whatever'],
-                ['id' => 23, 'question' => 'Due with past end date', 'post_id' => null, 'user_id' => 3, 'end_date' => '2020-01-01 00:00:00', 'created_at' => '2019-12-01 00:00:00', 'updated_at' => '2019-12-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => null, 'scheduled_publish_at' => $past, 'scheduled_publish_error' => null],
+            Poll::class => [
+                ['id' => 20, 'question' => 'Due Valid', 'user_id' => 3, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'settings' => ['allow_change_vote' => false], 'published_at' => null, 'scheduled_publish_at' => $past, 'scheduled_publish_error' => null],
+                ['id' => 21, 'question' => 'Due Empty', 'user_id' => 3, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'settings' => ['allow_change_vote' => false], 'published_at' => null, 'scheduled_publish_at' => $past, 'scheduled_publish_error' => null],
+                ['id' => 22, 'question' => 'Previously Errored', 'user_id' => 3, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'settings' => ['allow_change_vote' => false], 'published_at' => null, 'scheduled_publish_at' => $past, 'scheduled_publish_error' => 'whatever'],
+                ['id' => 23, 'question' => 'Due with past end date', 'user_id' => 3, 'end_date' => '2020-01-01 00:00:00', 'created_at' => '2019-12-01 00:00:00', 'updated_at' => '2019-12-01 00:00:00', 'settings' => ['allow_change_vote' => false], 'published_at' => null, 'scheduled_publish_at' => $past, 'scheduled_publish_error' => null],
             ],
-            'poll_options' => [
-                ['id' => 200, 'answer' => 'A', 'poll_id' => 20, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 201, 'answer' => 'B', 'poll_id' => 20, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 202, 'answer' => 'A', 'poll_id' => 22, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 203, 'answer' => 'B', 'poll_id' => 22, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 204, 'answer' => 'A', 'poll_id' => 23, 'vote_count' => 0, 'created_at' => '2019-12-01 00:00:00', 'updated_at' => '2019-12-01 00:00:00'],
-                ['id' => 205, 'answer' => 'B', 'poll_id' => 23, 'vote_count' => 0, 'created_at' => '2019-12-01 00:00:00', 'updated_at' => '2019-12-01 00:00:00'],
+            PollOption::class => [
+                ['id' => 200, 'answer' => 'A', 'poll_id' => 20, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
+                ['id' => 201, 'answer' => 'B', 'poll_id' => 20, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
+                ['id' => 202, 'answer' => 'A', 'poll_id' => 22, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
+                ['id' => 203, 'answer' => 'B', 'poll_id' => 22, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
+                ['id' => 204, 'answer' => 'A', 'poll_id' => 23, 'created_at' => '2019-12-01 00:00:00', 'updated_at' => '2019-12-01 00:00:00'],
+                ['id' => 205, 'answer' => 'B', 'poll_id' => 23, 'created_at' => '2019-12-01 00:00:00', 'updated_at' => '2019-12-01 00:00:00'],
             ],
         ]);
     }

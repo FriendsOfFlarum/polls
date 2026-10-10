@@ -14,6 +14,7 @@ namespace FoF\Polls\Tests\integration\api;
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
 use FoF\Polls\Poll;
+use FoF\Polls\PollOption;
 use PHPUnit\Framework\Attributes\Test;
 
 class UnpublishPollTest extends TestCase
@@ -56,21 +57,21 @@ class UnpublishPollTest extends TestCase
                 ['permission' => 'polls.selfEdit', 'group_id' => 12],
                 ['permission' => 'polls.moderate', 'group_id' => 12],
             ],
-            'polls' => [
-                ['id' => 20, 'question' => 'Published Poll', 'post_id' => null, 'user_id' => 3, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => '2021-01-01 00:00:00'],
-                ['id' => 21, 'question' => 'Published with votes', 'post_id' => null, 'user_id' => 3, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 1, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => '2021-01-01 00:00:00'],
-                ['id' => 22, 'question' => 'Draft Poll', 'post_id' => null, 'user_id' => 3, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => null],
-                ['id' => 23, 'question' => 'Published For List', 'post_id' => null, 'user_id' => 3, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => '2021-01-01 00:00:00'],
+            Poll::class => [
+                ['id' => 20, 'question' => 'Published Poll', 'user_id' => 3, 'settings' => ['allow_change_vote' => false], 'published_at' => '2021-01-01 00:00:00'],
+                ['id' => 21, 'question' => 'Published with votes', 'user_id' => 3, 'vote_count' => 1, 'settings' => ['allow_change_vote' => false], 'published_at' => '2021-01-01 00:00:00'],
+                ['id' => 22, 'question' => 'Draft Poll', 'user_id' => 3, 'settings' => ['allow_change_vote' => false], 'published_at' => null],
+                ['id' => 23, 'question' => 'Published For List', 'user_id' => 3, 'settings' => ['allow_change_vote' => false], 'published_at' => '2021-01-01 00:00:00'],
             ],
-            'poll_options' => [
-                ['id' => 200, 'answer' => 'A', 'poll_id' => 20, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 201, 'answer' => 'B', 'poll_id' => 20, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 202, 'answer' => 'A', 'poll_id' => 21, 'vote_count' => 1, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 203, 'answer' => 'B', 'poll_id' => 21, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 204, 'answer' => 'A', 'poll_id' => 22, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 205, 'answer' => 'B', 'poll_id' => 22, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 206, 'answer' => 'A', 'poll_id' => 23, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 207, 'answer' => 'B', 'poll_id' => 23, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
+            PollOption::class => [
+                ['id' => 200, 'answer' => 'A', 'poll_id' => 20],
+                ['id' => 201, 'answer' => 'B', 'poll_id' => 20],
+                ['id' => 202, 'answer' => 'A', 'poll_id' => 21, 'vote_count' => 1],
+                ['id' => 203, 'answer' => 'B', 'poll_id' => 21],
+                ['id' => 204, 'answer' => 'A', 'poll_id' => 22],
+                ['id' => 205, 'answer' => 'B', 'poll_id' => 22],
+                ['id' => 206, 'answer' => 'A', 'poll_id' => 23],
+                ['id' => 207, 'answer' => 'B', 'poll_id' => 23],
             ],
         ]);
     }

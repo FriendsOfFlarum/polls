@@ -14,6 +14,8 @@ namespace FoF\Polls\Tests\integration\api;
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
 use Flarum\User\User;
+use FoF\Polls\Poll;
+use FoF\Polls\PollOption;
 use PHPUnit\Framework\Attributes\Test;
 
 class ListGlobalPollsTest extends TestCase
@@ -32,25 +34,25 @@ class ListGlobalPollsTest extends TestCase
             User::class => [
                 $this->normalUser(),
             ],
-            'polls' => [
+            Poll::class => [
                 // Poll 1: Active — no end date (perpetual)
-                ['id' => 1, 'question' => 'Active poll no end', 'subtitle' => null, 'image' => null, 'image_alt' => null, 'post_id' => null, 'user_id' => 1, 'end_date' => null, 'created_at' => '2025-01-01 00:00:00', 'updated_at' => '2025-01-01 00:00:00', 'vote_count' => 0, 'published_at' => '2026-01-01 00:00:00', 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
+                ['id' => 1, 'question' => 'Active poll no end', 'user_id' => 1, 'end_date' => null, 'created_at' => '2025-01-01 00:00:00', 'updated_at' => '2025-01-01 00:00:00', 'published_at' => '2026-01-01 00:00:00', 'settings' => ['allow_change_vote' => false]],
                 // Poll 2: Active — end date in the future
-                ['id' => 2, 'question' => 'Active poll future end', 'subtitle' => null, 'image' => null, 'image_alt' => null, 'post_id' => null, 'user_id' => 1, 'end_date' => '2030-01-01 00:00:00', 'created_at' => '2025-01-02 00:00:00', 'updated_at' => '2025-01-02 00:00:00', 'vote_count' => 0, 'published_at' => '2026-01-01 00:00:00', 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
+                ['id' => 2, 'question' => 'Active poll future end', 'user_id' => 1, 'end_date' => '2030-01-01 00:00:00', 'created_at' => '2025-01-02 00:00:00', 'updated_at' => '2025-01-02 00:00:00', 'published_at' => '2026-01-01 00:00:00', 'settings' => ['allow_change_vote' => false]],
                 // Poll 3: Ended — end date in the past
-                ['id' => 3, 'question' => 'Ended poll old', 'subtitle' => null, 'image' => null, 'image_alt' => null, 'post_id' => null, 'user_id' => 1, 'end_date' => '2020-01-01 00:00:00', 'created_at' => '2025-01-03 00:00:00', 'updated_at' => '2025-01-03 00:00:00', 'vote_count' => 0, 'published_at' => '2026-01-01 00:00:00', 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
+                ['id' => 3, 'question' => 'Ended poll old', 'user_id' => 1, 'end_date' => '2020-01-01 00:00:00', 'created_at' => '2025-01-03 00:00:00', 'updated_at' => '2025-01-03 00:00:00', 'published_at' => '2026-01-01 00:00:00', 'settings' => ['allow_change_vote' => false]],
                 // Poll 4: Ended — end date in the past (more recent)
-                ['id' => 4, 'question' => 'Ended poll recent', 'subtitle' => null, 'image' => null, 'image_alt' => null, 'post_id' => null, 'user_id' => 1, 'end_date' => '2021-06-01 00:00:00', 'created_at' => '2025-01-04 00:00:00', 'updated_at' => '2025-01-04 00:00:00', 'vote_count' => 0, 'published_at' => '2026-01-01 00:00:00', 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}'],
+                ['id' => 4, 'question' => 'Ended poll recent', 'user_id' => 1, 'end_date' => '2021-06-01 00:00:00', 'created_at' => '2025-01-04 00:00:00', 'updated_at' => '2025-01-04 00:00:00', 'published_at' => '2026-01-01 00:00:00', 'settings' => ['allow_change_vote' => false]],
             ],
-            'poll_options' => [
-                ['id' => 1, 'answer' => 'Yes', 'poll_id' => 1, 'vote_count' => 0, 'created_at' => '2025-01-01 00:00:00', 'updated_at' => '2025-01-01 00:00:00'],
-                ['id' => 2, 'answer' => 'No', 'poll_id' => 1, 'vote_count' => 0, 'created_at' => '2025-01-01 00:00:00', 'updated_at' => '2025-01-01 00:00:00'],
-                ['id' => 3, 'answer' => 'Yes', 'poll_id' => 2, 'vote_count' => 0, 'created_at' => '2025-01-02 00:00:00', 'updated_at' => '2025-01-02 00:00:00'],
-                ['id' => 4, 'answer' => 'No', 'poll_id' => 2, 'vote_count' => 0, 'created_at' => '2025-01-02 00:00:00', 'updated_at' => '2025-01-02 00:00:00'],
-                ['id' => 5, 'answer' => 'Yes', 'poll_id' => 3, 'vote_count' => 0, 'created_at' => '2025-01-03 00:00:00', 'updated_at' => '2025-01-03 00:00:00'],
-                ['id' => 6, 'answer' => 'No', 'poll_id' => 3, 'vote_count' => 0, 'created_at' => '2025-01-03 00:00:00', 'updated_at' => '2025-01-03 00:00:00'],
-                ['id' => 7, 'answer' => 'Yes', 'poll_id' => 4, 'vote_count' => 0, 'created_at' => '2025-01-04 00:00:00', 'updated_at' => '2025-01-04 00:00:00'],
-                ['id' => 8, 'answer' => 'No', 'poll_id' => 4, 'vote_count' => 0, 'created_at' => '2025-01-04 00:00:00', 'updated_at' => '2025-01-04 00:00:00'],
+            PollOption::class => [
+                ['id' => 1, 'answer' => 'Yes', 'poll_id' => 1, 'created_at' => '2025-01-01 00:00:00', 'updated_at' => '2025-01-01 00:00:00'],
+                ['id' => 2, 'answer' => 'No', 'poll_id' => 1, 'created_at' => '2025-01-01 00:00:00', 'updated_at' => '2025-01-01 00:00:00'],
+                ['id' => 3, 'answer' => 'Yes', 'poll_id' => 2, 'created_at' => '2025-01-02 00:00:00', 'updated_at' => '2025-01-02 00:00:00'],
+                ['id' => 4, 'answer' => 'No', 'poll_id' => 2, 'created_at' => '2025-01-02 00:00:00', 'updated_at' => '2025-01-02 00:00:00'],
+                ['id' => 5, 'answer' => 'Yes', 'poll_id' => 3, 'created_at' => '2025-01-03 00:00:00', 'updated_at' => '2025-01-03 00:00:00'],
+                ['id' => 6, 'answer' => 'No', 'poll_id' => 3, 'created_at' => '2025-01-03 00:00:00', 'updated_at' => '2025-01-03 00:00:00'],
+                ['id' => 7, 'answer' => 'Yes', 'poll_id' => 4, 'created_at' => '2025-01-04 00:00:00', 'updated_at' => '2025-01-04 00:00:00'],
+                ['id' => 8, 'answer' => 'No', 'poll_id' => 4, 'created_at' => '2025-01-04 00:00:00', 'updated_at' => '2025-01-04 00:00:00'],
             ],
         ]);
     }

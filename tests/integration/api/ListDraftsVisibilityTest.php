@@ -13,6 +13,7 @@ namespace FoF\Polls\Tests\integration\api;
 
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
+use FoF\Polls\Poll;
 use PHPUnit\Framework\Attributes\Test;
 
 class ListDraftsVisibilityTest extends TestCase
@@ -52,9 +53,9 @@ class ListDraftsVisibilityTest extends TestCase
                 ['permission' => 'polls.selfEdit',  'group_id' => 10],
                 ['permission' => 'polls.moderate',  'group_id' => 12],
             ],
-            'polls' => [
-                ['id' => 100, 'user_id' => 3, 'post_id' => null, 'question' => 'Draft',     'settings' => '{}', 'created_at' => '2026-04-17 10:00:00', 'updated_at' => '2026-04-17 10:00:00', 'published_at' => null],
-                ['id' => 101, 'user_id' => 3, 'post_id' => null, 'question' => 'Published', 'settings' => '{}', 'created_at' => '2026-04-17 10:00:00', 'updated_at' => '2026-04-17 10:00:00', 'published_at' => '2026-04-17 10:00:00'],
+            Poll::class => [
+                ['id' => 100, 'user_id' => 3, 'question' => 'Draft',     'settings' => '{}', 'created_at' => '2026-04-17 10:00:00', 'updated_at' => '2026-04-17 10:00:00', 'published_at' => null],
+                ['id' => 101, 'user_id' => 3, 'question' => 'Published', 'settings' => '{}', 'created_at' => '2026-04-17 10:00:00', 'updated_at' => '2026-04-17 10:00:00', 'published_at' => '2026-04-17 10:00:00'],
             ],
         ]);
     }
