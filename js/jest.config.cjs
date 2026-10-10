@@ -11,12 +11,12 @@ module.exports = {
   setupFilesAfterEnv: [path.resolve(__dirname, 'tests/setup-env.js')],
   // Core's source is compiled from vendor/, outside this package, so its own
   // imports (clsx, focus-trap, ...) have to resolve back to node_modules here.
-  modulePaths: [path.resolve(__dirname, 'node_modules')],
+  modulePaths: [path.resolve(__dirname, 'node_modules'), path.resolve(path.dirname(require.resolve('@flarum/jest-config')), '../..')],
   moduleNameMapper: {
     ...base.moduleNameMapper,
     '^flarum/(.*)$': coreJs + '/src/$1',
   },
   // Ensure vendor/ TS files are transformed. @flarum/jest-config ships its
   // matchers as TypeScript, so it has to be transformed too.
-  transformIgnorePatterns: ['/node_modules/(?!@flarum/jest-config/)'],
+  transformIgnorePatterns: ['/node_modules/(?!(?:\\.pnpm/|@flarum/jest-config/))'],
 };

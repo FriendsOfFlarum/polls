@@ -1,8 +1,10 @@
 {
     "extends": "./tsconfig.json",
-    "include": ["tests/**/*"],
+    "include": ["tests/**/*", "src/@types/**/*", "../vendor/flarum/core/js/dist-typings/@types/**/*"],
     "files": ["node_modules/@flarum/jest-config/shims.d.ts"],
     "compilerOptions": {
+        "rootDir": ".",
+        "types": ["mithril", "jquery", "node", "jest"],
         "strict": false,
         "noImplicitReturns": false,
         "noImplicitAny": false

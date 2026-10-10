@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import jsYaml from 'js-yaml';
-import flatten from 'flat';
+import { load as loadYaml } from 'js-yaml';
+import { flatten } from 'flat';
 
 import app from 'flarum/forum/app';
 import ForumApplication from 'flarum/forum/ForumApplication';
@@ -13,7 +13,9 @@ let booted = false;
 
 export default function bootstrapForum(payload: Record<string, any> = {}): void {
   if (booted) {
-    app.store.data = {};
+    for (const type of Object.keys(app.store.models)) {
+      for (const model of app.store.all(type)) app.store.remove(model);
+    }
     load(payload);
     app.store.pushPayload({ data: (app as any).data.resources });
     app.forum = app.store.getById('forums', '1')!;
@@ -65,5 +67,5 @@ function load(payload: Record<string, any>): void {
 }
 
 function readTranslations(relative: string): Record<string, string> {
-  return flatten(jsYaml.load(fs.readFileSync(path.resolve(process.cwd(), relative), 'utf8')) as object) as Record<string, string>;
+  return flatten(loadYaml(fs.readFileSync(path.resolve(process.cwd(), relative), 'utf8')) as object) as Record<string, string>;
 }

@@ -147,7 +147,7 @@ describe('PollState', () => {
     it('asks a guest to log in instead of voting', () => {
       signedOut();
 
-      const modal = jest.spyOn(app.modal, 'show').mockImplementation(() => {});
+      const modal = jest.spyOn(app.modal, 'show').mockResolvedValue(undefined);
       const { state: s, options } = state();
 
       change(s, options[0]);
