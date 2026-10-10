@@ -188,4 +188,30 @@ class ListPostsPollsQueryCountTest extends TestCase
         $this->assertSame(1, $this->countMatching($sql, '/from polls/'), 'One query answers hasPoll for the whole page');
         $this->assertSame(0, $this->countMatching($sql, '/select \* from polls/'), 'hasPoll loads no poll rows');
     }
+
+    #[Test]
+    public function every_voter_and_their_options_load_in_batches_across_a_list()
+    {
+        // Public polls show their voters. Including `votes` and `votes.option`
+        // on a list must cost the same with eight polls as with one.
+        $this->database()->table('polls')->update(['settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": true,"allow_change_vote": false,"allow_multiple_votes": false}']);
+
+        $requests = [
+            'the posts list'      => ['/api/posts', ['filter' => ['author' => 'normal'], 'include' => 'polls,polls.votes,polls.votes.option']],
+            'the discussion list' => ['/api/discussions', ['include' => 'firstPost,firstPost.polls,firstPost.polls.votes,firstPost.polls.votes.option']],
+        ];
+
+        foreach ($requests as $where => [$path, $query]) {
+            [$body, $sql] = $this->get($path, $query);
+
+            $votes = array_filter($body['included'] ?? [], fn ($r) => $r['type'] === 'poll_votes');
+
+            $this->assertCount(self::DISCUSSIONS * 2, $votes, "Every vote of every public poll is included on $where");
+
+            // One query for the viewer's own votes, one for every vote, one for the voted options.
+            $this->assertSame(2, $this->countMatching($sql, '/from poll_votes/'), "Votes load in batches, not per poll, on $where");
+            $this->assertSame(1, $this->countMatching($sql, '/from poll_options/'), "Voted options load in one query, not per poll, on $where");
+            $this->assertSame(0, $this->countMatching($sql, '/from polls where polls\.id = \?/'), "No poll is fetched per vote on $where");
+        }
+    }
 }

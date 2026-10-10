@@ -18,6 +18,7 @@ use Flarum\Api\Schema;
 use Flarum\Api\Sort\SortColumn;
 use Flarum\Post\PostRepository;
 use Flarum\Settings\SettingsRepositoryInterface;
+use FoF\Polls\Api\PollEagerLoads;
 use FoF\Polls\Commands\CreatePoll;
 use FoF\Polls\Commands\EditPoll;
 use FoF\Polls\Commands\MultipleVotesPoll;
@@ -147,6 +148,10 @@ class PollResource extends Resource\AbstractDatabaseResource
             Endpoint\Index::make()
                 ->paginate()
                 ->defaultInclude(['options', 'votes', 'myVotes', 'myVotes.option'])
+                // The policies read the viewer's votes for every poll in the
+                // page; see PollEagerLoads for the rest.
+                ->eagerLoad(['myVotes'])
+                ->eagerLoadWhenIncluded(PollEagerLoads::primary())
                 ->defaultSort('-createdAt'),
             Endpoint\Endpoint::make('votes')
                 ->route('PATCH', '/{id}/votes')

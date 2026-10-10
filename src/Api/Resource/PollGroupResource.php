@@ -16,6 +16,7 @@ use Flarum\Api\Endpoint;
 use Flarum\Api\Resource;
 use Flarum\Api\Schema;
 use Flarum\Api\Sort\SortColumn;
+use FoF\Polls\Api\PollEagerLoads;
 use FoF\Polls\Commands\CreatePollGroup;
 use FoF\Polls\Commands\EditPollGroup;
 use FoF\Polls\PollGroup;
@@ -97,10 +98,12 @@ class PollGroupResource extends Resource\AbstractDatabaseResource
                 ->authenticated()
                 ->can('delete'),
             Endpoint\Show::make()
-                ->defaultInclude(['polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option']),
+                ->defaultInclude(['polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option'])
+                ->eagerLoadWhenIncluded(PollEagerLoads::under('polls')),
             Endpoint\Index::make()
                 ->paginate()
-                ->defaultInclude(['polls']),
+                ->defaultInclude(['polls'])
+                ->eagerLoadWhenIncluded(PollEagerLoads::under('polls')),
         ];
     }
 

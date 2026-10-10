@@ -171,20 +171,16 @@ return [
                             // every first post to be fully serialized and ran
                             // every poll's policy attributes — one lazy post
                             // fetch per poll. Explicit includers get complete,
-                            // batch-loaded polls, with the viewer's votes the
-                            // policies read; only when the polls themselves
-                            // are included.
-                            ->eagerLoadWhenIncluded([
-                                'firstPost'                      => ['firstPost.discussion'],
-                                'firstPost.polls'                => ['firstPost.polls.myVotes'],
-                                'firstPost.polls.options'        => ['firstPost.polls.options'],
-                                'firstPost.polls.myVotes.option' => ['firstPost.polls.myVotes.option'],
-                            ]);
+                            // batch-loaded polls (see Api\PollEagerLoads),
+                            // only when the polls themselves are included.
+                            ->eagerLoadWhenIncluded(['firstPost' => ['firstPost.discussion']] + Api\PollEagerLoads::under('firstPost.polls'));
                     })
                     ->endpoint('show', function ($endpoint) {
-                        return $endpoint->addDefaultInclude([
-                            'firstPost.polls', 'firstPost.polls.options', 'firstPost.polls.myVotes', 'firstPost.polls.myVotes.option',
-                        ]);
+                        return $endpoint
+                            ->addDefaultInclude([
+                                'firstPost.polls', 'firstPost.polls.options', 'firstPost.polls.myVotes', 'firstPost.polls.myVotes.option',
+                            ])
+                            ->eagerLoadWhenIncluded(Api\PollEagerLoads::under('firstPost.polls'));
                     }),
 
                 (new Extend\ApiResource(Resource\PostResource::class))
@@ -204,17 +200,7 @@ return [
                             ->addDefaultInclude([
                                 'polls', 'polls.options', 'polls.myVotes', 'polls.myVotes.option',
                             ])
-                            // Load what is serialized with the polls, with
-                            // them. The include buffer cannot batch these: it
-                            // resolves each poll's relationships before the
-                            // next poll is queued, so it would query options
-                            // and voted options once per poll, and the
-                            // policies read the viewer's votes even earlier.
-                            ->eagerLoadWhenIncluded([
-                                'polls'                => ['polls.myVotes'],
-                                'polls.options'        => ['polls.options'],
-                                'polls.myVotes.option' => ['polls.myVotes.option'],
-                            ]);
+                            ->eagerLoadWhenIncluded(Api\PollEagerLoads::under('polls'));
                     }),
 
                 (new Extend\ApiResource(Resource\ForumResource::class))
