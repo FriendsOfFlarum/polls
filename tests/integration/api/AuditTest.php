@@ -48,7 +48,7 @@ class AuditTest extends TestCase
 
         $date = '2021-01-01 00:00:00';
         $poll = fn (int $id, string $question, ?int $postId, bool $public = false, ?string $publishedAt = '2021-01-01 00:00:00') => [
-            'id' => $id, 'question' => $question, 'post_id' => $postId, 'user_id' => 1, 'end_date' => null, 'created_at' => $date, 'updated_at' => $date,
+            'id'         => $id, 'question' => $question, 'post_id' => $postId, 'user_id' => 1, 'end_date' => null, 'created_at' => $date, 'updated_at' => $date,
             'vote_count' => 0, 'published_at' => $publishedAt, 'settings' => sprintf(self::SETTINGS, $public ? 'true' : 'false'),
         ];
         $option = fn (int $id, int $pollId) => ['id' => $id, 'answer' => "Option $id", 'poll_id' => $pollId, 'vote_count' => 0, 'created_at' => $date, 'updated_at' => $date];
