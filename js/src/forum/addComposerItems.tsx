@@ -56,7 +56,15 @@ export const addToComposer = (composerPath: string) => {
   });
 };
 
+// Core's fallback focuses the first `:input` in the composer, which is the poll
+// button in the reply header. Left alone if core (or another extension) sets one.
+export const focusEditorOnOpen = (composerBody: { focusOnSelector: null | (() => string) }) => {
+  composerBody.focusOnSelector ??= () => '.TextEditor-editor';
+};
+
 export default () => {
   addToComposer('flarum/forum/components/DiscussionComposer');
   addToComposer('flarum/forum/components/ReplyComposer');
+
+  flarum.reg.onLoad('core', 'forum/components/ReplyComposer', focusEditorOnOpen);
 };
