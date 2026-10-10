@@ -18,6 +18,8 @@ use Flarum\Api\Schema;
 use Flarum\Api\Sort\SortColumn;
 use FoF\Polls\Commands\CreatePollGroup;
 use FoF\Polls\Commands\EditPollGroup;
+use FoF\Polls\Events\DeletedPollGroup;
+use FoF\Polls\Events\DeletingPollGroup;
 use FoF\Polls\PollGroup;
 use Illuminate\Database\Eloquent\Builder;
 use Tobyz\JsonApiServer\Context as OriginalContext;
@@ -45,6 +47,14 @@ class PollGroupResource extends Resource\AbstractDatabaseResource
     public function scope(Builder $query, OriginalContext $context): void
     {
         $query->whereVisibleTo($context->getActor());
+    }
+
+    /**
+     * @param PollGroup $model
+     */
+    public function deleted(object $model, OriginalContext $context): void
+    {
+        $this->events->dispatch(new DeletedPollGroup($context->getActor(), $model));
     }
 
     public function endpoints(): array
@@ -139,6 +149,8 @@ class PollGroupResource extends Resource\AbstractDatabaseResource
      */
     public function deleting(object $model, \Tobyz\JsonApiServer\Context $context): void
     {
+        $this->events->dispatch(new DeletingPollGroup($context->getActor(), $model));
+
         $model->polls()->update(['poll_group_id' => null]);
     }
 }
