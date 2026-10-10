@@ -6,6 +6,8 @@
   "devDependencies": {
     "@flarum/jest-config": "^2.0.2",
     "@flarum/prettier-config": "^1.0.0",
+    "@jest/globals": "^29.7.0",
+    "@types/jest": "^29.5.14",
     "@types/jquery": "^3.5.34",
     "@types/mithril": "^2.2.9",
     "@types/node": "^24.19.1",

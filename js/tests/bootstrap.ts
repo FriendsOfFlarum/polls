@@ -13,7 +13,9 @@ let booted = false;
 
 export default function bootstrapForum(payload: Record<string, any> = {}): void {
   if (booted) {
-    app.store.data = {};
+    for (const type of Object.keys(app.store.models)) {
+      for (const model of app.store.all(type)) app.store.remove(model);
+    }
     load(payload);
     app.store.pushPayload({ data: (app as any).data.resources });
     app.forum = app.store.getById('forums', '1')!;

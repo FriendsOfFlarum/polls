@@ -75,7 +75,7 @@ describe('PollForm', () => {
 
     const input = out.rootEl.querySelector('.PollForm-setting--allowMultipleVotes input') as HTMLInputElement;
     input.checked = true;
-    out.trigger('.PollForm-setting--allowMultipleVotes input', 'change');
+    out.trigger('.PollForm-setting--allowMultipleVotes input', 'change', undefined);
 
     expect(out).toHaveElement('input[name=maxVotes]');
   });
