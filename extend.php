@@ -175,9 +175,9 @@ return [
                             // policies read; only when the polls themselves
                             // are included.
                             ->eagerLoadWhenIncluded([
-                                'firstPost'       => ['firstPost.discussion'],
-                                'firstPost.polls'               => ['firstPost.polls.myVotes'],
-                                'firstPost.polls.options'       => ['firstPost.polls.options'],
+                                'firstPost'                      => ['firstPost.discussion'],
+                                'firstPost.polls'                => ['firstPost.polls.myVotes'],
+                                'firstPost.polls.options'        => ['firstPost.polls.options'],
                                 'firstPost.polls.myVotes.option' => ['firstPost.polls.myVotes.option'],
                             ]);
                     })
@@ -211,8 +211,8 @@ return [
                             // and voted options once per poll, and the
                             // policies read the viewer's votes even earlier.
                             ->eagerLoadWhenIncluded([
-                                'polls'               => ['polls.myVotes'],
-                                'polls.options'       => ['polls.options'],
+                                'polls'                => ['polls.myVotes'],
+                                'polls.options'        => ['polls.options'],
                                 'polls.myVotes.option' => ['polls.myVotes.option'],
                             ]);
                     }),
