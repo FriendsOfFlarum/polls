@@ -15,7 +15,6 @@ import listItems from 'flarum/common/helpers/listItems';
 import slidable from 'flarum/forum/utils/slidable';
 import Poll from '../../models/Poll';
 import PollControls from '../../utils/PollControls';
-import PollViewPage from '../PollViewPage';
 import PollDraftBadges from './PollDraftBadges';
 
 export interface IPollListItemAttrs extends ComponentAttrs {
@@ -130,7 +129,7 @@ export default class PollListItem<CustomAttrs extends IPollListItemAttrs = IPoll
   }
 
   active(): boolean {
-    return app.current.matches(PollViewPage, { poll: this.poll });
+    return app.current.matches('ext:fof/polls/forum/components/PollViewPage', { poll: this.poll });
   }
 
   markAsRead(): void {
