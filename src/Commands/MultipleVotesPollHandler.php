@@ -116,7 +116,7 @@ class MultipleVotesPollHandler
             $this->events->dispatch(new PollWasVoted($actor, $poll, $firstVote, !$deletedVotes->isEmpty() && !$newOptionIds->isEmpty()));
         }
 
-        $this->events->dispatch(new PollVotesChanged($actor, $poll, $deletedVoteOptions->pluck('option.id'), $newOptionIds));
+        $this->events->dispatch(new PollVotesChanged($actor, $poll, $deletedVoteOptions->pluck('id'), $newOptionIds));
 
         try {
             $changedOptionsIds = $currentVoteOptions->concat($deletedVoteOptions)->pluck('id');
