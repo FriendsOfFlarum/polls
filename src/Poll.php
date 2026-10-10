@@ -17,6 +17,7 @@ use Flarum\Post\Post;
 use Flarum\User\User;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Arr;
 
 /**
@@ -49,6 +50,7 @@ use Illuminate\Support\Arr;
 class Poll extends AbstractModel
 {
     use ScopeVisibilityTrait;
+    use HasFactory;
 
     /**
      * {@inheritdoc}

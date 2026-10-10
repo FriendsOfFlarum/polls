@@ -13,6 +13,7 @@ namespace FoF\Polls;
 
 use Flarum\Database\AbstractModel;
 use Flarum\User\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property Poll           $poll
@@ -26,6 +27,8 @@ use Flarum\User\User;
  */
 class PollVote extends AbstractModel
 {
+    use HasFactory;
+
     /**
      * {@inheritdoc}
      */
