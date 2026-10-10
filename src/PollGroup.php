@@ -14,6 +14,7 @@ namespace FoF\Polls;
 use Flarum\Database\AbstractModel;
 use Flarum\Database\ScopeVisibilityTrait;
 use Flarum\User\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property int               $id
@@ -27,6 +28,7 @@ use Flarum\User\User;
 class PollGroup extends AbstractModel
 {
     use ScopeVisibilityTrait;
+    use HasFactory;
 
     public $timestamps = true;
 

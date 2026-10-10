@@ -14,6 +14,8 @@ namespace FoF\Polls\Tests\integration\api;
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
 use Flarum\User\User;
+use FoF\Polls\Poll;
+use FoF\Polls\PollGroup;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -36,10 +38,10 @@ class PollGroupVisibilityTest extends TestCase
                 $this->normalUser(),
                 ['id' => 3, 'username' => 'moderator', 'email' => 'moderator@machine.local', 'is_email_confirmed' => 1],
             ],
-            'group_user'  => [['user_id' => 3, 'group_id' => 4]],
-            'poll_groups' => [['id' => 1, 'name' => 'Group', 'user_id' => 1, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00']],
-            'polls'       => [
-                ['id' => 1, 'question' => 'Grouped poll', 'post_id' => null, 'poll_group_id' => 1, 'user_id' => 1, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'published_at' => '2021-01-01 00:00:00', 'settings' => '{"max_votes":0,"hide_votes":false,"public_poll":false,"allow_change_vote":true,"allow_multiple_votes":false}'],
+            'group_user'     => [['user_id' => 3, 'group_id' => 4]],
+            PollGroup::class => [['id' => 1, 'name' => 'Group', 'user_id' => 1]],
+            Poll::class      => [
+                ['id' => 1, 'question' => 'Grouped poll', 'poll_group_id' => 1, 'user_id' => 1],
             ],
             'group_permission' => [['permission' => 'viewPollGroups', 'group_id' => 4]],
         ]);

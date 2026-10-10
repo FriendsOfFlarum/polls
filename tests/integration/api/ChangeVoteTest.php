@@ -11,12 +11,13 @@
 
 namespace FoF\Polls\Tests\integration\api;
 
-use Carbon\Carbon;
 use Flarum\Discussion\Discussion;
 use Flarum\Post\Post;
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
 use Flarum\User\User;
+use FoF\Polls\Poll;
+use FoF\Polls\PollOption;
 use FoF\Polls\PollVote;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -44,15 +45,15 @@ class ChangeVoteTest extends TestCase
             Post::class => [
                 ['id' => 1, 'user_id' => 1, 'discussion_id' => 1, 'number' => 1, 'created_at' => '2021-01-01 00:00:00', 'content' => 'Post 1', 'type' => 'comment'],
             ],
-            'polls' => [
-                ['id' => 1, 'question' => 'Testing Poll--Global', 'subtitle' => 'Testing subtitle', 'image' => 'pollimage-abcdef.png', 'image_alt' => 'test alt', 'post_id' => null, 'user_id' => 1, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => '2021-01-01 00:00:00'],
-                ['id' => 2, 'question' => 'Testing Poll--Global 2', 'subtitle' => 'Testing subtitle', 'image' => 'pollimage-abcdef.png', 'image_alt' => 'test alt', 'post_id' => null, 'user_id' => 1, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": true,"allow_multiple_votes": false}', 'published_at' => '2021-01-01 00:00:00'],
+            Poll::class => [
+                ['id' => 1, 'question' => 'Testing Poll--Global', 'subtitle' => 'Testing subtitle', 'image' => 'pollimage-abcdef.png', 'image_alt' => 'test alt', 'user_id' => 1, 'settings' => ['allow_change_vote' => false]],
+                ['id' => 2, 'question' => 'Testing Poll--Global 2', 'subtitle' => 'Testing subtitle', 'image' => 'pollimage-abcdef.png', 'image_alt' => 'test alt', 'user_id' => 1],
             ],
-            'poll_options' => [
-                ['id' => 1, 'answer' => 'Option 1', 'poll_id' => 1, 'vote_count' => 0, 'image_url' => 'pollimage-hijklm.png', 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 2, 'answer' => 'Option 2', 'poll_id' => 1, 'vote_count' => 0, 'image_url' => 'pollimage-nopqrs.png', 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 3, 'answer' => 'Option 3', 'poll_id' => 2, 'vote_count' => 0, 'image_url' => 'pollimage-hijklm.png', 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 4, 'answer' => 'Option 4', 'poll_id' => 2, 'vote_count' => 0, 'image_url' => 'pollimage-nopqrs.png', 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
+            PollOption::class => [
+                ['id' => 1, 'answer' => 'Option 1', 'poll_id' => 1, 'image_url' => 'pollimage-hijklm.png'],
+                ['id' => 2, 'answer' => 'Option 2', 'poll_id' => 1, 'image_url' => 'pollimage-nopqrs.png'],
+                ['id' => 3, 'answer' => 'Option 3', 'poll_id' => 2, 'image_url' => 'pollimage-hijklm.png'],
+                ['id' => 4, 'answer' => 'Option 4', 'poll_id' => 2, 'image_url' => 'pollimage-nopqrs.png'],
             ],
             'group_user' => [
                 ['user_id' => 4, 'group_id' => 4],
@@ -65,13 +66,13 @@ class ChangeVoteTest extends TestCase
                 ['permission' => 'uploadPollImages', 'group_id' => 4],
                 ['permission' => 'polls.changeVote', 'group_id' => 4],
             ],
-            'poll_votes' => [
-                ['id' => 1, 'poll_id' => 1, 'option_id' => 1, 'user_id' => 1, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['id' => 2, 'poll_id' => 1, 'option_id' => 1, 'user_id' => 2, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['id' => 3, 'poll_id' => 1, 'option_id' => 1, 'user_id' => 4, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['id' => 4, 'poll_id' => 2, 'option_id' => 3, 'user_id' => 1, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['id' => 5, 'poll_id' => 2, 'option_id' => 3, 'user_id' => 2, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['id' => 6, 'poll_id' => 2, 'option_id' => 3, 'user_id' => 4, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
+            PollVote::class => [
+                ['id' => 1, 'poll_id' => 1, 'option_id' => 1, 'user_id' => 1],
+                ['id' => 2, 'poll_id' => 1, 'option_id' => 1, 'user_id' => 2],
+                ['id' => 3, 'poll_id' => 1, 'option_id' => 1, 'user_id' => 4],
+                ['id' => 4, 'poll_id' => 2, 'option_id' => 3, 'user_id' => 1],
+                ['id' => 5, 'poll_id' => 2, 'option_id' => 3, 'user_id' => 2],
+                ['id' => 6, 'poll_id' => 2, 'option_id' => 3, 'user_id' => 4],
             ],
         ]);
     }

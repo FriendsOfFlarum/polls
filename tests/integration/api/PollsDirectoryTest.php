@@ -14,6 +14,8 @@ namespace FoF\Polls\Tests\integration\api;
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
 use Flarum\User\User;
+use FoF\Polls\Poll;
+use FoF\Polls\PollOption;
 use PHPUnit\Framework\Attributes\Test;
 
 class PollsDirectoryTest extends TestCase
@@ -32,11 +34,11 @@ class PollsDirectoryTest extends TestCase
             User::class => [
                 $this->normalUser(),
             ],
-            'polls' => [
-                ['id' => 1, 'question' => 'Global poll one', 'subtitle' => 'First poll', 'image' => null, 'image_alt' => null, 'post_id' => null, 'user_id' => 1, 'end_date' => null, 'created_at' => '2025-01-01 00:00:00', 'updated_at' => '2025-01-01 00:00:00', 'vote_count' => 5, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => '2025-01-01 00:00:00'],
-                ['id' => 2, 'question' => 'Global poll two', 'subtitle' => null, 'image' => null, 'image_alt' => null, 'post_id' => null, 'user_id' => 1, 'end_date' => '2030-01-01 00:00:00', 'created_at' => '2025-01-02 00:00:00', 'updated_at' => '2025-01-02 00:00:00', 'vote_count' => 10, 'settings' => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}', 'published_at' => '2025-01-01 00:00:00'],
+            Poll::class => [
+                ['id' => 1, 'question' => 'Global poll one', 'subtitle' => 'First poll', 'image' => null, 'user_id' => 1, 'created_at' => '2025-01-01 00:00:00', 'updated_at' => '2025-01-01 00:00:00', 'vote_count' => 5, 'settings' => ['allow_change_vote' => false], 'published_at' => '2025-01-01 00:00:00'],
+                ['id' => 2, 'question' => 'Global poll two', 'image' => null, 'user_id' => 1, 'end_date' => '2030-01-01 00:00:00', 'created_at' => '2025-01-02 00:00:00', 'updated_at' => '2025-01-02 00:00:00', 'vote_count' => 10, 'settings' => ['allow_change_vote' => false], 'published_at' => '2025-01-01 00:00:00'],
             ],
-            'poll_options' => [
+            PollOption::class => [
                 ['id' => 1, 'answer' => 'Yes', 'poll_id' => 1, 'vote_count' => 3, 'created_at' => '2025-01-01 00:00:00', 'updated_at' => '2025-01-01 00:00:00'],
                 ['id' => 2, 'answer' => 'No', 'poll_id' => 1, 'vote_count' => 2, 'created_at' => '2025-01-01 00:00:00', 'updated_at' => '2025-01-01 00:00:00'],
                 ['id' => 3, 'answer' => 'Yes', 'poll_id' => 2, 'vote_count' => 7, 'created_at' => '2025-01-02 00:00:00', 'updated_at' => '2025-01-02 00:00:00'],

@@ -80,7 +80,8 @@ abstract class AbstractPollGroupTestCase extends TestCase
             'question'      => 'Test Poll',
             'poll_group_id' => 1,
             'user_id'       => 1,
-            'settings'      => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}',
+            'published_at'  => null,
+            'settings'      => ['allow_change_vote' => false],
         ];
     }
 }

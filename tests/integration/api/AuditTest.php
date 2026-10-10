@@ -18,6 +18,9 @@ use Flarum\Post\Post;
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
 use Flarum\User\User;
+use FoF\Polls\Poll;
+use FoF\Polls\PollGroup;
+use FoF\Polls\PollOption;
 use Illuminate\Support\Arr;
 use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\ResponseInterface;
@@ -33,8 +36,6 @@ class AuditTest extends TestCase
 {
     use RetrievesAuthorizedUsers;
 
-    private const SETTINGS = '{"max_votes":0,"hide_votes":false,"public_poll":%s,"allow_change_vote":true,"allow_multiple_votes":false}';
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -47,11 +48,8 @@ class AuditTest extends TestCase
         $this->setting('fof-polls.enablePollGroups', true);
 
         $date = '2021-01-01 00:00:00';
-        $poll = fn (int $id, string $question, ?int $postId, bool $public = false, ?string $publishedAt = '2021-01-01 00:00:00') => [
-            'id'         => $id, 'question' => $question, 'post_id' => $postId, 'user_id' => 1, 'end_date' => null, 'created_at' => $date, 'updated_at' => $date,
-            'vote_count' => 0, 'published_at' => $publishedAt, 'settings' => sprintf(self::SETTINGS, $public ? 'true' : 'false'),
-        ];
-        $option = fn (int $id, int $pollId) => ['id' => $id, 'answer' => "Option $id", 'poll_id' => $pollId, 'vote_count' => 0, 'created_at' => $date, 'updated_at' => $date];
+        $poll = fn (int $id, string $question, ?int $postId, array $attributes = []) => ['id' => $id, 'question' => $question, 'post_id' => $postId, 'user_id' => 1] + $attributes;
+        $option = fn (int $id, int $pollId) => ['id' => $id, 'answer' => "Option $id", 'poll_id' => $pollId];
 
         $this->prepareDatabase([
             'audit_log'       => [],
@@ -62,14 +60,14 @@ class AuditTest extends TestCase
             Post::class => [
                 ['id' => 1, 'user_id' => 1, 'discussion_id' => 1, 'number' => 1, 'created_at' => $date, 'content' => '<t><p>Post 1</p></t>', 'type' => 'comment'],
             ],
-            'polls' => [
+            Poll::class => [
                 $poll(1, 'Global poll', null),
-                $poll(2, 'Public poll', null, true),
-                $poll(3, 'Draft poll', null, false, null),
+                $poll(2, 'Public poll', null, ['settings' => ['public_poll' => true]]),
+                $poll(3, 'Draft poll', null, ['published_at' => null]),
                 $poll(4, 'Discussion poll', 1),
             ],
-            'poll_options' => [$option(1, 1), $option(2, 1), $option(3, 2), $option(4, 2), $option(5, 3), $option(6, 3), $option(7, 4), $option(8, 4)],
-            'poll_groups'  => [['id' => 1, 'name' => 'Group', 'user_id' => 1, 'created_at' => $date, 'updated_at' => $date]],
+            PollOption::class => [$option(1, 1), $option(2, 1), $option(3, 2), $option(4, 2), $option(5, 3), $option(6, 3), $option(7, 4), $option(8, 4)],
+            PollGroup::class  => [['id' => 1, 'name' => 'Group', 'user_id' => 1]],
         ]);
     }
 

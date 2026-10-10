@@ -17,6 +17,8 @@ use Flarum\Post\Post;
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
 use Flarum\User\User;
+use FoF\Polls\Poll;
+use FoF\Polls\PollOption;
 use PHPUnit\Framework\Attributes\Test;
 
 /**
@@ -75,27 +77,22 @@ class ListDiscussionsPollsQueryCountTest extends TestCase
                 'content'       => '<t><p>post in '.$discussionId.'</p></t>',
             ];
             $polls[] = [
-                'id'           => $pollId,
-                'question'     => 'Poll '.$pollId,
-                'post_id'      => $postId,
-                'user_id'      => 1,
-                'end_date'     => null,
-                'created_at'   => '2021-01-01 00:00:00',
-                'updated_at'   => '2021-01-01 00:00:00',
-                'vote_count'   => 0,
-                'published_at' => '2021-01-01 00:00:00',
-                'settings'     => '{"max_votes": 0,"hide_votes": false,"public_poll": false,"allow_change_vote": false,"allow_multiple_votes": false}',
+                'id'       => $pollId,
+                'question' => 'Poll '.$pollId,
+                'post_id'  => $postId,
+                'user_id'  => 1,
+                'settings' => ['allow_change_vote' => false],
             ];
-            $pollOptions[] = ['id' => $pollId * 10, 'answer' => 'Yes', 'poll_id' => $pollId, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'];
-            $pollOptions[] = ['id' => $pollId * 10 + 1, 'answer' => 'No', 'poll_id' => $pollId, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'];
+            $pollOptions[] = ['id' => $pollId * 10, 'answer' => 'Yes', 'poll_id' => $pollId];
+            $pollOptions[] = ['id' => $pollId * 10 + 1, 'answer' => 'No', 'poll_id' => $pollId];
         }
 
         $this->prepareDatabase([
             Discussion::class => $discussions,
             Post::class       => $posts,
             User::class       => [$this->normalUser()],
-            'polls'           => $polls,
-            'poll_options'    => $pollOptions,
+            Poll::class       => $polls,
+            PollOption::class => $pollOptions,
         ]);
     }
 

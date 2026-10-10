@@ -59,12 +59,12 @@ class PollLifecycleEventsTest extends TestCase
             Post::class => [
                 ['id' => 1, 'user_id' => 1, 'discussion_id' => 1, 'number' => 1, 'created_at' => '2021-01-01 00:00:00', 'content' => '<t><p>Post 1</p></t>', 'type' => 'comment'],
             ],
-            'polls' => [
-                ['id' => 1, 'question' => 'Global poll', 'post_id' => null, 'user_id' => 1, 'end_date' => null, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00', 'vote_count' => 0, 'published_at' => '2021-01-01 00:00:00', 'settings' => '{"max_votes":0,"hide_votes":false,"public_poll":false,"allow_change_vote":true,"allow_multiple_votes":false}'],
+            Poll::class => [
+                ['id' => 1, 'question' => 'Global poll', 'user_id' => 1],
             ],
-            'poll_options' => [
-                ['id' => 1, 'answer' => 'Option 1', 'poll_id' => 1, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
-                ['id' => 2, 'answer' => 'Option 2', 'poll_id' => 1, 'vote_count' => 0, 'created_at' => '2021-01-01 00:00:00', 'updated_at' => '2021-01-01 00:00:00'],
+            PollOption::class => [
+                ['id' => 1, 'answer' => 'Option 1', 'poll_id' => 1],
+                ['id' => 2, 'answer' => 'Option 2', 'poll_id' => 1],
             ],
         ]);
     }
