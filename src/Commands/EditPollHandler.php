@@ -14,6 +14,7 @@ namespace FoF\Polls\Commands;
 use Carbon\Carbon;
 use Flarum\Settings\SettingsRepositoryInterface;
 use FoF\Polls\Events\PollOptionUpdated;
+use FoF\Polls\Events\PollWasEdited;
 use FoF\Polls\Events\SavingPollAttributes;
 use FoF\Polls\Poll;
 use FoF\Polls\PollImageUploader;
@@ -164,6 +165,8 @@ class EditPollHandler
 
             $this->events->dispatch(new PollOptionUpdated($option, $command->actor));
         }
+
+        $this->events->dispatch(new PollWasEdited($command->actor, $poll, $command->data));
 
         return $poll;
     }
