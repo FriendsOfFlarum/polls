@@ -112,8 +112,6 @@ class CreatePollHandler
 
             $poll->save();
 
-            $this->events->dispatch(new PollWasCreated($command->actor, $poll));
-
             foreach ($optionsData as $optionData) {
                 $option = PollOption::build(Arr::get($optionData, 'answer'), Arr::get($optionData, 'imageUrl'));
 
@@ -121,6 +119,8 @@ class CreatePollHandler
 
                 $this->events->dispatch(new PollOptionCreated($option, $command->actor));
             }
+
+            $this->events->dispatch(new PollWasCreated($command->actor, $poll));
 
             return $poll;
         });

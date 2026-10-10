@@ -23,6 +23,7 @@ use FoF\Polls\Commands\EditPoll;
 use FoF\Polls\Commands\MultipleVotesPoll;
 use FoF\Polls\Commands\PublishPoll;
 use FoF\Polls\Commands\UnpublishPoll;
+use FoF\Polls\Events\PollWasDeleted;
 use FoF\Polls\Poll;
 use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Database\Eloquent\Builder;
@@ -55,6 +56,14 @@ class PollResource extends Resource\AbstractDatabaseResource
     public function scope(Builder $query, OriginalContext $context): void
     {
         $query->whereVisibleTo($context->getActor());
+    }
+
+    /**
+     * @param Poll $model
+     */
+    public function deleted(object $model, OriginalContext $context): void
+    {
+        $this->events->dispatch(new PollWasDeleted($context->getActor(), $model));
     }
 
     public function endpoints(): array

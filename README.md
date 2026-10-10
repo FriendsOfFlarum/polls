@@ -187,6 +187,14 @@ If your extension integrates with fof/polls images:
 - **`PollImageUploader` service** — New service class for image operations. Use this instead of direct filesystem access for uploading, deleting, or generating srcset strings.
 - **Frontend `<img>` tags** — Use the `imageSrcset()` model accessor and pass it as the `srcset` attribute.
 
+## Events
+
+For extension developers, in `FoF\Polls\Events`:
+
+- **`PollWasCreated`** — dispatched once the poll and its options are saved. Earlier releases dispatched it before the options were saved, so `PollOptionCreated` now fires first.
+- **`PollWasEdited`** — dispatched once an edit is saved, options included. Carries the actor, the poll and the request data.
+- **`PollWasDeleted`** — dispatched after a poll is deleted through the API. The row is gone, but the model keeps its attributes.
+
 ## Poll Groups
 
 Poll Groups allow you to organize multiple polls under a single topic. Enable via the admin setting "Enable poll groups".
