@@ -18,6 +18,7 @@ use Flarum\Api\Schema;
 use Flarum\Api\Sort\SortColumn;
 use Flarum\Post\PostRepository;
 use Flarum\Settings\SettingsRepositoryInterface;
+use FoF\Polls\Api\PollEagerLoads;
 use FoF\Polls\Commands\CreatePoll;
 use FoF\Polls\Commands\EditPoll;
 use FoF\Polls\Commands\MultipleVotesPoll;
@@ -114,7 +115,6 @@ class PollResource extends Resource\AbstractDatabaseResource
                     $poll->unsetRelation('options');
                     $poll->load('options');
 
-                    Poll::setStateUser($context->getActor());
                     $poll->unsetRelation('myVotes');
 
                     $serializer = new \Flarum\Api\Serializer($context);
@@ -148,6 +148,10 @@ class PollResource extends Resource\AbstractDatabaseResource
             Endpoint\Index::make()
                 ->paginate()
                 ->defaultInclude(['options', 'votes', 'myVotes', 'myVotes.option'])
+                // The policies read the viewer's votes for every poll in the
+                // page; see PollEagerLoads for the rest.
+                ->eagerLoad(['myVotes'])
+                ->eagerLoadWhenIncluded(PollEagerLoads::primary())
                 ->defaultSort('-createdAt'),
             Endpoint\Endpoint::make('votes')
                 ->route('PATCH', '/{id}/votes')
@@ -163,7 +167,6 @@ class PollResource extends Resource\AbstractDatabaseResource
                 })
                 ->response(function (Context $context, Poll $poll) {
                     // Reload relations so the response includes updated vote counts
-                    Poll::setStateUser($context->getActor());
                     $poll->unsetRelation('myVotes');
                     $poll->load(['options', 'myVotes']);
 
@@ -224,7 +227,6 @@ class PollResource extends Resource\AbstractDatabaseResource
         $poll->unsetRelation('options');
         $poll->load('options');
 
-        Poll::setStateUser($context->getActor());
         $poll->unsetRelation('myVotes');
 
         $serializer = new \Flarum\Api\Serializer($context);
@@ -332,8 +334,6 @@ class PollResource extends Resource\AbstractDatabaseResource
                 ->includable()
                 ->type('poll_votes')
                 ->get(function (Poll $poll, Context $context) {
-                    Poll::setStateUser($context->getActor());
-
                     // The actor is constant within a request, so a relation
                     // loaded earlier (eager load or the vote policies) is
                     // this actor's — reuse it instead of re-querying per
