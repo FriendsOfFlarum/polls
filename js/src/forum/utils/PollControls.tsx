@@ -6,9 +6,6 @@ import Separator from 'flarum/common/components/Separator';
 import ItemList from 'flarum/common/utils/ItemList';
 import extractText from 'flarum/common/utils/extractText';
 import Poll from '../models/Poll';
-import ComposePollPage from '../components/ComposePollPage';
-import PollsPage from '../components/PollsPage';
-import PollViewPage from '../components/PollViewPage';
 import PollListState from '../states/PollListState';
 import SchedulePollModal from '../components/SchedulePollModal';
 
@@ -109,7 +106,9 @@ export default {
     app.modal.show(SchedulePollModal, {
       poll,
       form: null,
-      onSuccess: app.current.matches(PollsPage) ? () => m.redraw() : () => m.route.set(app.route('fof.polls.view', { id: poll.id() })),
+      onSuccess: app.current.matches('ext:fof/polls/forum/components/PollsPage')
+        ? () => m.redraw()
+        : () => m.route.set(app.route('fof.polls.view', { id: poll.id() })),
     });
   },
 
@@ -123,7 +122,10 @@ export default {
       .then(() => {
         this.alert('success', 'fof-polls.forum.poll_controls.delete_success_message');
 
-        if (app.current.matches(ComposePollPage) || app.current.matches(PollViewPage)) {
+        if (
+          app.current.matches('ext:fof/polls/forum/components/ComposePollPage') ||
+          app.current.matches('ext:fof/polls/forum/components/PollViewPage')
+        ) {
           m.route.set(app.route('fof.polls.list'));
         } else {
           PollListState.notifyDeleted(poll);

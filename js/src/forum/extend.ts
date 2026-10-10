@@ -5,24 +5,17 @@ import Discussion from 'flarum/common/models/Discussion';
 import Poll from './models/Poll';
 import PollOption from './models/PollOption';
 import PollVote from './models/PollVote';
-import PollsPage from './components/PollsPage';
-import ComposePollPage from './components/ComposePollPage';
-import PollViewPage from './components/PollViewPage';
-import PollsShowcasePage from './components/PollsShowcasePage';
 import PollGroup from './models/PollGroup';
-import ComposePollGroupPage from './components/ComposePollGroupPage';
-import PollGroupListPage from './components/PollGroupListPage';
-import PollGroupViewPage from './components/PollGroupViewPage';
 
 export default [
   new Extend.Routes() //
-    .add('fof.polls.showcase', '/polls', PollsShowcasePage)
-    .add('fof.polls.list', '/polls/all', PollsPage)
-    .add('fof.polls.view', '/polls/view/:id', PollViewPage)
-    .add('fof.polls.composer', '/polls/composer', ComposePollPage)
-    .add('fof.polls.groups.composer', '/polls/groups/composer', ComposePollGroupPage)
-    .add('fof.polls.groups.list', '/polls/groups', PollGroupListPage)
-    .add('fof.polls.groups.view', '/polls/groups/:id', PollGroupViewPage),
+    .add('fof.polls.showcase', '/polls', () => import('./components/PollsShowcasePage'))
+    .add('fof.polls.list', '/polls/all', () => import('./components/PollsPage'))
+    .add('fof.polls.view', '/polls/view/:id', () => import('./components/PollViewPage'))
+    .add('fof.polls.composer', '/polls/composer', () => import('./components/ComposePollPage'))
+    .add('fof.polls.groups.composer', '/polls/groups/composer', () => import('./components/ComposePollGroupPage'))
+    .add('fof.polls.groups.list', '/polls/groups', () => import('./components/PollGroupListPage'))
+    .add('fof.polls.groups.view', '/polls/groups/:id', () => import('./components/PollGroupViewPage')),
 
   new Extend.Store() //
     .add('polls', Poll)

@@ -6,7 +6,6 @@ import Separator from 'flarum/common/components/Separator';
 import ItemList from 'flarum/common/utils/ItemList';
 import extractText from 'flarum/common/utils/extractText';
 import PollGroup from '../models/PollGroup';
-import ComposePollGroupPage from '../components/ComposePollGroupPage';
 import PollGroupListState from '../states/PollGroupListState';
 import PollModelAttributes from '../models/PollModelAttributes';
 
@@ -87,7 +86,7 @@ export default {
       .then(() => {
         this.alert('success', 'fof-polls.forum.poll_groups.controls.delete_success_message');
 
-        if (app.current.matches(ComposePollGroupPage, { id: pollGroup.id() })) {
+        if (app.current.matches('ext:fof/polls/forum/components/ComposePollGroupPage', { id: pollGroup.id() })) {
           m.route.set(app.route('fof.polls.groups.list'));
         } else {
           PollGroupListState.notifyDeleted(pollGroup);
