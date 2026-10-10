@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import jsYaml from 'js-yaml';
-import flatten from 'flat';
+import { load as loadYaml } from 'js-yaml';
+import { flatten } from 'flat';
 
 import app from 'flarum/forum/app';
 import ForumApplication from 'flarum/forum/ForumApplication';
@@ -65,5 +65,5 @@ function load(payload: Record<string, any>): void {
 }
 
 function readTranslations(relative: string): Record<string, string> {
-  return flatten(jsYaml.load(fs.readFileSync(path.resolve(process.cwd(), relative), 'utf8')) as object) as Record<string, string>;
+  return flatten(loadYaml(fs.readFileSync(path.resolve(process.cwd(), relative), 'utf8')) as object) as Record<string, string>;
 }

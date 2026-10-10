@@ -9,10 +9,13 @@ beforeAll(() => bootstrapForum());
 let routeSet: any;
 
 beforeEach(() => {
+  jest.spyOn(app.store, 'find').mockResolvedValue([] as any);
   routeSet = jest.fn();
   m.route.set = routeSet as any;
   m.route.get = () => '/polls/all';
 });
+
+afterEach(() => jest.restoreAllMocks());
 
 describe('PollsPage', () => {
   // The redirect is asynchronous, so the page still renders once afterwards.
