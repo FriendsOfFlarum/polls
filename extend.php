@@ -228,6 +228,12 @@ return [
                     ->route('/polls/groups/{id}', 'fof.polls.groups.view'),
             ];
         })
+        // flarum/tags: its policy reads a discussion's tags on every permission
+        // check, so a group's discussion polls load them with their discussions.
+        ->whenExtensionEnabled('flarum-tags', fn () => [
+            (new Extend\ApiResource(Api\Resource\PollGroupResource::class))
+                ->endpoint(['index', 'show'], fn ($endpoint) => $endpoint->eagerLoadWhenIncluded(['polls' => ['polls.post.discussion.tags']])),
+        ])
         // flarum/audit
         ->whenExtensionEnabled('flarum-audit', fn () => [
             (new \Flarum\Audit\Extend\Audit())

@@ -73,7 +73,8 @@ class PollEagerLoads
     /**
      * For a poll group's polls. A group can hold discussion polls, and the
      * poll policies read each one's post and discussion, and the actor's
-     * state in that discussion, as core loads with its posts.
+     * state in that discussion, as core loads with its posts. With flarum/tags,
+     * extend.php adds the discussion's tags.
      *
      * @return array<string, string[]>
      */

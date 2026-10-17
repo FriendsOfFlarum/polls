@@ -65,7 +65,8 @@
     "require-dev": {
         "flarum/phpstan": "^2.0.0",
         "flarum/testing": "^2.0.0",
-        "flarum/audit": "^2.0.0"
+        "flarum/audit": "^2.0.0",
+        "flarum/tags": "^2.0.0"
     },
     "scripts": {
         "analyse:phpstan": "phpstan analyse",
