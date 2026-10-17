@@ -25,6 +25,7 @@ trait InspectsQueries
 
         $db = $this->database();
         $db->enableQueryLog();
+        $db->flushQueryLog();
 
         $callback();
 
