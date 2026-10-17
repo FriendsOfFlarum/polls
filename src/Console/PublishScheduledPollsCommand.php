@@ -48,7 +48,8 @@ class PublishScheduledPollsCommand extends Command
                 ->whereNull('scheduled_publish_error')
                 ->where('scheduled_publish_at', '<=', Carbon::now())
                 ->lockForUpdate()
-                ->get();
+                ->get()
+                ->loadCount('options');
 
             foreach ($due as $poll) {
                 try {
@@ -65,7 +66,7 @@ class PublishScheduledPollsCommand extends Command
                         throw new ValidationException(['endDate' => 'Poll end date has already passed; update or clear it before publishing.']);
                     }
 
-                    if ($poll->options()->count() < 2) {
+                    if ($poll->options_count < 2) {
                         throw new ValidationException(['options' => 'Poll must have at least 2 options to publish.']);
                     }
 

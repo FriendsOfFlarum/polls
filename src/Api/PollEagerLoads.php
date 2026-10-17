@@ -22,9 +22,9 @@ namespace FoF\Polls\Api;
  *
  * Core applies each related resource's scope to these eager loads too, and the
  * serializer still checks each field's visibility, so they expose nothing the
- * buffer would not. A poll's post and poll group are not listed because they
- * do not grow: the post is the one the polls were loaded through (see
- * Post::polls), and the buffer batches the group.
+ * buffer would not. A poll's post is not listed: below a post it is the one
+ * the polls were loaded through (see Post::polls). A poll group's discussion
+ * polls arrive without theirs, so the group endpoints load it (see inGroups()).
  *
  * The cost: an eager load cannot see the `votes` field's visibility, so when
  * a client includes votes below polls (`polls.votes`, or `votes.option` and
@@ -51,6 +51,7 @@ class PollEagerLoads
         'myVotes.option' => ['myVotes.option'],
         'myVotes.user'   => ['myVotes.user', 'myVotes.user.groups'],
         'user'           => ['user', 'user.groups'],
+        'pollGroup'      => ['pollGroup'],
     ];
 
     /**
@@ -65,6 +66,21 @@ class PollEagerLoads
         foreach (self::NESTED as $include => $relations) {
             $map[$path.'.'.$include] = array_map(fn (string $relation) => $path.'.'.$relation, $relations);
         }
+
+        return $map;
+    }
+
+    /**
+     * For a poll group's polls. A group can hold discussion polls, and the
+     * poll policies read each one's post and discussion, and the actor's
+     * state in that discussion, as core loads with its posts.
+     *
+     * @return array<string, string[]>
+     */
+    public static function inGroups(): array
+    {
+        $map = self::under('polls');
+        $map['polls'] = [...$map['polls'], 'polls.post', 'polls.post.discussion', 'polls.post.discussion.state'];
 
         return $map;
     }

@@ -70,7 +70,7 @@ class MultipleVotesPollHandler
             return !$myVotes->contains('option_id', $optionId);
         });
 
-        $this->db->transaction(function () use ($myVotes, $newOptionIds, $deletedVotes, $poll, $actor) {
+        $this->db->transaction(function () use ($myVotes, $newOptionIds, $deletedVotes, $poll, $actor, $options) {
             // Unvote options
             if ($deletedVotes->isNotEmpty()) {
                 $poll->myVotes($actor)->whereIn('id', $deletedVotes->pluck('id'))->delete();
@@ -95,9 +95,18 @@ class MultipleVotesPollHandler
                 $newOptionIds->toArray()
             );
 
-            foreach ($poll->options()->whereIn('id', $changedOptionIds)->get() as $opt) {
+            // One count for every changed option, set on the options already
+            // loaded, so the counts pushed below are the new ones.
+            $counts = PollVote::query()
+                ->whereIn('option_id', $changedOptionIds)
+                ->groupBy('option_id')
+                ->selectRaw('option_id, count(*) as vote_count')
+                ->pluck('vote_count', 'option_id');
+
+            foreach ($options->whereIn('id', $changedOptionIds) as $opt) {
                 if ($opt instanceof PollOption) {
-                    $opt->refreshVoteCount()->save();
+                    $opt->vote_count = (int) ($counts[$opt->id] ?? 0);
+                    $opt->save();
                 }
             }
 

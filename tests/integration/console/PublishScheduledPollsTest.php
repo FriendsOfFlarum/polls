@@ -16,12 +16,15 @@ use Flarum\Testing\integration\TestCase;
 use FoF\Polls\Console\PublishScheduledPollsCommand;
 use FoF\Polls\Poll;
 use FoF\Polls\PollOption;
+use FoF\Polls\Tests\integration\InspectsQueries;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 
 class PublishScheduledPollsTest extends TestCase
 {
+    use InspectsQueries;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -104,5 +107,16 @@ class PublishScheduledPollsTest extends TestCase
         $this->assertNull($poll->published_at);
         $this->assertNotNull($poll->scheduled_publish_error);
         $this->assertStringContainsString('Poll end date has already passed', $poll->scheduled_publish_error);
+    }
+
+    #[Test]
+    public function optionsAreCountedWithTheDuePollsNotOncePerPoll(): void
+    {
+        $optionQueries = array_values(array_filter(
+            $this->queriesDuring(fn () => $this->runCommand()),
+            fn (string $sql) => $this->selectsFrom($sql) === 'poll_options'
+        ));
+
+        $this->assertSame([], $optionQueries);
     }
 }

@@ -25,14 +25,17 @@ class RefreshVoteCountCommand extends Command
     {
         $progress = $this->output->createProgressBar(Poll::query()->count() + PollOption::query()->count());
 
-        Poll::query()->each(function (Poll $poll) use ($progress) {
-            $poll->refreshVoteCount()->save();
+        // Counted with each chunk, not one query per poll or option.
+        Poll::query()->withCount('votes')->each(function (Poll $poll) use ($progress) {
+            $poll->vote_count = (int) $poll->votes_count;
+            $poll->save();
 
             $progress->advance();
         });
 
-        PollOption::query()->each(function (PollOption $option) use ($progress) {
-            $option->refreshVoteCount()->save();
+        PollOption::query()->withCount('votes')->each(function (PollOption $option) use ($progress) {
+            $option->vote_count = (int) $option->votes_count;
+            $option->save();
 
             $progress->advance();
         });
