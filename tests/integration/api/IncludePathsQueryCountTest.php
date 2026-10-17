@@ -64,9 +64,10 @@ class IncludePathsQueryCountTest extends TestCase
 
     /**
      * Round 1 creates one of everything; each later round adds a discussion
-     * with a poll, a global poll, a group with a poll, a second poll on the
-     * first discussion's post and a second poll in the first group. So every
-     * endpoint above lists one poll more per round.
+     * with a poll, a global poll, a group holding a poll of its own and the
+     * discussion's poll, a second poll on the first discussion's post and a
+     * second poll in the first group. So every endpoint above lists one poll
+     * more per round.
      */
     private function seed(bool $public): void
     {
@@ -115,7 +116,9 @@ class IncludePathsQueryCountTest extends TestCase
             $rows['memberships'][] = ['user_id' => $owner, 'group_id' => 4];
             $rows['groups'][] = ['id' => $round, 'name' => "Group $round", 'user_id' => $owner, 'created_at' => $date, 'updated_at' => $date];
 
-            $addPoll(100 + $round, null);
+            // In its own group, so a list of posts reaches as many groups
+            // as polls.
+            $addPoll(100 + $round, $round);
             $addPoll(null, null);
             $addPoll(null, $round);
 
