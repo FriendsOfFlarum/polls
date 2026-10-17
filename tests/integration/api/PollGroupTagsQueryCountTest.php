@@ -146,6 +146,6 @@ class PollGroupTagsQueryCountTest extends TestCase
             }
         }
 
-        $this->assertSame([], $grows, "Requests that cost more with more polls:\n".implode("\n", $grows)."\n\nTags queries for ".self::POLLS." polls, ".array_key_first($many).":\n".implode("\n", reset($many)[1]));
+        $this->assertSame([], $grows, "Requests that cost more with more polls:\n".implode("\n", $grows)."\n\nTags queries for ".self::POLLS.' polls, '.array_key_first($many).":\n".implode("\n", reset($many)[1]));
     }
 }
