@@ -187,7 +187,8 @@ class ListDiscussionsPollsQueryCountTest extends TestCase
     public function the_discussion_list_serializes_no_posts_or_polls_by_default()
     {
         // The list UI reads exactly one thing from this extension: the
-        // hasPoll attribute, powered by a narrow eager load. Default-including
+        // hasPoll attribute, answered for the whole page by one query (see
+        // Api\DiscussionHasPoll). Default-including
         // firstPost.polls forced every first post to be fully serialized
         // (rendered HTML, per-post policies) and ran every poll's policy
         // attributes — which lazily fetched one post per poll.
@@ -217,10 +218,10 @@ class ListDiscussionsPollsQueryCountTest extends TestCase
             );
         }
 
-        // The narrow hasPoll eager load (id, post_id only) must not leak into
-        // serialization: explicitly requested polls carry their real data.
+        // Explicitly requested polls carry their real data, not just the
+        // post ids that hasPoll looks up.
         foreach ($polls as $poll) {
-            $this->assertNotNull($poll['attributes']['question'] ?? null, "Poll {$poll['id']} serialized without its question — a narrow eager load leaked into the include.");
+            $this->assertNotNull($poll['attributes']['question'] ?? null, "Poll {$poll['id']} serialized without its question.");
         }
     }
 }
