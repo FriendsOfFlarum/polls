@@ -143,10 +143,34 @@ return [
                 (new Extend\ApiResource(Resource\DiscussionResource::class))
                     ->fields(fn () => [
                         Schema\Boolean::make('hasPoll')
-                            ->get(function (Discussion $discussion) {
-                                return $discussion->relationLoaded('polls')
-                                    ? $discussion->polls->isNotEmpty() // @phpstan-ignore property.notFound
-                                    : $discussion->polls()->exists(); // @phpstan-ignore method.notFound
+                            ->get(function (Discussion $discussion, Context $context) {
+                                if ($discussion->relationLoaded('polls')) {
+                                    return $discussion->polls->isNotEmpty(); // @phpstan-ignore property.notFound
+                                }
+
+                                // A discussion without a first post has no poll. Skip the
+                                // lookup rather than batch a null key.
+                                if ($discussion->first_post_id === null) {
+                                    return false;
+                                }
+
+                                // Only the discussion index loads `polls`. Everywhere
+                                // else discussions are serialized (a user's posts,
+                                // notifications, realtime payloads), count the polls of
+                                // every discussion in the document in one grouped query,
+                                // as core batches a countRelation() field, rather than
+                                // run an exists() per discussion.
+                                $aggregate = ['name' => 'fofPollCount', 'relation' => 'polls', 'column' => '*', 'function' => 'count', 'constrain' => null];
+
+                                Resource\EloquentBuffer::add($discussion, 'polls', $aggregate);
+
+                                return function () use ($discussion, $context, $aggregate) {
+                                    if (! $discussion->hasAttribute('fof_poll_count')) {
+                                        Resource\EloquentBuffer::load($discussion, 'polls', null, $context, $aggregate);
+                                    }
+
+                                    return (bool) $discussion->getAttribute('fof_poll_count');
+                                };
                             }),
                         Schema\Boolean::make('canStartPoll')
                             ->get(fn (Discussion $discussion, Context $context) => $context->getActor()->can('polls.start', $discussion)),
