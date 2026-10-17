@@ -87,7 +87,7 @@ class VoteRecountTest extends TestCase
     #[Test]
     public function other_viewers_are_pushed_the_new_counts()
     {
-        $pusher = new class () {
+        $pusher = new class() {
             public array $triggered = [];
 
             public function trigger(string $channel, string $event, array $data): void
