@@ -165,7 +165,7 @@ return [
                                 Resource\EloquentBuffer::add($discussion, 'polls', $aggregate);
 
                                 return function () use ($discussion, $context, $aggregate) {
-                                    if (! $discussion->hasAttribute('fof_poll_count')) {
+                                    if (!$discussion->hasAttribute('fof_poll_count')) {
                                         Resource\EloquentBuffer::load($discussion, 'polls', null, $context, $aggregate);
                                     }
 
