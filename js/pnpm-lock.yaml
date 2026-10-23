@@ -167,8 +167,8 @@ importers:
   .:
     devDependencies:
       '@flarum/jest-config':
-        specifier: ^2.1.0
-        version: 2.1.0(@babel/core@7.29.7(supports-color@8.1.1))(@jest/transform@29.7.0(supports-color@8.1.1))(@jest/types@29.6.3)(@types/node@24.19.1)(jest-util@29.7.0)(supports-color@8.1.1)(typescript@7.0.2)(webpack@5.111.1)
+        specifier: ^2.1.1
+        version: 2.1.1(@babel/core@7.29.7(supports-color@8.1.1))(@jest/transform@29.7.0(supports-color@8.1.1))(@jest/types@29.6.3)(@types/node@24.19.1)(jest-util@29.7.0)(supports-color@8.1.1)(typescript@7.0.2)(webpack@5.111.1)
       '@flarum/prettier-config':
         specifier: ^1.0.0
         version: 1.0.0
@@ -917,8 +917,8 @@ packages:
   '@epic-web/invariant@1.0.0':
     resolution: {integrity: sha512-lrTPqgvfFQtR/eY/qkIzp98OGdNJu0m5ji3q/nJI8v3SXkRKEnWiOxMmbvcSoAIzv/cGiuvRy57k4suKQSAdwA==}
 
-  '@flarum/jest-config@2.1.0':
-    resolution: {integrity: sha512-IxFTFOSYrykO87aVABZqp3xTefR2Y2EVnl6iISIm4Nynmfv36LIR2vw/tpZtumXNIO5JVXjz4SI9uq8IgMIoFA==}
+  '@flarum/jest-config@2.1.1':
+    resolution: {integrity: sha512-55+ILQTmwa2FvFLlkfgm1J65A0uC4u5BQqgijketNFl6s/dFfpyLd2XxbxQICroUHQtRphp1KU4zPNqn/8fUEg==}
 
   '@flarum/prettier-config@1.0.0':
     resolution: {integrity: sha512-3/AcliIi5jPt4i7COb5hsLv6hm4EeXT9yI9I2EuEvhPi2QR+O9Y/8wrqRuO5mDkRzCIhUY+mjIL/f9770Zwfqg==}
@@ -3860,7 +3860,7 @@ snapshots:
 
   '@epic-web/invariant@1.0.0': {}
 
-  '@flarum/jest-config@2.1.0(@babel/core@7.29.7(supports-color@8.1.1))(@jest/transform@29.7.0(supports-color@8.1.1))(@jest/types@29.6.3)(@types/node@24.19.1)(jest-util@29.7.0)(supports-color@8.1.1)(typescript@7.0.2)(webpack@5.111.1)':
+  '@flarum/jest-config@2.1.1(@babel/core@7.29.7(supports-color@8.1.1))(@jest/transform@29.7.0(supports-color@8.1.1))(@jest/types@29.6.3)(@types/node@24.19.1)(jest-util@29.7.0)(supports-color@8.1.1)(typescript@7.0.2)(webpack@5.111.1)':
     dependencies:
       '@types/jest': 29.5.14
       babel-jest: 29.7.0(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1)
