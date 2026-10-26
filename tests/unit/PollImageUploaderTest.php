@@ -13,8 +13,12 @@ namespace FoF\Polls\Tests\unit;
 
 use Flarum\Settings\SettingsRepositoryInterface;
 use FoF\Polls\PollImageUploader;
+use Illuminate\Cache\ArrayStore;
+use Illuminate\Cache\Repository;
 use Illuminate\Contracts\Filesystem\Cloud;
 use Illuminate\Contracts\Filesystem\Factory;
+use Intervention\Image\Interfaces\EncodedImageInterface;
+use Intervention\Image\Interfaces\ImageInterface;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -22,7 +26,7 @@ class PollImageUploaderTest extends TestCase
 {
     protected function makeUploader(int $baseWidth = 250, int $baseHeight = 250, ?Cloud $disk = null): PollImageUploader
     {
-        $settings = $this->createMock(SettingsRepositoryInterface::class);
+        $settings = $this->createStub(SettingsRepositoryInterface::class);
         $settings->method('get')->willReturnCallback(function ($key) use ($baseWidth, $baseHeight) {
             return match ($key) {
                 'fof-polls.image_width'  => $baseWidth,
@@ -31,10 +35,98 @@ class PollImageUploaderTest extends TestCase
             };
         });
 
-        $factory = $this->createMock(Factory::class);
-        $factory->method('disk')->willReturn($disk ?? $this->createMock(Cloud::class));
+        $factory = $this->createStub(Factory::class);
+        $factory->method('disk')->willReturn($disk ?? $this->createStub(Cloud::class));
 
-        return new PollImageUploader($factory, $settings);
+        return new PollImageUploader($factory, $settings, new Repository(new ArrayStore()));
+    }
+
+    /**
+     * A disk on which only the given paths exist; counts how often `exists()` is asked.
+     *
+     * @param string[] $existing
+     */
+    protected function diskWith(array $existing, int &$existsCalls, bool $mock = false): Cloud
+    {
+        $disk = $mock ? $this->createMock(Cloud::class) : $this->createStub(Cloud::class);
+        $disk->method('exists')->willReturnCallback(function (string $path) use ($existing, &$existsCalls) {
+            $existsCalls++;
+
+            return in_array($path, $existing, true);
+        });
+        $disk->method('url')->willReturnCallback(fn (string $path) => "https://cdn.test/polls/$path");
+
+        return $disk;
+    }
+
+    protected function imageOfSize(int $width, int $height): ImageInterface
+    {
+        $encoded = $this->createStub(EncodedImageInterface::class);
+        $encoded->method('__toString')->willReturn('bytes');
+
+        $image = $this->createStub(ImageInterface::class);
+        $image->method('isAnimated')->willReturn(false);
+        $image->method('width')->willReturn($width);
+        $image->method('height')->willReturn($height);
+        $image->method('scaleDown')->willReturnSelf();
+        $image->method('toWebp')->willReturn($encoded);
+
+        return $image;
+    }
+
+    #[Test]
+    public function srcset_checks_the_disk_once_per_image_and_then_uses_the_cache(): void
+    {
+        $existsCalls = 0;
+        $uploader = $this->makeUploader(250, 250, $this->diskWith(['pollImage-abc.webp', 'pollImage-abc@2x.webp'], $existsCalls));
+
+        $expected = 'https://cdn.test/polls/pollImage-abc.webp 1x, https://cdn.test/polls/pollImage-abc@2x.webp 2x';
+
+        $this->assertEquals($expected, $uploader->srcsetFor('pollImage-abc.webp'));
+        $this->assertEquals($expected, $uploader->srcsetFor('pollImage-abc.webp'));
+        $this->assertEquals(3, $existsCalls, 'one exists() per possible variant, on the first call only');
+    }
+
+    #[Test]
+    public function srcset_is_null_when_only_the_base_variant_exists(): void
+    {
+        $existsCalls = 0;
+        $uploader = $this->makeUploader(250, 250, $this->diskWith(['pollImage-abc.webp'], $existsCalls));
+
+        $this->assertNull($uploader->srcsetFor('pollImage-abc.webp'));
+    }
+
+    #[Test]
+    public function upload_records_the_generated_variants_so_srcset_never_checks_the_disk(): void
+    {
+        $existsCalls = 0;
+        $disk = $this->diskWith([], $existsCalls, true);
+        $disk->expects($this->exactly(2))->method('put');
+        $uploader = $this->makeUploader(250, 250, $disk);
+
+        // 600px source: base and @2x fit, @3x (750px) would upscale and is skipped
+        $baseName = $uploader->upload('pollImage', $this->imageOfSize(600, 600));
+
+        $srcset = $uploader->srcsetFor($baseName);
+
+        $this->assertStringContainsString("$baseName 1x", $srcset);
+        $this->assertStringContainsString('@2x.webp 2x', $srcset);
+        $this->assertStringNotContainsString('@3x', $srcset);
+        $this->assertEquals(0, $existsCalls);
+    }
+
+    #[Test]
+    public function deleting_the_variants_forgets_the_cache(): void
+    {
+        $existsCalls = 0;
+        $uploader = $this->makeUploader(250, 250, $this->diskWith(['pollImage-abc.webp', 'pollImage-abc@2x.webp'], $existsCalls));
+
+        $uploader->srcsetFor('pollImage-abc.webp');
+        $uploader->deleteAllVariants('pollImage-abc.webp');
+        $uploader->srcsetFor('pollImage-abc.webp');
+
+        // 3 for the first srcset, 3 for the delete, 3 for the srcset after the forget
+        $this->assertEquals(9, $existsCalls);
     }
 
     #[Test]
