@@ -12,6 +12,7 @@
 namespace FoF\Polls;
 
 use Flarum\Settings\SettingsRepositoryInterface;
+use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Filesystem\Cloud;
 use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Support\Str;
@@ -27,6 +28,7 @@ class PollImageUploader
     public function __construct(
         Factory $filesystemFactory,
         protected SettingsRepositoryInterface $settings,
+        protected Cache $cache,
     ) {
         $this->uploadDir = $filesystemFactory->disk('fof-polls');
     }
@@ -46,6 +48,8 @@ class PollImageUploader
         $sourceWidth = $image->width();
         $sourceHeight = $image->height();
 
+        $multipliers = [];
+
         foreach ($this->getSizes() as $suffix => [$targetWidth, $targetHeight]) {
             // Always generate the base variant. For HiDPI variants, skip if
             // the source is too small (never upscale).
@@ -59,7 +63,11 @@ class PollImageUploader
             $encoded = $isAnimated ? $resized->toGif() : $resized->toWebp();
 
             $this->uploadDir->put($this->variantPath($baseName, $suffix), (string) $encoded);
+            $multipliers[$suffix] = $this->multiplierFor($suffix);
         }
+
+        // The upload knows exactly which variants exist, so srcsetFor() never has to ask the disk
+        $this->cache->forever($this->variantsCacheKey($baseName), $multipliers);
 
         return $baseName;
     }
@@ -75,10 +83,12 @@ class PollImageUploader
                 $this->uploadDir->delete($path);
             }
         }
+
+        $this->cache->forget($this->variantsCacheKey($basePath));
     }
 
     /**
-     * Return the srcset string for a given base path, including only variants that exist on disk.
+     * Return the srcset string for a given base path, including only variants that exist.
      * Returns null if only the base file exists (no HiDPI variants) or for external URLs.
      */
     public function srcsetFor(string $basePath): ?string
@@ -88,30 +98,54 @@ class PollImageUploader
             return null;
         }
 
-        $existing = [];
-
-        foreach ($this->getSizes() as $suffix => [$width, $height]) {
-            $path = $this->variantPath($basePath, $suffix);
-
-            if ($this->uploadDir->exists($path)) {
-                $multiplier = $suffix === '' ? 1 : (int) str_replace(['@', 'x'], '', $suffix);
-                $existing[$path] = $multiplier;
-            }
-        }
+        $multipliers = $this->existingVariants($basePath);
 
         // Only meaningful if we have more than just the 1× base.
-        if (count($existing) <= 1) {
+        if (count($multipliers) <= 1) {
             return null;
         }
 
         $entries = [];
-
-        foreach ($existing as $path => $multiplier) {
-            $url = $this->uploadDir->url($path);
+        foreach ($multipliers as $suffix => $multiplier) {
+            $url = $this->uploadDir->url($this->variantPath($basePath, $suffix));
             $entries[] = "$url {$multiplier}x";
         }
 
         return implode(', ', $entries);
+    }
+
+    /**
+     * Which variants exist for a base path, as suffix => multiplier. Variant names are random
+     * per upload and never change afterwards, so the answer is cached indefinitely: `upload()`
+     * primes it and `deleteAllVariants()` clears it. The disk is only consulted for images
+     * uploaded before this cache existed (once), because on cloud storage every `exists()`
+     * is a network round trip and this runs for every image in every poll list response.
+     *
+     * @return array<string, int>
+     */
+    protected function existingVariants(string $basePath): array
+    {
+        return $this->cache->rememberForever($this->variantsCacheKey($basePath), function () use ($basePath) {
+            $multipliers = [];
+
+            foreach (array_keys($this->getSizes()) as $suffix) {
+                if ($this->uploadDir->exists($this->variantPath($basePath, $suffix))) {
+                    $multipliers[$suffix] = $this->multiplierFor($suffix);
+                }
+            }
+
+            return $multipliers;
+        });
+    }
+
+    protected function multiplierFor(string $suffix): int
+    {
+        return $suffix === '' ? 1 : (int) str_replace(['@', 'x'], '', $suffix);
+    }
+
+    protected function variantsCacheKey(string $basePath): string
+    {
+        return 'fof-polls.image_variants.'.$basePath;
     }
 
     /**
