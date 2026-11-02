@@ -66,14 +66,11 @@ class PollOptionSerializer extends AbstractSerializer
             return $option->image_url;
         }
 
-        //if the value is a filename, generate the URL to the polls storage disk
-        /** @var Cloud */
+        // The value is a filename on the polls disk: derive the URL instead of checking the file,
+        // on cloud storage `exists()` is a network round trip per image on every serialization.
+        /** @var Cloud $fileSystem */
         $fileSystem = resolve(Factory::class)->disk('fof-polls');
 
-        if ($fileSystem->exists($option->image_url)) {
-            return $fileSystem->url($option->image_url);
-        }
-
-        return null;
+        return $fileSystem->url($option->image_url);
     }
 }
