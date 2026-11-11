@@ -60,10 +60,7 @@ export default class PostPoll extends Component<PostPollAttrs> {
     return (
       <div className="Post-poll" data-id={poll.id()}>
         <div className="PollHeading">
-          <div className="PollHeading-title-container">
-            <h3 className="PollHeading-title">{poll.question()}</h3>
-            {poll.subtitle() && <p className="helpText PollHeading-subtitle">{poll.subtitle()}</p>}
-          </div>
+          <div className="PollHeading-title-container">{this.headerItems().toArray()}</div>
 
           <div className="PollHeading-actions">
             {poll.canSeeVoters() && (
@@ -154,6 +151,23 @@ export default class PostPoll extends Component<PostPollAttrs> {
     return items;
   }
 
+  headerItems(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+    const poll = this.attrs.poll;
+
+    items.add('title', <h3 className="PollHeading-title">{poll.question()}</h3>, 100);
+
+    if (poll.subtitle()) {
+      items.add('subtitle', <p className="helpText PollHeading-subtitle">{poll.subtitle()}</p>, 50);
+    }
+
+    return items;
+  }
+
+  optionAnswer(opt: PollOption): string {
+    return opt.answer();
+  }
+
   viewOption(opt: PollOption) {
     const poll = this.attrs.poll;
     const hasVoted = poll.myVotes()?.length > 0;
@@ -180,12 +194,12 @@ export default class PostPoll extends Component<PostPollAttrs> {
         )}
 
         <div className="PollAnswer-text">
-          <span className="PollAnswer-text-answer">{opt.answer()}</span>
+          <span className="PollAnswer-text-answer">{this.optionAnswer(opt)}</span>
           {voted && !showCheckmark && icon('fas fa-check-circle', { className: 'PollAnswer-check' })}
           {canSeeVoteCount && <span className={classList('PollPercent', percent !== 100 && 'PollPercent--option')}>{percent}%</span>}
         </div>
 
-        {opt.imageUrl() ? <img className="PollAnswer-image" src={opt.imageUrl()} alt={opt.answer()} loading="lazy" /> : null}
+        {opt.imageUrl() ? <img className="PollAnswer-image" src={opt.imageUrl()} alt={this.optionAnswer(opt)} loading="lazy" /> : null}
       </div>
     );
 
