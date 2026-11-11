@@ -20,6 +20,8 @@ export default class PostPoll extends Component<PostPollAttrs> {
     onremove(vnode: Mithril.Vnode<PostPollAttrs, this>): void;
     view(): JSX.Element;
     infoItems(maxVotes: number): ItemList<unknown>;
+    headerItems(): ItemList<Mithril.Children>;
+    optionAnswer(opt: PollOption): string;
     viewOption(opt: PollOption): JSX.Element;
     changeVote(option: PollOption, evt: Event): Promise<void> | undefined;
     onsubmit(): Promise<void>;
