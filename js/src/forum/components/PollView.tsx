@@ -193,7 +193,7 @@ export default class PollView extends Component<PollAttrs, PollState> {
       }
     }
 
-    if (poll.hasEnded() || this.state.hasVoted()) {
+    if (this.state.canSeeVoteCount && (poll.hasEnded() || this.state.hasVoted())) {
       items.add(
         'total-vote-count',
         <span>
