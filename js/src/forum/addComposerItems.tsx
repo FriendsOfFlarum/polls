@@ -30,7 +30,9 @@ function addPoll(composer: any) {
   });
 }
 
-export const addToComposer = (composerPath: string) => {
+// `priority` places the button in the header. In a reply it must come after core's
+// title (priority 0): phones lift the first header item into the top bar.
+export const addToComposer = (composerPath: string, priority = 1) => {
   extend(composerPath, 'headerItems', function (this: any, items) {
     const discussion = this.composer.body?.attrs?.discussion;
 
@@ -44,7 +46,7 @@ export const addToComposer = (composerPath: string) => {
             {app.translator.trans(`fof-polls.forum.composer_discussion.${this.composer.fields.poll ? 'edit' : 'add'}_poll`)}
           </span>
         </Button>,
-        1
+        priority
       );
     }
   });
@@ -63,8 +65,8 @@ export const focusEditorOnOpen = (composerBody: { focusOnSelector: null | (() =>
 };
 
 export default () => {
-  addToComposer('flarum/forum/components/DiscussionComposer');
-  addToComposer('flarum/forum/components/ReplyComposer');
+  addToComposer('flarum/forum/components/DiscussionComposer', 1);
+  addToComposer('flarum/forum/components/ReplyComposer', -10);
 
   flarum.reg.onLoad('core', 'forum/components/ReplyComposer', focusEditorOnOpen);
 };
