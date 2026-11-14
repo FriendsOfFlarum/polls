@@ -3,6 +3,14 @@
   --poll-option-active-color: var(--secondary-color);
 }
 
+// In a reply the button follows the discussion title, whose item core pulls
+// 4px closer with a negative margin: 4px pays that back, 15px is the gap.
+@media @tablet-up {
+  .ComposerBody:not(.ComposerBody--discussion) .ComposerBody-header > .item-title + .item-polls {
+    margin-inline-start: 19px;
+  }
+}
+
 .ComposerBody-poll {
   margin-right: 15px;
 
