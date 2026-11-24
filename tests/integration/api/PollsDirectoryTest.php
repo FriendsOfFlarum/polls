@@ -11,9 +11,12 @@
 
 namespace FoF\Polls\Tests\integration\api;
 
+use Flarum\Api\Endpoint\Index;
+use Flarum\Extend;
 use Flarum\Testing\integration\RetrievesAuthorizedUsers;
 use Flarum\Testing\integration\TestCase;
 use Flarum\User\User;
+use FoF\Polls\Api\Resource\PollResource;
 use FoF\Polls\Poll;
 use FoF\Polls\PollOption;
 use PHPUnit\Framework\Attributes\Test;
@@ -188,5 +191,49 @@ class PollsDirectoryTest extends TestCase
         );
 
         $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    #[Test]
+    public function polls_directory_links_the_next_page_when_there_is_one()
+    {
+        $this->paginatePollsBy(1);
+
+        $response = $this->send(
+            $this->request('GET', '/polls/all')
+        );
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $body = $response->getBody()->getContents();
+
+        $this->assertMatchesRegularExpression('#<link rel="canonical" href="[^"]*/polls/all">#', $body);
+        $this->assertMatchesRegularExpression('#<link rel="next" href="[^"]*/polls/all\?page=2">#', $body);
+        $this->assertStringNotContainsString('rel="prev"', $body);
+    }
+
+    #[Test]
+    public function polls_directory_links_the_previous_page_from_a_later_one()
+    {
+        $this->paginatePollsBy(1);
+
+        $response = $this->send(
+            $this->request('GET', '/polls/all')->withQueryParams(['page' => '2'])
+        );
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $body = $response->getBody()->getContents();
+
+        $this->assertMatchesRegularExpression('#<link rel="canonical" href="[^"]*/polls/all\?page=2">#', $body);
+        $this->assertMatchesRegularExpression('#<link rel="prev" href="[^"]*/polls/all">#', $body);
+        $this->assertStringNotContainsString('rel="next"', $body);
+    }
+
+    protected function paginatePollsBy(int $limit): void
+    {
+        $this->extend(
+            (new Extend\ApiResource(PollResource::class))
+                ->endpoint('index', fn (Index $endpoint) => $endpoint->paginate($limit))
+        );
     }
 }

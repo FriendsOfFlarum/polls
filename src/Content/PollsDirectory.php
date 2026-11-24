@@ -13,6 +13,7 @@ namespace FoF\Polls\Content;
 
 use Flarum\Api\Client;
 use Flarum\Frontend\Document;
+use Flarum\Http\UrlGenerator;
 use Flarum\Settings\SettingsRepositoryInterface;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Arr;
@@ -31,6 +32,7 @@ class PollsDirectory
         protected Client $api,
         protected Factory $view,
         protected SettingsRepositoryInterface $settings,
+        protected UrlGenerator $url,
     ) {
     }
 
@@ -65,6 +67,7 @@ class PollsDirectory
 
         $document->content = $this->view->make('fof-polls::directory.index', compact('page', 'apiDocument'));
         $document->payload['apiDocument'] = $apiDocument;
+        $document->canonicalUrl = $this->url->to('forum')->route('fof.polls.list');
         $document->page = $page;
         $document->hasNextPage = isset($apiDocument->links->next);
 
