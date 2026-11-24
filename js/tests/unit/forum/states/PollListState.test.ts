@@ -1,3 +1,6 @@
+import { jest } from '@jest/globals';
+import app from 'flarum/forum/app';
+import type { ApiPayloadPlural } from 'flarum/common/Store';
 import bootstrapForum from '../../../bootstrap';
 import { makePoll } from '../../../factory';
 import PollListState from '../../../../src/forum/states/PollListState';
@@ -62,5 +65,50 @@ describe('PollListState', () => {
     PollListState.notifyDeleted(poll);
 
     expect(groups.getPages()[0].items).toHaveLength(1);
+  });
+});
+
+// Core's preloadedApiDocument() hands the document over once, on the first route.
+function preload(document: ApiPayloadPlural) {
+  app.initialRoute = window.location.href;
+  (app as any).data.apiDocument = document;
+}
+
+function pollsDocument(type: string, count: number, meta: ApiPayloadPlural['meta']): ApiPayloadPlural {
+  return {
+    data: Array.from({ length: count }, (_, i) => ({ type, id: String(i + 1), attributes: {} })),
+    links: { next: '/api/' + type + '?page[offset]=' + count },
+    meta,
+  };
+}
+
+describe.each([
+  ['PollListState', PollListState, 'polls'],
+  ['PollGroupListState', PollGroupListState, 'poll_groups'],
+])('%s with a server-rendered first page', (_name, State, type) => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  // The index endpoint's limit can be configured to something other than 20.
+  it.each([
+    ['meta.page.limit', { page: { limit: 5, offset: 0, total: 12 } }, 5],
+    ['meta.perPage', { perPage: 5 }, 5],
+    ['no page meta', {}, PollListState.DEFAULT_PAGE_SIZE],
+  ])('asks for the next page after the preloaded one, taking its size from %s', async (_label, meta, expected) => {
+    preload(pollsDocument(type, 5, meta));
+
+    const find = jest.spyOn(app.store, 'find').mockResolvedValue(Object.assign([], { payload: { data: [], links: {}, meta } }) as never);
+
+    const state = new (State as any)({});
+    await state.refresh();
+
+    expect(state.getPages()[0].items).toHaveLength(5);
+    expect(state.pageSize).toBe(expected);
+
+    await state.loadNext();
+
+    expect(find).toHaveBeenCalledTimes(1);
+    expect((find.mock.calls[0][1] as any).page).toEqual({ offset: expected, limit: expected });
   });
 });
