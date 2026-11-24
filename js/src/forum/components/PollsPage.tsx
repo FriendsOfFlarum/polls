@@ -53,7 +53,7 @@ export default class PollsPage extends Page<IPageAttrs, PollListState> {
       filter: { isDraft: STATUS_FILTER_VALUE[this.status] },
     });
 
-    this.state.refresh();
+    this.state.refresh((m.route.param('page') && Number(m.route.param('page'))) || 1);
 
     app.setTitle(extractText(app.translator.trans('fof-polls.forum.page.nav')));
   }

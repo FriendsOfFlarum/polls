@@ -96,14 +96,14 @@ describe.each([
     ['meta.perPage', { perPage: 5 }, 5],
     ['no page meta', {}, PollListState.DEFAULT_PAGE_SIZE],
   ])('asks for the next page after the preloaded one, taking its size from %s', async (_label, meta, expected) => {
-    preload(pollsDocument(type, 5, meta));
+    preload(pollsDocument(type, expected, meta));
 
     const find = jest.spyOn(app.store, 'find').mockResolvedValue(Object.assign([], { payload: { data: [], links: {}, meta } }) as never);
 
     const state = new (State as any)({});
     await state.refresh();
 
-    expect(state.getPages()[0].items).toHaveLength(5);
+    expect(state.getPages()[0].items).toHaveLength(expected);
     expect(state.pageSize).toBe(expected);
 
     await state.loadNext();
