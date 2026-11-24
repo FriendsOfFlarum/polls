@@ -19,7 +19,7 @@
         }
     ],
     "require": {
-        "flarum/core": "^2.0.0"
+        "flarum/core": "2.x-dev"
     },
     "authors": [
         {
@@ -49,7 +49,8 @@
                 "color": "#fff"
             },
             "optional-dependencies": [
-                "flarum/audit"
+                "flarum/audit",
+                "flarum/tags"
             ]
         },
         "flagrow": {
@@ -60,13 +61,16 @@
                 "githubActions": true,
                 "backendTesting": true
             }
+        },
+        "branch-alias": {
+            "dev-2.x": "2.x-dev"
         }
     },
     "require-dev": {
-        "flarum/phpstan": "^2.0.0",
-        "flarum/testing": "^2.0.0",
-        "flarum/audit": "^2.0.0",
-        "flarum/tags": "^2.0.0"
+        "flarum/phpstan": "^2.1.0-beta.1",
+        "flarum/testing": "^2.1.0-beta.1",
+        "flarum/audit": "^2.1.0-beta.1",
+        "flarum/tags": "^2.1.0-beta.1"
     },
     "scripts": {
         "analyse:phpstan": "phpstan analyse",
@@ -76,14 +80,18 @@
             "@test:integration"
         ],
         "test:unit": "phpunit -c tests/phpunit.unit.xml",
+        "test:unit:filter": "phpunit -c tests/phpunit.unit.xml --filter",
         "test:integration": "phpunit -c tests/phpunit.integration.xml",
+        "test:integration:filter": "phpunit -c tests/phpunit.integration.xml --filter",
         "test:setup": "@php tests/integration/setup.php"
     },
     "scripts-descriptions": {
         "analyse:phpstan": "Run static analysis",
         "test": "Runs all tests.",
         "test:unit": "Runs all unit tests.",
+        "test:unit:filter": "Runs unit tests whose name matches: composer test:unit:filter -- ClassName",
         "test:integration": "Runs all integration tests.",
+        "test:integration:filter": "Runs integration tests whose name matches: composer test:integration:filter -- ClassName",
         "test:setup": "Sets up a database for use with integration tests. Execute this only once."
     },
     "autoload-dev": {
@@ -91,6 +99,6 @@
             "FoF\\Polls\\Tests\\": "tests/"
         }
     },
-    "minimum-stability": "beta",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }
