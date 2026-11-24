@@ -197,8 +197,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       flarum-webpack-config:
-        specifier: ^3.0.6
-        version: 3.0.6(supports-color@8.1.1)(webpack@5.111.1)
+        specifier: ^3.1.1
+        version: 3.1.1(supports-color@8.1.1)(webpack@5.111.1)
       flat:
         specifier: ^6.0.1
         version: 6.0.1
@@ -1766,8 +1766,8 @@ packages:
   flarum-tsconfig@2.0.0:
     resolution: {integrity: sha512-YEyYu9uZCc7WIXw4Q+W60aC2RVSw7/K0tlaVfQrJbovw6Uu0dIV5AdRRtpJFGjVhzv+OmMfbQeG5aI+xxf/gvQ==}
 
-  flarum-webpack-config@3.0.6:
-    resolution: {integrity: sha512-W+XwQ8r0QFJk6njKSKWBirjt4MKrfp2ytdO8z2OQjgn0uDzNNlDXo1CgYRbAINWIOGPZv0a2+1dMP9zq/M/lMw==}
+  flarum-webpack-config@3.1.1:
+    resolution: {integrity: sha512-44pUut8hKjNAmqHFsU8K5xS3QmYyiKGtUKpg4HWOiWzbvO4fxRPC5zh+hIeT51tvs+aUz48ZmS6pRYsr8mPGLQ==}
     peerDependencies:
       webpack: ^5.104.1
 
@@ -2748,9 +2748,9 @@ packages:
     resolution: {integrity: sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==}
     engines: {node: '>=16'}
 
-  typescript@4.9.5:
-    resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
-    engines: {node: '>=4.2.0'}
+  typescript@5.9.3:
+    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
+    engines: {node: '>=14.17'}
     hasBin: true
 
   typescript@7.0.2:
@@ -3866,7 +3866,7 @@ snapshots:
       clsx: 1.2.1
       color-thief-browser: 2.0.2
       dayjs: 1.11.23
-      flarum-webpack-config: 3.0.6(supports-color@8.1.1)(webpack@5.111.1)
+      flarum-webpack-config: 3.1.1(supports-color@8.1.1)(webpack@5.111.1)
       flat: 5.0.2
       focus-trap: 6.9.4
       format-message: 6.2.4
@@ -4833,7 +4833,7 @@ snapshots:
       '@types/throttle-debounce': 2.1.0
       dayjs: 1.11.23
 
-  flarum-webpack-config@3.0.6(supports-color@8.1.1)(webpack@5.111.1):
+  flarum-webpack-config@3.1.1(supports-color@8.1.1)(webpack@5.111.1):
     dependencies:
       '@babel/core': 7.29.7(supports-color@8.1.1)
       '@babel/plugin-transform-object-assign': 7.29.7(@babel/core@7.29.7(supports-color@8.1.1))
@@ -4846,7 +4846,7 @@ snapshots:
       babel-loader: 9.2.1(@babel/core@7.29.7(supports-color@8.1.1))(webpack@5.111.1)
       loader-utils: 1.4.2
       schema-utils: 3.3.0
-      typescript: 4.9.5
+      typescript: 5.9.3
       webpack: 5.111.1(uglify-js@3.19.3)(webpack-cli@7.2.3)
       webpack-bundle-analyzer: 4.10.2
     transitivePeerDependencies:
@@ -5939,7 +5939,7 @@ snapshots:
 
   type-fest@4.41.0: {}
 
-  typescript@4.9.5: {}
+  typescript@5.9.3: {}
 
   typescript@7.0.2:
     optionalDependencies:
