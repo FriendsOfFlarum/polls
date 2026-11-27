@@ -3,6 +3,7 @@ import app from 'flarum/forum/app';
 import { jest } from '@jest/globals';
 import bootstrapForum from '../../../bootstrap';
 import PollsPage from '../../../../src/forum/components/PollsPage';
+import PollListState from '../../../../src/forum/states/PollListState';
 
 beforeAll(() => bootstrapForum());
 
@@ -42,5 +43,18 @@ describe('PollsPage', () => {
     expect(out.rootEl.querySelector('.item-sort .Dropdown-toggle .Button-labelText')!.textContent).toBe('Oldest');
 
     app.forum.pushAttributes({ pollsDirectoryDefaultSort: '-createdAt' });
+  });
+
+  // /polls/all?page=N is server-rendered with page N preloaded.
+  it.each([
+    [undefined, 1],
+    ['3', 3],
+  ])('starts the list on the page in the URL (%s)', (page, expected) => {
+    const refresh = jest.spyOn(PollListState.prototype, 'refresh').mockResolvedValue();
+    jest.spyOn(m.route, 'param').mockImplementation(((key?: string) => (key === 'page' ? page : undefined)) as any);
+
+    mq(PollsPage, {});
+
+    expect(refresh).toHaveBeenCalledWith(expected);
   });
 });

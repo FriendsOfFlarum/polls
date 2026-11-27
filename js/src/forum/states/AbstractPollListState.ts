@@ -48,7 +48,7 @@ export default abstract class AbstractPollListState<M extends Model, P extends P
 
     if (preloaded) {
       this.initialLoading = false;
-      this.pageSize = preloaded.payload?.meta?.perPage || PaginatedListState.DEFAULT_PAGE_SIZE;
+      this.pageSize = preloaded.payload?.meta?.page?.limit || preloaded.payload?.meta?.perPage || PaginatedListState.DEFAULT_PAGE_SIZE;
 
       return Promise.resolve(preloaded);
     }
