@@ -1,4 +1,2 @@
 allowBuilds:
   '@parcel/watcher': true
-minimumReleaseAgeExclude:
-  - flarum-webpack-config@3.1.1
